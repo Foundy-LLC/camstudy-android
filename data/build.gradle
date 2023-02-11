@@ -1,6 +1,8 @@
 plugins {
     id 'com.android.library'
     id 'org.jetbrains.kotlin.android'
+    id 'kotlin-kapt'
+    id 'dagger.hilt.android.plugin'
 }
 
 android {
@@ -35,5 +37,14 @@ android {
 dependencies {
     implementation project(":domain")
 
-    testImplementation "junit:junit:${junit_version}"
+    // hilt
+    implementation "com.google.dagger:hilt-android:$hilt_version"
+    kapt "com.google.dagger:hilt-android-compiler:$hilt_version"
+
+    // junit
+    testImplementation "junit:junit:$junit_version"
+}
+
+kapt {
+    correctErrorTypes true
 }
