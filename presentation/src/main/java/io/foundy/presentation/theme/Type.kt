@@ -1,4 +1,4 @@
-package io.foundy.camstudy.ui.theme
+package io.foundy.presentation.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle

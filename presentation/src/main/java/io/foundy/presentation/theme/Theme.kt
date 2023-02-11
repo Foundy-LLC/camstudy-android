@@ -1,4 +1,4 @@
-package io.foundy.camstudy.ui.theme
+package io.foundy.presentation.theme
 
 import android.app.Activity
 import android.os.Build

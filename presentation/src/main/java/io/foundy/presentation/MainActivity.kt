@@ -1,4 +1,4 @@
-package io.foundy.camstudy
+package io.foundy.presentation
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -10,7 +10,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import io.foundy.camstudy.ui.theme.CamstudyTheme
+import io.foundy.presentation.theme.CamstudyTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

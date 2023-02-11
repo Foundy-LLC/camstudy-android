@@ -1,26 +1,20 @@
 plugins {
-    id 'com.android.application'
+    id 'com.android.library'
     id 'org.jetbrains.kotlin.android'
-    id 'com.google.gms.google-services'
 }
 
 android {
     def globalConfiguration = rootProject.extensions.getByName("ext")
 
-    namespace 'io.foundy.camstudy'
+    namespace 'io.foundy.data'
     compileSdk globalConfiguration["android_compile_sdk_version"]
 
     defaultConfig {
-        applicationId "io.foundy.camstudy"
         minSdk globalConfiguration["android_min_sdk_version"]
         targetSdk globalConfiguration["android_target_sdk_version"]
-        versionCode globalConfiguration["android_version_code"]
-        versionName globalConfiguration["android_version_name"]
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-        vectorDrawables {
-            useSupportLibrary true
-        }
+        consumerProguardFiles "consumer-rules.pro"
     }
 
     buildTypes {
@@ -36,19 +30,10 @@ android {
     kotlinOptions {
         jvmTarget = '1.8'
     }
-    packagingOptions {
-        resources {
-            excludes += '/META-INF/{AL2.0,LGPL2.1}'
-        }
-    }
 }
 
 dependencies {
-    implementation project(":data")
     implementation project(":domain")
-    implementation project(":presentation")
 
-    // firabse
-    implementation platform('com.google.firebase:firebase-bom:31.2.0')
-    implementation 'com.google.firebase:firebase-analytics-ktx'
+    testImplementation "junit:junit:${junit_version}"
 }
