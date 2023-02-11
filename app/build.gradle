@@ -4,6 +4,7 @@ plugins {
     id 'com.google.gms.google-services'
     id 'kotlin-kapt'
     id 'dagger.hilt.android.plugin'
+    id 'org.jlleitschuh.gradle.ktlint' version "$ktlint_version"
 }
 
 android {
