@@ -11,7 +11,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import dagger.hilt.android.AndroidEntryPoint
-import io.foundy.presentation.theme.CamstudyTheme
+import io.foundy.core.designsystem.theme.CamstudyTheme
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {

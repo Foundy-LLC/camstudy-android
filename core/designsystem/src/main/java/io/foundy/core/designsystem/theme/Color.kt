@@ -1,4 +1,4 @@
-package io.foundy.presentation.theme
+package io.foundy.core.designsystem.theme
 
 import androidx.compose.ui.graphics.Color
 
