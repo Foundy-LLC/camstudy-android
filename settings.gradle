@@ -16,3 +16,5 @@ rootProject.name = "Camstudy"
 include ':app'
 include ':core:designsystem'
 include ':core:data'
+include ':room:data'
+include ':room:ui'
