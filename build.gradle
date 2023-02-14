@@ -13,6 +13,7 @@ buildscript {
         hilt_version = '2.44'
         ktlint_version = '11.1.0'
         retrofit_version = "2.9.0"
+        coroutines_version = "1.6.4"
     }
     dependencies {
 
