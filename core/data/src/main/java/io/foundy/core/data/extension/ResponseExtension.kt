@@ -8,7 +8,6 @@ fun <T> Response<ResponseBody<T>>.getErrorMessage(): String? {
     if (isSuccessful) throw IllegalStateException()
 
     return try {
-        message()
         val errorBodyJson = requireNotNull(errorBody()).string()
         val responseBody = Gson().fromJson(errorBodyJson, ResponseBody::class.java)
         responseBody.message
