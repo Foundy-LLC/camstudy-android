@@ -16,9 +16,9 @@ data class WelcomeUiState(
         get() = addedTags.size < MAX_TAG_COUNT
 
     val enabledAddTagButton: Boolean
-        get() = addedTags.size < MAX_TAG_COUNT
-            && tagInput.isNotBlank()
-            && !addedTags.contains(tagInput)
+        get() = addedTags.size < MAX_TAG_COUNT &&
+            tagInput.isNotBlank() &&
+            !addedTags.contains(tagInput)
 
     val enabledDoneButton: Boolean
         get() = nameInput.isNotEmpty() && addedTags.isNotEmpty()

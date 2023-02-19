@@ -152,7 +152,6 @@ private fun RemovableChip(
     }
 }
 
-
 @Composable
 @Preview("Empty input")
 private fun WelcomeScreenPreview() {

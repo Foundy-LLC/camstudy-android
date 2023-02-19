@@ -14,9 +14,8 @@ import org.orbitmvi.orbit.viewmodel.container
 import javax.inject.Inject
 
 @HiltViewModel
-class WelcomeViewModel @Inject constructor(
-
-) : ViewModel(), ContainerHost<WelcomeUiState, WelcomeSideEffect> {
+class WelcomeViewModel @Inject constructor() :
+    ViewModel(), ContainerHost<WelcomeUiState, WelcomeSideEffect> {
 
     override val container: Container<WelcomeUiState, WelcomeSideEffect> =
         container(WelcomeUiState())
