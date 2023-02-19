@@ -24,6 +24,7 @@ class FirebaseAuthRepository @Inject constructor(
     private val _currentUserIdState: MutableStateFlow<String?> = MutableStateFlow(null)
     override val currentUserIdStream: Flow<String?> get() = _currentUserIdState
 
+    // TODO: Local DB에 cache하기
     private var _existsInitInfo: Boolean? = null
     override val existsInitInfo: Boolean? get() = _existsInitInfo
 
