@@ -102,7 +102,8 @@ fun LoginScreen(
 private fun rememberSignInWithGoogleLauncher(
     onFailure: (ApiException) -> Unit
 ): ManagedActivityResultLauncher<Intent, ActivityResult> {
-    return rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+    val startActivityForResult = ActivityResultContracts.StartActivityForResult()
+    return rememberLauncherForActivityResult(startActivityForResult) { result ->
         val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
         try {
             val account = task.getResult(ApiException::class.java)
