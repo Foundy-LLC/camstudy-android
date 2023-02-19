@@ -112,7 +112,7 @@ fun WelcomeScreen(
                 )
             }
             Row {
-                uiState.addedTags.forEach { tag ->
+                for (tag in uiState.addedTags) {
                     RemovableChip(label = tag, onRemoveClick = { onClickRemoveTag(tag) })
                 }
             }
