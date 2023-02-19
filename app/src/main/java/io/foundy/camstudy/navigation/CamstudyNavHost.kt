@@ -16,13 +16,26 @@
 
 package io.foundy.camstudy.navigation
 
+import androidx.compose.animation.*
+import androidx.compose.animation.core.tween
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.NavHost
+import com.google.accompanist.navigation.animation.AnimatedNavHost
 import io.foundy.auth.ui.LoginDestination
 import io.foundy.auth.ui.loginGraph
+import io.foundy.camstudy.ui.CamstudyTransitions
+import io.foundy.home.ui.HomeDestination
+import io.foundy.home.ui.homeGraph
 import io.foundy.navigation.CamstudyDestination
+import io.foundy.welcome.ui.WelcomeDestination
+import io.foundy.welcome.ui.welcomeGraph
+
+typealias OnPopUpAndNavigateCallBack = (
+    destination: CamstudyDestination,
+    popUpToDestination: CamstudyDestination,
+    route: String
+) -> Unit
 
 /**
  * Top-level navigation graph. Navigation is organized as explained at
@@ -31,19 +44,49 @@ import io.foundy.navigation.CamstudyDestination
  * The navigation graph defined in this file defines the different top level routes. Navigation
  * within each route is handled using state and Back Handlers.
  */
+@OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun CamstudyNavHost(
     navController: NavHostController,
-    onNavigateToDestination: (CamstudyDestination, String) -> Unit,
+    navigate: (CamstudyDestination, String) -> Unit,
+    popUpAndNavigate: OnPopUpAndNavigateCallBack,
     onBackClick: () -> Unit,
     modifier: Modifier = Modifier,
-    startDestination: String = LoginDestination.route
+    startDestination: String = HomeDestination.route,
+    enabledTransition: Boolean
 ) {
-    NavHost(
+    AnimatedNavHost(
         navController = navController,
         startDestination = startDestination,
         modifier = modifier,
+        exitTransition = {
+            if (enabledTransition) {
+                fadeOut(animationSpec = tween(CamstudyTransitions.DurationMilli))
+            } else {
+                ExitTransition.None
+            }
+        },
+        enterTransition = {
+            if (enabledTransition) {
+                fadeIn(animationSpec = tween(CamstudyTransitions.DurationMilli))
+            } else {
+                EnterTransition.None
+            }
+        }
     ) {
-        loginGraph()
+        loginGraph(
+            onReplaceToHome = {
+                popUpAndNavigate(HomeDestination, LoginDestination, HomeDestination.route)
+            },
+            onReplaceToWelcome = {
+                popUpAndNavigate(WelcomeDestination, LoginDestination, WelcomeDestination.route)
+            }
+        )
+        welcomeGraph(
+            onReplaceToHome = {
+                popUpAndNavigate(HomeDestination, WelcomeDestination, HomeDestination.route)
+            }
+        )
+        homeGraph()
     }
 }

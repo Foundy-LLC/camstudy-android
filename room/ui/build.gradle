@@ -43,8 +43,10 @@ android {
 dependencies {
 
     // firabse
-    implementation platform('com.google.firebase:firebase-bom:31.2.0')
-    implementation 'com.google.firebase:firebase-analytics-ktx'
+    implementation platform("com.google.firebase:firebase-bom:$firebase_bom")
+
+    // navigation
+    implementation "com.google.accompanist:accompanist-navigation-animation:$accompanist_navigation_animation"
 
     implementation 'androidx.core:core-ktx:1.9.0'
     implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.5.1'

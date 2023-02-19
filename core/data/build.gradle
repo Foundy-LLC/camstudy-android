@@ -35,10 +35,23 @@ android {
 }
 
 dependencies {
+
+    // hilt
+    implementation "com.google.dagger:hilt-android:$hilt_version"
+    kapt "com.google.dagger:hilt-android-compiler:$hilt_version"
+    testImplementation "com.google.dagger:hilt-android-testing:$hilt_version"
+    kaptTest "com.google.dagger:hilt-android-compiler:$hilt_version"
+    testAnnotationProcessor "com.google.dagger:hilt-android-compiler:$hilt_version"
+    androidTestImplementation "com.google.dagger:hilt-android-testing:$hilt_version"
+    kaptAndroidTest "com.google.dagger:hilt-android-compiler:$hilt_version"
+    androidTestAnnotationProcessor "com.google.dagger:hilt-android-compiler:$hilt_version"
+
     // retrofit2
     implementation "com.squareup.retrofit2:retrofit:$retrofit_version"
     implementation "com.squareup.retrofit2:converter-gson:$retrofit_version"
-    implementation 'com.squareup.okhttp3:logging-interceptor:4.9.2'
+
+    // okhttp3
+    implementation 'com.squareup.okhttp3:logging-interceptor:4.10.0'
 
     // junit
     testImplementation "junit:junit:$junit_version"

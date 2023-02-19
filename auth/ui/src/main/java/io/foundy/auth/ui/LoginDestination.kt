@@ -1,15 +1,17 @@
 package io.foundy.auth.ui
 
+import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.navigation.NavGraphBuilder
-import androidx.navigation.compose.composable
+import com.google.accompanist.navigation.animation.composable
 import io.foundy.navigation.CamstudyDestination
 
 object LoginDestination : CamstudyDestination {
     override val route = "login"
 }
 
-fun NavGraphBuilder.loginGraph() {
+@OptIn(ExperimentalAnimationApi::class)
+fun NavGraphBuilder.loginGraph(onReplaceToHome: () -> Unit, onReplaceToWelcome: () -> Unit) {
     composable(route = LoginDestination.route) {
-        LoginRoute()
+        LoginRoute(onReplaceToHome = onReplaceToHome, onReplaceToWelcome = onReplaceToWelcome)
     }
 }

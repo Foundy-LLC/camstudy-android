@@ -1,17 +1,18 @@
 package io.foundy.camstudy.ui
 
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.Stable
-import androidx.compose.runtime.remember
+import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.runtime.*
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
+import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import io.foundy.camstudy.navigation.TopLevelDestination
 import io.foundy.navigation.CamstudyDestination
+import kotlinx.coroutines.delay
 
+@OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun rememberCamstudyAppState(
-    navController: NavHostController = rememberNavController()
+    navController: NavHostController = rememberAnimatedNavController()
 ): CamstudyAppState {
     return remember(navController) {
         CamstudyAppState(navController)
@@ -22,6 +23,13 @@ fun rememberCamstudyAppState(
 class CamstudyAppState(
     val navController: NavHostController,
 ) {
+    var enabledTransition by mutableStateOf(false)
+        private set
+
+    suspend fun enableTransition() {
+        delay(CamstudyTransitions.DurationMilli.toLong())
+        enabledTransition = true
+    }
 
     /**
      * UI logic for navigating to a particular destination in the app. The NavigationOptions to
@@ -56,7 +64,23 @@ class CamstudyAppState(
         }
     }
 
+    fun popUpAndNavigate(
+        destination: CamstudyDestination,
+        popUpToDestination: CamstudyDestination,
+        route: String? = null
+    ) {
+        navController.navigate(route ?: destination.route) {
+            popUpTo(popUpToDestination.route) {
+                inclusive = true
+            }
+        }
+    }
+
     fun onBackClick() {
         navController.popBackStack()
     }
+}
+
+object CamstudyTransitions {
+    const val DurationMilli = 300
 }

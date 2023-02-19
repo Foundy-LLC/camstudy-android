@@ -17,6 +17,11 @@ android {
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles "consumer-rules.pro"
+
+        def localPropertiesFile = rootProject.file("local.properties")
+        def localProperties = new Properties()
+        localProperties.load(new FileInputStream(localPropertiesFile))
+        buildConfigField("String", "WEB_CLIENT_ID", localProperties['web_client_id'])
     }
 
     buildTypes {
@@ -42,6 +47,20 @@ android {
 
 dependencies {
     implementation project(path: ':core:navigation')
+    implementation project(path: ':auth:data')
+    implementation project(path: ':user:data')
+
+    // navigation
+    implementation "com.google.accompanist:accompanist-navigation-animation:$accompanist_navigation_animation"
+
+    // orbit
+    implementation("org.orbit-mvi:orbit-viewmodel:$orbit_version")
+    implementation("org.orbit-mvi:orbit-compose:$orbit_version")
+    testImplementation("org.orbit-mvi:orbit-test:$orbit_version")
+
+    // play services
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.6.4"
+    implementation "com.google.android.gms:play-services-auth:20.4.1"
 
     // hilt
     implementation "com.google.dagger:hilt-android:$hilt_version"
@@ -66,8 +85,8 @@ dependencies {
     implementation "androidx.hilt:hilt-navigation-compose:$hilt_navigation_compose"
 
     // firabse
-    implementation platform('com.google.firebase:firebase-bom:31.2.0')
-    implementation 'com.google.firebase:firebase-analytics-ktx'
+    implementation platform("com.google.firebase:firebase-bom:$firebase_bom")
+    implementation 'com.google.firebase:firebase-auth-ktx'
 
     implementation 'androidx.core:core-ktx:1.9.0'
     implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.5.1'
