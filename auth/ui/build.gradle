@@ -21,7 +21,7 @@ android {
         def localPropertiesFile = rootProject.file("local.properties")
         def localProperties = new Properties()
         localProperties.load(new FileInputStream(localPropertiesFile))
-        buildConfigField("String", "WEB_CLIENT_ID", localProperties['web_client_id'])
+        buildConfigField("String", "WEB_CLIENT_ID", localProperties['WEB_CLIENT_ID'])
     }
 
     buildTypes {
