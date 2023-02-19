@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="must_input_name_error_message">이름은 필수 항목입니다.</string>
+    <string name="must_add_tag_error_message">관심 태그는 반드시 하나 이상 추가해야합니다.</string>
+    <string name="tag_remove_button">태그 삭제 버튼</string>
+</resources>

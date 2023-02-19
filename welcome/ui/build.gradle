@@ -42,6 +42,14 @@ android {
 
 dependencies {
     implementation project(path: ':core:navigation')
+    implementation project(path: ':core:model')
+    implementation project(path: ':core:designsystem')
+    implementation project(path: ':user:data')
+
+    // orbit
+    implementation("org.orbit-mvi:orbit-viewmodel:$orbit_version")
+    implementation("org.orbit-mvi:orbit-compose:$orbit_version")
+    testImplementation("org.orbit-mvi:orbit-test:$orbit_version")
 
     // navigation
     implementation "androidx.navigation:navigation-compose:$nav_version"
