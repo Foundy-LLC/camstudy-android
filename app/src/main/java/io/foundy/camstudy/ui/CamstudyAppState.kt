@@ -31,7 +31,7 @@ class CamstudyAppState(
     var enabledTransition by mutableStateOf(false)
         private set
 
-    suspend fun enableTransition() {
+    suspend fun enableTransitionAfterDelay() {
         delay(CamstudyTransitions.DurationMilli.toLong())
         enabledTransition = true
     }

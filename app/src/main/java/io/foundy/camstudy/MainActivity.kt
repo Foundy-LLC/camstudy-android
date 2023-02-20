@@ -50,7 +50,7 @@ class MainActivity : ComponentActivity() {
                         lifecycleScope.launch {
                             // TODO: NavController에서 애니메이션 없이 전환하는 기능이 없기 때문에 임시적으로 첫 전환시에만
                             //  전환 애니메이션을 껐다가 다시 켜고 있다. 추후에 앞서 언급한 기능이 API에 추가되면 리팩토링 할 것
-                            appState.enableTransition()
+                            appState.enableTransitionAfterDelay()
                         }
                         true
                     } else {
