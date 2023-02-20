@@ -18,7 +18,7 @@ class UserNetworkModule {
 
     @Provides
     @Singleton
-    fun provideAdminApiService(retrofit: Retrofit): UserApi {
+    fun provideUserApiService(retrofit: Retrofit): UserApi {
         return retrofit.create(UserApi::class.java)
     }
 
