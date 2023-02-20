@@ -40,6 +40,9 @@ dependencies {
     implementation project(path: ':core:common')
     implementation project(path: ':user:data')
 
+    // datastore
+    implementation "androidx.datastore:datastore-preferences:$datastore_version"
+
     // hilt
     implementation "com.google.dagger:hilt-android:$hilt_version"
     kapt "com.google.dagger:hilt-android-compiler:$hilt_version"
@@ -53,6 +56,10 @@ dependencies {
     // firabse
     implementation platform("com.google.firebase:firebase-bom:$firebase_bom")
     implementation 'com.google.firebase:firebase-auth-ktx'
+
+    // retrofit2
+    implementation "com.squareup.retrofit2:retrofit:$retrofit_version"
+    implementation "com.squareup.retrofit2:converter-gson:$retrofit_version"
 
     implementation 'androidx.core:core-ktx:1.7.0'
     implementation 'androidx.appcompat:appcompat:1.6.1'

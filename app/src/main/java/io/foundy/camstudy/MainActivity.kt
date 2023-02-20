@@ -42,10 +42,11 @@ class MainActivity : ComponentActivity() {
         content.viewTreeObserver.addOnPreDrawListener(
             object : ViewTreeObserver.OnPreDrawListener {
                 override fun onPreDraw(): Boolean {
-                    return if (viewModel.shouldHideSplashScreen) {
+                    val startDestination = viewModel.startDestination
+                    return if (startDestination != null) {
                         content.viewTreeObserver.removeOnPreDrawListener(this)
-                        if (viewModel.startDestination !is HomeDestination) {
-                            navigateAndPopUpTo(viewModel.startDestination)
+                        if (startDestination !is HomeDestination) {
+                            navigateAndPopUpTo(startDestination)
                         }
                         lifecycleScope.launch {
                             // TODO: NavController에서 애니메이션 없이 전환하는 기능이 없기 때문에 임시적으로 첫 전환시에만

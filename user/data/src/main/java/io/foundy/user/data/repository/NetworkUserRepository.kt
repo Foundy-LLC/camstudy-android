@@ -15,13 +15,6 @@ class NetworkUserRepository @Inject constructor(
     private val userDataSource: UserRemoteDataSource
 ) : UserRepository {
 
-    override suspend fun getUserExistence(userId: String): Result<Boolean> {
-        return runCatching {
-            val response = userDataSource.getUserExistence(userId)
-            response.getDataOrThrowMessage()
-        }
-    }
-
     override suspend fun postUserInitialInfo(
         userId: String,
         name: String,

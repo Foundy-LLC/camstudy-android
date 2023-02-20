@@ -16,10 +16,6 @@ class RetrofitUserDataSource @Inject constructor(
         return api.getUser(userId)
     }
 
-    override suspend fun getUserExistence(userId: String): Response<ResponseBody<Boolean>> {
-        return api.getUserExistence(userId)
-    }
-
     override suspend fun postUserInitialInfo(
         body: UserCreateRequestBody
     ): Response<ResponseBody<Unit>> {

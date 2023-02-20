@@ -23,7 +23,14 @@ class LoginViewModel @Inject constructor(
                     return@collect
                 }
                 val existsInitInfo = authRepository.existsInitInfo
-                check(existsInitInfo != null)
+                if (existsInitInfo == null) {
+                    postSideEffect(
+                        LoginSideEffect.Message(
+                            defaultMessageRes = R.string.failed_to_connect_server
+                        )
+                    )
+                    return@collect
+                }
                 if (existsInitInfo) {
                     postSideEffect(LoginSideEffect.NavigateToHome)
                 } else {

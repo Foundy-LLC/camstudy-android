@@ -8,7 +8,6 @@ import retrofit2.Response
 
 interface UserRemoteDataSource {
     suspend fun getUser(userId: String): Response<ResponseBody<UserDto>>
-    suspend fun getUserExistence(userId: String): Response<ResponseBody<Boolean>>
     suspend fun postUserInitialInfo(body: UserCreateRequestBody): Response<ResponseBody<Unit>>
     suspend fun uploadUserProfileImage(
         userId: String,
