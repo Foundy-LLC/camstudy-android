@@ -44,7 +44,12 @@ dependencies {
     implementation project(path: ':core:navigation')
     implementation project(path: ':core:model')
     implementation project(path: ':core:designsystem')
+    implementation project(path: ':core:common')
     implementation project(path: ':user:data')
+    implementation project(path: ':auth:data')
+
+    // coil
+    implementation("io.coil-kt:coil-compose:$coil_version")
 
     // orbit
     implementation("org.orbit-mvi:orbit-viewmodel:$orbit_version")
@@ -55,6 +60,16 @@ dependencies {
     implementation "androidx.navigation:navigation-compose:$nav_version"
     implementation "androidx.hilt:hilt-navigation-compose:$hilt_navigation_compose"
     implementation "com.google.accompanist:accompanist-navigation-animation:$accompanist_navigation_animation"
+
+    // hilt
+    implementation "com.google.dagger:hilt-android:$hilt_version"
+    kapt "com.google.dagger:hilt-android-compiler:$hilt_version"
+    testImplementation "com.google.dagger:hilt-android-testing:$hilt_version"
+    kaptTest "com.google.dagger:hilt-android-compiler:$hilt_version"
+    testAnnotationProcessor "com.google.dagger:hilt-android-compiler:$hilt_version"
+    androidTestImplementation "com.google.dagger:hilt-android-testing:$hilt_version"
+    kaptAndroidTest "com.google.dagger:hilt-android-compiler:$hilt_version"
+    androidTestAnnotationProcessor "com.google.dagger:hilt-android-compiler:$hilt_version"
 
     implementation 'androidx.core:core-ktx:1.9.0'
     implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.5.1'

@@ -3,4 +3,7 @@
     <string name="must_input_name_error_message">이름은 필수 항목입니다.</string>
     <string name="must_add_tag_error_message">관심 태그는 반드시 하나 이상 추가해야합니다.</string>
     <string name="tag_remove_button">태그 삭제 버튼</string>
+    <string name="remove_profile_image">프로필 이미지 제거</string>
+    <string name="selected_profile_image">선택된 프로필 이미지</string>
+    <string name="cannot_save_from_unknown_error">알수없는 이유로 저장에 실패했습니다.</string>
 </resources>

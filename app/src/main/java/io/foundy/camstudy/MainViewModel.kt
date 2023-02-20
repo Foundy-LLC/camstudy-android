@@ -35,6 +35,7 @@ class MainViewModel @Inject constructor(
                         LoginDestination
                     } else {
                         val existsInitInfo = authRepository.existsInitInfo
+                        // TODO: null인경우 while문으로 반복 체크하기
                         check(existsInitInfo != null)
                         if (existsInitInfo) {
                             HomeDestination
