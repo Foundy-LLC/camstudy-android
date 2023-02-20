@@ -46,9 +46,11 @@ class ConnectivityManagerNetworkMonitor @Inject constructor(
 
     private fun ConnectivityManager?.isCurrentlyConnected() = when (this) {
         null -> false
-        else -> activeNetwork
-            ?.let(::getNetworkCapabilities)
-            ?.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
-            ?: false
+        else -> {
+            activeNetwork
+                ?.let(::getNetworkCapabilities)
+                ?.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
+                ?: false
+        }
     }
 }
