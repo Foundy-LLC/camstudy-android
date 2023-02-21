@@ -4,7 +4,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import io.foundy.navigation.CamstudyDestination
 
-object RoomListDestination: CamstudyDestination {
+object RoomListDestination : CamstudyDestination {
     override val route: String = "room_list"
 }
 
@@ -13,4 +13,3 @@ fun NavGraphBuilder.roomListGraph() {
         RoomListRoute()
     }
 }
-

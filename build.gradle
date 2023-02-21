@@ -22,7 +22,7 @@ buildscript {
         coil_version = "2.2.2"
         datastore_version = "1.0.0"
         paging = "3.1.1"
-        paging_compose = "1.0.0-alpha17"
+        paging_compose = "1.0.0-alpha18"
     }
     dependencies {
 

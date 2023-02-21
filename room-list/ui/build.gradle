@@ -42,9 +42,21 @@ android {
 
 dependencies {
     implementation project(path: ':core:navigation')
+    implementation project(path: ':core:model')
+    implementation project(path: ':room-list:data')
 
     // navigation
+    implementation "androidx.hilt:hilt-navigation-compose:$hilt_navigation_compose"
     implementation "com.google.accompanist:accompanist-navigation-animation:$accompanist_navigation_animation"
+
+    // orbit
+    implementation("org.orbit-mvi:orbit-viewmodel:$orbit_version")
+    implementation("org.orbit-mvi:orbit-compose:$orbit_version")
+    testImplementation("org.orbit-mvi:orbit-test:$orbit_version")
+
+    // paging
+    implementation "androidx.paging:paging-common-ktx:$paging"
+    implementation "androidx.paging:paging-compose:$paging_compose"
 
     // hilt
     implementation "com.google.dagger:hilt-android:$hilt_version"

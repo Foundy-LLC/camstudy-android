@@ -19,6 +19,6 @@ fun ImageVector.asCamstudyIcon(): CamstudyIcon {
     return ImageVectorIcon(this)
 }
 
-fun @receiver:DrawableRes Int.asCamstudyIcon() : CamstudyIcon {
+fun @receiver:DrawableRes Int.asCamstudyIcon(): CamstudyIcon {
     return DrawableResourceIcon(this)
 }

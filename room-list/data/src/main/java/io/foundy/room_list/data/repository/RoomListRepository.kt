@@ -5,5 +5,5 @@ import io.foundy.core.model.RoomOverview
 import kotlinx.coroutines.flow.Flow
 
 interface RoomListRepository {
-    suspend fun getRooms(): Flow<PagingData<RoomOverview>>
+    fun getRooms(): Flow<PagingData<RoomOverview>>
 }
