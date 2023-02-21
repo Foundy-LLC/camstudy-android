@@ -6,7 +6,7 @@ import io.foundy.home.ui.destinations.HomeRouteDestination
 import io.foundy.welcome.ui.WelcomeNavigator
 import io.foundy.welcome.ui.destinations.WelcomeRouteDestination
 
-class WelcomeNavigatorImpl(
+internal class WelcomeNavigatorImpl(
     private val navController: NavController,
 ) : WelcomeNavigator {
 

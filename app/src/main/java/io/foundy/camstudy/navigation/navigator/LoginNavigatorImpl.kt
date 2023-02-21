@@ -7,7 +7,7 @@ import io.foundy.auth.ui.destinations.LoginRouteDestination
 import io.foundy.home.ui.destinations.HomeRouteDestination
 import io.foundy.welcome.ui.destinations.WelcomeRouteDestination
 
-class LoginNavigatorImpl(
+internal class LoginNavigatorImpl(
     private val navController: NavController,
 ) : LoginNavigator {
 

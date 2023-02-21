@@ -7,7 +7,7 @@ import io.foundy.auth.ui.destinations.LoginRouteDestination
 import io.foundy.home.ui.destinations.HomeRouteDestination
 import io.foundy.welcome.ui.destinations.WelcomeRouteDestination
 
-object NavGraphs {
+internal object NavGraphs {
 
     val root = object : NavGraphSpec {
         override val route: String = "root"
