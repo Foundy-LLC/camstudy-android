@@ -1,5 +1,6 @@
 package io.foundy.user.data.repository
 
+import io.foundy.auth.data.source.AuthLocalDataSource
 import io.foundy.core.data.extension.getDataOrThrowMessage
 import io.foundy.user.data.model.UserCreateRequestBody
 import io.foundy.user.data.source.UserRemoteDataSource
@@ -12,7 +13,8 @@ import java.io.File
 import javax.inject.Inject
 
 class NetworkUserRepository @Inject constructor(
-    private val userDataSource: UserRemoteDataSource
+    private val userDataSource: UserRemoteDataSource,
+    private val authLocalDataSource: AuthLocalDataSource
 ) : UserRepository {
 
     override suspend fun postUserInitialInfo(
@@ -45,6 +47,7 @@ class NetworkUserRepository @Inject constructor(
                     deferredProfileImageResponse.await().getDataOrThrowMessage()
                 }
                 deferredUserResponse.await().getDataOrThrowMessage()
+                authLocalDataSource.markAsUserInitialInfoExists(userId)
             }
         }
     }
