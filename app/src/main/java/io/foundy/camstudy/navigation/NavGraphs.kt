@@ -7,15 +7,15 @@ import io.foundy.auth.ui.destinations.LoginRouteDestination
 import io.foundy.home.ui.destinations.HomeRouteDestination
 import io.foundy.welcome.ui.destinations.WelcomeRouteDestination
 
-object RootNavGraph : NavGraphSpec {
+object NavGraphs {
 
-    override val route: String = "root"
-
-    override val startRoute: Route = LoginRouteDestination
-
-    override val destinationsByRoute: Map<String, DestinationSpec<*>> = listOf(
-        HomeRouteDestination,
-        LoginRouteDestination,
-        WelcomeRouteDestination,
-    ).associateBy { it.route }
+    val root = object : NavGraphSpec {
+        override val route: String = "root"
+        override val startRoute: Route = LoginRouteDestination
+        override val destinationsByRoute: Map<String, DestinationSpec<*>> = listOf(
+            HomeRouteDestination,
+            LoginRouteDestination,
+            WelcomeRouteDestination,
+        ).associateBy { it.route }
+    }
 }
