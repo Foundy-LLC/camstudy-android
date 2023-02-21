@@ -1,8 +1,9 @@
-package io.foundy.home.ui
+package io.foundy.home.ui.navigation
 
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.navigation.NavGraphBuilder
 import com.google.accompanist.navigation.animation.composable
+import io.foundy.home.ui.HomeRoute
 import io.foundy.navigation.CamstudyDestination
 
 object HomeDestination : CamstudyDestination {

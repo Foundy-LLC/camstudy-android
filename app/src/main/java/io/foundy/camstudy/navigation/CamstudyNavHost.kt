@@ -29,8 +29,8 @@ import com.google.accompanist.navigation.animation.AnimatedNavHost
 import io.foundy.auth.ui.LoginDestination
 import io.foundy.auth.ui.loginGraph
 import io.foundy.camstudy.ui.CamstudyTransitions
-import io.foundy.home.ui.HomeDestination
-import io.foundy.home.ui.homeGraph
+import io.foundy.home.ui.navigation.HomeDestination
+import io.foundy.home.ui.navigation.homeGraph
 import io.foundy.navigation.CamstudyDestination
 import io.foundy.welcome.ui.WelcomeDestination
 import io.foundy.welcome.ui.welcomeGraph

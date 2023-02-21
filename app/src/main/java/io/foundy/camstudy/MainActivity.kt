@@ -14,7 +14,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import io.foundy.camstudy.ui.CamstudyApp
 import io.foundy.camstudy.ui.CamstudyAppState
 import io.foundy.camstudy.ui.rememberCamstudyAppState
-import io.foundy.home.ui.HomeDestination
+import io.foundy.home.ui.navigation.HomeDestination
 import io.foundy.navigation.CamstudyDestination
 import kotlinx.coroutines.launch
 

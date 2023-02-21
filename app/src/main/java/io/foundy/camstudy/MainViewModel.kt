@@ -5,7 +5,7 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.foundy.auth.data.repository.AuthRepository
 import io.foundy.auth.ui.LoginDestination
-import io.foundy.home.ui.HomeDestination
+import io.foundy.home.ui.navigation.HomeDestination
 import io.foundy.navigation.CamstudyDestination
 import io.foundy.welcome.ui.WelcomeDestination
 import kotlinx.coroutines.flow.first

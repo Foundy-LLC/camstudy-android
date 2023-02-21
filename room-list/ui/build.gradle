@@ -8,7 +8,7 @@ plugins {
 android {
     def globalConfiguration = rootProject.extensions.getByName("ext")
 
-    namespace 'io.foundy.room.ui'
+    namespace 'io.foundy.room_list.ui'
     compileSdk globalConfiguration["android_compile_sdk_version"]
 
     defaultConfig {
@@ -41,9 +41,7 @@ android {
 }
 
 dependencies {
-
-    // firabse
-    implementation platform("com.google.firebase:firebase-bom:$firebase_bom")
+    implementation project(path: ':core:navigation')
 
     // navigation
     implementation "com.google.accompanist:accompanist-navigation-animation:$accompanist_navigation_animation"
