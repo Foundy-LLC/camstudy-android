@@ -15,22 +15,33 @@ import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hierarchy
 import com.ramcosta.composedestinations.DestinationsNavHost
 import com.ramcosta.composedestinations.annotation.Destination
+import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import com.ramcosta.composedestinations.navigation.dependency
 import com.ramcosta.composedestinations.spec.DestinationStyle
 import io.foundy.core.designsystem.icon.DrawableResourceIcon
 import io.foundy.core.designsystem.icon.ImageVectorIcon
 import io.foundy.home.ui.navigation.HomeNavGraph
 import io.foundy.home.ui.navigation.HomeTabDestination
+import io.foundy.home.ui.navigation.RoomListNavigatorImpl
+import io.foundy.room.ui.destinations.RoomRouteDestination
 
 @Destination(style = DestinationStyle.Runtime::class)
 @Composable
-fun HomeRoute() {
-    HomeScreen()
+fun HomeRoute(
+    navigator: DestinationsNavigator
+) {
+    HomeScreen(
+        onNavigateToRoom = { id ->
+            navigator.navigate(RoomRouteDestination(id = id))
+        }
+    )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
-    homeScreenState: HomeScreenState = rememberHomeScreenState()
+    homeScreenState: HomeScreenState = rememberHomeScreenState(),
+    onNavigateToRoom: (id: String) -> Unit
 ) {
     Scaffold(
         bottomBar = {
@@ -44,7 +55,10 @@ fun HomeScreen(
         DestinationsNavHost(
             navGraph = HomeNavGraph,
             navController = homeScreenState.navController,
-            modifier = Modifier.padding(padding)
+            modifier = Modifier.padding(padding),
+            dependenciesContainerBuilder = {
+                dependency(RoomListNavigatorImpl(onNavigateToRoom = onNavigateToRoom))
+            }
         )
     }
 }
@@ -56,7 +70,7 @@ private fun CamstudyBottomBar(
     currentDestination: NavDestination?
 ) {
     NavigationBar {
-        destinations.forEach { destination ->
+        for (destination in destinations) {
             val selected = currentDestination?.hierarchy?.any {
                 it.route == destination.direction.route
             } == true

@@ -64,6 +64,8 @@ dependencies {
     implementation project(":auth:ui")
     implementation project(":welcome:ui")
     implementation project(":home:ui")
+    implementation project(":room-list:ui")
+    implementation project(":room:ui")
 
     // compose destination
     implementation "io.github.raamcosta.compose-destinations:animations-core:$compose_destination_version"

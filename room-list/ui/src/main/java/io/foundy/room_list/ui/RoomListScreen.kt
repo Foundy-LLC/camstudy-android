@@ -24,21 +24,28 @@ import com.ramcosta.composedestinations.annotation.Destination
 import io.foundy.core.model.RoomOverview
 import org.orbitmvi.orbit.compose.collectAsState
 
+interface RoomListNavigator {
+    fun navigateToRoom(id: String)
+}
+
 @Destination
 @Composable
 fun RoomListRoute(
+    roomListNavigator: RoomListNavigator,
     viewModel: RoomListViewModel = hiltViewModel()
 ) {
     val uiState = viewModel.collectAsState().value
 
     RoomListScreen(
-        uiState = uiState
+        uiState = uiState,
+        onRoomClick = roomListNavigator::navigateToRoom
     )
 }
 
 @Composable
 fun RoomListScreen(
-    uiState: RoomListUiState
+    uiState: RoomListUiState,
+    onRoomClick: (id: String) -> Unit
 ) {
     val rooms = uiState.roomPagingDataStream.collectAsLazyPagingItems()
 
@@ -54,7 +61,7 @@ fun RoomListScreen(
                 Text("End")
                 return@items
             }
-            RoomItem(room = roomOverview, onClick = { /* TODO */ })
+            RoomItem(room = roomOverview, onClick = { onRoomClick(roomOverview.id) })
         }
         when (rooms.loadState.refresh) { // FIRST LOAD
             is LoadState.Error -> errorItem(rooms.loadState)
