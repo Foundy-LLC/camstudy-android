@@ -38,16 +38,23 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
+import com.ramcosta.composedestinations.annotation.Destination
+import com.ramcosta.composedestinations.spec.DestinationStyle
 import io.foundy.core.common.util.toBitmap
 import io.foundy.core.designsystem.component.CamstudyTextField
 import kotlinx.coroutines.launch
 import org.orbitmvi.orbit.compose.collectAsState
 import org.orbitmvi.orbit.compose.collectSideEffect
 
+interface WelcomeNavigator {
+    fun replaceToHome()
+}
+
+@Destination(style = DestinationStyle.Runtime::class)
 @Composable
 fun WelcomeRoute(
     viewModel: WelcomeViewModel = hiltViewModel(),
-    onReplaceToHome: () -> Unit
+    navigator: WelcomeNavigator
 ) {
     val uiState = viewModel.collectAsState().value
     val snackbarHostState = remember { SnackbarHostState() }
@@ -56,7 +63,7 @@ fun WelcomeRoute(
 
     viewModel.collectSideEffect {
         when (it) {
-            WelcomeSideEffect.NavigateToHome -> onReplaceToHome()
+            WelcomeSideEffect.NavigateToHome -> navigator.replaceToHome()
             is WelcomeSideEffect.Message -> coroutineScope.launch {
                 snackbarHostState.showSnackbar(
                     it.content ?: context.getString(it.defaultContentRes)

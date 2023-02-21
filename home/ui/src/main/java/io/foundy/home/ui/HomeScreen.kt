@@ -13,11 +13,14 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hierarchy
+import com.ramcosta.composedestinations.annotation.Destination
+import com.ramcosta.composedestinations.spec.DestinationStyle
 import io.foundy.core.designsystem.icon.DrawableResourceIcon
 import io.foundy.core.designsystem.icon.ImageVectorIcon
 import io.foundy.home.ui.navigation.HomeNavHost
 import io.foundy.home.ui.navigation.HomeTabDestination
 
+@Destination(style = DestinationStyle.Runtime::class)
 @Composable
 fun HomeRoute() {
     HomeScreen()

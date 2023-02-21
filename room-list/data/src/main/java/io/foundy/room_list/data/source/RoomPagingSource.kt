@@ -23,7 +23,7 @@ class RoomPagingSource @Inject constructor(
             api.getRooms(page = page).getDataOrThrowMessage()
         }.onSuccess {
             val roomOverviews = it.map { dto -> dto.toEntity() }
-            val isEnd = roomOverviews.isEmpty()
+            val isEnd = roomOverviews.size < PAGE_SIZE
 
             return LoadResult.Page(
                 data = roomOverviews,

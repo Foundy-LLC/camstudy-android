@@ -1,18 +1,12 @@
 package io.foundy.home.ui.navigation
 
-import androidx.compose.animation.ExperimentalAnimationApi
-import androidx.navigation.NavGraphBuilder
-import com.google.accompanist.navigation.animation.composable
+import com.ramcosta.composedestinations.manualcomposablecalls.ManualComposableCallsBuilder
+import com.ramcosta.composedestinations.manualcomposablecalls.composable
 import io.foundy.home.ui.HomeRoute
-import io.foundy.navigation.CamstudyDestination
+import io.foundy.home.ui.destinations.HomeRouteDestination
 
-object HomeDestination : CamstudyDestination {
-    override val route: String = "home"
-}
-
-@OptIn(ExperimentalAnimationApi::class)
-fun NavGraphBuilder.homeGraph() {
-    composable(route = HomeDestination.route) {
+fun ManualComposableCallsBuilder.homeGraph() {
+    composable(HomeRouteDestination) {
         HomeRoute()
     }
 }
