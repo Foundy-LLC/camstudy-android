@@ -13,11 +13,12 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hierarchy
+import com.ramcosta.composedestinations.DestinationsNavHost
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.spec.DestinationStyle
 import io.foundy.core.designsystem.icon.DrawableResourceIcon
 import io.foundy.core.designsystem.icon.ImageVectorIcon
-import io.foundy.home.ui.navigation.HomeNavHost
+import io.foundy.home.ui.navigation.HomeNavGraph
 import io.foundy.home.ui.navigation.HomeTabDestination
 
 @Destination(style = DestinationStyle.Runtime::class)
@@ -40,9 +41,10 @@ fun HomeScreen(
             )
         }
     ) { padding ->
-        HomeNavHost(
-            modifier = Modifier.padding(padding),
-            navController = homeScreenState.navController
+        DestinationsNavHost(
+            navGraph = HomeNavGraph,
+            navController = homeScreenState.navController,
+            modifier = Modifier.padding(padding)
         )
     }
 }
@@ -55,8 +57,9 @@ private fun CamstudyBottomBar(
 ) {
     NavigationBar {
         destinations.forEach { destination ->
-            val selected =
-                currentDestination?.hierarchy?.any { it.route == destination.route } == true
+            val selected = currentDestination?.hierarchy?.any {
+                it.route == destination.direction.route
+            } == true
             NavigationBarItem(
                 selected = selected,
                 onClick = { onNavigateToDestination(destination) },
@@ -69,15 +72,15 @@ private fun CamstudyBottomBar(
                     when (icon) {
                         is ImageVectorIcon -> Icon(
                             imageVector = icon.imageVector,
-                            contentDescription = stringResource(id = destination.iconTextId)
+                            contentDescription = stringResource(id = destination.label)
                         )
                         is DrawableResourceIcon -> Icon(
                             painter = painterResource(id = icon.id),
-                            contentDescription = stringResource(id = destination.iconTextId)
+                            contentDescription = stringResource(id = destination.label)
                         )
                     }
                 },
-                label = { Text(stringResource(destination.iconTextId)) }
+                label = { Text(stringResource(destination.label)) }
             )
         }
     }

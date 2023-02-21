@@ -20,9 +20,11 @@ import androidx.paging.CombinedLoadStates
 import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.items
+import com.ramcosta.composedestinations.annotation.Destination
 import io.foundy.core.model.RoomOverview
 import org.orbitmvi.orbit.compose.collectAsState
 
+@Destination
 @Composable
 fun RoomListRoute(
     viewModel: RoomListViewModel = hiltViewModel()

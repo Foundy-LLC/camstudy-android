@@ -8,10 +8,7 @@ import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import io.foundy.core.designsystem.icon.CamstudyIcons
-import io.foundy.core.designsystem.icon.asCamstudyIcon
 import io.foundy.home.ui.navigation.HomeTabDestination
-import io.foundy.room_list.ui.RoomListDestination
 
 @Composable
 fun rememberHomeScreenState(
@@ -33,17 +30,10 @@ class HomeScreenState(
     /**
      * Top level destinations to be used in the BottomBar and NavRail
      */
-    val tabDestinations: List<HomeTabDestination> = listOf(
-        HomeTabDestination(
-            route = RoomListDestination.route,
-            selectedIcon = CamstudyIcons.Home.asCamstudyIcon(),
-            unselectedIcon = CamstudyIcons.HomeOutlined.asCamstudyIcon(),
-            iconTextId = R.string.home,
-        ),
-    )
+    val tabDestinations: List<HomeTabDestination> = HomeTabDestination.values().toList()
 
     fun navigate(destination: HomeTabDestination, route: String? = null) {
-        navController.navigate(route ?: destination.route) {
+        navController.navigate(route ?: destination.direction.route) {
             // Pop up to the start destination of the graph to
             // avoid building up a large stack of destinations
             // on the back stack as users select items
