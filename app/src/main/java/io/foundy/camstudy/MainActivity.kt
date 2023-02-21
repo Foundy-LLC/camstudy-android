@@ -44,7 +44,6 @@ class MainActivity : ComponentActivity() {
                 override fun onPreDraw(): Boolean {
                     val startDestination = viewModel.startDestination
                     return if (startDestination != null) {
-                        content.viewTreeObserver.removeOnPreDrawListener(this)
                         if (startDestination !is HomeDestination) {
                             navigateAndPopUpTo(startDestination)
                         }
@@ -53,6 +52,7 @@ class MainActivity : ComponentActivity() {
                             //  전환 애니메이션을 껐다가 다시 켜고 있다. 추후에 앞서 언급한 기능이 API에 추가되면 리팩토링 할 것
                             appState.enableTransitionAfterDelay()
                         }
+                        content.viewTreeObserver.removeOnPreDrawListener(this)
                         true
                     } else {
                         false
