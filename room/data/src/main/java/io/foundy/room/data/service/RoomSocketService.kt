@@ -18,14 +18,12 @@ import javax.inject.Inject
 @OptIn(ExperimentalCoroutinesApi::class)
 class RoomSocketService @Inject constructor() : RoomService {
 
+    private val socket: Socket = Manager(URI(URL)).socket(Protocol.NAME_SPACE)
+
     override val event: MutableSharedFlow<RoomEvent> = MutableSharedFlow()
 
-    private var _socket: Socket? = null
-    private val socket: Socket get() = requireNotNull(_socket)
-
     override suspend fun connect() = suspendCoroutineWithTimeout { continuation ->
-        val manager = Manager(URI(URL))
-        _socket = manager.socket(Protocol.NAME_SPACE).apply {
+        socket.run {
             connect()
 
             on(Protocol.CONNECTION_SUCCESS) {
