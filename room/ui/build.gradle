@@ -46,9 +46,12 @@ android {
 }
 
 dependencies {
+    implementation project(path: ':room:data')
 
-    // firabse
-    implementation platform("com.google.firebase:firebase-bom:$firebase_bom")
+    // orbit
+    implementation("org.orbit-mvi:orbit-viewmodel:$orbit_version")
+    implementation("org.orbit-mvi:orbit-compose:$orbit_version")
+    testImplementation("org.orbit-mvi:orbit-test:$orbit_version")
 
     // compose destination
     implementation "io.github.raamcosta.compose-destinations:core:$compose_destination_version"
@@ -56,6 +59,9 @@ dependencies {
 
     // navigation
     implementation "com.google.accompanist:accompanist-navigation-animation:$accompanist_navigation_animation"
+
+    // navigation
+    implementation "androidx.hilt:hilt-navigation-compose:$hilt_navigation_compose"
 
     // hilt
     implementation "com.google.dagger:hilt-android:$hilt_version"

@@ -25,6 +25,8 @@ buildscript {
         paging_compose = "1.0.0-alpha18"
         compose_destination_version = "1.7.33-beta"
         ksp_version = "1.8.10-1.0.9"
+        socket_io_version = "2.1.0"
+        mediasoupe_version = "3.0.8-beta-3"
     }
     dependencies {
 
