@@ -3,9 +3,12 @@ package io.foundy.room.ui
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import io.foundy.room.data.model.OtherPeerExitedRoomEvent
+import io.foundy.room.data.model.OtherPeerJoinedRoomEvent
+import io.foundy.room.data.model.StudyRoomEvent
+import io.foundy.room.data.model.WaitingRoomEvent
 import io.foundy.room.data.service.RoomService
 import kotlinx.coroutines.TimeoutCancellationException
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.ContainerHost
@@ -24,8 +27,11 @@ class RoomViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            roomService.event.collectLatest {
-                TODO()
+            roomService.event.collect {
+                when (it) {
+                    is WaitingRoomEvent -> handleWaitingRoomEvent(it)
+                    is StudyRoomEvent -> handleStudyRoomEvent(it)
+                }
             }
         }
     }
@@ -47,4 +53,27 @@ class RoomViewModel @Inject constructor(
             reduce { RoomUiState.FailedToConnect(R.string.failed_to_join_waiting_room) }
         }
     }
+
+    private fun handleWaitingRoomEvent(waitingRoomEvent: WaitingRoomEvent) = intent {
+        val uiState = state
+        check(uiState is RoomUiState.WaitingRoom)
+        when (waitingRoomEvent) {
+            is OtherPeerJoinedRoomEvent -> {
+                val newJoiner = waitingRoomEvent.joiner
+                val newJoinerList = uiState.data.joinerList + newJoiner
+                reduce {
+                    RoomUiState.WaitingRoom(data = uiState.data.copy(joinerList = newJoinerList))
+                }
+            }
+            is OtherPeerExitedRoomEvent -> {
+                val exitedUserId = waitingRoomEvent.userId
+                val newJoinerList = uiState.data.joinerList.filter { it.id != exitedUserId }
+                reduce {
+                    RoomUiState.WaitingRoom(data = uiState.data.copy(joinerList = newJoinerList))
+                }
+            }
+        }
+    }
+
+    private fun handleStudyRoomEvent(studyRoomEvent: StudyRoomEvent) {}
 }

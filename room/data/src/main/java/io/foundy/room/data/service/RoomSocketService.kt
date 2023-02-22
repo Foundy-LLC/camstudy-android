@@ -2,8 +2,12 @@ package io.foundy.room.data.service
 
 import android.util.Log
 import io.foundy.room.data.extension.emit
+import io.foundy.room.data.extension.on
+import io.foundy.room.data.model.OtherPeerExitedRoomEvent
+import io.foundy.room.data.model.OtherPeerJoinedRoomEvent
 import io.foundy.room.data.model.Protocol
 import io.foundy.room.data.model.RoomEvent
+import io.foundy.room.data.model.RoomJoiner
 import io.foundy.room.data.model.WaitingRoomData
 import io.socket.client.Manager
 import io.socket.client.Socket
@@ -20,7 +24,7 @@ class RoomSocketService @Inject constructor() : RoomService {
 
     private val socket: Socket = Manager(URI(URL)).socket(Protocol.NAME_SPACE)
 
-    override val event: MutableSharedFlow<RoomEvent> = MutableSharedFlow()
+    override val event: MutableSharedFlow<RoomEvent> = MutableSharedFlow(replay = 1)
 
     override suspend fun connect() = suspendCoroutineWithTimeout { continuation ->
         socket.run {
@@ -28,7 +32,9 @@ class RoomSocketService @Inject constructor() : RoomService {
 
             on(Protocol.CONNECTION_SUCCESS) {
                 Log.d(TAG, "Connected socket server.")
-                continuation.resume(Unit) {}
+                continuation.resume(Unit) {
+                    off(Protocol.CONNECTION_SUCCESS)
+                }
             }
         }
     }
@@ -37,9 +43,28 @@ class RoomSocketService @Inject constructor() : RoomService {
         roomId: String
     ) = suspendCoroutineWithTimeout { continuation ->
         socket.emit(Protocol.JOIN_WAITING_ROOM, roomId) { waitingRoomData: WaitingRoomData ->
-            Log.e(TAG, "Joined waiting room: $roomId")
+            Log.d(TAG, "Joined waiting room: $roomId")
+            listenWaitingRoomEvents()
             continuation.resume(waitingRoomData) {}
         }
+    }
+
+    private fun listenWaitingRoomEvents() {
+        socket.run {
+            on(Protocol.OTHER_PEER_JOINED_ROOM) { joiner: RoomJoiner ->
+                Log.d(TAG, "Joined other peer in room: $joiner")
+                event.tryEmit(OtherPeerJoinedRoomEvent(joiner = joiner))
+            }
+            on(Protocol.OTHER_PEER_EXITED_ROOM) { userId: String ->
+                Log.d(TAG, "Exited other peer from room: $userId")
+                event.tryEmit(OtherPeerExitedRoomEvent(userId = userId))
+            }
+        }
+    }
+
+    private fun removeWaitingRoomEventsListener() {
+        socket.off(Protocol.OTHER_PEER_JOINED_ROOM)
+        socket.off(Protocol.OTHER_PEER_EXITED_ROOM)
     }
 
     companion object {
@@ -49,7 +74,7 @@ class RoomSocketService @Inject constructor() : RoomService {
         private suspend inline fun <T> suspendCoroutineWithTimeout(
             crossinline block: (CancellableContinuation<T>) -> Unit
         ): T {
-            return withTimeout(3_000L) {
+            return withTimeout(5_000L) {
                 suspendCancellableCoroutine(block)
             }
         }
