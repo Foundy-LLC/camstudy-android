@@ -49,6 +49,7 @@ dependencies {
     implementation project(path: ':core:navigation')
     implementation project(path: ':core:model')
     implementation project(path: ':room-list:data')
+    implementation project(path: ':room:ui')
 
     // compose destination
     implementation "io.github.raamcosta.compose-destinations:core:$compose_destination_version"

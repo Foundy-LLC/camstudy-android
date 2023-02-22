@@ -15,15 +15,15 @@ import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hierarchy
 import com.ramcosta.composedestinations.DestinationsNavHost
 import com.ramcosta.composedestinations.annotation.Destination
+import com.ramcosta.composedestinations.manualcomposablecalls.composable
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
-import com.ramcosta.composedestinations.navigation.dependency
 import com.ramcosta.composedestinations.spec.DestinationStyle
 import io.foundy.core.designsystem.icon.DrawableResourceIcon
 import io.foundy.core.designsystem.icon.ImageVectorIcon
 import io.foundy.home.ui.navigation.HomeNavGraph
 import io.foundy.home.ui.navigation.HomeTabDestination
-import io.foundy.home.ui.navigation.RoomListNavigatorImpl
-import io.foundy.room.ui.destinations.RoomRouteDestination
+import io.foundy.room_list.ui.RoomListRoute
+import io.foundy.room_list.ui.destinations.RoomListRouteDestination
 
 @Destination(style = DestinationStyle.Runtime::class)
 @Composable
@@ -31,9 +31,7 @@ fun HomeRoute(
     navigator: DestinationsNavigator
 ) {
     HomeScreen(
-        onNavigateToRoom = { id ->
-            navigator.navigate(RoomRouteDestination(id = id))
-        }
+        rootNavigator = navigator,
     )
 }
 
@@ -41,7 +39,7 @@ fun HomeRoute(
 @Composable
 fun HomeScreen(
     homeScreenState: HomeScreenState = rememberHomeScreenState(),
-    onNavigateToRoom: (id: String) -> Unit
+    rootNavigator: DestinationsNavigator,
 ) {
     Scaffold(
         bottomBar = {
@@ -56,10 +54,11 @@ fun HomeScreen(
             navGraph = HomeNavGraph,
             navController = homeScreenState.navController,
             modifier = Modifier.padding(padding),
-            dependenciesContainerBuilder = {
-                dependency(RoomListNavigatorImpl(onNavigateToRoom = onNavigateToRoom))
+        ) {
+            composable(RoomListRouteDestination) {
+                RoomListRoute(parentNavigator = rootNavigator)
             }
-        )
+        }
     }
 }
 
