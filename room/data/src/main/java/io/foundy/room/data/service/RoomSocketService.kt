@@ -3,12 +3,11 @@ package io.foundy.room.data.service
 import android.util.Log
 import io.foundy.room.data.extension.emit
 import io.foundy.room.data.extension.on
-import io.foundy.room.data.model.OtherPeerExitedRoomEvent
-import io.foundy.room.data.model.OtherPeerJoinedRoomEvent
 import io.foundy.room.data.model.Protocol
 import io.foundy.room.data.model.RoomEvent
 import io.foundy.room.data.model.RoomJoiner
 import io.foundy.room.data.model.WaitingRoomData
+import io.foundy.room.data.model.WaitingRoomEvent
 import io.socket.client.Manager
 import io.socket.client.Socket
 import kotlinx.coroutines.CancellableContinuation
@@ -53,11 +52,11 @@ class RoomSocketService @Inject constructor() : RoomService {
         socket.run {
             on(Protocol.OTHER_PEER_JOINED_ROOM) { joiner: RoomJoiner ->
                 Log.d(TAG, "Joined other peer in room: $joiner")
-                event.tryEmit(OtherPeerJoinedRoomEvent(joiner = joiner))
+                event.tryEmit(WaitingRoomEvent.OtherPeerJoined(joiner = joiner))
             }
             on(Protocol.OTHER_PEER_EXITED_ROOM) { userId: String ->
                 Log.d(TAG, "Exited other peer from room: $userId")
-                event.tryEmit(OtherPeerExitedRoomEvent(userId = userId))
+                event.tryEmit(WaitingRoomEvent.OtherPeerExited(userId = userId))
             }
         }
     }

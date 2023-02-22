@@ -3,8 +3,6 @@ package io.foundy.room.ui
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import io.foundy.room.data.model.OtherPeerExitedRoomEvent
-import io.foundy.room.data.model.OtherPeerJoinedRoomEvent
 import io.foundy.room.data.model.StudyRoomEvent
 import io.foundy.room.data.model.WaitingRoomEvent
 import io.foundy.room.data.service.RoomService
@@ -58,14 +56,14 @@ class RoomViewModel @Inject constructor(
         val uiState = state
         check(uiState is RoomUiState.WaitingRoom)
         when (waitingRoomEvent) {
-            is OtherPeerJoinedRoomEvent -> {
+            is WaitingRoomEvent.OtherPeerJoined -> {
                 val newJoiner = waitingRoomEvent.joiner
                 val newJoinerList = uiState.data.joinerList + newJoiner
                 reduce {
                     RoomUiState.WaitingRoom(data = uiState.data.copy(joinerList = newJoinerList))
                 }
             }
-            is OtherPeerExitedRoomEvent -> {
+            is WaitingRoomEvent.OtherPeerExited -> {
                 val exitedUserId = waitingRoomEvent.userId
                 val newJoinerList = uiState.data.joinerList.filter { it.id != exitedUserId }
                 reduce {
