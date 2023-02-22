@@ -3,6 +3,7 @@ plugins {
     id 'org.jetbrains.kotlin.android'
     id 'kotlin-kapt'
     id 'org.jlleitschuh.gradle.ktlint' version "$ktlint_version"
+    id 'com.google.devtools.ksp' version "$ksp_version"
 }
 
 android {
@@ -43,12 +44,20 @@ android {
     kotlinOptions {
         jvmTarget = '1.8'
     }
+    ksp {
+        arg("compose-destinations.moduleName", "auth")
+        arg("compose-destinations.mode", "destinations")
+    }
 }
 
 dependencies {
     implementation project(path: ':core:navigation')
     implementation project(path: ':auth:data')
     implementation project(path: ':user:data')
+
+    // compose destination
+    implementation "io.github.raamcosta.compose-destinations:core:$compose_destination_version"
+    ksp "io.github.raamcosta.compose-destinations:ksp:$compose_destination_version"
 
     // navigation
     implementation "com.google.accompanist:accompanist-navigation-animation:$accompanist_navigation_animation"

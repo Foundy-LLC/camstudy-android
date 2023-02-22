@@ -27,15 +27,22 @@ import com.google.android.gms.common.api.ApiException
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
+import com.ramcosta.composedestinations.annotation.Destination
+import com.ramcosta.composedestinations.spec.DestinationStyle
 import kotlinx.coroutines.launch
 import org.orbitmvi.orbit.compose.collectAsState
 import org.orbitmvi.orbit.compose.collectSideEffect
 
+interface LoginNavigator {
+    fun replaceToHome()
+    fun replaceToWelcome()
+}
+
+@Destination(style = DestinationStyle.Runtime::class)
 @Composable
 fun LoginRoute(
-    viewModel: LoginViewModel = hiltViewModel(),
-    onReplaceToHome: () -> Unit,
-    onReplaceToWelcome: () -> Unit
+    navigator: LoginNavigator,
+    viewModel: LoginViewModel = hiltViewModel()
 ) {
     val uiState = viewModel.collectAsState().value
     val context = LocalContext.current
@@ -53,8 +60,8 @@ fun LoginRoute(
 
     viewModel.collectSideEffect {
         when (it) {
-            LoginSideEffect.NavigateToHome -> onReplaceToHome()
-            LoginSideEffect.NavigateToWelcome -> onReplaceToWelcome()
+            LoginSideEffect.NavigateToHome -> navigator.replaceToHome()
+            LoginSideEffect.NavigateToWelcome -> navigator.replaceToWelcome()
             is LoginSideEffect.Message -> {
                 snackbarHostState.showSnackbar(
                     it.message ?: context.getString(it.defaultMessageRes)

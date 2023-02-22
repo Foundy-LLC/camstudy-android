@@ -13,20 +13,33 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hierarchy
+import com.ramcosta.composedestinations.DestinationsNavHost
+import com.ramcosta.composedestinations.annotation.Destination
+import com.ramcosta.composedestinations.manualcomposablecalls.composable
+import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import com.ramcosta.composedestinations.spec.DestinationStyle
 import io.foundy.core.designsystem.icon.DrawableResourceIcon
 import io.foundy.core.designsystem.icon.ImageVectorIcon
-import io.foundy.home.ui.navigation.HomeNavHost
+import io.foundy.home.ui.navigation.HomeNavGraph
 import io.foundy.home.ui.navigation.HomeTabDestination
+import io.foundy.room_list.ui.RoomListRoute
+import io.foundy.room_list.ui.destinations.RoomListRouteDestination
 
+@Destination(style = DestinationStyle.Runtime::class)
 @Composable
-fun HomeRoute() {
-    HomeScreen()
+fun HomeRoute(
+    navigator: DestinationsNavigator
+) {
+    HomeScreen(
+        rootNavigator = navigator,
+    )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
-    homeScreenState: HomeScreenState = rememberHomeScreenState()
+    homeScreenState: HomeScreenState = rememberHomeScreenState(),
+    rootNavigator: DestinationsNavigator,
 ) {
     Scaffold(
         bottomBar = {
@@ -37,10 +50,15 @@ fun HomeScreen(
             )
         }
     ) { padding ->
-        HomeNavHost(
+        DestinationsNavHost(
+            navGraph = HomeNavGraph,
+            navController = homeScreenState.navController,
             modifier = Modifier.padding(padding),
-            navController = homeScreenState.navController
-        )
+        ) {
+            composable(RoomListRouteDestination) {
+                RoomListRoute(parentNavigator = rootNavigator)
+            }
+        }
     }
 }
 
@@ -51,9 +69,10 @@ private fun CamstudyBottomBar(
     currentDestination: NavDestination?
 ) {
     NavigationBar {
-        destinations.forEach { destination ->
-            val selected =
-                currentDestination?.hierarchy?.any { it.route == destination.route } == true
+        for (destination in destinations) {
+            val selected = currentDestination?.hierarchy?.any {
+                it.route == destination.direction.route
+            } == true
             NavigationBarItem(
                 selected = selected,
                 onClick = { onNavigateToDestination(destination) },
@@ -66,15 +85,15 @@ private fun CamstudyBottomBar(
                     when (icon) {
                         is ImageVectorIcon -> Icon(
                             imageVector = icon.imageVector,
-                            contentDescription = stringResource(id = destination.iconTextId)
+                            contentDescription = stringResource(id = destination.label)
                         )
                         is DrawableResourceIcon -> Icon(
                             painter = painterResource(id = icon.id),
-                            contentDescription = stringResource(id = destination.iconTextId)
+                            contentDescription = stringResource(id = destination.label)
                         )
                     }
                 },
-                label = { Text(stringResource(destination.iconTextId)) }
+                label = { Text(stringResource(destination.label)) }
             )
         }
     }

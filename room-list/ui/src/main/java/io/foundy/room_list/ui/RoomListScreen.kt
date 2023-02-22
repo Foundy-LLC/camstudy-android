@@ -20,23 +20,30 @@ import androidx.paging.CombinedLoadStates
 import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.items
+import com.ramcosta.composedestinations.annotation.Destination
+import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import io.foundy.core.model.RoomOverview
+import io.foundy.room.ui.destinations.RoomRouteDestination
 import org.orbitmvi.orbit.compose.collectAsState
 
+@Destination
 @Composable
 fun RoomListRoute(
+    parentNavigator: DestinationsNavigator,
     viewModel: RoomListViewModel = hiltViewModel()
 ) {
     val uiState = viewModel.collectAsState().value
 
     RoomListScreen(
-        uiState = uiState
+        uiState = uiState,
+        onRoomClick = { id -> parentNavigator.navigate(RoomRouteDestination(id = id)) }
     )
 }
 
 @Composable
 fun RoomListScreen(
-    uiState: RoomListUiState
+    uiState: RoomListUiState,
+    onRoomClick: (id: String) -> Unit
 ) {
     val rooms = uiState.roomPagingDataStream.collectAsLazyPagingItems()
 
@@ -52,7 +59,7 @@ fun RoomListScreen(
                 Text("End")
                 return@items
             }
-            RoomItem(room = roomOverview, onClick = { /* TODO */ })
+            RoomItem(room = roomOverview, onClick = { onRoomClick(roomOverview.id) })
         }
         when (rooms.loadState.refresh) { // FIRST LOAD
             is LoadState.Error -> errorItem(rooms.loadState)

@@ -1,20 +1,29 @@
 package io.foundy.camstudy.ui
 
+import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.runtime.Composable
-import io.foundy.camstudy.navigation.CamstudyNavHost
+import androidx.navigation.NavHostController
+import com.google.accompanist.navigation.material.ExperimentalMaterialNavigationApi
+import com.ramcosta.composedestinations.DestinationsNavHost
+import com.ramcosta.composedestinations.animations.rememberAnimatedNavHostEngine
+import com.ramcosta.composedestinations.navigation.dependency
+import io.foundy.camstudy.navigation.RootNavGraph
+import io.foundy.camstudy.navigation.navigator.LoginNavigatorImpl
+import io.foundy.camstudy.navigation.navigator.WelcomeNavigatorImpl
 import io.foundy.core.designsystem.theme.CamstudyTheme
 
+@OptIn(ExperimentalAnimationApi::class, ExperimentalMaterialNavigationApi::class)
 @Composable
-fun CamstudyApp(
-    appState: CamstudyAppState = rememberCamstudyAppState()
-) {
+fun CamstudyApp(navController: NavHostController) {
     CamstudyTheme {
-        CamstudyNavHost(
-            navController = appState.navController,
-            navigate = appState::navigate,
-            popUpAndNavigate = appState::popUpAndNavigate,
-            onBackClick = appState::onBackClick,
-            enabledTransition = appState.enabledTransition
+        DestinationsNavHost(
+            navController = navController,
+            engine = rememberAnimatedNavHostEngine(),
+            navGraph = RootNavGraph,
+            dependenciesContainerBuilder = {
+                dependency(LoginNavigatorImpl(navController = navController))
+                dependency(WelcomeNavigatorImpl(navController = navController))
+            }
         )
     }
 }
