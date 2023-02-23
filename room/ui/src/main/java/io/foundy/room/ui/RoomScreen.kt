@@ -32,7 +32,9 @@ import androidx.core.app.ActivityCompat.requestPermissions
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import io.foundy.core.designsystem.icon.CamstudyIcons
 import io.foundy.room.data.model.WaitingRoomData
+import io.foundy.room.ui.component.ToggleIconButton
 import io.foundy.room.ui.component.VideoRenderer
 import org.orbitmvi.orbit.compose.collectAsState
 
@@ -127,6 +129,12 @@ fun WaitingRoomScreen(
                     )
                 }
             }
+            ToggleIconButton(
+                enabled = mediaManager.enabledLocalVideo,
+                enabledIcon = CamstudyIcons.VideoCam,
+                disabledIcon = CamstudyIcons.VideoCamOff,
+                onClick = mediaManager::toggleLocalVideo
+            )
 
             Text(text = data.toString())
             Button(onClick = { /*TODO*/ }) {

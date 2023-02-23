@@ -2,14 +2,12 @@ package io.foundy.home.ui
 
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hierarchy
@@ -18,8 +16,7 @@ import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.manualcomposablecalls.composable
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.ramcosta.composedestinations.spec.DestinationStyle
-import io.foundy.core.designsystem.icon.DrawableResourceIcon
-import io.foundy.core.designsystem.icon.ImageVectorIcon
+import io.foundy.core.designsystem.icon.CamstudyIcon
 import io.foundy.home.ui.navigation.HomeNavGraph
 import io.foundy.home.ui.navigation.HomeTabDestination
 import io.foundy.room_list.ui.RoomListRoute
@@ -82,16 +79,10 @@ private fun CamstudyBottomBar(
                     } else {
                         destination.unselectedIcon
                     }
-                    when (icon) {
-                        is ImageVectorIcon -> Icon(
-                            imageVector = icon.imageVector,
-                            contentDescription = stringResource(id = destination.label)
-                        )
-                        is DrawableResourceIcon -> Icon(
-                            painter = painterResource(id = icon.id),
-                            contentDescription = stringResource(id = destination.label)
-                        )
-                    }
+                    CamstudyIcon(
+                        icon = icon,
+                        contentDescription = stringResource(id = destination.label)
+                    )
                 },
                 label = { Text(stringResource(destination.label)) }
             )

@@ -9,7 +9,10 @@ import android.media.AudioManager
 import android.os.Build
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.ProvidableCompositionLocal
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.platform.LocalContext
 import androidx.core.content.getSystemService
@@ -58,15 +61,14 @@ class MediaManager(
     val eglBaseContext: EglBase.Context get() = peerConnectionFactory.eglBaseContext
 
     // used to send local video track to the fragment
-    private val _localVideoSinkFlow = MutableSharedFlow<VideoTrack>(replay = 1)
-    val localVideoTrackFlow: SharedFlow<VideoTrack> = _localVideoSinkFlow
+    private val _localVideoSinkFlow = MutableSharedFlow<VideoTrack?>(replay = 1)
+    val localVideoTrackFlow: SharedFlow<VideoTrack?> = _localVideoSinkFlow
 
     // used to send remote video track to the sender
     private val _remoteVideoSinkFlow = MutableSharedFlow<VideoTrack>(replay = 1)
     val remoteVideoTrackFlow: SharedFlow<VideoTrack> = _remoteVideoSinkFlow
 
     // getting front camera
-    private val videoCapturer: VideoCapturer by lazy { buildCameraCapturer() }
     private val cameraManager by lazy { context.getSystemService<CameraManager>() }
     private val cameraEnumerator: Camera2Enumerator by lazy {
         Camera2Enumerator(context)
@@ -89,19 +91,11 @@ class MediaManager(
         peerConnectionFactory.eglBaseContext
     )
 
-    private val videoSource by lazy {
-        peerConnectionFactory.makeVideoSource(videoCapturer.isScreencast).apply {
-            videoCapturer.initialize(surfaceTextureHelper, context, this.capturerObserver)
-            videoCapturer.startCapture(resolution.width, resolution.height, 30)
-        }
-    }
+    private var videoCapturer: VideoCapturer? = buildCameraCapturer()
+    private var localVideoTrack: VideoTrack? = createLocalVideoTrack()
 
-    private val localVideoTrack: VideoTrack by lazy {
-        peerConnectionFactory.makeVideoTrack(
-            source = videoSource,
-            trackId = "Video${UUID.randomUUID()}"
-        )
-    }
+    var enabledLocalVideo by mutableStateOf(localVideoTrack != null)
+        private set
 
     /* Audio properties */
 
@@ -132,7 +126,7 @@ class MediaManager(
         setupAudio()
         managerScope.launch {
             // sending local video track to show local video from start
-            _localVideoSinkFlow.emit(localVideoTrack)
+            localVideoTrack?.let { _localVideoSinkFlow.emit(it) }
         }
     }
 
@@ -158,6 +152,21 @@ class MediaManager(
         }
 
         return Camera2Capturer(context, cameraId, null)
+    }
+
+    private fun createLocalVideoTrack(): VideoTrack {
+        val videoCapturer = this.videoCapturer
+        check(videoCapturer != null) {
+            "Should initialize videoCapturer before create local video track"
+        }
+        val videoSource = peerConnectionFactory.makeVideoSource(videoCapturer.isScreencast).apply {
+            videoCapturer.initialize(surfaceTextureHelper, context, this.capturerObserver)
+            videoCapturer.startCapture(resolution.width, resolution.height, 30)
+        }
+        return peerConnectionFactory.makeVideoTrack(
+            source = videoSource,
+            trackId = "Video${UUID.randomUUID()}"
+        )
     }
 
     private fun buildAudioConstraints(): MediaConstraints {
@@ -209,18 +218,39 @@ class MediaManager(
         }
     }
 
+    fun toggleLocalVideo(enabled: Boolean) {
+        if (enabled) {
+            videoCapturer = buildCameraCapturer()
+            localVideoTrack = createLocalVideoTrack()
+            enabledLocalVideo = true
+            managerScope.launch {
+                _localVideoSinkFlow.emit(localVideoTrack!!)
+            }
+        } else {
+            localVideoTrack?.dispose()
+            localVideoTrack = null
+            videoCapturer?.stopCapture()
+            videoCapturer?.dispose()
+            videoCapturer = null
+            enabledLocalVideo = false
+            managerScope.launch {
+                _localVideoSinkFlow.emit(null)
+            }
+        }
+    }
+
     fun disconnect() {
         // dispose audio & video tracks.
         remoteVideoTrackFlow.replayCache.forEach { videoTrack ->
             videoTrack.dispose()
         }
         localVideoTrackFlow.replayCache.forEach { videoTrack ->
-            videoTrack.dispose()
+            videoTrack?.dispose()
         }
 
         // dispose audio handler and video capturer.
         audioHandler.stop()
-        videoCapturer.stopCapture()
-        videoCapturer.dispose()
+        videoCapturer?.stopCapture()
+        videoCapturer?.dispose()
     }
 }

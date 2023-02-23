@@ -3,12 +3,22 @@ package io.foundy.core.designsystem.icon
 import androidx.annotation.DrawableRes
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Videocam
+import androidx.compose.material.icons.filled.VideocamOff
 import androidx.compose.material.icons.outlined.Home
+import androidx.compose.material3.Icon
+import androidx.compose.material3.LocalContentColor
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.painterResource
 
 object CamstudyIcons {
-    val Home = Icons.Default.Home
-    val HomeOutlined = Icons.Outlined.Home
+    val Home = Icons.Default.Home.asCamstudyIcon()
+    val HomeOutlined = Icons.Outlined.Home.asCamstudyIcon()
+    val VideoCam = Icons.Default.Videocam.asCamstudyIcon()
+    val VideoCamOff = Icons.Default.VideocamOff.asCamstudyIcon()
 }
 
 sealed class CamstudyIcon
@@ -21,4 +31,27 @@ fun ImageVector.asCamstudyIcon(): CamstudyIcon {
 
 fun @receiver:DrawableRes Int.asCamstudyIcon(): CamstudyIcon {
     return DrawableResourceIcon(this)
+}
+
+@Composable
+fun CamstudyIcon(
+    icon: CamstudyIcon,
+    contentDescription: String?,
+    modifier: Modifier = Modifier,
+    tint: Color = LocalContentColor.current
+) {
+    when (icon) {
+        is DrawableResourceIcon -> Icon(
+            painter = painterResource(id = icon.id),
+            contentDescription = contentDescription,
+            modifier = modifier,
+            tint = tint
+        )
+        is ImageVectorIcon -> Icon(
+            imageVector = icon.imageVector,
+            contentDescription = contentDescription,
+            modifier = modifier,
+            tint = tint
+        )
+    }
 }
