@@ -25,6 +25,9 @@ class RoomSocketService @Inject constructor() : RoomService {
 
     override val event: MutableSharedFlow<RoomEvent> = MutableSharedFlow(replay = 1)
 
+    init {
+    }
+
     override suspend fun connect() = suspendCoroutineWithTimeout { continuation ->
         socket.run {
             connect()

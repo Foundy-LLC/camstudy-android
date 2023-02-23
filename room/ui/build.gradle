@@ -59,9 +59,19 @@ dependencies {
 
     // navigation
     implementation "com.google.accompanist:accompanist-navigation-animation:$accompanist_navigation_animation"
-
-    // navigation
     implementation "androidx.hilt:hilt-navigation-compose:$hilt_navigation_compose"
+
+    // mediasoup
+    implementation "org.mediasoup.droid:mediasoup-client:$mediasoupe_version"
+
+    // socket io
+    implementation ("io.socket:socket.io-client:$socket_io_version") {
+        exclude group: 'org.json', module: 'json'
+    }
+
+    // stream log
+    implementation("io.getstream:stream-log-android:$stream_log_version")
+    debugImplementation("io.getstream:stream-log-android-file:$stream_log_version")
 
     // hilt
     implementation "com.google.dagger:hilt-android:$hilt_version"

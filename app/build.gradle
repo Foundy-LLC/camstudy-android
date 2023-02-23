@@ -67,6 +67,13 @@ dependencies {
     implementation project(":room-list:ui")
     implementation project(":room:ui")
 
+    // stream log
+    implementation("io.getstream:stream-log-android:$stream_log_version")
+    debugImplementation("io.getstream:stream-log-android-file:$stream_log_version")
+
+    // mediasoup
+    implementation "org.mediasoup.droid:mediasoup-client:$mediasoupe_version"
+
     // compose destination
     implementation "io.github.raamcosta.compose-destinations:animations-core:$compose_destination_version"
 

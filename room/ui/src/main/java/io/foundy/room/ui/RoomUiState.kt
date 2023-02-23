@@ -9,5 +9,6 @@ sealed class RoomUiState {
 
     data class FailedToConnect(@StringRes val messageRes: Int) : RoomUiState()
 
+    // TODO: Connecting이랑 Failure 둘다 여기에 넣기
     data class WaitingRoom(val data: WaitingRoomData) : RoomUiState()
 }
