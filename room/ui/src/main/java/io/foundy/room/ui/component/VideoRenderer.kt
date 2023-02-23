@@ -21,9 +21,9 @@ import org.webrtc.VideoTrack
  */
 @Composable
 fun VideoRenderer(
+    modifier: Modifier = Modifier,
     eglBaseContext: EglBase.Context,
-    videoTrack: VideoTrack,
-    modifier: Modifier = Modifier
+    videoTrack: VideoTrack
 ) {
     val trackState: MutableState<VideoTrack?> = remember { mutableStateOf(null) }
     var view: VideoTextureViewRenderer? by remember { mutableStateOf(null) }
