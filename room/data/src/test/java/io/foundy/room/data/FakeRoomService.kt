@@ -1,5 +1,6 @@
 package io.foundy.room.data
 
+import io.foundy.room.data.model.JoinRoomSuccessResponse
 import io.foundy.room.data.model.RoomEvent
 import io.foundy.room.data.model.WaitingRoomData
 import io.foundy.room.data.service.RoomService
@@ -24,7 +25,11 @@ class FakeRoomService : RoomService {
         localAudio: AudioTrack?,
         userId: String,
         password: String
-    ) {
+    ): Result<JoinRoomSuccessResponse> {
+        TODO("Not yet implemented")
+    }
+
+    override fun disconnect() {
         TODO("Not yet implemented")
     }
 }

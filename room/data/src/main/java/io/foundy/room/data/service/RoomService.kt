@@ -29,4 +29,6 @@ interface RoomService {
         userId: String,
         password: String
     ): Result<JoinRoomSuccessResponse>
+
+    fun disconnect()
 }

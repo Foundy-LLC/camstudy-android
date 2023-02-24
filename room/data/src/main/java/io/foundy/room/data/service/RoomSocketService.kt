@@ -103,6 +103,10 @@ class RoomSocketService @Inject constructor() : RoomService {
         )
     }
 
+    override fun disconnect() {
+        socket.disconnect()
+    }
+
     companion object {
         private const val URL = "http://10.0.2.2:2000"
 

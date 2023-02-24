@@ -97,8 +97,8 @@ fun RoomContent(
 
     BackHandler {
         // TODO: 사용자에게 한 번 더 확인하기
-        // TODO: 소켓 연결 끊기
         mediaManager.disconnect()
+        viewModel.disconnect()
         navigator.popBackStack()
     }
 
