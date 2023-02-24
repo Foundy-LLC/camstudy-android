@@ -18,19 +18,19 @@ package io.foundy.room.ui.audio
 
 internal interface AudioManagerAdapter {
 
-  fun hasEarpiece(): Boolean
+    fun hasEarpiece(): Boolean
 
-  fun hasSpeakerphone(): Boolean
+    fun hasSpeakerphone(): Boolean
 
-  fun setAudioFocus()
+    fun setAudioFocus()
 
-  fun enableBluetoothSco(enable: Boolean)
+    fun enableBluetoothSco(enable: Boolean)
 
-  fun enableSpeakerphone(enable: Boolean)
+    fun enableSpeakerphone(enable: Boolean)
 
-  fun mute(mute: Boolean)
+    fun mute(mute: Boolean)
 
-  fun cacheAudioState()
+    fun cacheAudioState()
 
-  fun restoreAudioState()
+    fun restoreAudioState()
 }
