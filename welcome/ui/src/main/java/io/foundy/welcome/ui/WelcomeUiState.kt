@@ -4,6 +4,7 @@ import android.graphics.Bitmap
 import androidx.annotation.StringRes
 import io.foundy.core.model.constant.MAX_TAG_COUNT
 
+// TODO: 제출하고 로딩중일 때 로딩을 나타내는 필드 추가하기
 data class WelcomeUiState(
     val nameInput: String = "",
     val selectedProfileImage: Bitmap? = null,
