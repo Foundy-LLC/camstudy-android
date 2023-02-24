@@ -1,4 +1,4 @@
-package io.foundy.room.ui
+package io.foundy.room.ui.screen
 
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
@@ -22,6 +22,8 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import io.foundy.core.designsystem.icon.CamstudyIcons
 import io.foundy.room.ui.component.ToggleIconButton
 import io.foundy.room.ui.component.VideoRenderer
+import io.foundy.room.ui.media.LocalMediaManager
+import io.foundy.room.ui.viewmodel.RoomUiState
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

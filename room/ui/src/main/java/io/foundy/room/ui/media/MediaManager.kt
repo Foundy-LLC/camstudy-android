@@ -1,4 +1,4 @@
-package io.foundy.room.ui
+package io.foundy.room.ui.media
 
 import android.content.Context
 import android.hardware.camera2.CameraCharacteristics

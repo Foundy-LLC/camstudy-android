@@ -1,10 +1,11 @@
-package io.foundy.room.ui
+package io.foundy.room.ui.viewmodel
 
 import androidx.annotation.StringRes
 import com.example.domain.PeerState
 import com.example.domain.PomodoroTimerProperty
 import com.example.domain.PomodoroTimerState
 import io.foundy.room.data.model.WaitingRoomData
+import io.foundy.room.ui.R
 import org.webrtc.AudioTrack
 import org.webrtc.VideoTrack
 

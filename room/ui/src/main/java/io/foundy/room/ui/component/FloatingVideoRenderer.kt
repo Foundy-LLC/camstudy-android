@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.foundy.room.ui
+package io.foundy.room.ui.component
 
 import androidx.compose.animation.core.animateOffsetAsState
 import androidx.compose.foundation.gestures.detectDragGestures
@@ -41,7 +41,6 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
-import io.foundy.room.ui.component.VideoRenderer
 import org.webrtc.EglBase
 import org.webrtc.VideoTrack
 

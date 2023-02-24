@@ -1,4 +1,4 @@
-package io.foundy.room.ui
+package io.foundy.room.ui.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -8,6 +8,7 @@ import io.foundy.core.model.constant.RoomConstants
 import io.foundy.room.data.model.StudyRoomEvent
 import io.foundy.room.data.model.WaitingRoomEvent
 import io.foundy.room.data.service.RoomService
+import io.foundy.room.ui.R
 import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch

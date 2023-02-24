@@ -1,4 +1,4 @@
-package io.foundy.room.ui
+package io.foundy.room.ui.viewmodel
 
 import androidx.annotation.StringRes
 

@@ -1,4 +1,4 @@
-package io.foundy.room.ui
+package io.foundy.room.ui.screen
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
