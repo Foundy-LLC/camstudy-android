@@ -32,6 +32,7 @@ fun WaitingRoomScreen(
     uiState: RoomUiState.WaitingRoom,
 ) {
     val mediaManager = LocalMediaManager.current
+    val enabledLocalVideo = mediaManager.enabledLocalVideo
     val localVideoTrack = mediaManager.localVideoTrackFlow.collectAsState(initial = null).value
 
     BoxWithConstraints(
@@ -56,7 +57,7 @@ fun WaitingRoomScreen(
                     containerColor = MaterialTheme.colorScheme.onBackground
                 )
             ) {
-                if (localVideoTrack != null) {
+                if (localVideoTrack != null && enabledLocalVideo) {
                     VideoRenderer(
                         modifier = Modifier.fillMaxWidth(),
                         eglBaseContext = mediaManager.eglBaseContext,

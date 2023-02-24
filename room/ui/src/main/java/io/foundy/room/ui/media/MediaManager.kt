@@ -60,6 +60,9 @@ class MediaManager(
 
     val eglBaseContext: EglBase.Context get() = peerConnectionFactory.eglBaseContext
 
+    var enabledLocalVideo by mutableStateOf(false)
+        private set
+
     // used to send local video track to the fragment
     private val _localVideoSinkFlow = MutableSharedFlow<VideoTrack?>(replay = 1)
     val localVideoTrackFlow: SharedFlow<VideoTrack?> = _localVideoSinkFlow
@@ -69,6 +72,7 @@ class MediaManager(
     val remoteVideoTrackFlow: SharedFlow<VideoTrack> = _remoteVideoSinkFlow
 
     // getting front camera
+    private val videoCapturer: VideoCapturer by lazy { buildCameraCapturer() }
     private val cameraManager by lazy { context.getSystemService<CameraManager>() }
     private val cameraEnumerator: Camera2Enumerator by lazy {
         Camera2Enumerator(context)
@@ -91,11 +95,19 @@ class MediaManager(
         peerConnectionFactory.eglBaseContext
     )
 
-    private var videoCapturer: VideoCapturer? = buildCameraCapturer()
-    private var localVideoTrack: VideoTrack? = createLocalVideoTrack()
+    private val videoSource by lazy {
+        peerConnectionFactory.makeVideoSource(videoCapturer.isScreencast).apply {
+            videoCapturer.initialize(surfaceTextureHelper, context, this.capturerObserver)
+            videoCapturer.startCapture(resolution.width, resolution.height, 30)
+        }
+    }
 
-    var enabledLocalVideo by mutableStateOf(localVideoTrack != null)
-        private set
+    private val localVideoTrack: VideoTrack by lazy {
+        peerConnectionFactory.makeVideoTrack(
+            source = videoSource,
+            trackId = "Video${UUID.randomUUID()}"
+        )
+    }
 
     /* Audio properties */
 
@@ -127,7 +139,8 @@ class MediaManager(
         setupAudio()
         managerScope.launch {
             // sending local video track to show local video from start
-            localVideoTrack?.let { _localVideoSinkFlow.emit(it) }
+            enabledLocalVideo = true
+            _localVideoSinkFlow.emit(localVideoTrack)
         }
     }
 
@@ -153,21 +166,6 @@ class MediaManager(
         }
 
         return Camera2Capturer(context, cameraId, null)
-    }
-
-    private fun createLocalVideoTrack(): VideoTrack {
-        val videoCapturer = this.videoCapturer
-        check(videoCapturer != null) {
-            "Should initialize videoCapturer before create local video track"
-        }
-        val videoSource = peerConnectionFactory.makeVideoSource(videoCapturer.isScreencast).apply {
-            videoCapturer.initialize(surfaceTextureHelper, context, this.capturerObserver)
-            videoCapturer.startCapture(resolution.width, resolution.height, 30)
-        }
-        return peerConnectionFactory.makeVideoTrack(
-            source = videoSource,
-            trackId = "Video${UUID.randomUUID()}"
-        )
     }
 
     private fun buildAudioConstraints(): MediaConstraints {
@@ -221,22 +219,11 @@ class MediaManager(
 
     fun toggleLocalVideo(enabled: Boolean) {
         if (enabled) {
-            videoCapturer = buildCameraCapturer()
-            localVideoTrack = createLocalVideoTrack()
             enabledLocalVideo = true
-            managerScope.launch {
-                _localVideoSinkFlow.emit(localVideoTrack!!)
-            }
+            videoCapturer.startCapture(resolution.width, resolution.height, 30)
         } else {
-            localVideoTrack?.dispose()
-            localVideoTrack = null
-            videoCapturer?.stopCapture()
-            videoCapturer?.dispose()
-            videoCapturer = null
             enabledLocalVideo = false
-            managerScope.launch {
-                _localVideoSinkFlow.emit(null)
-            }
+            videoCapturer.stopCapture()
         }
     }
 
@@ -251,7 +238,7 @@ class MediaManager(
 
         // dispose audio handler and video capturer.
         audioHandler.stop()
-        videoCapturer?.stopCapture()
-        videoCapturer?.dispose()
+        videoCapturer.stopCapture()
+        videoCapturer.dispose()
     }
 }
