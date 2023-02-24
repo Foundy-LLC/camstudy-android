@@ -4,8 +4,6 @@ import io.foundy.auth.data.source.AuthLocalDataSource
 import io.foundy.core.data.extension.getDataOrThrowMessage
 import io.foundy.user.data.model.UserCreateRequestBody
 import io.foundy.user.data.source.UserRemoteDataSource
-import kotlinx.coroutines.async
-import kotlinx.coroutines.coroutineScope
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
@@ -31,23 +29,15 @@ class NetworkUserRepository @Inject constructor(
             tags = tags,
         )
         return runCatching {
-            coroutineScope {
-                val deferredUserResponse = async {
-                    userDataSource.postUserInitialInfo(body = requestBody)
-                }
-                if (profileImage != null) {
-                    val multipart = MultipartBody.Part.createFormData(
-                        PROFILE_IMAGE_KEY,
-                        profileImage.name,
-                        profileImage.asRequestBody("multipart/form-data".toMediaTypeOrNull())
-                    )
-                    val deferredProfileImageResponse = async {
-                        userDataSource.uploadUserProfileImage(userId, multipart)
-                    }
-                    deferredProfileImageResponse.await().getDataOrThrowMessage()
-                }
-                deferredUserResponse.await().getDataOrThrowMessage()
-                authLocalDataSource.markAsUserInitialInfoExists(userId)
+            userDataSource.postUserInitialInfo(body = requestBody).getDataOrThrowMessage()
+            authLocalDataSource.markAsUserInitialInfoExists(userId)
+            if (profileImage != null) {
+                val multipart = MultipartBody.Part.createFormData(
+                    PROFILE_IMAGE_KEY,
+                    profileImage.name,
+                    profileImage.asRequestBody("multipart/form-data".toMediaTypeOrNull())
+                )
+                userDataSource.uploadUserProfileImage(userId, multipart).getDataOrThrowMessage()
             }
         }
     }
