@@ -3,6 +3,8 @@ package io.foundy.core.designsystem.icon
 import androidx.annotation.DrawableRes
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Mic
+import androidx.compose.material.icons.filled.MicOff
 import androidx.compose.material.icons.filled.Videocam
 import androidx.compose.material.icons.filled.VideocamOff
 import androidx.compose.material.icons.outlined.Home
@@ -19,6 +21,8 @@ object CamstudyIcons {
     val HomeOutlined = Icons.Outlined.Home.asCamstudyIcon()
     val VideoCam = Icons.Default.Videocam.asCamstudyIcon()
     val VideoCamOff = Icons.Default.VideocamOff.asCamstudyIcon()
+    val Mic = Icons.Default.Mic.asCamstudyIcon()
+    val MicOff = Icons.Default.MicOff.asCamstudyIcon()
 }
 
 sealed class CamstudyIcon

@@ -2,6 +2,7 @@ package io.foundy.room.ui.screen
 
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
@@ -33,6 +34,7 @@ fun WaitingRoomScreen(
 ) {
     val mediaManager = LocalMediaManager.current
     val enabledLocalVideo = mediaManager.enabledLocalVideo
+    val enabledLocalAudio = mediaManager.enabledLocalAudio
     val localVideoTrack = mediaManager.localVideoTrackFlow.collectAsState(initial = null).value
 
     BoxWithConstraints(
@@ -65,12 +67,20 @@ fun WaitingRoomScreen(
                     )
                 }
             }
-            ToggleIconButton(
-                enabled = mediaManager.enabledLocalVideo,
-                enabledIcon = CamstudyIcons.VideoCam,
-                disabledIcon = CamstudyIcons.VideoCamOff,
-                onClick = mediaManager::toggleLocalVideo
-            )
+            Row {
+                ToggleIconButton(
+                    enabled = enabledLocalVideo,
+                    enabledIcon = CamstudyIcons.VideoCam,
+                    disabledIcon = CamstudyIcons.VideoCamOff,
+                    onClick = mediaManager::toggleVideo
+                )
+                ToggleIconButton(
+                    enabled = enabledLocalAudio,
+                    enabledIcon = CamstudyIcons.Mic,
+                    disabledIcon = CamstudyIcons.MicOff,
+                    onClick = mediaManager::toggleMicrophone
+                )
+            }
 
             Text(text = uiState.toString())
             uiState.cannotJoinMessage?.let { Text(text = stringResource(id = it)) }

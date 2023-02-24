@@ -63,6 +63,9 @@ class MediaManager(
     var enabledLocalVideo by mutableStateOf(false)
         private set
 
+    var enabledLocalAudio by mutableStateOf(false)
+        private set
+
     // used to send local video track to the fragment
     private val _localVideoSinkFlow = MutableSharedFlow<VideoTrack?>(replay = 1)
     val localVideoTrackFlow: SharedFlow<VideoTrack?> = _localVideoSinkFlow
@@ -127,7 +130,6 @@ class MediaManager(
         peerConnectionFactory.makeAudioSource(audioConstraints)
     }
 
-    // TODO: audio 끄고 켜는 기능 구현
     val localAudioTrack: AudioTrack by lazy {
         peerConnectionFactory.makeAudioTrack(
             source = audioSource,
@@ -139,8 +141,8 @@ class MediaManager(
         setupAudio()
         managerScope.launch {
             // sending local video track to show local video from start
-            enabledLocalVideo = true
             _localVideoSinkFlow.emit(localVideoTrack)
+            enabledLocalVideo = true
         }
     }
 
@@ -204,6 +206,7 @@ class MediaManager(
     private fun setupAudio() {
         logger.d { "[setupAudio] #sfu; no args" }
         audioHandler.start()
+        audioManager?.isMicrophoneMute = true
         audioManager?.mode = AudioManager.MODE_IN_COMMUNICATION
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
@@ -217,7 +220,12 @@ class MediaManager(
         }
     }
 
-    fun toggleLocalVideo(enabled: Boolean) {
+    fun toggleMicrophone(enabled: Boolean) {
+        audioManager?.isMicrophoneMute = !enabled
+        enabledLocalAudio = enabled
+    }
+
+    fun toggleVideo(enabled: Boolean) {
         if (enabled) {
             enabledLocalVideo = true
             videoCapturer.startCapture(resolution.width, resolution.height, 30)
@@ -235,6 +243,7 @@ class MediaManager(
         localVideoTrackFlow.replayCache.forEach { videoTrack ->
             videoTrack?.dispose()
         }
+        localAudioTrack.dispose()
 
         // dispose audio handler and video capturer.
         audioHandler.stop()
