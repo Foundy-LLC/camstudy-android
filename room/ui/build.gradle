@@ -52,6 +52,9 @@ dependencies {
     implementation project(path: ':core:model')
     implementation project(path: ':auth:data')
 
+    // permission
+    implementation "com.google.accompanist:accompanist-permissions:$accompanist_permission_version"
+
     // orbit
     implementation("org.orbit-mvi:orbit-viewmodel:$orbit_version")
     implementation("org.orbit-mvi:orbit-compose:$orbit_version")

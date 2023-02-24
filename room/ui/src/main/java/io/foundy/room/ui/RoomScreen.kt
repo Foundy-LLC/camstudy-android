@@ -1,7 +1,6 @@
 package io.foundy.room.ui
 
 import android.Manifest
-import android.app.Activity
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -23,18 +22,42 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.IntSize
-import androidx.core.app.ActivityCompat.requestPermissions
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import kotlinx.coroutines.launch
 import org.orbitmvi.orbit.compose.collectAsState
 import org.orbitmvi.orbit.compose.collectSideEffect
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalPermissionsApi::class)
 @Destination
 @Composable
 fun RoomRoute(
+    id: String,
+    navigator: DestinationsNavigator,
+) {
+    val permissionsState = rememberMultiplePermissionsState(
+        listOf(
+            Manifest.permission.CAMERA,
+            Manifest.permission.RECORD_AUDIO
+        )
+    )
+
+    if (permissionsState.allPermissionsGranted) {
+        RoomContent(id = id, navigator = navigator)
+    } else {
+        PermissionRequestScreen(
+            shouldShowRationale = permissionsState.shouldShowRationale,
+            onRequestClick = permissionsState::launchMultiplePermissionRequest
+        )
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun RoomContent(
     id: String,
     navigator: DestinationsNavigator,
     mediaManager: MediaManager = rememberMediaManager(),
@@ -54,13 +77,6 @@ fun RoomRoute(
             }
         }
     }
-
-    // TODO: 권한 부여 프로세스 수정해야함. 공부방 화면 진입하고 바로 앱이 죽고있음
-    requestPermissions(
-        LocalContext.current as Activity,
-        arrayOf(Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO),
-        0
-    )
 
     LaunchedEffect(id) {
         viewModel.connect(id)
