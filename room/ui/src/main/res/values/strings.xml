@@ -2,4 +2,8 @@
 <resources>
     <string name="failed_to_connect_server">서버와의 연결을 실패했습니다.</string>
     <string name="failed_to_join_waiting_room">대기실 입장을 실패했습니다.</string>
+    <string name="room_is_full">방 정원이 가득 찼습니다.</string>
+    <string name="cannot_join_because_blocked">방에 차단되어 입장할 수 없습니다.</string>
+    <string name="loading">로딩중…</string>
+    <string name="input_password">방 비밀번호를 입력해주세요.</string>
 </resources>

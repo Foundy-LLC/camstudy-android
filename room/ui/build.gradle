@@ -48,6 +48,8 @@ android {
 dependencies {
     implementation project(path: ':room:data')
     implementation project(path: ':core:designsystem')
+    implementation project(path: ':core:model')
+    implementation project(path: ':auth:data')
 
     // orbit
     implementation("org.orbit-mvi:orbit-viewmodel:$orbit_version")
