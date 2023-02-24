@@ -2,7 +2,7 @@ package io.foundy.welcome.ui
 
 import android.graphics.Bitmap
 import androidx.annotation.StringRes
-import io.foundy.core.model.constant.MAX_TAG_COUNT
+import io.foundy.core.model.constant.UserConstants
 
 // TODO: 제출하고 로딩중일 때 로딩을 나타내는 필드 추가하기
 data class WelcomeUiState(
@@ -16,10 +16,10 @@ data class WelcomeUiState(
     @StringRes val tagErrorMessageRes: Int? = null
 ) {
     val enableTagInput: Boolean
-        get() = addedTags.size < MAX_TAG_COUNT
+        get() = addedTags.size < UserConstants.MaxTagCount
 
     val enabledAddTagButton: Boolean
-        get() = addedTags.size < MAX_TAG_COUNT &&
+        get() = addedTags.size < UserConstants.MaxTagCount &&
             tagInput.isNotBlank() &&
             !addedTags.contains(tagInput)
 

@@ -5,10 +5,7 @@ import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.foundy.auth.data.repository.AuthRepository
 import io.foundy.core.common.util.ConvertBitmapToFileUseCase
-import io.foundy.core.model.constant.MAX_INTRODUCE_LENGTH
-import io.foundy.core.model.constant.MAX_NAME_LENGTH
-import io.foundy.core.model.constant.MAX_TAG_COUNT
-import io.foundy.core.model.constant.MAX_TAG_LENGTH
+import io.foundy.core.model.constant.UserConstants
 import io.foundy.user.data.repository.UserRepository
 import kotlinx.coroutines.flow.first
 import org.orbitmvi.orbit.Container
@@ -38,7 +35,7 @@ class WelcomeViewModel @Inject constructor(
     }
 
     fun updateNameInput(name: String) = intent {
-        if (name.length > MAX_NAME_LENGTH) {
+        if (name.length > UserConstants.MaxNameLength) {
             return@intent
         }
         reduce { state.copy(nameInput = name) }
@@ -46,21 +43,21 @@ class WelcomeViewModel @Inject constructor(
     }
 
     fun updateIntroduceInput(introduce: String) = intent {
-        if (introduce.length > MAX_INTRODUCE_LENGTH) {
+        if (introduce.length > UserConstants.MaxIntroduceLength) {
             return@intent
         }
         reduce { state.copy(introduceInput = introduce) }
     }
 
     fun updateTagInput(tag: String) = intent {
-        if (tag.length > MAX_TAG_LENGTH) {
+        if (tag.length > UserConstants.MaxTagLength) {
             return@intent
         }
         reduce { state.copy(tagInput = tag) }
     }
 
     fun addTag() = intent {
-        check(state.addedTags.size < MAX_TAG_COUNT)
+        check(state.addedTags.size < UserConstants.MaxTagCount)
         val newTags = state.addedTags + state.tagInput
         reduce { state.copy(tagInput = "", addedTags = newTags) }
         updateTagErrorMessage()
