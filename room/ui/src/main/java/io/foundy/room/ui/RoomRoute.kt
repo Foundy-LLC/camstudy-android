@@ -3,7 +3,6 @@ package io.foundy.room.ui
 import android.Manifest
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
@@ -12,26 +11,20 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.unit.IntSize
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
-import io.foundy.room.ui.component.FloatingVideoRenderer
 import io.foundy.room.ui.media.LocalMediaManager
 import io.foundy.room.ui.media.MediaManager
 import io.foundy.room.ui.media.rememberMediaManager
 import io.foundy.room.ui.screen.PermissionRequestScreen
+import io.foundy.room.ui.screen.StudyRoomScreen
 import io.foundy.room.ui.screen.WaitingRoomScreen
 import io.foundy.room.ui.viewmodel.RoomSideEffect
 import io.foundy.room.ui.viewmodel.RoomUiState
@@ -115,27 +108,6 @@ fun RoomContent(
                     is RoomUiState.StudyRoom -> StudyRoomScreen()
                 }
             }
-        }
-    }
-}
-
-@Composable
-fun StudyRoomScreen() {
-    val mediaManager = LocalMediaManager.current
-    val localVideoTrack = mediaManager.localVideoTrackFlow.collectAsState(initial = null).value
-    var parentBounds: IntSize by remember { mutableStateOf(IntSize(0, 0)) }
-
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .onSizeChanged { parentBounds = it }
-    ) {
-        if (localVideoTrack != null) {
-            FloatingVideoRenderer(
-                eglBaseContext = mediaManager.eglBaseContext,
-                videoTrack = localVideoTrack,
-                parentBounds = parentBounds
-            )
         }
     }
 }
