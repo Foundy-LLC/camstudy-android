@@ -1,8 +1,12 @@
-package io.foundy.user.data.repository
+package io.foundy.user.domain.repository
 
+import io.foundy.core.model.User
 import java.io.File
 
 interface UserRepository {
+
+    suspend fun getUser(id: String): Result<User>
+
     suspend fun postUserInitialInfo(
         userId: String,
         name: String,

@@ -1,5 +1,8 @@
 package io.foundy.room.data.model
 
+import kotlinx.serialization.Serializable
+
+@Serializable
 data class WaitingRoomData(
     /**
      * 공부방에 참여한 사람들의 목록이다.

@@ -115,7 +115,8 @@ class MediaManager(
         peerConnectionFactory.makeAudioSource(audioConstraints)
     }
 
-    private val localAudioTrack: AudioTrack by lazy {
+    // TODO: audio 끄고 켜는 기능 구현
+    val localAudioTrack: AudioTrack by lazy {
         peerConnectionFactory.makeAudioTrack(
             source = audioSource,
             trackId = "Audio${UUID.randomUUID()}"

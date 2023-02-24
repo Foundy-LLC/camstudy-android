@@ -2,8 +2,11 @@ package io.foundy.user.data.repository
 
 import io.foundy.auth.data.source.AuthLocalDataSource
 import io.foundy.core.data.extension.getDataOrThrowMessage
+import io.foundy.core.model.User
 import io.foundy.user.data.model.UserCreateRequestBody
+import io.foundy.user.data.model.toEntity
 import io.foundy.user.data.source.UserRemoteDataSource
+import io.foundy.user.domain.repository.UserRepository
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
@@ -14,6 +17,13 @@ class NetworkUserRepository @Inject constructor(
     private val userDataSource: UserRemoteDataSource,
     private val authLocalDataSource: AuthLocalDataSource
 ) : UserRepository {
+
+    override suspend fun getUser(id: String): Result<User> {
+        return runCatching {
+            val response = userDataSource.getUser(userId = id)
+            response.getDataOrThrowMessage().toEntity()
+        }
+    }
 
     override suspend fun postUserInitialInfo(
         userId: String,

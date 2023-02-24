@@ -2,14 +2,14 @@ plugins {
     id 'com.android.library'
     id 'org.jetbrains.kotlin.android'
     id 'kotlin-kapt'
+    id 'dagger.hilt.android.plugin'
     id 'org.jlleitschuh.gradle.ktlint' version "$ktlint_version"
-    id 'org.jetbrains.kotlin.plugin.serialization' version "$serialization_plugin_version"
 }
 
 android {
     def globalConfiguration = rootProject.extensions.getByName("ext")
 
-    namespace 'io.foundy.room.data'
+    namespace 'io.foundy.user.domain'
     compileSdk globalConfiguration["android_compile_sdk_version"]
 
     defaultConfig {
@@ -36,38 +36,11 @@ android {
 }
 
 dependencies {
-    implementation project(path: ':room:domain')
-
-    // kotlinx datetime
-    implementation "org.jetbrains.kotlinx:kotlinx-datetime:0.3.2"
-
-    // kotlinx serialization
-    implementation "org.jetbrains.kotlinx:kotlinx-serialization-json:$serialization_version"
-
-    // coroutines
-    testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:$coroutines_version"
+    implementation project(path: ':core:model')
 
     // hilt
     implementation "com.google.dagger:hilt-android:$hilt_version"
     kapt "com.google.dagger:hilt-android-compiler:$hilt_version"
-    testImplementation "com.google.dagger:hilt-android-testing:$hilt_version"
-    kaptTest "com.google.dagger:hilt-android-compiler:$hilt_version"
-    testAnnotationProcessor "com.google.dagger:hilt-android-compiler:$hilt_version"
-    androidTestImplementation "com.google.dagger:hilt-android-testing:$hilt_version"
-    kaptAndroidTest "com.google.dagger:hilt-android-compiler:$hilt_version"
-    androidTestAnnotationProcessor "com.google.dagger:hilt-android-compiler:$hilt_version"
-
-    // socket io
-    implementation ("io.socket:socket.io-client:$socket_io_version") {
-        exclude group: 'org.json', module: 'json'
-    }
-
-    // stream log
-    implementation("io.getstream:stream-log-android:$stream_log_version")
-    debugImplementation("io.getstream:stream-log-android-file:$stream_log_version")
-
-    // mediasoup
-    implementation "org.mediasoup.droid:mediasoup-client:$mediasoupe_version"
 
     implementation 'androidx.core:core-ktx:1.7.0'
     implementation 'androidx.appcompat:appcompat:1.6.1'

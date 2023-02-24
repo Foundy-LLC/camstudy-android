@@ -14,14 +14,17 @@ import kotlinx.coroutines.launch
 import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.syntax.simple.intent
+import org.orbitmvi.orbit.syntax.simple.postSideEffect
 import org.orbitmvi.orbit.syntax.simple.reduce
 import org.orbitmvi.orbit.viewmodel.container
+import org.webrtc.AudioTrack
+import org.webrtc.VideoTrack
 import javax.inject.Inject
 
 @HiltViewModel
 class RoomViewModel @Inject constructor(
     private val roomService: RoomService,
-    private val authRepository: AuthRepository
+    private val authRepository: AuthRepository,
 ) : ViewModel(), ContainerHost<RoomUiState, RoomSideEffect> {
 
     override val container: Container<RoomUiState, RoomSideEffect> =
@@ -32,10 +35,11 @@ class RoomViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            _currentUserId = authRepository.currentUserIdStream.first()
-            check(_currentUserId != null) {
+            val currentUserId = authRepository.currentUserIdStream.first()
+            check(currentUserId != null) {
                 "회원 정보를 얻을 수 없습니다. 로그인하지 않고 공부방 접속은 할 수 없습니다."
             }
+            _currentUserId = currentUserId
         }
         viewModelScope.launch {
             roomService.event.collect {
@@ -71,11 +75,44 @@ class RoomViewModel @Inject constructor(
                                 reduce { uiState.copy(passwordInput = password) }
                             }
                         }
-                    }
+                    },
+                    onJoinClick = ::joinToStudyRoom
                 )
             }
         } catch (e: TimeoutCancellationException) {
             reduce { RoomUiState.WaitingRoom.FailedToConnect(R.string.failed_to_join_waiting_room) }
+        }
+    }
+
+    private fun joinToStudyRoom(
+        localVideo: VideoTrack?,
+        localAudio: AudioTrack?,
+        password: String
+    ) = intent {
+        try {
+            roomService.joinToStudyRoom(
+                localVideo = localVideo,
+                localAudio = localAudio,
+                userId = currentUserId,
+                password = password
+            ).onSuccess {
+                reduce {
+                    RoomUiState.StudyRoom(
+                        peerStates = it.peerStates,
+                        pomodoroTimer = it.timerProperty,
+                        pomodoroTimerState = it.timerState
+                    )
+                }
+            }.onFailure {
+                postSideEffect(
+                    RoomSideEffect.Message(
+                        content = it.message,
+                        defaultContentRes = R.string.failed_to_join_study_room
+                    )
+                )
+            }
+        } catch (e: TimeoutCancellationException) {
+            reduce { RoomUiState.WaitingRoom.FailedToConnect(R.string.timeout_to_join_study_room) }
         }
     }
 

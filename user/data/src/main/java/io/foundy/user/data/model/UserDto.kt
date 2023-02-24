@@ -6,8 +6,8 @@ data class UserDto(
     val id: String,
     val name: String,
     val introduce: String?,
-    val rankingScore: Int,
-    val totalStudyMinute: Int,
+    val rankingScore: Float,
+    val totalStudyMinute: Float,
     val organizations: List<String>,
     val tags: List<String>
 )
@@ -16,8 +16,8 @@ fun UserDto.toEntity(): User = User(
     id = id,
     name = name,
     introduce = introduce,
-    rankingScore = rankingScore,
-    totalStudyMinute = totalStudyMinute,
+    rankingScore = rankingScore.toInt(),
+    totalStudyMinute = totalStudyMinute.toInt(),
     organizations = organizations,
     tags = tags
 )

@@ -82,7 +82,15 @@ fun WaitingRoomScreen(
             }
             Button(
                 enabled = uiState.enableJoinButton,
-                onClick = { /*TODO*/ },
+                onClick = {
+                    if (uiState is RoomUiState.WaitingRoom.Connected) {
+                        uiState.onJoinClick(
+                            localVideoTrack,
+                            mediaManager.localAudioTrack,
+                            uiState.passwordInput
+                        )
+                    }
+                },
             ) {
                 Text(text = "입장")
             }

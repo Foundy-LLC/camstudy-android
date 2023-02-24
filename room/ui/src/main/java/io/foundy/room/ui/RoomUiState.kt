@@ -1,7 +1,12 @@
 package io.foundy.room.ui
 
 import androidx.annotation.StringRes
+import com.example.domain.PeerState
+import com.example.domain.PomodoroTimerProperty
+import com.example.domain.PomodoroTimerState
 import io.foundy.room.data.model.WaitingRoomData
+import org.webrtc.AudioTrack
+import org.webrtc.VideoTrack
 
 sealed class RoomUiState {
 
@@ -15,7 +20,12 @@ sealed class RoomUiState {
             val currentUserId: String,
             val data: WaitingRoomData,
             val passwordInput: String = "",
-            val onPasswordChange: (String) -> Unit
+            val onPasswordChange: (String) -> Unit,
+            val onJoinClick: (
+                localVideo: VideoTrack?,
+                localAudio: AudioTrack?,
+                password: String
+            ) -> Unit
         ) : WaitingRoom() {
             val isCurrentUserMaster: Boolean get() = data.masterId == currentUserId
             val isFull: Boolean get() = data.joinerList.size >= data.capacity
@@ -48,4 +58,10 @@ sealed class RoomUiState {
                 }
             }
     }
+
+    data class StudyRoom(
+        val peerStates: List<PeerState>,
+        val pomodoroTimer: PomodoroTimerProperty,
+        val pomodoroTimerState: PomodoroTimerState
+    ) : RoomUiState()
 }

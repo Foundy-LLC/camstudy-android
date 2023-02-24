@@ -47,6 +47,7 @@ android {
 
 dependencies {
     implementation project(path: ':room:data')
+    implementation project(path: ':room:domain')
     implementation project(path: ':core:designsystem')
     implementation project(path: ':core:model')
     implementation project(path: ':auth:data')

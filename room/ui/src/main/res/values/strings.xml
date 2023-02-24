@@ -6,4 +6,6 @@
     <string name="cannot_join_because_blocked">방에 차단되어 입장할 수 없습니다.</string>
     <string name="loading">로딩중…</string>
     <string name="input_password">방 비밀번호를 입력해주세요.</string>
+    <string name="timeout_to_join_study_room">시간초과가 발생하여 공부방 입장을 실패했습니다.</string>
+    <string name="failed_to_join_study_room">공부방 입장을 실패했습니다.</string>
 </resources>

@@ -6,7 +6,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import io.foundy.auth.data.repository.AuthRepository
 import io.foundy.core.common.util.ConvertBitmapToFileUseCase
 import io.foundy.core.model.constant.UserConstants
-import io.foundy.user.data.repository.UserRepository
+import io.foundy.user.domain.usecase.PostUserInitInfoUseCase
 import kotlinx.coroutines.flow.first
 import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.ContainerHost
@@ -18,7 +18,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class WelcomeViewModel @Inject constructor(
-    private val userRepository: UserRepository,
+    private val postUserInitInfoUseCase: PostUserInitInfoUseCase,
     private val authRepository: AuthRepository,
     private val convertBitmapToFileUseCase: ConvertBitmapToFileUseCase
 ) : ViewModel(), ContainerHost<WelcomeUiState, WelcomeSideEffect> {
@@ -88,7 +88,7 @@ class WelcomeViewModel @Inject constructor(
     fun saveInitInformation() = intent {
         val uid = authRepository.currentUserIdStream.first()
         check(uid != null)
-        userRepository.postUserInitialInfo(
+        postUserInitInfoUseCase(
             userId = uid,
             profileImage = state.selectedProfileImage?.let {
                 convertBitmapToFileUseCase(
