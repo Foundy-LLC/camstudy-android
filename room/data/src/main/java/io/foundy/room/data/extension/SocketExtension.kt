@@ -6,10 +6,31 @@ import io.socket.emitter.Emitter.Listener
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 
+inline fun <reified T> Socket.emit(event: String, crossinline callback: (T) -> Unit) {
+    val ack = Ack { args ->
+        val paredObject = Json.decodeFromString<T>(args[0].toString())
+        callback(paredObject)
+    }
+    this.emit(event, ack)
+}
+
 inline fun <reified T> Socket.emit(event: String, arg: Any, crossinline callback: (T) -> Unit) {
     val ack = Ack { args ->
         val paredObject = Json.decodeFromString<T>(args[0].toString())
         callback(paredObject)
+    }
+    this.emit(event, arg, ack)
+}
+
+inline fun <reified T1, reified T2> Socket.emitWithPrimitiveCallBack(
+    event: String,
+    arg: Any,
+    crossinline callback: (T1, T2) -> Unit
+) {
+    val ack = Ack { args ->
+        val t1 = args[0] as T1
+        val t2 = args[1] as T2
+        callback(t1, t2)
     }
     this.emit(event, arg, ack)
 }

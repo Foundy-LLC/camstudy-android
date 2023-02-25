@@ -1,13 +1,18 @@
 package io.foundy.room.data.service
 
 import io.foundy.room.data.extension.emit
+import io.foundy.room.data.extension.emitWithPrimitiveCallBack
 import io.foundy.room.data.extension.on
+import io.foundy.room.data.extension.toJson
+import io.foundy.room.data.model.CreateWebRtcTransportRequest
+import io.foundy.room.data.model.CreateWebRtcTransportResponse
 import io.foundy.room.data.model.JoinRoomFailureResponse
-import io.foundy.room.data.model.JoinRoomRequestArgument
+import io.foundy.room.data.model.JoinRoomRequest
 import io.foundy.room.data.model.JoinRoomSuccessResponse
 import io.foundy.room.data.model.Protocol
 import io.foundy.room.data.model.RoomEvent
 import io.foundy.room.data.model.RoomJoiner
+import io.foundy.room.data.model.UserAndProducerId
 import io.foundy.room.data.model.WaitingRoomData
 import io.foundy.room.data.model.WaitingRoomEvent
 import io.getstream.log.taggedLogger
@@ -18,8 +23,10 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withTimeout
-import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.Json
+import org.json.JSONObject
+import org.mediasoup.droid.Device
+import org.mediasoup.droid.SendTransport
+import org.mediasoup.droid.Transport
 import org.webrtc.AudioTrack
 import org.webrtc.VideoTrack
 import java.net.URI
@@ -33,6 +40,11 @@ class RoomSocketService @Inject constructor() : RoomService {
     private val socket: Socket = Manager(URI(URL)).socket(Protocol.NAME_SPACE)
 
     override val event: MutableSharedFlow<RoomEvent> = MutableSharedFlow(replay = 1)
+
+    private var _device: Device? = null
+    private val device: Device get() = requireNotNull(_device)
+
+    private var didGetInitProducers = false
 
     override suspend fun connect() = suspendCoroutineWithTimeout { continuation ->
         socket.run {
@@ -70,7 +82,7 @@ class RoomSocketService @Inject constructor() : RoomService {
         }
     }
 
-    private fun removeWaitingRoomEventsListener() {
+    private fun removeWaitingRoomEventListeners() {
         socket.off(Protocol.OTHER_PEER_JOINED_ROOM)
         socket.off(Protocol.OTHER_PEER_EXITED_ROOM)
     }
@@ -81,26 +93,107 @@ class RoomSocketService @Inject constructor() : RoomService {
         userId: String,
         password: String
     ): Result<JoinRoomSuccessResponse> = suspendCoroutineWithTimeout { continuation ->
-        removeWaitingRoomEventsListener()
+        removeWaitingRoomEventListeners()
         socket.emit(
             Protocol.JOIN_ROOM,
-            arg = org.json.JSONObject(
-                Json.encodeToString(
-                    JoinRoomRequestArgument(
-                        userId = userId,
-                        roomPasswordInput = password
-                    )
-                )
+            arg = JSONObject(
+                JoinRoomRequest(
+                    userId = userId,
+                    roomPasswordInput = password
+                ).toJson()
             ),
             onSuccess = { response: JoinRoomSuccessResponse ->
                 logger.d { response.toString() }
+                _device = Device().apply { load(response.rtpCapabilities.toString()) }
+                createProducerTransport(localVideo, localAudio)
                 continuation.resume(Result.success(response)) {}
             },
             onFailure = { response: JoinRoomFailureResponse ->
-                logger.d { response.toString() }
+                logger.e { response.toString() }
                 continuation.resume(Result.failure(Exception(response.message))) {}
             }
         )
+    }
+
+    private fun createProducerTransport(localVideo: VideoTrack?, localAudio: AudioTrack?) {
+        socket.emit(
+            Protocol.CREATE_WEB_RTC_TRANSPORT,
+            JSONObject(CreateWebRtcTransportRequest(isConsumer = false).toJson()),
+        ) { response: CreateWebRtcTransportResponse ->
+            val sendTransport: SendTransport = device.createSendTransport(
+                onSendTransportProduce,
+                response.id,
+                response.iceParameters.toString(),
+                response.iceCandidates.toString(),
+                response.dtlsParameters.toString()
+            )
+
+            produceLocalMedia(sendTransport, localVideo, localAudio)
+        }
+    }
+
+    private fun produceLocalMedia(
+        sendTransport: SendTransport,
+        localVideo: VideoTrack?,
+        localAudio: AudioTrack?
+    ) {
+        localVideo?.let {
+            sendTransport.produce(
+                { logger.d { "Video onTransportClose" } },
+                it,
+                null,
+                null
+            )
+        }
+        localAudio?.let {
+            sendTransport.produce(
+                { logger.d { "Audio onTransportClose" } },
+                it,
+                null,
+                null
+            )
+        }
+    }
+
+    private val onSendTransportProduce = object : SendTransport.Listener {
+
+        override fun onConnect(transport: Transport, dtlsParameters: String) {
+            socket.emit(Protocol.TRANSPORT_PRODUCER_CONNECT, JSONObject(dtlsParameters))
+        }
+
+        override fun onConnectionStateChange(transport: Transport, connectionState: String) {
+            logger.d { "onConnectionStateChange: $connectionState" }
+        }
+
+        override fun onProduce(
+            transport: Transport,
+            kind: String,
+            rtpParameters: String,
+            appData: String
+        ): String {
+            socket.emitWithPrimitiveCallBack(
+                Protocol.TRANSPORT_PRODUCER,
+                JSONObject(
+                    mapOf(
+                        "kind" to kind,
+                        "rtpParameters" to JSONObject(rtpParameters),
+                        "appData" to JSONObject(appData)
+                    )
+                )
+            ) { _: String, producersExists: Boolean ->
+                if (!didGetInitProducers && producersExists) {
+                    didGetInitProducers = true
+                    getRemoteProducersAndCreateReceiveTransport()
+                }
+            }
+            return transport.id
+        }
+    }
+
+    private fun getRemoteProducersAndCreateReceiveTransport() {
+        socket.emit(Protocol.GET_PRODUCER_IDS) { userAndProducerIds: List<UserAndProducerId> ->
+            logger.d { "Got remote producers: $userAndProducerIds" }
+        }
     }
 
     override fun disconnect() {
