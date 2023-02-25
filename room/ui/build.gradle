@@ -80,6 +80,9 @@ dependencies {
     implementation("io.getstream:stream-log-android:$stream_log_version")
     debugImplementation("io.getstream:stream-log-android-file:$stream_log_version")
 
+    // coroutine test
+    testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:$coroutines_version"
+
     // hilt
     implementation "com.google.dagger:hilt-android:$hilt_version"
     kapt "com.google.dagger:hilt-android-compiler:$hilt_version"

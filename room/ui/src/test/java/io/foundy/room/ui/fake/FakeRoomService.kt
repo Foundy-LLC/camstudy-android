@@ -1,4 +1,4 @@
-package io.foundy.room.data
+package io.foundy.room.ui.fake
 
 import io.foundy.room.data.model.JoinRoomSuccessResponse
 import io.foundy.room.data.model.RoomEvent
@@ -12,12 +12,20 @@ class FakeRoomService : RoomService {
 
     override val event: MutableSharedFlow<RoomEvent> = MutableSharedFlow()
 
+    var waitingRoomData: WaitingRoomData = WaitingRoomData(
+        joinerList = emptyList(),
+        capacity = 4,
+        masterId = "1",
+        blacklist = emptyList(),
+        hasPassword = false
+    )
+
     override suspend fun connect() {
-        TODO("Not yet implemented")
+        return
     }
 
     override suspend fun joinToWaitingRoom(roomId: String): WaitingRoomData {
-        TODO("Not yet implemented")
+        return waitingRoomData
     }
 
     override suspend fun joinToStudyRoom(
