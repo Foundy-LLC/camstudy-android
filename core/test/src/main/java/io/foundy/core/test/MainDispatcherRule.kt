@@ -21,4 +21,3 @@ class MainDispatcherRule(
         Dispatchers.resetMain()
     }
 }
-
