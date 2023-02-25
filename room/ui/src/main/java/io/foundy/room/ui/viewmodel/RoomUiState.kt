@@ -42,6 +42,9 @@ sealed class RoomUiState {
                     Loading -> return R.string.loading
                     is FailedToConnect -> return messageRes
                     is Connected -> {
+                        if (data.joinerList.any { it.id == currentUserId }) {
+                            return R.string.already_joined
+                        }
                         if (data.hasPassword && passwordInput.isEmpty()) {
                             return R.string.input_password
                         }
