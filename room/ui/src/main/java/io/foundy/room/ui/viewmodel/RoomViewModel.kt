@@ -140,7 +140,7 @@ class RoomViewModel @Inject constructor(
 
     private fun handleStudyRoomEvent(studyRoomEvent: StudyRoomEvent) {}
 
-    fun disconnect() {
+    override fun onCleared() {
         roomService.disconnect()
     }
 }
