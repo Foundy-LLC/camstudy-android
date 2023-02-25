@@ -20,7 +20,10 @@ class FakeRoomService : RoomService {
         hasPassword = false
     )
 
+    var onConnect: suspend () -> Unit = {}
+
     override suspend fun connect() {
+        onConnect()
         return
     }
 

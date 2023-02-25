@@ -12,6 +12,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
+import kotlinx.coroutines.withTimeout
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TestWatcher
@@ -42,6 +43,20 @@ class RoomViewModelTest {
 
         val states = viewModel.stateObserver.values
         assertTrue(states[1] is RoomUiState.WaitingRoom.Connected)
+    }
+
+    @Test
+    fun `should be FailedToConnect when occurs timeout to join waiting room`() = runTest {
+        initViewModel()
+        roomService.onConnect = { withTimeout(0L) {} }
+        viewModel.runOnCreate()
+
+        viewModel.testIntent {
+            connect("id")
+        }
+
+        val states = viewModel.stateObserver.values
+        assertTrue(states[1] is RoomUiState.WaitingRoom.FailedToConnect)
     }
 
     private fun initViewModel() {
