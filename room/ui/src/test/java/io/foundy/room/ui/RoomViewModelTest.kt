@@ -1,22 +1,17 @@
 package io.foundy.room.ui
 
+import io.foundy.core.test.MainDispatcherRule
 import io.foundy.room.ui.fake.FakeAuthRepository
 import io.foundy.room.ui.fake.FakeRoomService
 import io.foundy.room.ui.viewmodel.RoomSideEffect
 import io.foundy.room.ui.viewmodel.RoomUiState
 import io.foundy.room.ui.viewmodel.RoomViewModel
 import junit.framework.TestCase.assertTrue
-import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
-import kotlinx.coroutines.test.setMain
 import kotlinx.coroutines.withTimeout
 import org.junit.Rule
 import org.junit.Test
-import org.junit.rules.TestWatcher
-import org.junit.runner.Description
 import org.orbitmvi.orbit.RegularTestContainerHost
 import org.orbitmvi.orbit.liveTest
 
@@ -64,19 +59,5 @@ class RoomViewModelTest {
             authRepository = authRepository,
             roomService = roomService
         ).liveTest { dispatcher = mainDispatcherRule.testDispatcher }
-    }
-}
-
-@OptIn(ExperimentalCoroutinesApi::class)
-class MainDispatcherRule(
-    val testDispatcher: CoroutineDispatcher = Dispatchers.Unconfined
-) : TestWatcher() {
-
-    override fun starting(description: Description) {
-        Dispatchers.setMain(testDispatcher)
-    }
-
-    override fun finished(description: Description) {
-        Dispatchers.resetMain()
     }
 }

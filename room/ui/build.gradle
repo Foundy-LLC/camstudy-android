@@ -51,6 +51,7 @@ dependencies {
     implementation project(path: ':core:designsystem')
     implementation project(path: ':core:model')
     implementation project(path: ':auth:data')
+    testImplementation project(path: ':core:test')
 
     // permission
     implementation "com.google.accompanist:accompanist-permissions:$accompanist_permission_version"
