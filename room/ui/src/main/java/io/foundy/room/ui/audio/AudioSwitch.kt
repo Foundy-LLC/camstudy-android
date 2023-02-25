@@ -222,7 +222,7 @@ class AudioSwitch internal constructor(
                 "bluetoothHeadsetName: $bluetoothHeadsetName"
         }
         mutableAudioDevices.clear()
-        preferredDeviceList.forEach { audioDevice ->
+        for (audioDevice in preferredDeviceList) {
             logger.v { "[addAvailableAudioDevices] audioDevice: ${audioDevice.simpleName}" }
             when (audioDevice) {
                 BluetoothHeadset::class.java -> {
