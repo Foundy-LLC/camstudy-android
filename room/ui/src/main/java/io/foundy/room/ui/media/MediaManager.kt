@@ -237,10 +237,10 @@ class MediaManager(
 
     fun disconnect() {
         // dispose audio & video tracks.
-        remoteVideoTrackFlow.replayCache.forEach { videoTrack ->
+        for (videoTrack in remoteVideoTrackFlow.replayCache) {
             videoTrack.dispose()
         }
-        localVideoTrackFlow.replayCache.forEach { videoTrack ->
+        for (videoTrack in localVideoTrackFlow.replayCache) {
             videoTrack?.dispose()
         }
         localAudioTrack.dispose()
