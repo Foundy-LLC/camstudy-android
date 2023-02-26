@@ -104,7 +104,7 @@ fun RoomContent(
                         roomTitle = id,
                         uiState = uiState
                     )
-                    is RoomUiState.StudyRoom -> StudyRoomScreen()
+                    is RoomUiState.StudyRoom -> StudyRoomScreen(uiState = uiState)
                 }
             }
         }

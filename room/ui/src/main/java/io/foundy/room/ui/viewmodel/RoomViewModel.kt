@@ -9,6 +9,7 @@ import io.foundy.room.data.model.StudyRoomEvent
 import io.foundy.room.data.model.WaitingRoomEvent
 import io.foundy.room.data.service.RoomService
 import io.foundy.room.ui.R
+import io.foundy.room.ui.peer.toUiState
 import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
@@ -99,7 +100,7 @@ class RoomViewModel @Inject constructor(
             ).onSuccess {
                 reduce {
                     RoomUiState.StudyRoom(
-                        peerStates = it.peerStates,
+                        peerStates = it.peerStates.map { peerState -> peerState.toUiState() },
                         pomodoroTimer = it.timerProperty,
                         pomodoroTimerState = it.timerState
                     )
@@ -138,7 +139,31 @@ class RoomViewModel @Inject constructor(
         }
     }
 
-    private fun handleStudyRoomEvent(studyRoomEvent: StudyRoomEvent) {}
+    private fun handleStudyRoomEvent(studyRoomEvent: StudyRoomEvent) = intent {
+        val uiState = state
+        check(uiState is RoomUiState.StudyRoom)
+        when (studyRoomEvent) {
+            is StudyRoomEvent.AddedConsumer -> {
+                val userId = studyRoomEvent.userId
+                val track = studyRoomEvent.track
+                val targetPeer = uiState.peerStates.find { it.uid == userId }
+                check(targetPeer != null)
+                val newPeer = when (track) {
+                    is AudioTrack -> targetPeer.copy(audioTrack = track)
+                    is VideoTrack -> targetPeer.copy(videoTrack = track)
+                    else -> throw IllegalArgumentException()
+                }
+                val newPeerStates = uiState.peerStates.map { peerUiState ->
+                    if (peerUiState.uid == userId) {
+                        newPeer
+                    } else {
+                        peerUiState
+                    }
+                }
+                reduce { uiState.copy(peerStates = newPeerStates) }
+            }
+        }
+    }
 
     override fun onCleared() {
         roomService.disconnect()
