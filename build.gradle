@@ -33,6 +33,7 @@ buildscript {
         serialization_version = "1.5.0-RC"
         serialization_plugin_version = "1.8.0"
         accompanist_permission_version = "0.29.1-alpha"
+        mockito_version = "4.1.0"
     }
     dependencies {
 
