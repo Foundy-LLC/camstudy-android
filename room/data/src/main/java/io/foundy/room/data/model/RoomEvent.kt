@@ -1,5 +1,6 @@
 package io.foundy.room.data.model
 
+import com.example.domain.PeerState
 import org.webrtc.MediaStreamTrack
 
 sealed class RoomEvent
@@ -10,5 +11,6 @@ sealed class WaitingRoomEvent : RoomEvent() {
 }
 
 sealed class StudyRoomEvent : RoomEvent() {
+    data class OnChangePeerState(val state: PeerState) : StudyRoomEvent()
     data class AddedConsumer(val userId: String, val track: MediaStreamTrack) : StudyRoomEvent()
 }

@@ -143,6 +143,24 @@ class RoomViewModel @Inject constructor(
         val uiState = state
         check(uiState is RoomUiState.StudyRoom)
         when (studyRoomEvent) {
+            is StudyRoomEvent.OnChangePeerState -> {
+                val existsState = uiState.peerStates.any { it.uid == studyRoomEvent.state.uid }
+                if (existsState) {
+                    val newPeerStates = uiState.peerStates.map { state ->
+                        if (studyRoomEvent.state.uid == state.uid) {
+                            return@map studyRoomEvent.state.toUiState()
+                        }
+                        return@map state
+                    }
+                    reduce { uiState.copy(peerStates = newPeerStates) }
+                } else {
+                    reduce {
+                        uiState.copy(
+                            peerStates = uiState.peerStates + studyRoomEvent.state.toUiState()
+                        )
+                    }
+                }
+            }
             is StudyRoomEvent.AddedConsumer -> {
                 val userId = studyRoomEvent.userId
                 val track = studyRoomEvent.track

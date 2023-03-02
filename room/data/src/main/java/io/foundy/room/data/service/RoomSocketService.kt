@@ -1,5 +1,6 @@
 package io.foundy.room.data.service
 
+import com.example.domain.PeerState
 import io.foundy.room.data.BuildConfig
 import io.foundy.room.data.extension.emit
 import io.foundy.room.data.extension.emitWithPrimitiveCallBack
@@ -12,6 +13,7 @@ import io.foundy.room.data.model.CreateWebRtcTransportResponse
 import io.foundy.room.data.model.JoinRoomFailureResponse
 import io.foundy.room.data.model.JoinRoomRequest
 import io.foundy.room.data.model.JoinRoomSuccessResponse
+import io.foundy.room.data.model.NewProducerResponse
 import io.foundy.room.data.model.Protocol
 import io.foundy.room.data.model.ReceiveTransportWrapper
 import io.foundy.room.data.model.RoomEvent
@@ -40,7 +42,6 @@ import java.net.URI
 import javax.inject.Inject
 
 // TODO: 다른 피어가 연결 끊는 경우 처리
-// TODO: 다른 피어가 새로 등장하는 경우 처리
 // TODO: 다른 피어가 마이크 끄는 경우 처리
 // TODO: 다른 피어가 비디오 끄는 경우 처리
 // TODO: 다른 피어가 헤드셋 끄는 경우 처리
@@ -121,6 +122,7 @@ class RoomSocketService @Inject constructor() : RoomService {
                 logger.d { response.toString() }
                 _device = Device().apply { load(response.rtpCapabilities.toString()) }
                 createSendTransport(localVideo, localAudio)
+                listenRoomEvents()
                 continuation.resume(Result.success(response)) {}
             },
             onFailure = { response: JoinRoomFailureResponse ->
@@ -128,6 +130,18 @@ class RoomSocketService @Inject constructor() : RoomService {
                 continuation.resume(Result.failure(Exception(response.message))) {}
             }
         )
+    }
+
+    private fun listenRoomEvents() = with(socket) {
+        on(Protocol.PEER_STATE_CHANGED) { state: PeerState ->
+            event.tryEmit(StudyRoomEvent.OnChangePeerState(state = state))
+        }
+        on(Protocol.NEW_PRODUCER) { response: NewProducerResponse ->
+            createReceiveTransportAndConsume(
+                userId = response.userId,
+                remoteProducerId = response.producerId
+            )
+        }
     }
 
     private fun createSendTransport(localVideo: VideoTrack?, localAudio: AudioTrack?) {
