@@ -112,6 +112,8 @@ class RoomSocketService @Inject constructor() : RoomService {
             arg = JSONObject(
                 JoinRoomRequest(
                     userId = userId,
+                    // TODO: 음소거 기능 구현되면 초기값 전달하도록 수정하기
+                    mutedHeadset = false,
                     roomPasswordInput = password
                 ).toJson()
             ),
