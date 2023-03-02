@@ -14,6 +14,7 @@ import io.foundy.room.data.model.JoinRoomFailureResponse
 import io.foundy.room.data.model.JoinRoomRequest
 import io.foundy.room.data.model.JoinRoomSuccessResponse
 import io.foundy.room.data.model.NewProducerResponse
+import io.foundy.room.data.model.OtherPeerDisconnectedResponse
 import io.foundy.room.data.model.Protocol
 import io.foundy.room.data.model.ReceiveTransportWrapper
 import io.foundy.room.data.model.RoomEvent
@@ -41,10 +42,11 @@ import org.webrtc.VideoTrack
 import java.net.URI
 import javax.inject.Inject
 
-// TODO: 다른 피어가 연결 끊는 경우 처리
 // TODO: 다른 피어가 마이크 끄는 경우 처리
 // TODO: 다른 피어가 비디오 끄는 경우 처리
 // TODO: 다른 피어가 헤드셋 끄는 경우 처리
+// TODO: 타이머 이벤트 처리 구현
+// TODO: 채팅 구현
 @OptIn(ExperimentalCoroutinesApi::class)
 class RoomSocketService @Inject constructor() : RoomService {
 
@@ -141,6 +143,11 @@ class RoomSocketService @Inject constructor() : RoomService {
                 userId = response.userId,
                 remoteProducerId = response.producerId
             )
+        }
+        on(Protocol.OTHER_PEER_DISCONNECTED) { response: OtherPeerDisconnectedResponse ->
+            val disposedPeerId = response.disposedPeerId
+            receiveTransportWrappers.removeAll { it.userId == disposedPeerId }
+            event.tryEmit(StudyRoomEvent.OnDisconnectPeer(disposedPeerId = disposedPeerId))
         }
     }
 

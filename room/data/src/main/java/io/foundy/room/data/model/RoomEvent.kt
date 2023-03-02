@@ -13,4 +13,5 @@ sealed class WaitingRoomEvent : RoomEvent() {
 sealed class StudyRoomEvent : RoomEvent() {
     data class OnChangePeerState(val state: PeerState) : StudyRoomEvent()
     data class AddedConsumer(val userId: String, val track: MediaStreamTrack) : StudyRoomEvent()
+    data class OnDisconnectPeer(val disposedPeerId: String) : StudyRoomEvent()
 }

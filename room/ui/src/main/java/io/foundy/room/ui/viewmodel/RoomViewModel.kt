@@ -180,6 +180,12 @@ class RoomViewModel @Inject constructor(
                 }
                 reduce { uiState.copy(peerStates = newPeerStates) }
             }
+            is StudyRoomEvent.OnDisconnectPeer -> {
+                val newPeerStates = uiState.peerStates.filter {
+                    it.uid != studyRoomEvent.disposedPeerId
+                }
+                reduce { uiState.copy(peerStates = newPeerStates) }
+            }
         }
     }
 
