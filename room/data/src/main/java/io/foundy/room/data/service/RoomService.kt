@@ -30,5 +30,9 @@ interface RoomService {
         password: String
     ): Result<JoinRoomSuccessResponse>
 
+    suspend fun produceVideo(videoTrack: VideoTrack)
+
+    suspend fun closeVideoProducer()
+
     fun disconnect()
 }

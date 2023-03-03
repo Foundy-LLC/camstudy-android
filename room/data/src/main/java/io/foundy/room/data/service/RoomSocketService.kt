@@ -44,7 +44,6 @@ import org.webrtc.VideoTrack
 import java.net.URI
 import javax.inject.Inject
 
-// TODO: 내가 비디오 끄는 경우 처리
 // TODO: 다른 피어가 마이크 끄는 경우 처리
 // TODO: 다른 피어가 헤드셋 끄는 경우 처리
 // TODO: 타이머 이벤트 처리 구현
@@ -62,6 +61,9 @@ class RoomSocketService @Inject constructor() : RoomService {
     private val device: Device get() = requireNotNull(_device)
 
     private var didGetInitProducers = false
+
+    private var _sendTransport: SendTransport? = null
+    private val sendTransport: SendTransport get() = requireNotNull(_sendTransport)
 
     private val receiveTransportWrappers: MutableList<ReceiveTransportWrapper> = mutableListOf()
 
@@ -139,6 +141,14 @@ class RoomSocketService @Inject constructor() : RoomService {
         )
     }
 
+    override suspend fun produceVideo(videoTrack: VideoTrack) {
+        sendTransport.produce({ logger.d { "Video onTransportClose" } }, videoTrack, null, null)
+    }
+
+    override suspend fun closeVideoProducer() {
+        socket.emit(Protocol.CLOSE_VIDEO_PRODUCER)
+    }
+
     private fun listenRoomEvents(currentUserId: String) = with(socket) {
         on(Protocol.PEER_STATE_CHANGED) { state: PeerState ->
             if (state.uid == currentUserId) {
@@ -183,7 +193,7 @@ class RoomSocketService @Inject constructor() : RoomService {
             Protocol.CREATE_WEB_RTC_TRANSPORT,
             JSONObject(CreateWebRtcTransportRequest(isConsumer = false).toJson()),
         ) { response: CreateWebRtcTransportResponse ->
-            val sendTransport: SendTransport = device.createSendTransport(
+            _sendTransport = device.createSendTransport(
                 sendTransportListener,
                 response.id,
                 response.iceParameters.toString(),
@@ -191,12 +201,11 @@ class RoomSocketService @Inject constructor() : RoomService {
                 response.dtlsParameters.toString()
             )
 
-            produceLocalMedia(sendTransport, localVideo, localAudio)
+            produceLocalMedia(localVideo, localAudio)
         }
     }
 
     private fun produceLocalMedia(
-        sendTransport: SendTransport,
         localVideo: VideoTrack?,
         localAudio: AudioTrack?
     ) {

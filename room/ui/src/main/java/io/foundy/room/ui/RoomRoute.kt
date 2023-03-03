@@ -62,8 +62,10 @@ fun RoomRoute(
 fun RoomContent(
     id: String,
     navigator: DestinationsNavigator,
-    mediaManager: MediaManager = rememberMediaManager(),
-    viewModel: RoomViewModel = hiltViewModel()
+    viewModel: RoomViewModel = hiltViewModel(),
+    mediaManager: MediaManager = rememberMediaManager(
+        onToggleVideo = viewModel::onToggleVideo
+    )
 ) {
     val uiState = viewModel.collectAsState().value
     val context = LocalContext.current

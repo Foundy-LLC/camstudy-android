@@ -121,6 +121,14 @@ class RoomViewModel @Inject constructor(
         }
     }
 
+    fun onToggleVideo(videoTrack: VideoTrack?) = intent {
+        if (videoTrack != null) {
+            roomService.produceVideo(videoTrack)
+        } else {
+            roomService.closeVideoProducer()
+        }
+    }
+
     private fun handleWaitingRoomEvent(waitingRoomEvent: WaitingRoomEvent) = intent {
         val uiState = state
         check(uiState is RoomUiState.WaitingRoom.Connected)

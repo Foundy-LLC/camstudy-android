@@ -41,19 +41,23 @@ val LocalMediaManager: ProvidableCompositionLocal<MediaManager> =
     staticCompositionLocalOf { error("WebRtcSessionManager was not initialized!") }
 
 @Composable
-fun rememberMediaManager(): MediaManager {
+fun rememberMediaManager(
+    onToggleVideo: (track: VideoTrack?) -> Unit,
+): MediaManager {
     val context = LocalContext.current
     return remember {
         MediaManager(
             context = context,
-            peerConnectionFactory = PeerConnectionFactoryWrapper(context = context)
+            peerConnectionFactory = PeerConnectionFactoryWrapper(context = context),
+            onToggleVideo = onToggleVideo
         )
     }
 }
 
 class MediaManager(
     private val context: Context,
-    private val peerConnectionFactory: PeerConnectionFactoryWrapper
+    private val peerConnectionFactory: PeerConnectionFactoryWrapper,
+    private val onToggleVideo: (track: VideoTrack?) -> Unit,
 ) {
     private val logger by taggedLogger("Call:LocalRoomSessionManager")
     private val managerScope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
@@ -105,12 +109,7 @@ class MediaManager(
         }
     }
 
-    private val localVideoTrack: VideoTrack by lazy {
-        peerConnectionFactory.makeVideoTrack(
-            source = videoSource,
-            trackId = "Video${UUID.randomUUID()}"
-        )
-    }
+    private var localVideoTrack: VideoTrack? = null
 
     /* Audio properties */
 
@@ -138,6 +137,7 @@ class MediaManager(
     }
 
     fun onSessionScreenReady() {
+        setupVideoTrack()
         setupAudio()
         managerScope.launch {
             // sending local video track to show local video from start
@@ -203,6 +203,17 @@ class MediaManager(
         }
     }
 
+    private fun setupVideoTrack() {
+        localVideoTrack = peerConnectionFactory.makeVideoTrack(
+            source = videoSource,
+            trackId = "Video${UUID.randomUUID()}"
+        )
+    }
+
+    private fun clearVideoTrack() {
+        localVideoTrack = null
+    }
+
     private fun setupAudio() {
         logger.d { "[setupAudio] #sfu; no args" }
         audioHandler.start()
@@ -229,9 +240,13 @@ class MediaManager(
         if (enabled) {
             enabledLocalVideo = true
             videoCapturer.startCapture(resolution.width, resolution.height, 30)
+            setupVideoTrack()
+            onToggleVideo(localVideoTrack!!)
         } else {
             enabledLocalVideo = false
             videoCapturer.stopCapture()
+            clearVideoTrack()
+            onToggleVideo(null)
         }
     }
 
