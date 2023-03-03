@@ -13,11 +13,18 @@ data class PeerUiState(
     val videoTrack: VideoTrack? = null
 )
 
-fun PeerState.toUiState(): PeerUiState {
+fun PeerState.toInitialUiState(): PeerUiState {
     return PeerUiState(
         uid = uid,
         name = name,
         enabledMicrophone = enabledMicrophone,
         enabledHeadset = enabledHeadset
+    )
+}
+
+fun PeerUiState.merge(peerState: PeerState): PeerUiState {
+    return copy(
+        enabledHeadset = peerState.enabledHeadset,
+        enabledMicrophone = peerState.enabledMicrophone
     )
 }

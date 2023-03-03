@@ -8,7 +8,7 @@ import org.webrtc.AudioTrack
 import org.webrtc.VideoTrack
 
 interface RoomService {
-    val event: Flow<RoomEvent>
+    val eventFlow: Flow<RoomEvent>
 
     /**
      * 공부방 소켓 서버에 연결을 시도한다.

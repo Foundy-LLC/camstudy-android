@@ -10,7 +10,7 @@ import org.webrtc.VideoTrack
 
 class FakeRoomService : RoomService {
 
-    override val event: MutableSharedFlow<RoomEvent> = MutableSharedFlow()
+    override val eventFlow: MutableSharedFlow<RoomEvent> = MutableSharedFlow()
 
     var waitingRoomData: WaitingRoomData = WaitingRoomData(
         joinerList = emptyList(),

@@ -9,6 +9,8 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -57,13 +59,19 @@ fun StudyRoomScreen(uiState: RoomUiState.StudyRoom) {
                 columns = GridCells.Adaptive(minSize = 128.dp),
             ) {
                 items(uiState.peerStates, key = { it.uid }) { peerState ->
-                    if (peerState.videoTrack != null) {
-                        // TODO: 오디오 처리하기
-                        VideoRenderer(
-                            modifier = Modifier.size(width = 128.dp, height = 200.dp),
-                            eglBaseContext = mediaManager.eglBaseContext,
-                            videoTrack = peerState.videoTrack
-                        )
+                    val videoSizeModifier = Modifier.size(width = 128.dp, height = 200.dp)
+                    Surface(
+                        modifier = videoSizeModifier,
+                        color = MaterialTheme.colorScheme.onBackground
+                    ) {
+                        if (peerState.videoTrack != null) {
+                            // TODO: 오디오 처리하기
+                            VideoRenderer(
+                                modifier = videoSizeModifier,
+                                eglBaseContext = mediaManager.eglBaseContext,
+                                videoTrack = peerState.videoTrack
+                            )
+                        }
                     }
                 }
             }

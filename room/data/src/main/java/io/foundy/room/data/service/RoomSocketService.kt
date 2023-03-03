@@ -15,6 +15,7 @@ import io.foundy.room.data.model.JoinRoomRequest
 import io.foundy.room.data.model.JoinRoomSuccessResponse
 import io.foundy.room.data.model.NewProducerResponse
 import io.foundy.room.data.model.OtherPeerDisconnectedResponse
+import io.foundy.room.data.model.ProducerClosedResponse
 import io.foundy.room.data.model.Protocol
 import io.foundy.room.data.model.ReceiveTransportWrapper
 import io.foundy.room.data.model.RoomEvent
@@ -38,12 +39,13 @@ import org.mediasoup.droid.RecvTransport
 import org.mediasoup.droid.SendTransport
 import org.mediasoup.droid.Transport
 import org.webrtc.AudioTrack
+import org.webrtc.MediaStreamTrack
 import org.webrtc.VideoTrack
 import java.net.URI
 import javax.inject.Inject
 
+// TODO: 내가 비디오 끄는 경우 처리
 // TODO: 다른 피어가 마이크 끄는 경우 처리
-// TODO: 다른 피어가 비디오 끄는 경우 처리
 // TODO: 다른 피어가 헤드셋 끄는 경우 처리
 // TODO: 타이머 이벤트 처리 구현
 // TODO: 채팅 구현
@@ -54,7 +56,7 @@ class RoomSocketService @Inject constructor() : RoomService {
 
     private val socket: Socket = Manager(URI(URL)).socket(Protocol.NAME_SPACE)
 
-    override val event: MutableSharedFlow<RoomEvent> = MutableSharedFlow(replay = 1)
+    override val eventFlow: MutableSharedFlow<RoomEvent> = MutableSharedFlow(replay = 1)
 
     private var _device: Device? = null
     private val device: Device get() = requireNotNull(_device)
@@ -89,11 +91,11 @@ class RoomSocketService @Inject constructor() : RoomService {
         socket.run {
             on(Protocol.OTHER_PEER_JOINED_ROOM) { joiner: RoomJoiner ->
                 logger.d { "Joined other peer in room: $joiner" }
-                event.tryEmit(WaitingRoomEvent.OtherPeerJoined(joiner = joiner))
+                eventFlow.tryEmit(WaitingRoomEvent.OtherPeerJoined(joiner = joiner))
             }
             on(Protocol.OTHER_PEER_EXITED_ROOM) { userId: String ->
                 logger.d { "Exited other peer from room: $userId" }
-                event.tryEmit(WaitingRoomEvent.OtherPeerExited(userId = userId))
+                eventFlow.tryEmit(WaitingRoomEvent.OtherPeerExited(userId = userId))
             }
         }
     }
@@ -124,8 +126,11 @@ class RoomSocketService @Inject constructor() : RoomService {
                 logger.d { response.toString() }
                 _device = Device().apply { load(response.rtpCapabilities.toString()) }
                 createSendTransport(localVideo, localAudio)
-                listenRoomEvents()
-                continuation.resume(Result.success(response)) {}
+                listenRoomEvents(currentUserId = userId)
+                val responseThatFilteredCurrentUser = response.copy(
+                    peerStates = response.peerStates.filter { it.uid != userId }
+                )
+                continuation.resume(Result.success(responseThatFilteredCurrentUser)) {}
             },
             onFailure = { response: JoinRoomFailureResponse ->
                 logger.e { response.toString() }
@@ -134,9 +139,12 @@ class RoomSocketService @Inject constructor() : RoomService {
         )
     }
 
-    private fun listenRoomEvents() = with(socket) {
+    private fun listenRoomEvents(currentUserId: String) = with(socket) {
         on(Protocol.PEER_STATE_CHANGED) { state: PeerState ->
-            event.tryEmit(StudyRoomEvent.OnChangePeerState(state = state))
+            if (state.uid == currentUserId) {
+                return@on
+            }
+            eventFlow.tryEmit(StudyRoomEvent.OnChangePeerState(state = state))
         }
         on(Protocol.NEW_PRODUCER) { response: NewProducerResponse ->
             createReceiveTransportAndConsume(
@@ -144,10 +152,29 @@ class RoomSocketService @Inject constructor() : RoomService {
                 remoteProducerId = response.producerId
             )
         }
+        on(Protocol.PRODUCER_CLOSED) { response: ProducerClosedResponse ->
+            val transportWrapper = receiveTransportWrappers.find {
+                it.producerId == response.remoteProducerId
+            }
+            if (transportWrapper != null) {
+                transportWrapper.consumer.close()
+                val userId = transportWrapper.userId
+                val event = when (transportWrapper.consumer.kind) {
+                    MediaStreamTrack.VIDEO_TRACK_KIND -> StudyRoomEvent.OnCloseVideoConsumer(
+                        userId = userId
+                    )
+                    MediaStreamTrack.AUDIO_TRACK_KIND -> StudyRoomEvent.OnCloseAudioConsumer(
+                        userId = userId
+                    )
+                    else -> throw IllegalArgumentException()
+                }
+                eventFlow.tryEmit(event)
+            }
+        }
         on(Protocol.OTHER_PEER_DISCONNECTED) { response: OtherPeerDisconnectedResponse ->
             val disposedPeerId = response.disposedPeerId
             receiveTransportWrappers.removeAll { it.userId == disposedPeerId }
-            event.tryEmit(StudyRoomEvent.OnDisconnectPeer(disposedPeerId = disposedPeerId))
+            eventFlow.tryEmit(StudyRoomEvent.OnDisconnectPeer(disposedPeerId = disposedPeerId))
         }
     }
 
@@ -326,7 +353,12 @@ class RoomSocketService @Inject constructor() : RoomService {
                 )
                 receiveTransportWrappers.add(wrapper)
 
-                event.tryEmit(StudyRoomEvent.AddedConsumer(userId = userId, track = consumer.track))
+                eventFlow.tryEmit(
+                    StudyRoomEvent.AddedConsumer(
+                        userId = userId,
+                        track = consumer.track
+                    )
+                )
 
                 socket.emit(Protocol.CONSUME_RESUME, response.serverConsumerId)
             },

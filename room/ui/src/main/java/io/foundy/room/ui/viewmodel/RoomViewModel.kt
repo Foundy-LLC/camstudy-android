@@ -9,7 +9,8 @@ import io.foundy.room.data.model.StudyRoomEvent
 import io.foundy.room.data.model.WaitingRoomEvent
 import io.foundy.room.data.service.RoomService
 import io.foundy.room.ui.R
-import io.foundy.room.ui.peer.toUiState
+import io.foundy.room.ui.peer.merge
+import io.foundy.room.ui.peer.toInitialUiState
 import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
@@ -44,7 +45,7 @@ class RoomViewModel @Inject constructor(
             _currentUserId = currentUserId
         }
         viewModelScope.launch {
-            roomService.event.collect {
+            roomService.eventFlow.collect {
                 when (it) {
                     is WaitingRoomEvent -> handleWaitingRoomEvent(it)
                     is StudyRoomEvent -> handleStudyRoomEvent(it)
@@ -100,7 +101,9 @@ class RoomViewModel @Inject constructor(
             ).onSuccess {
                 reduce {
                     RoomUiState.StudyRoom(
-                        peerStates = it.peerStates.map { peerState -> peerState.toUiState() },
+                        peerStates = it.peerStates.map { peerState ->
+                            peerState.toInitialUiState()
+                        },
                         pomodoroTimer = it.timerProperty,
                         pomodoroTimerState = it.timerState
                     )
@@ -148,7 +151,7 @@ class RoomViewModel @Inject constructor(
                 if (existsState) {
                     val newPeerStates = uiState.peerStates.map { state ->
                         if (studyRoomEvent.state.uid == state.uid) {
-                            return@map studyRoomEvent.state.toUiState()
+                            return@map state.merge(studyRoomEvent.state)
                         }
                         return@map state
                     }
@@ -156,7 +159,8 @@ class RoomViewModel @Inject constructor(
                 } else {
                     reduce {
                         uiState.copy(
-                            peerStates = uiState.peerStates + studyRoomEvent.state.toUiState()
+                            peerStates = uiState.peerStates +
+                                studyRoomEvent.state.toInitialUiState()
                         )
                     }
                 }
@@ -179,6 +183,18 @@ class RoomViewModel @Inject constructor(
                     }
                 }
                 reduce { uiState.copy(peerStates = newPeerStates) }
+            }
+            is StudyRoomEvent.OnCloseVideoConsumer -> {
+                val newPeerStates = uiState.peerStates.map {
+                    if (it.uid == studyRoomEvent.userId) {
+                        return@map it.copy(videoTrack = null)
+                    }
+                    return@map it
+                }
+                reduce { uiState.copy(peerStates = newPeerStates) }
+            }
+            is StudyRoomEvent.OnCloseAudioConsumer -> {
+                // TODO: 구현하기
             }
             is StudyRoomEvent.OnDisconnectPeer -> {
                 val newPeerStates = uiState.peerStates.filter {
