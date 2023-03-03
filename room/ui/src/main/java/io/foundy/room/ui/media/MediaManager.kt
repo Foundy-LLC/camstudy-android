@@ -74,10 +74,6 @@ class MediaManager(
     private val _localVideoSinkFlow = MutableSharedFlow<VideoTrack?>(replay = 1)
     val localVideoTrackFlow: SharedFlow<VideoTrack?> = _localVideoSinkFlow
 
-    // used to send remote video track to the sender
-    private val _remoteVideoSinkFlow = MutableSharedFlow<VideoTrack>(replay = 1)
-    val remoteVideoTrackFlow: SharedFlow<VideoTrack> = _remoteVideoSinkFlow
-
     // getting front camera
     private val videoCapturer: VideoCapturer by lazy { buildCameraCapturer() }
     private val cameraManager by lazy { context.getSystemService<CameraManager>() }
@@ -252,9 +248,6 @@ class MediaManager(
 
     fun disconnect() {
         // dispose audio & video tracks.
-        for (videoTrack in remoteVideoTrackFlow.replayCache) {
-            videoTrack.dispose()
-        }
         for (videoTrack in localVideoTrackFlow.replayCache) {
             videoTrack?.dispose()
         }
