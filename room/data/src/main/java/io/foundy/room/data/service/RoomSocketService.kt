@@ -5,6 +5,7 @@ import io.foundy.room.data.BuildConfig
 import io.foundy.room.data.extension.emit
 import io.foundy.room.data.extension.emitWithPrimitiveCallBack
 import io.foundy.room.data.extension.on
+import io.foundy.room.data.extension.onPrimitiveCallback
 import io.foundy.room.data.extension.toJson
 import io.foundy.room.data.model.ConsumeErrorResponse
 import io.foundy.room.data.model.ConsumeResponse
@@ -44,7 +45,6 @@ import org.webrtc.VideoTrack
 import java.net.URI
 import javax.inject.Inject
 
-// TODO: 다른 피어가 마이크 끄는 경우 처리
 // TODO: 다른 피어가 헤드셋 끄는 경우 처리
 // TODO: 타이머 이벤트 처리 구현
 // TODO: 채팅 구현
@@ -147,6 +147,14 @@ class RoomSocketService @Inject constructor() : RoomService {
 
     override suspend fun closeVideoProducer() {
         socket.emit(Protocol.CLOSE_VIDEO_PRODUCER)
+    }
+
+    override suspend fun produceAudio(audioTrack: AudioTrack) {
+        sendTransport.produce({ logger.d { "Audio onTransportClose" } }, audioTrack, null, null)
+    }
+
+    override suspend fun closeAudioProducer() {
+        socket.emit(Protocol.CLOSE_AUDIO_PRODUCER)
     }
 
     private fun listenRoomEvents(currentUserId: String) = with(socket) {

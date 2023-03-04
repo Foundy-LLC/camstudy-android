@@ -43,13 +43,15 @@ val LocalMediaManager: ProvidableCompositionLocal<MediaManager> =
 @Composable
 fun rememberMediaManager(
     onToggleVideo: (track: VideoTrack?) -> Unit,
+    onToggleAudio: (track: AudioTrack?) -> Unit,
 ): MediaManager {
     val context = LocalContext.current
     return remember {
         MediaManager(
             context = context,
             peerConnectionFactory = PeerConnectionFactoryWrapper(context = context),
-            onToggleVideo = onToggleVideo
+            onToggleVideo = onToggleVideo,
+            onToggleAudio = onToggleAudio
         )
     }
 }
@@ -58,6 +60,7 @@ class MediaManager(
     private val context: Context,
     private val peerConnectionFactory: PeerConnectionFactoryWrapper,
     private val onToggleVideo: (track: VideoTrack?) -> Unit,
+    private val onToggleAudio: (track: AudioTrack?) -> Unit,
 ) {
     private val logger by taggedLogger("Call:LocalRoomSessionManager")
     private val managerScope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
@@ -125,12 +128,13 @@ class MediaManager(
         peerConnectionFactory.makeAudioSource(audioConstraints)
     }
 
-    val localAudioTrack: AudioTrack by lazy {
+    private val _localAudioTrack: AudioTrack by lazy {
         peerConnectionFactory.makeAudioTrack(
             source = audioSource,
             trackId = "Audio${UUID.randomUUID()}"
         )
     }
+    val localAudioTrack: AudioTrack? get() = if (enabledLocalAudio) _localAudioTrack else null
 
     fun onSessionScreenReady() {
         setupVideoTrack()
@@ -230,6 +234,7 @@ class MediaManager(
     fun toggleMicrophone(enabled: Boolean) {
         audioManager?.isMicrophoneMute = !enabled
         enabledLocalAudio = enabled
+        onToggleAudio(if (enabled) _localAudioTrack else null)
     }
 
     fun toggleVideo(enabled: Boolean) {
@@ -257,7 +262,7 @@ class MediaManager(
         for (videoTrack in localVideoTrackFlow.replayCache) {
             videoTrack?.dispose()
         }
-        localAudioTrack.dispose()
+        _localAudioTrack.dispose()
 
         // dispose audio handler and video capturer.
         audioHandler.stop()

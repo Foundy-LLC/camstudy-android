@@ -34,5 +34,9 @@ interface RoomService {
 
     suspend fun closeVideoProducer()
 
+    suspend fun produceAudio(audioTrack: AudioTrack)
+
+    suspend fun closeAudioProducer()
+
     fun disconnect()
 }

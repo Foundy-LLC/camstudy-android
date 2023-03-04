@@ -48,6 +48,14 @@ class FakeRoomService : RoomService {
         TODO("Not yet implemented")
     }
 
+    override suspend fun produceAudio(audioTrack: AudioTrack) {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun closeAudioProducer() {
+        TODO("Not yet implemented")
+    }
+
     override fun disconnect() {
         TODO("Not yet implemented")
     }

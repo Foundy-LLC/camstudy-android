@@ -64,8 +64,9 @@ fun RoomContent(
     navigator: DestinationsNavigator,
     viewModel: RoomViewModel = hiltViewModel(),
     mediaManager: MediaManager = rememberMediaManager(
-        onToggleVideo = viewModel::onToggleVideo
-    )
+        onToggleVideo = viewModel::onToggleVideo,
+        onToggleAudio = viewModel::onToggleAudio,
+    ),
 ) {
     val uiState = viewModel.collectAsState().value
     val context = LocalContext.current

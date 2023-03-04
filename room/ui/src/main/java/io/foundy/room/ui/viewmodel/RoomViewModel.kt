@@ -121,6 +121,17 @@ class RoomViewModel @Inject constructor(
         }
     }
 
+    fun onToggleAudio(audioTrack: AudioTrack?) = intent {
+        if (state !is RoomUiState.StudyRoom) {
+            return@intent
+        }
+        if (audioTrack != null) {
+            roomService.produceAudio(audioTrack)
+        } else {
+            roomService.closeAudioProducer()
+        }
+    }
+
     fun onToggleVideo(videoTrack: VideoTrack?) = intent {
         if (state !is RoomUiState.StudyRoom) {
             return@intent
