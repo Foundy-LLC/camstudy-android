@@ -36,6 +36,9 @@ android {
 
 dependencies {
 
+    // kotlinx datetime
+    implementation "org.jetbrains.kotlinx:kotlinx-datetime:$kotlin_datetime_version"
+
     // hilt
     implementation "com.google.dagger:hilt-android:$hilt_version"
     kapt "com.google.dagger:hilt-android-compiler:$hilt_version"

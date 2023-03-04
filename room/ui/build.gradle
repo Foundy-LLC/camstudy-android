@@ -48,10 +48,14 @@ android {
 dependencies {
     implementation project(path: ':room:data')
     implementation project(path: ':room:domain')
+    implementation project(path: ':core:common')
     implementation project(path: ':core:designsystem')
     implementation project(path: ':core:model')
     implementation project(path: ':auth:data')
     testImplementation project(path: ':core:test')
+
+    // kotlinx datetime
+    implementation "org.jetbrains.kotlinx:kotlinx-datetime:$kotlin_datetime_version"
 
     // permission
     implementation "com.google.accompanist:accompanist-permissions:$accompanist_permission_version"

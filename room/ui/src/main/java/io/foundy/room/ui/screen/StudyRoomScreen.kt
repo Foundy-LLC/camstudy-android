@@ -11,7 +11,9 @@ import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -23,12 +25,19 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
+import com.example.domain.PomodoroTimerState
+import io.foundy.core.common.util.WebRtcServerTimeZone
 import io.foundy.core.designsystem.icon.CamstudyIcons
 import io.foundy.room.ui.component.FloatingVideoRenderer
 import io.foundy.room.ui.component.ToggleIconButton
 import io.foundy.room.ui.component.VideoRenderer
 import io.foundy.room.ui.media.LocalMediaManager
 import io.foundy.room.ui.viewmodel.RoomUiState
+import kotlinx.coroutines.delay
+import kotlinx.datetime.Clock
+import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.toInstant
+import kotlinx.datetime.toLocalDateTime
 
 @Composable
 fun StudyRoomScreen(uiState: RoomUiState.StudyRoom) {
@@ -58,6 +67,12 @@ fun StudyRoomScreen(uiState: RoomUiState.StudyRoom) {
             LazyVerticalGrid(
                 columns = GridCells.Adaptive(minSize = 128.dp),
             ) {
+                item {
+                    PomodoroTimer(
+                        state = uiState.pomodoroTimerState,
+                        pomodoroTimerEventDate = uiState.pomodoroTimerEventDate
+                    )
+                }
                 items(uiState.peerStates, key = { it.uid }) { peerState ->
                     val videoSizeModifier = Modifier.size(width = 128.dp, height = 200.dp)
                     Surface(
@@ -92,3 +107,44 @@ fun StudyRoomScreen(uiState: RoomUiState.StudyRoom) {
         }
     }
 }
+
+@Composable
+private fun PomodoroTimer(
+    state: PomodoroTimerState,
+    pomodoroTimerEventDate: LocalDateTime?,
+) {
+    var elapsedTimeText by remember { mutableStateOf(pomodoroTimerEventDate.elapsedTimeText) }
+
+    if (state != PomodoroTimerState.STOPPED) {
+        LaunchedEffect(pomodoroTimerEventDate) {
+            while (true) {
+                delay(1_000)
+                elapsedTimeText = pomodoroTimerEventDate.elapsedTimeText
+            }
+        }
+    }
+    val color = when (state) {
+        PomodoroTimerState.STOPPED -> MaterialTheme.colorScheme.onBackground
+        PomodoroTimerState.STARTED -> MaterialTheme.colorScheme.error
+        PomodoroTimerState.SHORT_BREAK -> MaterialTheme.colorScheme.primary
+        PomodoroTimerState.LONG_BREAK -> MaterialTheme.colorScheme.secondary
+    }
+    Text(
+        text = elapsedTimeText,
+        color = color
+    )
+}
+
+private val LocalDateTime?.elapsedTimeText: String
+    get() {
+        if (this == null) {
+            return "00:00"
+        }
+        val currentTime = Clock.System.now().toLocalDateTime(WebRtcServerTimeZone)
+        val instantDiff = currentTime.toInstant(WebRtcServerTimeZone) -
+            this.toInstant(WebRtcServerTimeZone)
+        val diffWholeSeconds = instantDiff.inWholeSeconds
+        val minutes = diffWholeSeconds / 60
+        val seconds = diffWholeSeconds % 60
+        return "%02d:%02d".format(minutes, seconds)
+    }

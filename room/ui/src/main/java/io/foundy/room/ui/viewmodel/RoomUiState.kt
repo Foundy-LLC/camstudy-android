@@ -6,6 +6,7 @@ import com.example.domain.PomodoroTimerState
 import io.foundy.room.data.model.WaitingRoomData
 import io.foundy.room.ui.R
 import io.foundy.room.ui.peer.PeerUiState
+import kotlinx.datetime.LocalDateTime
 import org.webrtc.AudioTrack
 import org.webrtc.VideoTrack
 
@@ -65,6 +66,7 @@ sealed class RoomUiState {
 
     data class StudyRoom(
         val peerStates: List<PeerUiState>,
+        val pomodoroTimerEventDate: LocalDateTime?,
         val pomodoroTimer: PomodoroTimerProperty,
         val pomodoroTimerState: PomodoroTimerState
     ) : RoomUiState()

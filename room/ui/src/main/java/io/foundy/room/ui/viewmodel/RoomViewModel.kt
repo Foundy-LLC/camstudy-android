@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.foundy.auth.data.repository.AuthRepository
+import io.foundy.core.common.util.WebRtcServerTimeZone
 import io.foundy.core.model.constant.RoomConstants
 import io.foundy.room.data.model.StudyRoomEvent
 import io.foundy.room.data.model.WaitingRoomEvent
@@ -14,6 +15,8 @@ import io.foundy.room.ui.peer.toInitialUiState
 import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import kotlinx.datetime.Clock
+import kotlinx.datetime.toLocalDateTime
 import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.syntax.simple.intent
@@ -104,6 +107,7 @@ class RoomViewModel @Inject constructor(
                         peerStates = it.peerStates.map { peerState ->
                             peerState.toInitialUiState()
                         },
+                        pomodoroTimerEventDate = it.timerStartedDateTime,
                         pomodoroTimer = it.timerProperty,
                         pomodoroTimerState = it.timerState
                     )
@@ -217,6 +221,17 @@ class RoomViewModel @Inject constructor(
             }
             is StudyRoomEvent.OnCloseAudioConsumer -> {
                 // TODO: 구현하기
+            }
+            is StudyRoomEvent.Timer -> {
+                reduce {
+                    uiState.copy(
+                        // TODO: 여기서 새로 시간이 갱신이 안되는 중 ㅅㅂ...
+                        pomodoroTimerEventDate = Clock.System.now().toLocalDateTime(
+                            WebRtcServerTimeZone
+                        ),
+                        pomodoroTimerState = studyRoomEvent.state
+                    )
+                }
             }
             is StudyRoomEvent.OnDisconnectPeer -> {
                 val newPeerStates = uiState.peerStates.filter {

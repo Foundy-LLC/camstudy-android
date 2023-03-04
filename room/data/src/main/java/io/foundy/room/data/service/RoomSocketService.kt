@@ -1,6 +1,7 @@
 package io.foundy.room.data.service
 
 import com.example.domain.PeerState
+import com.example.domain.PomodoroTimerState
 import io.foundy.room.data.BuildConfig
 import io.foundy.room.data.extension.emit
 import io.foundy.room.data.extension.emitWithPrimitiveCallBack
@@ -46,7 +47,6 @@ import java.net.URI
 import javax.inject.Inject
 
 // TODO: 다른 피어가 헤드셋 끄는 경우 처리
-// TODO: 타이머 이벤트 처리 구현
 // TODO: 채팅 구현
 @OptIn(ExperimentalCoroutinesApi::class)
 class RoomSocketService @Inject constructor() : RoomService {
@@ -188,6 +188,15 @@ class RoomSocketService @Inject constructor() : RoomService {
                 }
                 eventFlow.tryEmit(event)
             }
+        }
+        on(Protocol.START_TIMER) {
+            eventFlow.tryEmit(StudyRoomEvent.Timer(state = PomodoroTimerState.STARTED))
+        }
+        on(Protocol.START_SHORT_BREAK) {
+            eventFlow.tryEmit(StudyRoomEvent.Timer(state = PomodoroTimerState.SHORT_BREAK))
+        }
+        on(Protocol.START_LONG_BREAK) {
+            eventFlow.tryEmit(StudyRoomEvent.Timer(state = PomodoroTimerState.LONG_BREAK))
         }
         on(Protocol.OTHER_PEER_DISCONNECTED) { response: OtherPeerDisconnectedResponse ->
             val disposedPeerId = response.disposedPeerId

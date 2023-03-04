@@ -2,7 +2,7 @@ package io.foundy.room.data.model
 
 internal object Protocol {
 
-    const val IP_ADDRESS = "192.168.35.113" // 10.0.0.2
+    const val IP_ADDRESS = "10.0.2.2" // 10.0.2.2
 
     const val PORT_NUMBER = "2000"
 

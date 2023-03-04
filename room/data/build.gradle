@@ -36,10 +36,11 @@ android {
 }
 
 dependencies {
+    implementation project(path: ':core:common')
     implementation project(path: ':room:domain')
 
     // kotlinx datetime
-    implementation "org.jetbrains.kotlinx:kotlinx-datetime:0.3.2"
+    implementation "org.jetbrains.kotlinx:kotlinx-datetime:$kotlin_datetime_version"
 
     // kotlinx serialization
     implementation "org.jetbrains.kotlinx:kotlinx-serialization-json:$serialization_version"
