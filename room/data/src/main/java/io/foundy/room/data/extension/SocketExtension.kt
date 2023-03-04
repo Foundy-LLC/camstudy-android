@@ -60,3 +60,14 @@ inline fun <reified T> Socket.on(event: String, crossinline callback: (T) -> Uni
     }
     this.on(event, listener)
 }
+
+inline fun <reified T> Socket.onPrimitiveCallback(
+    event: String,
+    crossinline callback: (T) -> Unit
+) {
+    val listener = Listener { args ->
+        val paredObject = args[0] as T
+        callback(paredObject)
+    }
+    this.on(event, listener)
+}

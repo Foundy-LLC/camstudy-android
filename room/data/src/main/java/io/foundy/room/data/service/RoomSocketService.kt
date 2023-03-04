@@ -95,7 +95,7 @@ class RoomSocketService @Inject constructor() : RoomService {
                 logger.d { "Joined other peer in room: $joiner" }
                 eventFlow.tryEmit(WaitingRoomEvent.OtherPeerJoined(joiner = joiner))
             }
-            on(Protocol.OTHER_PEER_EXITED_ROOM) { userId: String ->
+            onPrimitiveCallback(Protocol.OTHER_PEER_EXITED_ROOM) { userId: String ->
                 logger.d { "Exited other peer from room: $userId" }
                 eventFlow.tryEmit(WaitingRoomEvent.OtherPeerExited(userId = userId))
             }
