@@ -390,7 +390,7 @@ class RoomSocketService @Inject constructor() : RoomService {
     }
 
     companion object {
-        private const val URL = "http://10.0.2.2:2000"
+        private const val URL = "http://${Protocol.IP_ADDRESS}:${Protocol.PORT_NUMBER}"
 
         private val TimeOutMilli = if (BuildConfig.DEBUG) 20_000L else 5_000L
 

@@ -18,7 +18,7 @@ import javax.inject.Singleton
 class RetrofitModule {
 
     companion object {
-        private const val BASE_URL = "http://10.0.2.2:3000/api/"
+        private const val BASE_URL = "http://192.168.35.113:3000/api/" // 10.0.2.2
     }
 
     @Provides
