@@ -122,6 +122,9 @@ class RoomViewModel @Inject constructor(
     }
 
     fun onToggleVideo(videoTrack: VideoTrack?) = intent {
+        if (state !is RoomUiState.StudyRoom) {
+            return@intent
+        }
         if (videoTrack != null) {
             roomService.produceVideo(videoTrack)
         } else {

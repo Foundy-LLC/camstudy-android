@@ -238,11 +238,17 @@ class MediaManager(
             videoCapturer.startCapture(resolution.width, resolution.height, 30)
             setupVideoTrack()
             onToggleVideo(localVideoTrack!!)
+            managerScope.launch {
+                _localVideoSinkFlow.emit(localVideoTrack)
+            }
         } else {
             enabledLocalVideo = false
             videoCapturer.stopCapture()
             clearVideoTrack()
             onToggleVideo(null)
+            managerScope.launch {
+                _localVideoSinkFlow.emit(null)
+            }
         }
     }
 
