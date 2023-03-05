@@ -4,7 +4,6 @@ import com.example.domain.PeerState
 import com.example.domain.PomodoroTimerState
 import io.foundy.room.data.BuildConfig
 import io.foundy.room.data.extension.emit
-import io.foundy.room.data.extension.emitWithPrimitiveCallBack
 import io.foundy.room.data.extension.on
 import io.foundy.room.data.extension.onPrimitiveCallback
 import io.foundy.room.data.extension.toJson
@@ -59,8 +58,6 @@ class RoomSocketService @Inject constructor() : RoomService {
 
     private var _device: Device? = null
     private val device: Device get() = requireNotNull(_device)
-
-    private var didGetInitProducers = false
 
     private var _sendTransport: SendTransport? = null
     private val sendTransport: SendTransport get() = requireNotNull(_sendTransport)
@@ -129,6 +126,7 @@ class RoomSocketService @Inject constructor() : RoomService {
                 _device = Device().apply { load(response.rtpCapabilities.toString()) }
                 createSendTransport(localVideo, localAudio)
                 listenRoomEvents(currentUserId = userId)
+                getRemoteProducersAndCreateReceiveTransport()
                 val responseThatFilteredCurrentUser = response.copy(
                     peerStates = response.peerStates.filter { it.uid != userId }
                 )
@@ -261,7 +259,7 @@ class RoomSocketService @Inject constructor() : RoomService {
             rtpParameters: String,
             appData: String
         ): String {
-            socket.emitWithPrimitiveCallBack(
+            socket.emit(
                 Protocol.TRANSPORT_PRODUCER,
                 JSONObject(
                     mapOf(
@@ -270,12 +268,7 @@ class RoomSocketService @Inject constructor() : RoomService {
                         "appData" to JSONObject(appData)
                     )
                 )
-            ) { _: String, producersExists: Boolean ->
-                if (!didGetInitProducers && producersExists) {
-                    didGetInitProducers = true
-                    getRemoteProducersAndCreateReceiveTransport()
-                }
-            }
+            )
             return transport.id
         }
     }
