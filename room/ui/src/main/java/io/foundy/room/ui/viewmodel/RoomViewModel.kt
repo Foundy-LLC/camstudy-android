@@ -2,6 +2,7 @@ package io.foundy.room.ui.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.domain.PeerState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.foundy.auth.data.repository.AuthRepository
 import io.foundy.core.common.util.WebRtcServerTimeZone
@@ -104,9 +105,7 @@ class RoomViewModel @Inject constructor(
             ).onSuccess {
                 reduce {
                     RoomUiState.StudyRoom(
-                        peerStates = it.peerStates.map { peerState ->
-                            peerState.toInitialUiState()
-                        },
+                        peerStates = it.peerStates.map(PeerState::toInitialUiState),
                         pomodoroTimerEventDate = it.timerStartedDateTime,
                         pomodoroTimer = it.timerProperty,
                         pomodoroTimerState = it.timerState
