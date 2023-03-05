@@ -27,11 +27,13 @@ import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import com.example.domain.PomodoroTimerState
 import io.foundy.core.common.util.WebRtcServerTimeZone
+import io.foundy.core.designsystem.icon.CamstudyIcon
 import io.foundy.core.designsystem.icon.CamstudyIcons
 import io.foundy.room.ui.component.FloatingVideoRenderer
 import io.foundy.room.ui.component.ToggleIconButton
 import io.foundy.room.ui.component.VideoRenderer
 import io.foundy.room.ui.media.LocalMediaManager
+import io.foundy.room.ui.peer.PeerUiState
 import io.foundy.room.ui.viewmodel.RoomUiState
 import kotlinx.coroutines.delay
 import kotlinx.datetime.Clock
@@ -74,20 +76,7 @@ fun StudyRoomScreen(uiState: RoomUiState.StudyRoom) {
                     )
                 }
                 items(uiState.peerStates, key = { it.uid }) { peerState ->
-                    val videoSizeModifier = Modifier.size(width = 128.dp, height = 200.dp)
-                    Surface(
-                        modifier = videoSizeModifier,
-                        color = MaterialTheme.colorScheme.onBackground
-                    ) {
-                        if (peerState.videoTrack != null) {
-                            // TODO: 오디오 처리하기
-                            VideoRenderer(
-                                modifier = videoSizeModifier,
-                                eglBaseContext = mediaManager.eglBaseContext,
-                                videoTrack = peerState.videoTrack
-                            )
-                        }
-                    }
+                    RemotePeer(peerState = peerState)
                 }
             }
             Row {
@@ -102,6 +91,41 @@ fun StudyRoomScreen(uiState: RoomUiState.StudyRoom) {
                     enabledIcon = CamstudyIcons.Mic,
                     disabledIcon = CamstudyIcons.MicOff,
                     onClick = mediaManager::toggleMicrophone
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun RemotePeer(peerState: PeerUiState) {
+    val mediaManager = LocalMediaManager.current
+    val videoSizeModifier = Modifier.size(width = 128.dp, height = 200.dp)
+
+    Surface(
+        modifier = videoSizeModifier,
+        color = MaterialTheme.colorScheme.onBackground
+    ) {
+        if (peerState.videoTrack != null) {
+            VideoRenderer(
+                modifier = videoSizeModifier,
+                eglBaseContext = mediaManager.eglBaseContext,
+                videoTrack = peerState.videoTrack
+            )
+        }
+        Row {
+            if (!peerState.enabledMicrophone) {
+                CamstudyIcon(
+                    icon = CamstudyIcons.MicOff,
+                    tint = MaterialTheme.colorScheme.background,
+                    contentDescription = null
+                )
+            }
+            if (!peerState.enabledHeadset) {
+                CamstudyIcon(
+                    icon = CamstudyIcons.HeadsetOff,
+                    tint = MaterialTheme.colorScheme.background,
+                    contentDescription = null
                 )
             }
         }
