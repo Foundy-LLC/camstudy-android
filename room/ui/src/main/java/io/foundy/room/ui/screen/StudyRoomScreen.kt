@@ -30,7 +30,7 @@ import io.foundy.core.common.util.WebRtcServerTimeZone
 import io.foundy.core.designsystem.icon.CamstudyIcon
 import io.foundy.core.designsystem.icon.CamstudyIcons
 import io.foundy.room.ui.component.FloatingVideoRenderer
-import io.foundy.room.ui.component.ToggleIconButton
+import io.foundy.room.ui.component.MediaController
 import io.foundy.room.ui.component.VideoRenderer
 import io.foundy.room.ui.media.LocalMediaManager
 import io.foundy.room.ui.peer.PeerUiState
@@ -46,6 +46,7 @@ fun StudyRoomScreen(uiState: RoomUiState.StudyRoom) {
     val mediaManager = LocalMediaManager.current
     val enabledLocalVideo = mediaManager.enabledLocalVideo
     val enabledLocalAudio = mediaManager.enabledLocalAudio
+    val enabledLocalHeadset = mediaManager.enabledLocalHeadset
     val localVideoTrack = mediaManager.localVideoTrackFlow.collectAsState(initial = null).value
     var parentBounds: IntSize by remember { mutableStateOf(IntSize(0, 0)) }
 
@@ -79,20 +80,14 @@ fun StudyRoomScreen(uiState: RoomUiState.StudyRoom) {
                     RemotePeer(peerState = peerState)
                 }
             }
-            Row {
-                ToggleIconButton(
-                    enabled = enabledLocalVideo,
-                    enabledIcon = CamstudyIcons.VideoCam,
-                    disabledIcon = CamstudyIcons.VideoCamOff,
-                    onClick = mediaManager::toggleVideo
-                )
-                ToggleIconButton(
-                    enabled = enabledLocalAudio,
-                    enabledIcon = CamstudyIcons.Mic,
-                    disabledIcon = CamstudyIcons.MicOff,
-                    onClick = mediaManager::toggleMicrophone
-                )
-            }
+            MediaController(
+                enabledLocalVideo = enabledLocalVideo,
+                enabledLocalAudio = enabledLocalAudio,
+                enabledLocalHeadset = enabledLocalHeadset,
+                onToggleVideo = mediaManager::toggleVideo,
+                onToggleAudio = mediaManager::toggleMicrophone,
+                onToggleHeadset = mediaManager::toggleHeadset,
+            )
         }
     }
 }

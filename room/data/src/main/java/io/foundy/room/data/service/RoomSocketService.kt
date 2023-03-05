@@ -45,8 +45,8 @@ import org.webrtc.VideoTrack
 import java.net.URI
 import javax.inject.Inject
 
-// TODO: 다른 피어가 헤드셋 끄는 경우 처리
 // TODO: 채팅 구현
+// TODO: 뽀모도로 시작 기능 구현
 @OptIn(ExperimentalCoroutinesApi::class)
 class RoomSocketService @Inject constructor() : RoomService {
 
@@ -63,6 +63,8 @@ class RoomSocketService @Inject constructor() : RoomService {
     private val sendTransport: SendTransport get() = requireNotNull(_sendTransport)
 
     private val receiveTransportWrappers: MutableList<ReceiveTransportWrapper> = mutableListOf()
+
+    private var mutedHeadset: Boolean = false
 
     override suspend fun connect() = suspendCoroutineWithTimeout { continuation ->
         socket.run {
@@ -116,8 +118,7 @@ class RoomSocketService @Inject constructor() : RoomService {
             arg = JSONObject(
                 JoinRoomRequest(
                     userId = userId,
-                    // TODO: 음소거 기능 구현되면 초기값 전달하도록 수정하기
-                    mutedHeadset = false,
+                    mutedHeadset = mutedHeadset,
                     roomPasswordInput = password
                 ).toJson()
             ),
@@ -153,6 +154,34 @@ class RoomSocketService @Inject constructor() : RoomService {
 
     override suspend fun closeAudioProducer() {
         socket.emit(Protocol.CLOSE_AUDIO_PRODUCER)
+    }
+
+    override suspend fun muteHeadset() {
+        mutedHeadset = true
+        receiveTransportWrappers.removeAll { wrapper ->
+            if (wrapper.consumer.kind == MediaStreamTrack.AUDIO_TRACK_KIND) {
+                wrapper.consumer.close()
+                return@removeAll true
+            }
+            return@removeAll false
+        }
+        socket.emit(Protocol.MUTE_HEADSET)
+    }
+
+    override suspend fun unmuteHeadset() {
+        mutedHeadset = false
+        socket.emit(Protocol.UNMUTE_HEADSET) { userAndProducerIds: List<UserAndProducerId> ->
+            // 대기실에서는 소비자 생성을 수행하지 않는다.
+            if (_device == null) {
+                return@emit
+            }
+            for (userAndProducerId in userAndProducerIds) {
+                createReceiveTransportAndConsume(
+                    userId = userAndProducerId.userId,
+                    remoteProducerId = userAndProducerId.producerId
+                )
+            }
+        }
     }
 
     private fun listenRoomEvents(currentUserId: String) = with(socket) {
@@ -355,6 +384,10 @@ class RoomSocketService @Inject constructor() : RoomService {
             ),
             onSuccess = { response: ConsumeResponse ->
                 logger.d { "Success to consume from server: ${response.id}" }
+                if (response.kind == MediaStreamTrack.AUDIO_TRACK_KIND && mutedHeadset) {
+                    return@emit
+                }
+
                 val consumer: Consumer = receiveTransport.consume(
                     { logger.d { "RecvTransport.onTransportClose" } },
                     response.id,

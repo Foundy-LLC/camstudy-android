@@ -44,6 +44,7 @@ val LocalMediaManager: ProvidableCompositionLocal<MediaManager> =
 fun rememberMediaManager(
     onToggleVideo: (track: VideoTrack?) -> Unit,
     onToggleAudio: (track: AudioTrack?) -> Unit,
+    onToggleHeadset: (Boolean) -> Unit,
 ): MediaManager {
     val context = LocalContext.current
     return remember {
@@ -51,7 +52,8 @@ fun rememberMediaManager(
             context = context,
             peerConnectionFactory = PeerConnectionFactoryWrapper(context = context),
             onToggleVideo = onToggleVideo,
-            onToggleAudio = onToggleAudio
+            onToggleAudio = onToggleAudio,
+            onToggleHeadset = onToggleHeadset,
         )
     }
 }
@@ -61,6 +63,7 @@ class MediaManager(
     private val peerConnectionFactory: PeerConnectionFactoryWrapper,
     private val onToggleVideo: (track: VideoTrack?) -> Unit,
     private val onToggleAudio: (track: AudioTrack?) -> Unit,
+    private val onToggleHeadset: (Boolean) -> Unit,
 ) {
     private val logger by taggedLogger("Call:LocalRoomSessionManager")
     private val managerScope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
@@ -71,6 +74,9 @@ class MediaManager(
         private set
 
     var enabledLocalAudio by mutableStateOf(false)
+        private set
+
+    var enabledLocalHeadset by mutableStateOf(false)
         private set
 
     // used to send local video track to the fragment
@@ -143,6 +149,7 @@ class MediaManager(
             // sending local video track to show local video from start
             _localVideoSinkFlow.emit(localVideoTrack)
             enabledLocalVideo = true
+            enabledLocalHeadset = true
         }
     }
 
@@ -232,6 +239,9 @@ class MediaManager(
     }
 
     fun toggleMicrophone(enabled: Boolean) {
+        if (enabled && !enabledLocalHeadset) {
+            toggleHeadset(enabled = true)
+        }
         audioManager?.isMicrophoneMute = !enabled
         enabledLocalAudio = enabled
         onToggleAudio(if (enabled) _localAudioTrack else null)
@@ -255,6 +265,14 @@ class MediaManager(
                 _localVideoSinkFlow.emit(null)
             }
         }
+    }
+
+    fun toggleHeadset(enabled: Boolean) {
+        if (!enabled && enabledLocalAudio) {
+            toggleMicrophone(enabled = false)
+        }
+        enabledLocalHeadset = enabled
+        onToggleHeadset(enabled)
     }
 
     fun disconnect() {

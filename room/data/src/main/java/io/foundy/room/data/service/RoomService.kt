@@ -38,5 +38,9 @@ interface RoomService {
 
     suspend fun closeAudioProducer()
 
+    suspend fun muteHeadset()
+
+    suspend fun unmuteHeadset()
+
     fun disconnect()
 }

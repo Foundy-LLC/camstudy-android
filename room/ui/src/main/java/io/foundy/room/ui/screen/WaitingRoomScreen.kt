@@ -2,7 +2,6 @@ package io.foundy.room.ui.screen
 
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
@@ -20,8 +19,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.PasswordVisualTransformation
-import io.foundy.core.designsystem.icon.CamstudyIcons
-import io.foundy.room.ui.component.ToggleIconButton
+import io.foundy.room.ui.component.MediaController
 import io.foundy.room.ui.component.VideoRenderer
 import io.foundy.room.ui.media.LocalMediaManager
 import io.foundy.room.ui.viewmodel.RoomUiState
@@ -35,6 +33,7 @@ fun WaitingRoomScreen(
     val mediaManager = LocalMediaManager.current
     val enabledLocalVideo = mediaManager.enabledLocalVideo
     val enabledLocalAudio = mediaManager.enabledLocalAudio
+    val enabledLocalHeadset = mediaManager.enabledLocalHeadset
     val localVideoTrack = mediaManager.localVideoTrackFlow.collectAsState(initial = null).value
 
     BoxWithConstraints(
@@ -67,20 +66,14 @@ fun WaitingRoomScreen(
                     )
                 }
             }
-            Row {
-                ToggleIconButton(
-                    enabled = enabledLocalVideo,
-                    enabledIcon = CamstudyIcons.VideoCam,
-                    disabledIcon = CamstudyIcons.VideoCamOff,
-                    onClick = mediaManager::toggleVideo
-                )
-                ToggleIconButton(
-                    enabled = enabledLocalAudio,
-                    enabledIcon = CamstudyIcons.Mic,
-                    disabledIcon = CamstudyIcons.MicOff,
-                    onClick = mediaManager::toggleMicrophone
-                )
-            }
+            MediaController(
+                enabledLocalVideo = enabledLocalVideo,
+                enabledLocalAudio = enabledLocalAudio,
+                enabledLocalHeadset = enabledLocalHeadset,
+                onToggleVideo = mediaManager::toggleVideo,
+                onToggleAudio = mediaManager::toggleMicrophone,
+                onToggleHeadset = mediaManager::toggleHeadset,
+            )
 
             Text(text = uiState.toString())
             uiState.cannotJoinMessage?.let { Text(text = stringResource(id = it)) }

@@ -66,6 +66,7 @@ fun RoomContent(
     mediaManager: MediaManager = rememberMediaManager(
         onToggleVideo = viewModel::onToggleVideo,
         onToggleAudio = viewModel::onToggleAudio,
+        onToggleHeadset = viewModel::onToggleHeadset,
     ),
 ) {
     val uiState = viewModel.collectAsState().value

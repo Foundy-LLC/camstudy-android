@@ -146,6 +146,14 @@ class RoomViewModel @Inject constructor(
         }
     }
 
+    fun onToggleHeadset(enabled: Boolean) = intent {
+        if (enabled) {
+            roomService.unmuteHeadset()
+        } else {
+            roomService.muteHeadset()
+        }
+    }
+
     private fun handleWaitingRoomEvent(waitingRoomEvent: WaitingRoomEvent) = intent {
         val uiState = state
         check(uiState is RoomUiState.WaitingRoom.Connected)
@@ -224,7 +232,6 @@ class RoomViewModel @Inject constructor(
             is StudyRoomEvent.Timer -> {
                 reduce {
                     uiState.copy(
-                        // TODO: 여기서 새로 시간이 갱신이 안되는 중 ㅅㅂ...
                         pomodoroTimerEventDate = Clock.System.now().toLocalDateTime(
                             WebRtcServerTimeZone
                         ),
