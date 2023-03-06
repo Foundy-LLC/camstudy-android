@@ -184,6 +184,10 @@ class RoomSocketService @Inject constructor() : RoomService {
         }
     }
 
+    override suspend fun startPomodoroTimer() {
+        socket.emit(Protocol.START_TIMER)
+    }
+
     private fun listenRoomEvents(currentUserId: String) = with(socket) {
         on(Protocol.PEER_STATE_CHANGED) { state: PeerState ->
             if (state.uid == currentUserId) {

@@ -42,5 +42,7 @@ interface RoomService {
 
     suspend fun unmuteHeadset()
 
+    suspend fun startPomodoroTimer()
+
     fun disconnect()
 }

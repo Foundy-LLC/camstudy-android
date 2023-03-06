@@ -64,6 +64,10 @@ class FakeRoomService : RoomService {
         TODO("Not yet implemented")
     }
 
+    override suspend fun startPomodoroTimer() {
+        TODO("Not yet implemented")
+    }
+
     override fun disconnect() {
         TODO("Not yet implemented")
     }

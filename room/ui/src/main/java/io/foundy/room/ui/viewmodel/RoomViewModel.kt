@@ -108,7 +108,8 @@ class RoomViewModel @Inject constructor(
                         peerStates = it.peerStates.map(PeerState::toInitialUiState),
                         pomodoroTimerEventDate = it.timerStartedDateTime,
                         pomodoroTimer = it.timerProperty,
-                        pomodoroTimerState = it.timerState
+                        pomodoroTimerState = it.timerState,
+                        onStartPomodoroClick = ::startPomodoroTimer
                     )
                 }
             }.onFailure {
@@ -152,6 +153,10 @@ class RoomViewModel @Inject constructor(
         } else {
             roomService.muteHeadset()
         }
+    }
+
+    private fun startPomodoroTimer() = intent {
+        roomService.startPomodoroTimer()
     }
 
     private fun handleWaitingRoomEvent(waitingRoomEvent: WaitingRoomEvent) = intent {

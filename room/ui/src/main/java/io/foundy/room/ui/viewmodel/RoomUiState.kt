@@ -68,6 +68,7 @@ sealed class RoomUiState {
         val peerStates: List<PeerUiState>,
         val pomodoroTimerEventDate: LocalDateTime?,
         val pomodoroTimer: PomodoroTimerProperty,
-        val pomodoroTimerState: PomodoroTimerState
+        val pomodoroTimerState: PomodoroTimerState,
+        val onStartPomodoroClick: () -> Unit,
     ) : RoomUiState()
 }

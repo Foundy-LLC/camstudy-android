@@ -9,6 +9,7 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -67,15 +68,18 @@ fun StudyRoomScreen(uiState: RoomUiState.StudyRoom) {
             )
         }
         Column {
+            PomodoroTimer(
+                state = uiState.pomodoroTimerState,
+                pomodoroTimerEventDate = uiState.pomodoroTimerEventDate
+            )
+            if (uiState.pomodoroTimerState == PomodoroTimerState.STOPPED) {
+                PomodoroTimerStartButton(
+                    onStartClick = uiState.onStartPomodoroClick
+                )
+            }
             LazyVerticalGrid(
                 columns = GridCells.Adaptive(minSize = 128.dp),
             ) {
-                item {
-                    PomodoroTimer(
-                        state = uiState.pomodoroTimerState,
-                        pomodoroTimerEventDate = uiState.pomodoroTimerEventDate
-                    )
-                }
                 items(uiState.peerStates, key = { it.uid }) { peerState ->
                     RemotePeer(peerState = peerState)
                 }
@@ -152,6 +156,15 @@ private fun PomodoroTimer(
         text = elapsedTimeText,
         color = color
     )
+}
+
+@Composable
+fun PomodoroTimerStartButton(
+    onStartClick: () -> Unit
+) {
+    Button(onClick = onStartClick) {
+        Text(text = "시작")
+    }
 }
 
 private val LocalDateTime?.elapsedTimeText: String
