@@ -22,6 +22,7 @@ sealed class RoomUiState {
             val currentUserId: String,
             val data: WaitingRoomData,
             val passwordInput: String = "",
+            val joining: Boolean = false,
             val onPasswordChange: (String) -> Unit,
             val onJoinClick: (
                 localVideo: VideoTrack?,
@@ -34,7 +35,23 @@ sealed class RoomUiState {
             val isCurrentUserBlocked: Boolean get() = data.blacklist.contains(currentUserId)
         }
 
-        val enableJoinButton: Boolean get() = cannotJoinMessage == null
+        val enableJoinButton: Boolean
+            get() {
+                val hasErrorMessage = cannotJoinMessage != null
+                if (this is Connected) {
+                    return !hasErrorMessage && !joining
+                }
+                return !hasErrorMessage
+            }
+
+        @get:StringRes
+        val joinButtonTextRes: Int
+            get() {
+                if (this is Connected && joining) {
+                    return R.string.joining
+                }
+                return R.string.join
+            }
 
         @get:StringRes
         val cannotJoinMessage: Int?

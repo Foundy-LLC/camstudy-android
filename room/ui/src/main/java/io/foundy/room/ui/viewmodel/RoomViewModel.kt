@@ -96,7 +96,10 @@ class RoomViewModel @Inject constructor(
         localAudio: AudioTrack?,
         password: String
     ) = intent {
+        val uiState = state
+        check(uiState is RoomUiState.WaitingRoom.Connected)
         try {
+            reduce { uiState.copy(joining = true) }
             roomService.joinToStudyRoom(
                 localVideo = localVideo,
                 localAudio = localAudio,
@@ -119,6 +122,7 @@ class RoomViewModel @Inject constructor(
                         defaultContentRes = R.string.failed_to_join_study_room
                     )
                 )
+                reduce { uiState.copy(joining = false) }
             }
         } catch (e: TimeoutCancellationException) {
             reduce { RoomUiState.WaitingRoom.FailedToConnect(R.string.timeout_to_join_study_room) }

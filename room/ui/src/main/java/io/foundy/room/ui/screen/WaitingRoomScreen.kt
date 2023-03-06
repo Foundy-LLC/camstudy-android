@@ -98,7 +98,7 @@ fun WaitingRoomScreen(
                     }
                 },
             ) {
-                Text(text = "입장")
+                Text(text = stringResource(id = uiState.joinButtonTextRes))
             }
         }
     }

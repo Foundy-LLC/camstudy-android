@@ -9,4 +9,6 @@
     <string name="timeout_to_join_study_room">시간초과가 발생하여 공부방 입장을 실패했습니다.</string>
     <string name="failed_to_join_study_room">공부방 입장을 실패했습니다.</string>
     <string name="already_joined">이미 접속한 방입니다.</string>
+    <string name="joining">입장중...</string>
+    <string name="join">입장</string>
 </resources>
