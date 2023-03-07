@@ -12,4 +12,7 @@ java {
 dependencies {
     // kotlinx serialization
     implementation "org.jetbrains.kotlinx:kotlinx-serialization-json:$serialization_version"
+
+    // kotlinx datetime
+    implementation "org.jetbrains.kotlinx:kotlinx-datetime:$kotlin_datetime_version"
 }

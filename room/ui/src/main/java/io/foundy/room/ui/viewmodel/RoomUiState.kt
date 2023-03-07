@@ -1,6 +1,7 @@
 package io.foundy.room.ui.viewmodel
 
 import androidx.annotation.StringRes
+import com.example.domain.ChatMessage
 import com.example.domain.PomodoroTimerProperty
 import com.example.domain.PomodoroTimerState
 import io.foundy.room.data.model.WaitingRoomData
@@ -83,6 +84,13 @@ sealed class RoomUiState {
 
     data class StudyRoom(
         val peerStates: List<PeerUiState>,
+
+        // Chatting
+        val chatMessageInput: String = "",
+        val onSendChatClick: (String) -> Unit,
+        val chatMessages: List<ChatMessage> = emptyList(),
+
+        // Pomodoro Timer
         val pomodoroTimerEventDate: LocalDateTime?,
         val pomodoroTimer: PomodoroTimerProperty,
         val pomodoroTimerState: PomodoroTimerState,

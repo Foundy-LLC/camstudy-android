@@ -81,6 +81,11 @@ fun RoomContent(
                     it.content ?: context.getString(it.defaultContentRes)
                 )
             }
+            is RoomSideEffect.OnChatMessage -> coroutineScope.launch {
+                snackbarHostState.showSnackbar(
+                    "${it.message.authorName}: ${it.message.content}"
+                )
+            }
         }
     }
 

@@ -3,9 +3,9 @@ package io.foundy.room.ui.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.domain.PeerState
+import com.example.domain.WebRtcServerTimeZone
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.foundy.auth.data.repository.AuthRepository
-import io.foundy.core.common.util.WebRtcServerTimeZone
 import io.foundy.core.model.constant.RoomConstants
 import io.foundy.room.data.model.StudyRoomEvent
 import io.foundy.room.data.model.WaitingRoomEvent
@@ -112,7 +112,8 @@ class RoomViewModel @Inject constructor(
                         pomodoroTimerEventDate = it.timerStartedDateTime,
                         pomodoroTimer = it.timerProperty,
                         pomodoroTimerState = it.timerState,
-                        onStartPomodoroClick = ::startPomodoroTimer
+                        onStartPomodoroClick = ::startPomodoroTimer,
+                        onSendChatClick = ::sendChat
                     )
                 }
             }.onFailure {
@@ -161,6 +162,10 @@ class RoomViewModel @Inject constructor(
 
     private fun startPomodoroTimer() = intent {
         roomService.startPomodoroTimer()
+    }
+
+    private fun sendChat(message: String) = intent {
+        roomService.sendChat(message)
     }
 
     private fun handleWaitingRoomEvent(waitingRoomEvent: WaitingRoomEvent) = intent {
@@ -237,6 +242,13 @@ class RoomViewModel @Inject constructor(
             }
             is StudyRoomEvent.OnCloseAudioConsumer -> {
                 // TODO: 구현하기
+            }
+            is StudyRoomEvent.OnReceiveChatMessage -> {
+                reduce {
+                    uiState.copy(chatMessages = uiState.chatMessages + studyRoomEvent.message)
+                }
+                // TODO: 채팅 화면이 아닐때만 전송하기
+                postSideEffect(RoomSideEffect.OnChatMessage(message = studyRoomEvent.message))
             }
             is StudyRoomEvent.Timer -> {
                 reduce {

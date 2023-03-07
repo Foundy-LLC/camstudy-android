@@ -36,7 +36,6 @@ android {
 }
 
 dependencies {
-    implementation project(path: ':core:common')
     implementation project(path: ':room:domain')
 
     // kotlinx datetime

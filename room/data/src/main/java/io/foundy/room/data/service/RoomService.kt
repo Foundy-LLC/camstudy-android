@@ -44,5 +44,7 @@ interface RoomService {
 
     suspend fun startPomodoroTimer()
 
+    suspend fun sendChat(message: String)
+
     fun disconnect()
 }

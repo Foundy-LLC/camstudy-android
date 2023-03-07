@@ -3,7 +3,7 @@ package io.foundy.room.data.model
 import com.example.domain.PeerState
 import com.example.domain.PomodoroTimerProperty
 import com.example.domain.PomodoroTimerState
-import io.foundy.core.common.util.WebRtcServerTimeZone
+import com.example.domain.WebRtcServerTimeZone
 import kotlinx.datetime.Instant
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.toLocalDateTime

@@ -1,5 +1,6 @@
 package io.foundy.room.data.service
 
+import com.example.domain.ChatMessage
 import com.example.domain.PeerState
 import com.example.domain.PomodoroTimerState
 import io.foundy.room.data.BuildConfig
@@ -188,6 +189,10 @@ class RoomSocketService @Inject constructor() : RoomService {
         socket.emit(Protocol.START_TIMER)
     }
 
+    override suspend fun sendChat(message: String) {
+        socket.emit(Protocol.SEND_CHAT, message)
+    }
+
     private fun listenRoomEvents(currentUserId: String) = with(socket) {
         on(Protocol.PEER_STATE_CHANGED) { state: PeerState ->
             if (state.uid == currentUserId) {
@@ -219,6 +224,9 @@ class RoomSocketService @Inject constructor() : RoomService {
                 }
                 eventFlow.tryEmit(event)
             }
+        }
+        on(Protocol.SEND_CHAT) { message: ChatMessage ->
+            eventFlow.tryEmit(StudyRoomEvent.OnReceiveChatMessage(message = message))
         }
         on(Protocol.START_TIMER) {
             eventFlow.tryEmit(StudyRoomEvent.Timer(state = PomodoroTimerState.STARTED))

@@ -68,6 +68,10 @@ class FakeRoomService : RoomService {
         TODO("Not yet implemented")
     }
 
+    override suspend fun sendChat(message: String) {
+        TODO("Not yet implemented")
+    }
+
     override fun disconnect() {
         TODO("Not yet implemented")
     }

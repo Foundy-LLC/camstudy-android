@@ -1,5 +1,6 @@
 package io.foundy.room.data.model
 
+import com.example.domain.ChatMessage
 import com.example.domain.PeerState
 import com.example.domain.PomodoroTimerState
 import org.webrtc.MediaStreamTrack
@@ -16,6 +17,7 @@ sealed class StudyRoomEvent : RoomEvent() {
     data class AddedConsumer(val userId: String, val track: MediaStreamTrack) : StudyRoomEvent()
     data class OnCloseVideoConsumer(val userId: String) : StudyRoomEvent()
     data class OnCloseAudioConsumer(val userId: String) : StudyRoomEvent()
+    data class OnReceiveChatMessage(val message: ChatMessage) : StudyRoomEvent()
     data class Timer(val state: PomodoroTimerState) : StudyRoomEvent()
     data class OnDisconnectPeer(val disposedPeerId: String) : StudyRoomEvent()
 }

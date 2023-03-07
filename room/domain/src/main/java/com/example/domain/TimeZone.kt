@@ -1,4 +1,4 @@
-package io.foundy.core.common.util
+package com.example.domain
 
 import kotlinx.datetime.TimeZone
 
