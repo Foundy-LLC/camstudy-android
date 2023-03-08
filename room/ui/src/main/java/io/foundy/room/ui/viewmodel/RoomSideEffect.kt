@@ -6,11 +6,14 @@ import com.example.domain.ChatMessage
 sealed class RoomSideEffect {
 
     data class Message(
-        val content: String?,
-        @StringRes val defaultContentRes: Int
+        val content: String? = null,
+        @StringRes val defaultContentRes: Int,
+        val stringResArgs: List<String> = emptyList()
     ) : RoomSideEffect()
 
     data class OnChatMessage(
         val message: ChatMessage
     ) : RoomSideEffect()
+
+    object Kicked : RoomSideEffect()
 }

@@ -46,8 +46,10 @@ import org.webrtc.VideoTrack
 import java.net.URI
 import javax.inject.Inject
 
-// TODO: 채팅 구현
-// TODO: 뽀모도로 시작 기능 구현
+// TODO: 상대 피어가 캠, 마이크를 끄고 입장하면 화면에 해당 회원 프레임 안보이는 문제 수정해야함.
+// TODO: 강퇴 기능 구현
+// TODO: 차단 기능 구현
+// TODO: 강퇴 당하면 공부방 나가지는 기능 구현
 @OptIn(ExperimentalCoroutinesApi::class)
 class RoomSocketService @Inject constructor() : RoomService {
 
@@ -241,6 +243,10 @@ class RoomSocketService @Inject constructor() : RoomService {
             val disposedPeerId = response.disposedPeerId
             receiveTransportWrappers.removeAll { it.userId == disposedPeerId }
             eventFlow.tryEmit(StudyRoomEvent.OnDisconnectPeer(disposedPeerId = disposedPeerId))
+        }
+        onPrimitiveCallback(Protocol.KICK_USER) { userId: String ->
+            eventFlow.tryEmit(StudyRoomEvent.OnKicked(userId = userId))
+            disconnect()
         }
     }
 

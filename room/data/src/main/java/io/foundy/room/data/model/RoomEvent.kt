@@ -20,4 +20,5 @@ sealed class StudyRoomEvent : RoomEvent() {
     data class OnReceiveChatMessage(val message: ChatMessage) : StudyRoomEvent()
     data class Timer(val state: PomodoroTimerState) : StudyRoomEvent()
     data class OnDisconnectPeer(val disposedPeerId: String) : StudyRoomEvent()
+    data class OnKicked(val userId: String) : StudyRoomEvent()
 }

@@ -78,7 +78,7 @@ fun RoomContent(
         when (it) {
             is RoomSideEffect.Message -> coroutineScope.launch {
                 snackbarHostState.showSnackbar(
-                    it.content ?: context.getString(it.defaultContentRes)
+                    it.content ?: context.getString(it.defaultContentRes, it.stringResArgs)
                 )
             }
             is RoomSideEffect.OnChatMessage -> coroutineScope.launch {
@@ -86,6 +86,7 @@ fun RoomContent(
                     "${it.message.authorName}: ${it.message.content}"
                 )
             }
+            RoomSideEffect.Kicked -> TODO("현재 회원이 강퇴 되었을 경우 구현하기")
         }
     }
 

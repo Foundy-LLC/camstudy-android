@@ -266,6 +266,23 @@ class RoomViewModel @Inject constructor(
                 }
                 reduce { uiState.copy(peerStates = newPeerStates) }
             }
+            is StudyRoomEvent.OnKicked -> {
+                val kickedUserId = studyRoomEvent.userId
+                val isMe = kickedUserId == currentUserId
+                if (isMe) {
+                    postSideEffect(RoomSideEffect.Kicked)
+                } else {
+                    val kickedUser = uiState.peerStates.find { it.uid == kickedUserId }
+                    kickedUser?.let { user ->
+                        postSideEffect(
+                            RoomSideEffect.Message(
+                                defaultContentRes = R.string.user_has_been_kicked,
+                                stringResArgs = listOf(user.name)
+                            )
+                        )
+                    }
+                }
+            }
         }
     }
 
