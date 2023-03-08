@@ -5,6 +5,7 @@ import com.example.domain.PeerState
 import com.example.domain.PomodoroTimerState
 import io.foundy.room.data.BuildConfig
 import io.foundy.room.data.extension.emit
+import io.foundy.room.data.extension.emitWithPrimitiveCallBack
 import io.foundy.room.data.extension.on
 import io.foundy.room.data.extension.onPrimitiveCallback
 import io.foundy.room.data.extension.toJson
@@ -32,6 +33,7 @@ import io.socket.client.Socket
 import kotlinx.coroutines.CancellableContinuation
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withTimeout
 import org.json.JSONObject
@@ -45,6 +47,7 @@ import org.webrtc.MediaStreamTrack
 import org.webrtc.VideoTrack
 import java.net.URI
 import javax.inject.Inject
+import kotlin.coroutines.resume
 
 // TODO: 상대 피어가 캠, 마이크를 끄고 입장하면 화면에 해당 회원 프레임 안보이는 문제 수정해야함.
 // TODO: 강퇴 기능 구현
@@ -306,17 +309,24 @@ class RoomSocketService @Inject constructor() : RoomService {
             rtpParameters: String,
             appData: String
         ): String {
-            socket.emit(
-                Protocol.TRANSPORT_PRODUCER,
-                JSONObject(
-                    mapOf(
-                        "kind" to kind,
-                        "rtpParameters" to JSONObject(rtpParameters),
-                        "appData" to JSONObject(appData)
-                    )
-                )
-            )
-            return transport.id
+            var producerId: String
+            runBlocking {
+                producerId = suspendCoroutineWithTimeout { continuation ->
+                    socket.emitWithPrimitiveCallBack(
+                        Protocol.TRANSPORT_PRODUCER,
+                        JSONObject(
+                            mapOf(
+                                "kind" to kind,
+                                "rtpParameters" to JSONObject(rtpParameters),
+                                "appData" to JSONObject(appData)
+                            )
+                        )
+                    ) { remoteProducerId: String ->
+                        continuation.resume(remoteProducerId)
+                    }
+                }
+            }
+            return producerId
         }
     }
 
