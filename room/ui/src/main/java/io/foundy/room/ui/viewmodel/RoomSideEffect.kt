@@ -14,6 +14,4 @@ sealed class RoomSideEffect {
     data class OnChatMessage(
         val message: ChatMessage
     ) : RoomSideEffect()
-
-    object Kicked : RoomSideEffect()
 }

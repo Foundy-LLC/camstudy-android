@@ -9,10 +9,13 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -24,12 +27,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import com.example.domain.PomodoroTimerState
 import com.example.domain.WebRtcServerTimeZone
 import io.foundy.core.designsystem.icon.CamstudyIcon
 import io.foundy.core.designsystem.icon.CamstudyIcons
+import io.foundy.room.ui.R
 import io.foundy.room.ui.component.FloatingVideoRenderer
 import io.foundy.room.ui.component.MediaController
 import io.foundy.room.ui.component.VideoRenderer
@@ -42,14 +47,27 @@ import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.toInstant
 import kotlinx.datetime.toLocalDateTime
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun StudyRoomScreen(uiState: RoomUiState.StudyRoom) {
+fun StudyRoomScreen(uiState: RoomUiState.StudyRoom, onDismissKickedDialog: () -> Unit) {
     val mediaManager = LocalMediaManager.current
     val enabledLocalVideo = mediaManager.enabledLocalVideo
     val enabledLocalAudio = mediaManager.enabledLocalAudio
     val enabledLocalHeadset = mediaManager.enabledLocalHeadset
     val localVideoTrack = mediaManager.localVideoTrackFlow.collectAsState(initial = null).value
     var parentBounds: IntSize by remember { mutableStateOf(IntSize(0, 0)) }
+
+    if (uiState.isCurrentUserKicked) {
+        AlertDialog(
+            title = { Text(text = stringResource(id = R.string.master_kicked_you)) },
+            confirmButton = {
+                TextButton(onClick = onDismissKickedDialog) {
+                    Text(text = stringResource(R.string.back_to_home))
+                }
+            },
+            onDismissRequest = onDismissKickedDialog,
+        )
+    }
 
     Box(
         modifier = Modifier

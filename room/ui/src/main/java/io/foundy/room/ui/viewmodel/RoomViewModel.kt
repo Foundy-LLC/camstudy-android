@@ -270,7 +270,7 @@ class RoomViewModel @Inject constructor(
                 val kickedUserId = studyRoomEvent.userId
                 val isMe = kickedUserId == currentUserId
                 if (isMe) {
-                    postSideEffect(RoomSideEffect.Kicked)
+                    reduce { uiState.copy(isCurrentUserKicked = true) }
                 } else {
                     val kickedUser = uiState.peerStates.find { it.uid == kickedUserId }
                     kickedUser?.let { user ->

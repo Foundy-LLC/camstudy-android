@@ -84,6 +84,7 @@ sealed class RoomUiState {
 
     data class StudyRoom(
         val peerStates: List<PeerUiState>,
+        val isCurrentUserKicked: Boolean = false,
 
         // Chatting
         val chatMessageInput: String = "",

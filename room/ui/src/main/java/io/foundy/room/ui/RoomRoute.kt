@@ -86,7 +86,6 @@ fun RoomContent(
                     "${it.message.authorName}: ${it.message.content}"
                 )
             }
-            RoomSideEffect.Kicked -> TODO("현재 회원이 강퇴 되었을 경우 구현하기")
         }
     }
 
@@ -114,7 +113,12 @@ fun RoomContent(
                         roomTitle = id,
                         uiState = uiState
                     )
-                    is RoomUiState.StudyRoom -> StudyRoomScreen(uiState = uiState)
+                    is RoomUiState.StudyRoom -> StudyRoomScreen(
+                        uiState = uiState,
+                        onDismissKickedDialog = {
+                            navigator.popBackStack()
+                        }
+                    )
                 }
             }
         }
