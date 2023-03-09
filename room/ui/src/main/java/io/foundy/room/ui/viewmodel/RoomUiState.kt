@@ -6,6 +6,7 @@ import com.example.domain.PomodoroTimerProperty
 import com.example.domain.PomodoroTimerState
 import io.foundy.room.data.model.WaitingRoomData
 import io.foundy.room.ui.R
+import com.example.domain.PeerOverview
 import io.foundy.room.ui.peer.PeerUiState
 import kotlinx.datetime.LocalDateTime
 import org.webrtc.AudioTrack
@@ -33,7 +34,7 @@ sealed class RoomUiState {
         ) : WaitingRoom() {
             val isCurrentUserMaster: Boolean get() = data.masterId == currentUserId
             val isFull: Boolean get() = data.joinerList.size >= data.capacity
-            val isCurrentUserBlocked: Boolean get() = data.blacklist.contains(currentUserId)
+            val isCurrentUserBlocked: Boolean get() = data.blacklist.any { it.id == currentUserId }
         }
 
         val enableJoinButton: Boolean
@@ -88,6 +89,7 @@ sealed class RoomUiState {
         val isCurrentUserKicked: Boolean = false,
 
         // Master's features
+        val blacklist: List<PeerOverview>,
         val onKickUserClick: (userId: String) -> Unit,
 
         // Chatting

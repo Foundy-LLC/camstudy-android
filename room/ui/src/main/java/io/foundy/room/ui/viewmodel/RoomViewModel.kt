@@ -110,6 +110,7 @@ class RoomViewModel @Inject constructor(
                     RoomUiState.StudyRoom(
                         peerStates = it.peerStates.map(PeerState::toInitialUiState),
                         isCurrentUserMaster = uiState.isCurrentUserMaster,
+                        blacklist = uiState.data.blacklist,
                         onKickUserClick = ::kickUser,
                         pomodoroTimerEventDate = it.timerStartedDateTime,
                         pomodoroTimer = it.timerProperty,
