@@ -46,5 +46,7 @@ interface RoomService {
 
     suspend fun sendChat(message: String)
 
+    suspend fun kickUser(userId: String)
+
     fun disconnect()
 }

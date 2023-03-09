@@ -11,13 +11,15 @@ import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
-import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.Stable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -32,6 +34,7 @@ import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import com.example.domain.PomodoroTimerState
 import com.example.domain.WebRtcServerTimeZone
+import com.holix.android.bottomsheetdialog.compose.BottomSheetDialog
 import io.foundy.core.designsystem.icon.CamstudyIcon
 import io.foundy.core.designsystem.icon.CamstudyIcons
 import io.foundy.room.ui.R
@@ -47,9 +50,15 @@ import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.toInstant
 import kotlinx.datetime.toLocalDateTime
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun StudyRoomScreen(uiState: RoomUiState.StudyRoom, onDismissKickedDialog: () -> Unit) {
+fun StudyRoomScreen(
+    uiState: RoomUiState.StudyRoom,
+    userBottomSheetState: UserBottomSheetState = remember { UserBottomSheetState() },
+    kickUserRecheckDialogState: KickUserRecheckDialogState = remember {
+        KickUserRecheckDialogState()
+    },
+    onDismissKickedDialog: () -> Unit
+) {
     val mediaManager = LocalMediaManager.current
     val enabledLocalVideo = mediaManager.enabledLocalVideo
     val enabledLocalAudio = mediaManager.enabledLocalAudio
@@ -67,6 +76,50 @@ fun StudyRoomScreen(uiState: RoomUiState.StudyRoom, onDismissKickedDialog: () ->
             },
             onDismissRequest = onDismissKickedDialog,
         )
+    }
+
+    val userToKick = kickUserRecheckDialogState.user
+    if (userToKick != null) {
+        AlertDialog(
+            title = {
+                Text(
+                    text = stringResource(id = R.string.are_you_sure_want_to_kick, userToKick.name)
+                )
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        uiState.onKickUserClick(userToKick.id)
+                        kickUserRecheckDialogState.hide()
+                    }
+                ) {
+                    Text(text = stringResource(R.string.kick))
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = kickUserRecheckDialogState::hide) {
+                    Text(text = stringResource(R.string.cancel))
+                }
+            },
+            onDismissRequest = kickUserRecheckDialogState::hide,
+        )
+    }
+
+    val selectedUser = userBottomSheetState.selectedUser
+    if (selectedUser != null) {
+        BottomSheetDialog(onDismissRequest = userBottomSheetState::hide) {
+            Button(
+                onClick = {
+                    kickUserRecheckDialogState.show(
+                        userId = selectedUser.id,
+                        userName = selectedUser.name
+                    )
+                    userBottomSheetState.hide()
+                }
+            ) {
+                Text(stringResource(R.string.kick_user))
+            }
+        }
     }
 
     Box(
@@ -99,7 +152,11 @@ fun StudyRoomScreen(uiState: RoomUiState.StudyRoom, onDismissKickedDialog: () ->
                 columns = GridCells.Adaptive(minSize = 128.dp),
             ) {
                 items(uiState.peerStates, key = { it.uid }) { peerState ->
-                    RemotePeer(peerState = peerState)
+                    RemotePeer(
+                        peerState = peerState,
+                        isCurrentUserMaster = uiState.isCurrentUserMaster,
+                        onMoreButtonClick = userBottomSheetState::show
+                    )
                 }
             }
             MediaController(
@@ -115,7 +172,11 @@ fun StudyRoomScreen(uiState: RoomUiState.StudyRoom, onDismissKickedDialog: () ->
 }
 
 @Composable
-private fun RemotePeer(peerState: PeerUiState) {
+private fun RemotePeer(
+    peerState: PeerUiState,
+    isCurrentUserMaster: Boolean,
+    onMoreButtonClick: (userId: String, userName: String) -> Unit
+) {
     val mediaManager = LocalMediaManager.current
     val videoSizeModifier = Modifier.size(width = 128.dp, height = 200.dp)
 
@@ -141,6 +202,18 @@ private fun RemotePeer(peerState: PeerUiState) {
             if (!peerState.enabledHeadset) {
                 CamstudyIcon(
                     icon = CamstudyIcons.HeadsetOff,
+                    tint = MaterialTheme.colorScheme.background,
+                    contentDescription = null
+                )
+            }
+        }
+
+        if (isCurrentUserMaster) {
+            IconButton(
+                onClick = { onMoreButtonClick(peerState.uid, peerState.name) },
+            ) {
+                CamstudyIcon(
+                    icon = CamstudyIcons.MoreVert,
                     tint = MaterialTheme.colorScheme.background,
                     contentDescription = null
                 )
@@ -198,3 +271,45 @@ private val LocalDateTime?.elapsedTimeText: String
         val seconds = diffWholeSeconds % 60
         return "%02d:%02d".format(minutes, seconds)
     }
+
+@Immutable
+data class UserState(
+    val id: String,
+    val name: String,
+)
+
+@Stable
+class UserBottomSheetState {
+
+    var selectedUser by mutableStateOf<UserState?>(null)
+        private set
+
+    fun show(userId: String, userName: String) {
+        selectedUser = UserState(
+            name = userName,
+            id = userId
+        )
+    }
+
+    fun hide() {
+        selectedUser = null
+    }
+}
+
+@Stable
+class KickUserRecheckDialogState {
+
+    var user by mutableStateOf<UserState?>(null)
+        private set
+
+    fun show(userId: String, userName: String) {
+        user = UserState(
+            name = userName,
+            id = userId
+        )
+    }
+
+    fun hide() {
+        user = null
+    }
+}

@@ -194,6 +194,10 @@ class RoomSocketService @Inject constructor() : RoomService {
         socket.emit(Protocol.SEND_CHAT, message)
     }
 
+    override suspend fun kickUser(userId: String) {
+        socket.emit(Protocol.KICK_USER, userId)
+    }
+
     private fun listenRoomEvents(currentUserId: String) = with(socket) {
         on(Protocol.PEER_STATE_CHANGED) { state: PeerState ->
             if (state.uid == currentUserId) {

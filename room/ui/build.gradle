@@ -54,6 +54,9 @@ dependencies {
     implementation project(path: ':auth:data')
     testImplementation project(path: ':core:test')
 
+    // bottom sheet dialog
+    implementation "com.holix.android:bottomsheetdialog-compose:$bottom_sheet_dialog_version"
+
     // kotlinx datetime
     implementation "org.jetbrains.kotlinx:kotlinx-datetime:$kotlin_datetime_version"
 

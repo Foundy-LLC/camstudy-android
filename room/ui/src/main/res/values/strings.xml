@@ -11,7 +11,13 @@
     <string name="already_joined">이미 접속한 방입니다.</string>
     <string name="joining">입장중…</string>
     <string name="join">입장</string>
+
     <string name="user_has_been_kicked">%s님이 강퇴되었습니다.</string>
     <string name="master_kicked_you">방장이 회원님을 강퇴했습니다.</string>
+    <string name="are_you_sure_want_to_kick">정말로 %s님을 강퇴할까요?</string>
+    <string name="kick_user">강퇴하기</string>
+
     <string name="back_to_home">돌아가기</string>
+    <string name="cancel">취소</string>
+    <string name="kick">강퇴</string>
 </resources>

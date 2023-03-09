@@ -84,7 +84,11 @@ sealed class RoomUiState {
 
     data class StudyRoom(
         val peerStates: List<PeerUiState>,
+        val isCurrentUserMaster: Boolean,
         val isCurrentUserKicked: Boolean = false,
+
+        // Master's features
+        val onKickUserClick: (userId: String) -> Unit,
 
         // Chatting
         val chatMessageInput: String = "",

@@ -7,6 +7,7 @@ import androidx.compose.material.icons.filled.HeadsetOff
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Mic
 import androidx.compose.material.icons.filled.MicOff
+import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Videocam
 import androidx.compose.material.icons.filled.VideocamOff
 import androidx.compose.material.icons.outlined.Home
@@ -27,6 +28,7 @@ object CamstudyIcons {
     val MicOff = Icons.Default.MicOff.asCamstudyIcon()
     val Headset = Icons.Default.Headset.asCamstudyIcon()
     val HeadsetOff = Icons.Default.HeadsetOff.asCamstudyIcon()
+    val MoreVert = Icons.Default.MoreVert.asCamstudyIcon()
 }
 
 sealed class CamstudyIcon

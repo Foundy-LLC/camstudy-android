@@ -109,6 +109,8 @@ class RoomViewModel @Inject constructor(
                 reduce {
                     RoomUiState.StudyRoom(
                         peerStates = it.peerStates.map(PeerState::toInitialUiState),
+                        isCurrentUserMaster = uiState.isCurrentUserMaster,
+                        onKickUserClick = ::kickUser,
                         pomodoroTimerEventDate = it.timerStartedDateTime,
                         pomodoroTimer = it.timerProperty,
                         pomodoroTimerState = it.timerState,
@@ -158,6 +160,13 @@ class RoomViewModel @Inject constructor(
         } else {
             roomService.muteHeadset()
         }
+    }
+
+    private fun kickUser(userId: String) = intent {
+        val uiState = state
+        check(uiState is RoomUiState.StudyRoom)
+        check(uiState.isCurrentUserMaster)
+        roomService.kickUser(userId = userId)
     }
 
     private fun startPomodoroTimer() = intent {
@@ -280,6 +289,11 @@ class RoomViewModel @Inject constructor(
                                 stringResArgs = listOf(user.name)
                             )
                         )
+                        reduce {
+                            uiState.copy(
+                                peerStates = uiState.peerStates.filter { it.uid != user.uid }
+                            )
+                        }
                     }
                 }
             }
