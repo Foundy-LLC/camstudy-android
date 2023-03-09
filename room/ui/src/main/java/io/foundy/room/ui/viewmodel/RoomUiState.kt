@@ -91,6 +91,7 @@ sealed class RoomUiState {
         // Master's features
         val blacklist: List<PeerOverview>,
         val onKickUserClick: (userId: String) -> Unit,
+        val onBlockUserClick: (userId: String) -> Unit,
 
         // Chatting
         val chatMessageInput: String = "",

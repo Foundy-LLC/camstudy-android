@@ -48,5 +48,7 @@ interface RoomService {
 
     suspend fun kickUser(userId: String)
 
+    suspend fun blockUser(userId: String)
+
     fun disconnect()
 }

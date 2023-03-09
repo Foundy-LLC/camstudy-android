@@ -47,7 +47,8 @@ import org.webrtc.VideoTrack
 import java.net.URI
 import javax.inject.Inject
 
-// TODO: 차단 기능 구현
+// TODO: 차단 해제하는 기능 구현
+// TODO: 타이머 편집하는 기능 구현
 @OptIn(ExperimentalCoroutinesApi::class)
 class RoomSocketService @Inject constructor() : RoomService {
 
@@ -195,6 +196,10 @@ class RoomSocketService @Inject constructor() : RoomService {
 
     override suspend fun kickUser(userId: String) {
         socket.emit(Protocol.KICK_USER, userId)
+    }
+
+    override suspend fun blockUser(userId: String) {
+        socket.emit(Protocol.BLOCK_USER, userId)
     }
 
     private fun listenRoomEvents(currentUserId: String) = with(socket) {

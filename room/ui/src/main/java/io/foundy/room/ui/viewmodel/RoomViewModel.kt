@@ -112,6 +112,7 @@ class RoomViewModel @Inject constructor(
                         isCurrentUserMaster = uiState.isCurrentUserMaster,
                         blacklist = uiState.data.blacklist,
                         onKickUserClick = ::kickUser,
+                        onBlockUserClick = ::blockUser,
                         pomodoroTimerEventDate = it.timerStartedDateTime,
                         pomodoroTimer = it.timerProperty,
                         pomodoroTimerState = it.timerState,
@@ -168,6 +169,13 @@ class RoomViewModel @Inject constructor(
         check(uiState is RoomUiState.StudyRoom)
         check(uiState.isCurrentUserMaster)
         roomService.kickUser(userId = userId)
+    }
+
+    private fun blockUser(userId: String) = intent {
+        val uiState = state
+        check(uiState is RoomUiState.StudyRoom)
+        check(uiState.isCurrentUserMaster)
+        roomService.blockUser(userId = userId)
     }
 
     private fun startPomodoroTimer() = intent {

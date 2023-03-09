@@ -76,6 +76,10 @@ class FakeRoomService : RoomService {
         TODO("Not yet implemented")
     }
 
+    override suspend fun blockUser(userId: String) {
+        TODO("Not yet implemented")
+    }
+
     override fun disconnect() {
         TODO("Not yet implemented")
     }
