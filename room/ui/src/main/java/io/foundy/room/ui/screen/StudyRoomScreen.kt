@@ -61,6 +61,11 @@ fun StudyRoomScreen(
     },
     onDismissKickedDialog: () -> Unit
 ) {
+    if (uiState.isPipMode) {
+        StudyRoomContentInPip(uiState = uiState)
+        return
+    }
+
     val mediaManager = LocalMediaManager.current
     val enabledLocalVideo = mediaManager.enabledLocalVideo
     val enabledLocalAudio = mediaManager.enabledLocalAudio
@@ -329,5 +334,33 @@ class KickUserRecheckDialogState {
 
     fun hide() {
         user = null
+    }
+}
+
+@Composable
+fun StudyRoomContentInPip(
+    uiState: RoomUiState.StudyRoom
+) {
+    val mediaManager = LocalMediaManager.current
+    val videoSizeModifier = Modifier.size(width = 128.dp, height = 128.dp)
+    val localVideoTrack = mediaManager.localVideoTrackFlow.collectAsState(initial = null).value
+
+    Row {
+        PomodoroTimer(
+            state = uiState.pomodoroTimerState,
+            pomodoroTimerEventDate = uiState.pomodoroTimerEventDate
+        )
+        Surface(
+            modifier = videoSizeModifier,
+            color = MaterialTheme.colorScheme.onBackground
+        ) {
+            if (localVideoTrack != null) {
+                VideoRenderer(
+                    modifier = videoSizeModifier,
+                    eglBaseContext = mediaManager.eglBaseContext,
+                    videoTrack = localVideoTrack
+                )
+            }
+        }
     }
 }

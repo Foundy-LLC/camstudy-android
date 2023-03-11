@@ -186,6 +186,12 @@ class RoomViewModel @Inject constructor(
         roomService.sendChat(message)
     }
 
+    fun updatePictureInPictureMode(isPipMode: Boolean) = intent {
+        val uiState = state
+        check(uiState is RoomUiState.StudyRoom)
+        reduce { uiState.copy(isPipMode = isPipMode) }
+    }
+
     private fun handleWaitingRoomEvent(waitingRoomEvent: WaitingRoomEvent) = intent {
         val uiState = state
         check(uiState is RoomUiState.WaitingRoom.Connected)
