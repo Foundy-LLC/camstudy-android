@@ -13,6 +13,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -21,22 +22,24 @@ import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.items
 import com.ramcosta.composedestinations.annotation.Destination
-import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import io.foundy.core.model.RoomOverview
-import io.foundy.room.ui.destinations.RoomRouteDestination
+import io.foundy.room.ui.RoomActivity
 import org.orbitmvi.orbit.compose.collectAsState
 
 @Destination
 @Composable
 fun RoomListRoute(
-    parentNavigator: DestinationsNavigator,
     viewModel: RoomListViewModel = hiltViewModel()
 ) {
     val uiState = viewModel.collectAsState().value
+    val context = LocalContext.current
 
     RoomListScreen(
         uiState = uiState,
-        onRoomClick = { id -> parentNavigator.navigate(RoomRouteDestination(id = id)) }
+        onRoomClick = { id ->
+            val intent = RoomActivity.getIntent(context, roomId = id)
+            context.startActivity(intent)
+        }
     )
 }
 

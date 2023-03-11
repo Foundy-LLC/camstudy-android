@@ -14,7 +14,6 @@ import androidx.navigation.NavDestination.Companion.hierarchy
 import com.ramcosta.composedestinations.DestinationsNavHost
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.manualcomposablecalls.composable
-import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.ramcosta.composedestinations.spec.DestinationStyle
 import io.foundy.core.designsystem.icon.CamstudyIcon
 import io.foundy.home.ui.navigation.HomeNavGraph
@@ -24,19 +23,14 @@ import io.foundy.room_list.ui.destinations.RoomListRouteDestination
 
 @Destination(style = DestinationStyle.Runtime::class)
 @Composable
-fun HomeRoute(
-    navigator: DestinationsNavigator
-) {
-    HomeScreen(
-        rootNavigator = navigator,
-    )
+fun HomeRoute() {
+    HomeScreen()
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
     homeScreenState: HomeScreenState = rememberHomeScreenState(),
-    rootNavigator: DestinationsNavigator,
 ) {
     Scaffold(
         bottomBar = {
@@ -53,7 +47,7 @@ fun HomeScreen(
             modifier = Modifier.padding(padding),
         ) {
             composable(RoomListRouteDestination) {
-                RoomListRoute(parentNavigator = rootNavigator)
+                RoomListRoute()
             }
         }
     }

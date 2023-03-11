@@ -1,6 +1,5 @@
 package io.foundy.room.ui
 
-import android.Manifest
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
@@ -16,14 +15,9 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.google.accompanist.permissions.ExperimentalPermissionsApi
-import com.google.accompanist.permissions.rememberMultiplePermissionsState
-import com.ramcosta.composedestinations.annotation.Destination
-import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import io.foundy.room.ui.media.LocalMediaManager
 import io.foundy.room.ui.media.MediaManager
 import io.foundy.room.ui.media.rememberMediaManager
-import io.foundy.room.ui.screen.PermissionRequestScreen
 import io.foundy.room.ui.screen.StudyRoomScreen
 import io.foundy.room.ui.screen.WaitingRoomScreen
 import io.foundy.room.ui.viewmodel.RoomSideEffect
@@ -33,35 +27,11 @@ import kotlinx.coroutines.launch
 import org.orbitmvi.orbit.compose.collectAsState
 import org.orbitmvi.orbit.compose.collectSideEffect
 
-@OptIn(ExperimentalPermissionsApi::class)
-@Destination
-@Composable
-fun RoomRoute(
-    id: String,
-    navigator: DestinationsNavigator,
-) {
-    val permissionsState = rememberMultiplePermissionsState(
-        listOf(
-            Manifest.permission.CAMERA,
-            Manifest.permission.RECORD_AUDIO
-        )
-    )
-
-    if (permissionsState.allPermissionsGranted) {
-        RoomContent(id = id, navigator = navigator)
-    } else {
-        PermissionRequestScreen(
-            shouldShowRationale = permissionsState.shouldShowRationale,
-            onRequestClick = permissionsState::launchMultiplePermissionRequest
-        )
-    }
-}
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RoomContent(
     id: String,
-    navigator: DestinationsNavigator,
+    popBackStack: () -> Unit,
     viewModel: RoomViewModel = hiltViewModel(),
     mediaManager: MediaManager = rememberMediaManager(
         onToggleVideo = viewModel::onToggleVideo,
@@ -100,7 +70,7 @@ fun RoomContent(
     BackHandler {
         // TODO: 사용자에게 한 번 더 확인하기
         mediaManager.disconnect()
-        navigator.popBackStack()
+        popBackStack()
     }
 
     CompositionLocalProvider(LocalMediaManager provides mediaManager) {
@@ -116,7 +86,7 @@ fun RoomContent(
                     is RoomUiState.StudyRoom -> StudyRoomScreen(
                         uiState = uiState,
                         onDismissKickedDialog = {
-                            navigator.popBackStack()
+                            popBackStack()
                         }
                     )
                 }
