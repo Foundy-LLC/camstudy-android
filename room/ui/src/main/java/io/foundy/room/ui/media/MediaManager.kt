@@ -7,14 +7,11 @@ import android.hardware.camera2.CameraMetadata
 import android.media.AudioDeviceInfo
 import android.media.AudioManager
 import android.os.Build
-import androidx.compose.runtime.Composable
 import androidx.compose.runtime.ProvidableCompositionLocal
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.staticCompositionLocalOf
-import androidx.compose.ui.platform.LocalContext
 import androidx.core.content.getSystemService
 import io.foundy.room.ui.audio.AudioHandler
 import io.foundy.room.ui.audio.AudioSwitchHandler
@@ -39,24 +36,6 @@ import java.util.UUID
 
 val LocalMediaManager: ProvidableCompositionLocal<MediaManager> =
     staticCompositionLocalOf { error("WebRtcSessionManager was not initialized!") }
-
-@Composable
-fun rememberMediaManager(
-    onToggleVideo: (track: VideoTrack?) -> Unit,
-    onToggleAudio: (track: AudioTrack?) -> Unit,
-    onToggleHeadset: (Boolean) -> Unit,
-): MediaManager {
-    val context = LocalContext.current
-    return remember {
-        MediaManager(
-            context = context,
-            peerConnectionFactory = PeerConnectionFactoryWrapper(context = context),
-            onToggleVideo = onToggleVideo,
-            onToggleAudio = onToggleAudio,
-            onToggleHeadset = onToggleHeadset,
-        )
-    }
-}
 
 class MediaManager(
     private val context: Context,

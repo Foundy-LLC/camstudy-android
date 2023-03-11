@@ -14,10 +14,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.hilt.navigation.compose.hiltViewModel
 import io.foundy.room.ui.media.LocalMediaManager
 import io.foundy.room.ui.media.MediaManager
-import io.foundy.room.ui.media.rememberMediaManager
 import io.foundy.room.ui.screen.StudyRoomScreen
 import io.foundy.room.ui.screen.WaitingRoomScreen
 import io.foundy.room.ui.viewmodel.RoomSideEffect
@@ -32,12 +30,8 @@ import org.orbitmvi.orbit.compose.collectSideEffect
 fun RoomContent(
     id: String,
     popBackStack: () -> Unit,
-    viewModel: RoomViewModel = hiltViewModel(),
-    mediaManager: MediaManager = rememberMediaManager(
-        onToggleVideo = viewModel::onToggleVideo,
-        onToggleAudio = viewModel::onToggleAudio,
-        onToggleHeadset = viewModel::onToggleHeadset,
-    ),
+    viewModel: RoomViewModel,
+    mediaManager: MediaManager,
 ) {
     val uiState = viewModel.collectAsState().value
     val context = LocalContext.current
