@@ -11,6 +11,8 @@
     <string name="already_joined">이미 접속한 방입니다.</string>
     <string name="joining">입장중…</string>
     <string name="join">입장</string>
+    <string name="turn_on_video">비디오 켜기</string>
+    <string name="turn_off_video">비디오 끄기</string>
 
     <string name="user_has_been_kicked">%s님이 강퇴되었습니다.</string>
     <string name="master_kicked_you">방장이 회원님을 강퇴했습니다.</string>

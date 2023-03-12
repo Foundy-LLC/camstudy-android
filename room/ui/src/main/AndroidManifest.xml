@@ -8,6 +8,9 @@
     <uses-feature android:name="android.hardware.camera" />
 
     <application android:theme="@style/Theme.Camstudy">
+
+        <receiver android:name=".receiver.VideoToggleReceiver" />
+
         <activity
             android:name=".RoomActivity"
             android:configChanges="screenSize|smallestScreenSize|screenLayout|orientation"
