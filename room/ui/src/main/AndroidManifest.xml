@@ -11,6 +11,8 @@
 
         <receiver android:name=".receiver.VideoToggleReceiver" />
 
+        <receiver android:name=".receiver.AudioToggleReceiver" />
+
         <activity
             android:name=".RoomActivity"
             android:configChanges="screenSize|smallestScreenSize|screenLayout|orientation"
