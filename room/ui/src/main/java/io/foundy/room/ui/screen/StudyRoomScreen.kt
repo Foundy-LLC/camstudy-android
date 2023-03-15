@@ -171,7 +171,7 @@ fun StudyRoomScreen(
                     onStartClick = uiState.onStartPomodoroClick
                 )
             }
-            IconButton(onClick = mediaManager::switchCamera) {
+            IconButton(onClick = mediaManager::switchCamera, enabled = enabledLocalVideo) {
                 CamstudyIcon(
                     icon = CamstudyIcons.SwitchVideo,
                     contentDescription = stringResource(R.string.switch_video)
