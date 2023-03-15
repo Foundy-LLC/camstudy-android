@@ -25,4 +25,5 @@
     <string name="cancel">취소</string>
     <string name="kick">강퇴</string>
     <string name="block_user">해당 회원 차단하기</string>
+    <string name="switch_video">카메라 전환</string>
 </resources>

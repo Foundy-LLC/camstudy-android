@@ -171,6 +171,12 @@ fun StudyRoomScreen(
                     onStartClick = uiState.onStartPomodoroClick
                 )
             }
+            IconButton(onClick = mediaManager::switchCamera) {
+                CamstudyIcon(
+                    icon = CamstudyIcons.SwitchVideo,
+                    contentDescription = stringResource(R.string.switch_video)
+                )
+            }
             LazyVerticalGrid(
                 columns = GridCells.Adaptive(minSize = 128.dp),
             ) {

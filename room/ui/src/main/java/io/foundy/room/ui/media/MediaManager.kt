@@ -246,6 +246,10 @@ class MediaManager(
         }
     }
 
+    fun switchCamera() {
+        (videoCapturer as? Camera2Capturer)?.switchCamera(null)
+    }
+
     fun toggleHeadset(enabled: Boolean) {
         if (!enabled && enabledLocalAudio) {
             toggleMicrophone(enabled = false)
