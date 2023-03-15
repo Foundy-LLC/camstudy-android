@@ -28,6 +28,7 @@ import org.orbitmvi.orbit.compose.collectSideEffect
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RoomContent(
+    modifier: Modifier = Modifier,
     id: String,
     popBackStack: () -> Unit,
     viewModel: RoomViewModel,
@@ -69,6 +70,7 @@ fun RoomContent(
 
     CompositionLocalProvider(LocalMediaManager provides mediaManager) {
         Scaffold(
+            modifier = modifier,
             snackbarHost = { SnackbarHost(hostState = snackbarHostState) }
         ) { padding ->
             Box(Modifier.padding(padding)) {

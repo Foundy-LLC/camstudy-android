@@ -87,6 +87,7 @@ sealed class RoomUiState {
         val peerStates: List<PeerUiState>,
         val isCurrentUserMaster: Boolean,
         val isCurrentUserKicked: Boolean = false,
+        val isPipMode: Boolean = false,
 
         // Master's features
         val blacklist: List<PeerOverview>,
