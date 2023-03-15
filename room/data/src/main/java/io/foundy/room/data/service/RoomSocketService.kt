@@ -448,7 +448,14 @@ class RoomSocketService @Inject constructor() : RoomService {
     }
 
     override fun disconnect() {
+        logger.d { "Disconnect socket service" }
         socket.disconnect()
+        eventFlow.resetReplayCache()
+        _device = null
+        _sendTransport?.dispose()
+        _sendTransport = null
+        receiveTransportWrappers.clear()
+        mutedHeadset = false
     }
 
     companion object {
