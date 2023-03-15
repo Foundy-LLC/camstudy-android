@@ -26,4 +26,6 @@
     <string name="kick">강퇴</string>
     <string name="block_user">해당 회원 차단하기</string>
     <string name="switch_video">카메라 전환</string>
+    <string name="send_message">메시지 전송</string>
+    <string name="show_chat_messages">채팅 보기</string>
 </resources>

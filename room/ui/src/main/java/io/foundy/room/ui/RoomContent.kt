@@ -47,6 +47,7 @@ fun RoomContent(
                 )
             }
             is RoomSideEffect.OnChatMessage -> coroutineScope.launch {
+                snackbarHostState.currentSnackbarData?.dismiss()
                 snackbarHostState.showSnackbar(
                     "${it.message.authorName}: ${it.message.content}"
                 )

@@ -85,6 +85,9 @@ dependencies {
         exclude group: 'org.json', module: 'json'
     }
 
+    // kotlinx serialization
+    implementation "org.jetbrains.kotlinx:kotlinx-serialization-json:$serialization_version"
+
     // stream log
     implementation("io.getstream:stream-log-android:$stream_log_version")
     debugImplementation("io.getstream:stream-log-android-file:$stream_log_version")

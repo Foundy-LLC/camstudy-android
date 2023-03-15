@@ -192,6 +192,14 @@ class RoomViewModel @Inject constructor(
         reduce { uiState.copy(isPipMode = isPipMode) }
     }
 
+    fun updateChatSnackbarVisible(visible: Boolean) = intent {
+        val uiState = state
+        if (uiState !is RoomUiState.StudyRoom) {
+            return@intent
+        }
+        reduce { uiState.copy(shouldShowChatSnackbar = visible) }
+    }
+
     private fun handleWaitingRoomEvent(waitingRoomEvent: WaitingRoomEvent) = intent {
         val uiState = state
         check(uiState is RoomUiState.WaitingRoom.Connected)
@@ -271,8 +279,9 @@ class RoomViewModel @Inject constructor(
                 reduce {
                     uiState.copy(chatMessages = uiState.chatMessages + studyRoomEvent.message)
                 }
-                // TODO: 채팅 화면이 아닐때만 전송하기
-                postSideEffect(RoomSideEffect.OnChatMessage(message = studyRoomEvent.message))
+                if (uiState.shouldShowChatSnackbar) {
+                    postSideEffect(RoomSideEffect.OnChatMessage(message = studyRoomEvent.message))
+                }
             }
             is StudyRoomEvent.Timer -> {
                 reduce {

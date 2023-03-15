@@ -122,6 +122,16 @@ class RoomActivity : ComponentActivity() {
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        viewModel.updateChatSnackbarVisible(true)
+    }
+
+    override fun onPause() {
+        super.onPause()
+        viewModel.updateChatSnackbarVisible(false)
+    }
+
     @RequiresApi(Build.VERSION_CODES.O)
     private fun createVideoRemoteAction(): RemoteAction {
         val enabledVideo = mediaManager.enabledLocalVideo

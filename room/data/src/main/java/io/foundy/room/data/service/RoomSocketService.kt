@@ -191,6 +191,7 @@ class RoomSocketService @Inject constructor() : RoomService {
     }
 
     override suspend fun sendChat(message: String) {
+        logger.d { "Send message: $message" }
         socket.emit(Protocol.SEND_CHAT, message)
     }
 
@@ -235,6 +236,7 @@ class RoomSocketService @Inject constructor() : RoomService {
             }
         }
         on(Protocol.SEND_CHAT) { message: ChatMessage ->
+            logger.d { "Chat message received: $message" }
             eventFlow.tryEmit(StudyRoomEvent.OnReceiveChatMessage(message = message))
         }
         on(Protocol.START_TIMER) {

@@ -31,6 +31,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
@@ -39,6 +40,7 @@ import com.example.domain.WebRtcServerTimeZone
 import com.holix.android.bottomsheetdialog.compose.BottomSheetDialog
 import io.foundy.core.designsystem.icon.CamstudyIcon
 import io.foundy.core.designsystem.icon.CamstudyIcons
+import io.foundy.room.ui.ChatActivity
 import io.foundy.room.ui.R
 import io.foundy.room.ui.component.FloatingVideoRenderer
 import io.foundy.room.ui.component.MediaController
@@ -66,6 +68,7 @@ fun StudyRoomScreen(
         return
     }
 
+    val context = LocalContext.current
     val mediaManager = LocalMediaManager.current
     val enabledLocalVideo = mediaManager.enabledLocalVideo
     val enabledLocalAudio = mediaManager.enabledLocalAudio
@@ -175,6 +178,21 @@ fun StudyRoomScreen(
                 CamstudyIcon(
                     icon = CamstudyIcons.SwitchVideo,
                     contentDescription = stringResource(R.string.switch_video)
+                )
+            }
+            IconButton(
+                onClick = {
+                    val intent = ChatActivity.getIntent(
+                        context = context,
+                        chatMessages = uiState.chatMessages
+                    )
+                    // TODO: PIP 모드로 전환하기
+                    context.startActivity(intent)
+                }
+            ) {
+                CamstudyIcon(
+                    icon = CamstudyIcons.Chat,
+                    contentDescription = stringResource(R.string.show_chat_messages)
                 )
             }
             LazyVerticalGrid(
