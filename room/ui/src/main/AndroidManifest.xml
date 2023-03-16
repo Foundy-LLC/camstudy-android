@@ -8,9 +8,6 @@
     <uses-feature android:name="android.hardware.camera" />
 
     <application android:theme="@style/Theme.Camstudy">
-        <activity
-            android:name=".ChatActivity"
-            android:exported="false" />
 
         <receiver android:name=".receiver.VideoToggleReceiver" />
         <receiver android:name=".receiver.AudioToggleReceiver" />
@@ -21,6 +18,10 @@
             android:exported="false"
             android:supportsPictureInPicture="true"
             android:theme="@style/Theme.Camstudy" />
+
+        <activity
+            android:name=".ChatActivity"
+            android:exported="false" />
     </application>
 
 </manifest>

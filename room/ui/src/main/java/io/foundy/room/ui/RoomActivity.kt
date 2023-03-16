@@ -24,6 +24,7 @@ import androidx.compose.ui.layout.boundsInWindow
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.lifecycle.Lifecycle
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import com.example.domain.ChatMessage
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import dagger.hilt.android.AndroidEntryPoint
@@ -110,7 +111,8 @@ class RoomActivity : ComponentActivity() {
                         id = id,
                         popBackStack = ::finish,
                         viewModel = viewModel,
-                        mediaManager = mediaManager
+                        mediaManager = mediaManager,
+                        startChatActivity = ::startChatActivity
                     )
                 } else {
                     PermissionRequestScreen(
@@ -191,7 +193,7 @@ class RoomActivity : ComponentActivity() {
             .build()
     }
 
-    override fun onUserLeaveHint() {
+    private fun tryToEnterPictureInPictureMode() {
         val uiState = viewModel.container.stateFlow.value
         if (!isPipSupported || uiState !is RoomUiState.StudyRoom) {
             return
@@ -199,6 +201,10 @@ class RoomActivity : ComponentActivity() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             buildPipParams()?.let(::enterPictureInPictureMode)
         }
+    }
+
+    override fun onUserLeaveHint() {
+        tryToEnterPictureInPictureMode()
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -210,6 +216,7 @@ class RoomActivity : ComponentActivity() {
         viewModel.updatePictureInPictureMode(isPipMode = isInPictureInPictureMode)
         // When user click the close button in PIP
         if (!isInPictureInPictureMode && lifecycle.currentState == Lifecycle.State.CREATED) {
+            mediaManager.disconnect()
             finish()
         }
     }
@@ -239,5 +246,13 @@ class RoomActivity : ComponentActivity() {
                 else -> throw IllegalArgumentException()
             }
         }
+    }
+
+    private fun startChatActivity(chatMessages: List<ChatMessage>) {
+        val intent = ChatActivity.getIntent(
+            context = this,
+            chatMessages = chatMessages
+        )
+        startActivity(intent)
     }
 }

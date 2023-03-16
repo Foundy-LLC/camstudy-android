@@ -14,6 +14,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import com.example.domain.ChatMessage
 import io.foundy.room.ui.media.LocalMediaManager
 import io.foundy.room.ui.media.MediaManager
 import io.foundy.room.ui.screen.StudyRoomScreen
@@ -31,6 +32,7 @@ fun RoomContent(
     modifier: Modifier = Modifier,
     id: String,
     popBackStack: () -> Unit,
+    startChatActivity: (List<ChatMessage>) -> Unit,
     viewModel: RoomViewModel,
     mediaManager: MediaManager,
 ) {
@@ -84,7 +86,8 @@ fun RoomContent(
                         uiState = uiState,
                         onDismissKickedDialog = {
                             popBackStack()
-                        }
+                        },
+                        startChatActivity = startChatActivity
                     )
                 }
             }
