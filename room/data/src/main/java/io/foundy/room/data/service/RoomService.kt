@@ -50,5 +50,7 @@ interface RoomService {
 
     suspend fun blockUser(userId: String)
 
+    suspend fun unblockUser(userId: String): Result<Unit>
+
     fun disconnect()
 }

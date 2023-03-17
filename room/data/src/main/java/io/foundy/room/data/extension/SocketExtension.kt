@@ -33,6 +33,17 @@ inline fun <reified T> Socket.emitWithPrimitiveCallBack(
     this.emit(event, arg, ack)
 }
 
+inline fun <reified T1, reified T2> Socket.emitWithPrimitiveCallBack(
+    event: String,
+    arg: Any,
+    crossinline callback: (T1, T2) -> Unit
+) {
+    val ack = Ack { args ->
+        callback(args[0] as T1, args[1] as T2)
+    }
+    this.emit(event, arg, ack)
+}
+
 inline fun <reified S, reified F> Socket.emit(
     event: String,
     arg: Any,

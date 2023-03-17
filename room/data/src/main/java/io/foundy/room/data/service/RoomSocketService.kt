@@ -203,6 +203,21 @@ class RoomSocketService @Inject constructor() : RoomService {
         socket.emit(Protocol.BLOCK_USER, userId)
     }
 
+    override suspend fun unblockUser(userId: String): Result<Unit> =
+        suspendCoroutineWithTimeout { continuation ->
+            socket.emitWithPrimitiveCallBack(
+                Protocol.UNBLOCK_USER,
+                userId
+            ) { isSuccess: Boolean, message: String ->
+                val result = if (isSuccess) {
+                    Result.success(Unit)
+                } else {
+                    Result.failure(Exception(message))
+                }
+                continuation.resume(result) {}
+            }
+        }
+
     private fun listenRoomEvents(currentUserId: String) = with(socket) {
         on(Protocol.PEER_STATE_CHANGED) { state: PeerState ->
             if (state.uid == currentUserId) {
@@ -255,7 +270,15 @@ class RoomSocketService @Inject constructor() : RoomService {
         }
         onPrimitiveCallback(Protocol.KICK_USER) { userId: String ->
             eventFlow.tryEmit(StudyRoomEvent.OnKicked(userId = userId))
-            disconnect()
+            if (userId == currentUserId) {
+                disconnect()
+            }
+        }
+        onPrimitiveCallback(Protocol.BLOCK_USER) { userId: String ->
+            eventFlow.tryEmit(StudyRoomEvent.OnBlocked(userId = userId))
+            if (userId == currentUserId) {
+                disconnect()
+            }
         }
     }
 

@@ -2,6 +2,7 @@ package io.foundy.room.ui.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.domain.PeerOverview
 import com.example.domain.PeerState
 import com.example.domain.WebRtcServerTimeZone
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -113,6 +114,7 @@ class RoomViewModel @Inject constructor(
                         blacklist = uiState.data.blacklist,
                         onKickUserClick = ::kickUser,
                         onBlockUserClick = ::blockUser,
+                        onUnblockUserClick = ::unblockUser,
                         pomodoroTimerEventDate = it.timerStartedDateTime,
                         pomodoroTimer = it.timerProperty,
                         pomodoroTimerState = it.timerState,
@@ -176,6 +178,25 @@ class RoomViewModel @Inject constructor(
         check(uiState is RoomUiState.StudyRoom)
         check(uiState.isCurrentUserMaster)
         roomService.blockUser(userId = userId)
+    }
+
+    private fun unblockUser(userId: String) = intent {
+        val uiState = state
+        check(uiState is RoomUiState.StudyRoom)
+        check(uiState.isCurrentUserMaster)
+        roomService.unblockUser(userId = userId)
+            .onSuccess {
+                reduce {
+                    uiState.copy(
+                        blacklist = uiState.blacklist.filterNot { it.id == userId }
+                    )
+                }
+                postSideEffect(RoomSideEffect.Message(defaultContentRes = R.string.unblocked_user))
+            }.onFailure {
+                postSideEffect(
+                    RoomSideEffect.Message(defaultContentRes = R.string.failed_to_unblock_user)
+                )
+            }
     }
 
     private fun startPomodoroTimer() = intent {
@@ -299,26 +320,43 @@ class RoomViewModel @Inject constructor(
                 }
                 reduce { uiState.copy(peerStates = newPeerStates) }
             }
-            is StudyRoomEvent.OnKicked -> {
+            is StudyRoomEvent.OnKicked -> onKickedUser(
+                kickedUserId = studyRoomEvent.userId,
+                uiState = uiState
+            )
+            is StudyRoomEvent.OnBlocked -> {
                 val kickedUserId = studyRoomEvent.userId
-                val isMe = kickedUserId == currentUserId
-                if (isMe) {
-                    reduce { uiState.copy(isCurrentUserKicked = true) }
-                } else {
-                    val kickedUser = uiState.peerStates.find { it.uid == kickedUserId }
-                    kickedUser?.let { user ->
-                        postSideEffect(
-                            RoomSideEffect.Message(
-                                defaultContentRes = R.string.user_has_been_kicked,
-                                stringResArgs = listOf(user.name)
-                            )
-                        )
-                        reduce {
-                            uiState.copy(
-                                peerStates = uiState.peerStates.filter { it.uid != user.uid }
-                            )
-                        }
-                    }
+                val kickedPeer = uiState.peerStates.find { it.uid == kickedUserId }
+                check(kickedPeer != null)
+                val newBlacklist = uiState.blacklist + PeerOverview(
+                    id = kickedPeer.uid,
+                    name = kickedPeer.name
+                )
+                onKickedUser(
+                    kickedUserId = studyRoomEvent.userId,
+                    uiState = uiState.copy(blacklist = newBlacklist)
+                )
+            }
+        }
+    }
+
+    private fun onKickedUser(kickedUserId: String, uiState: RoomUiState.StudyRoom) = intent {
+        val isMe = kickedUserId == currentUserId
+        if (isMe) {
+            reduce { uiState.copy(isCurrentUserKicked = true) }
+        } else {
+            val kickedUser = uiState.peerStates.find { it.uid == kickedUserId }
+            kickedUser?.let { user ->
+                postSideEffect(
+                    RoomSideEffect.Message(
+                        defaultContentRes = R.string.user_has_been_kicked,
+                        stringResArgs = listOf(user.name)
+                    )
+                )
+                reduce {
+                    uiState.copy(
+                        peerStates = uiState.peerStates.filter { it.uid != user.uid }
+                    )
                 }
             }
         }

@@ -6,9 +6,11 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
@@ -35,6 +37,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import com.example.domain.ChatMessage
+import com.example.domain.PeerOverview
 import com.example.domain.PomodoroTimerState
 import com.example.domain.WebRtcServerTimeZone
 import com.holix.android.bottomsheetdialog.compose.BottomSheetDialog
@@ -73,7 +76,19 @@ fun StudyRoomScreen(
     val enabledLocalAudio = mediaManager.enabledLocalAudio
     val enabledLocalHeadset = mediaManager.enabledLocalHeadset
     val localVideoTrack = mediaManager.localVideoTrackFlow.collectAsState(initial = null).value
+    var showBlacklistBottomSheet by remember { mutableStateOf(false) }
     var parentBounds: IntSize by remember { mutableStateOf(IntSize(0, 0)) }
+
+    if (showBlacklistBottomSheet) {
+        BlacklistBottomSheet(
+            blacklist = uiState.blacklist,
+            onDeleteClick = { peer ->
+                uiState.onUnblockUserClick(peer.id)
+                showBlacklistBottomSheet = false
+            },
+            onDismissRequest = { showBlacklistBottomSheet = false }
+        )
+    }
 
     if (uiState.isCurrentUserKicked) {
         AlertDialog(
@@ -178,6 +193,14 @@ fun StudyRoomScreen(
                     icon = CamstudyIcons.SwitchVideo,
                     contentDescription = stringResource(R.string.switch_video)
                 )
+            }
+            if (uiState.isCurrentUserMaster) {
+                IconButton(onClick = { showBlacklistBottomSheet = true }) {
+                    CamstudyIcon(
+                        icon = CamstudyIcons.Person,
+                        contentDescription = stringResource(R.string.blacklist)
+                    )
+                }
             }
             IconButton(
                 onClick = {
@@ -296,6 +319,44 @@ fun PomodoroTimerStartButton(
 ) {
     Button(onClick = onStartClick) {
         Text(text = "시작")
+    }
+}
+
+@Composable
+private fun BlacklistBottomSheet(
+    blacklist: List<PeerOverview>,
+    onDeleteClick: (PeerOverview) -> Unit,
+    onDismissRequest: () -> Unit,
+) {
+    BottomSheetDialog(
+        onDismissRequest = onDismissRequest
+    ) {
+        Column {
+            Text("블랙리스트")
+            LazyColumn {
+                items(items = blacklist) { peer ->
+                    BlacklistItem(
+                        peerOverview = peer,
+                        onDeleteClick = onDeleteClick
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun BlacklistItem(
+    peerOverview: PeerOverview,
+    onDeleteClick: (PeerOverview) -> Unit
+) {
+    Row {
+        Text(
+            text = peerOverview.name,
+        )
+        IconButton(onClick = { onDeleteClick(peerOverview) }) {
+            CamstudyIcon(icon = CamstudyIcons.Delete, contentDescription = null)
+        }
     }
 }
 
