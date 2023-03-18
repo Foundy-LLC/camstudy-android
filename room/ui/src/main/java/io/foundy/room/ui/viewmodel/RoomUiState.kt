@@ -20,6 +20,8 @@ sealed class RoomUiState {
 
         data class FailedToConnect(@StringRes val messageRes: Int) : WaitingRoom()
 
+        object NotExists : WaitingRoom()
+
         data class Connected(
             val currentUserId: String,
             val data: WaitingRoomData,
@@ -60,6 +62,7 @@ sealed class RoomUiState {
             get() {
                 when (this) {
                     Loading -> return R.string.loading
+                    NotExists -> return R.string.not_exists_study_room
                     is FailedToConnect -> return messageRes
                     is Connected -> {
                         if (data.joinerList.any { it.id == currentUserId }) {

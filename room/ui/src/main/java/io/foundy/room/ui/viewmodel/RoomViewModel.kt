@@ -72,6 +72,10 @@ class RoomViewModel @Inject constructor(
     private fun joinToWaitingRoom(roomId: String) = intent {
         try {
             val waitingRoomData = roomService.joinToWaitingRoom(roomId)
+            if (waitingRoomData == null) {
+                reduce { RoomUiState.WaitingRoom.NotExists }
+                return@intent
+            }
             reduce {
                 RoomUiState.WaitingRoom.Connected(
                     data = waitingRoomData,

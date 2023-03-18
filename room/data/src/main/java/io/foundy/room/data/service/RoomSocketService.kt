@@ -82,7 +82,7 @@ class RoomSocketService @Inject constructor() : RoomService {
     override suspend fun joinToWaitingRoom(
         roomId: String
     ) = suspendCoroutineWithTimeout { continuation ->
-        socket.emit(Protocol.JOIN_WAITING_ROOM, roomId) { waitingRoomData: WaitingRoomData ->
+        socket.emit(Protocol.JOIN_WAITING_ROOM, roomId) { waitingRoomData: WaitingRoomData? ->
             logger.d { "Joined waiting room: $roomId" }
             listenWaitingRoomEvents()
             continuation.resume(waitingRoomData) {}

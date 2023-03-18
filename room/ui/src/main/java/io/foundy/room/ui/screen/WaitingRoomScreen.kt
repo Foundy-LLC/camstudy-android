@@ -19,6 +19,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.PasswordVisualTransformation
+import io.foundy.room.ui.R
 import io.foundy.room.ui.component.MediaController
 import io.foundy.room.ui.component.VideoRenderer
 import io.foundy.room.ui.media.LocalMediaManager
@@ -30,6 +31,10 @@ fun WaitingRoomScreen(
     roomTitle: String,
     uiState: RoomUiState.WaitingRoom,
 ) {
+    if (uiState is RoomUiState.WaitingRoom.NotExists) {
+        NotExistsContent()
+        return
+    }
     val mediaManager = LocalMediaManager.current
     val enabledLocalVideo = mediaManager.enabledLocalVideo
     val enabledLocalAudio = mediaManager.enabledLocalAudio
@@ -102,4 +107,9 @@ fun WaitingRoomScreen(
             }
         }
     }
+}
+
+@Composable
+private fun NotExistsContent() {
+    Text(text = stringResource(R.string.not_exists_study_room))
 }

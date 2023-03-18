@@ -19,7 +19,7 @@ interface RoomService {
     /**
      * 대기실에 입장한다.
      */
-    suspend fun joinToWaitingRoom(roomId: String): WaitingRoomData
+    suspend fun joinToWaitingRoom(roomId: String): WaitingRoomData?
 
     /**
      * 공부방에 입장한다.
