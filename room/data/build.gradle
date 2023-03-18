@@ -6,6 +6,10 @@ plugins {
     id 'org.jetbrains.kotlin.plugin.serialization' version "$serialization_plugin_version"
 }
 
+def localPropertiesFile = rootProject.file("local.properties")
+def localProperties = new Properties()
+localProperties.load(new FileInputStream(localPropertiesFile))
+
 android {
     def globalConfiguration = rootProject.extensions.getByName("ext")
 
@@ -21,9 +25,13 @@ android {
     }
 
     buildTypes {
+        debug {
+            buildConfigField("String", "SERVER_URL", localProperties['DEBUG_WEBRTC_SERVER_BASE_URL'])
+        }
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            buildConfigField("String", "SERVER_URL", localProperties['RELEASE_WEBRTC_SERVER_BASE_URL'])
         }
     }
     compileOptions {
