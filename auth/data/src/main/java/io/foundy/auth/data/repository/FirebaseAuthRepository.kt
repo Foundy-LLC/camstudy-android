@@ -42,7 +42,7 @@ class FirebaseAuthRepository @Inject constructor(
                 runCatching {
                     val response = authRemoteDataSource.getUserInitialInfoExistence(currentUserId)
                     response.getDataOrThrowMessage()
-                }.onSuccess {exists ->
+                }.onSuccess { exists ->
                     existsInitInfo = exists
                     if (exists) {
                         authLocalDataSource.markAsUserInitialInfoExists(currentUserId)
