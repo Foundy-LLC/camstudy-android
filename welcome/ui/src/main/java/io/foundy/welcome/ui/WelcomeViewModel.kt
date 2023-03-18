@@ -88,6 +88,7 @@ class WelcomeViewModel @Inject constructor(
     fun saveInitInformation() = intent {
         val uid = authRepository.currentUserIdStream.first()
         check(uid != null)
+        reduce { state.copy(inSaving = true) }
         postUserInitInfoUseCase(
             userId = uid,
             profileImage = state.selectedProfileImage?.let {
@@ -110,5 +111,6 @@ class WelcomeViewModel @Inject constructor(
                 )
             )
         }
+        reduce { state.copy(inSaving = false) }
     }
 }

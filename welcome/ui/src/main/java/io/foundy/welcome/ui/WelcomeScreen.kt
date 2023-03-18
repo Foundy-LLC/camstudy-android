@@ -15,6 +15,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -160,11 +161,11 @@ fun WelcomeScreen(
                     RemovableChip(label = tag, onRemoveClick = { onClickRemoveTag(tag) })
                 }
             }
-            TextButton(
+            Button(
                 onClick = onClickDone,
                 enabled = uiState.enabledDoneButton
             ) {
-                Text(text = "완료")
+                Text(text = stringResource(id = uiState.doneButtonTextRes))
             }
         }
     }
