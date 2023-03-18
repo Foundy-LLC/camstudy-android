@@ -1,5 +1,6 @@
 package io.foundy.room.ui.fake
 
+import com.example.domain.PomodoroTimerProperty
 import io.foundy.room.data.model.JoinRoomSuccessResponse
 import io.foundy.room.data.model.RoomEvent
 import io.foundy.room.data.model.WaitingRoomData
@@ -81,6 +82,10 @@ class FakeRoomService : RoomService {
     }
 
     override suspend fun unblockUser(userId: String): Result<Unit> {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun updateAndStopTimer(newProperty: PomodoroTimerProperty) {
         TODO("Not yet implemented")
     }
 

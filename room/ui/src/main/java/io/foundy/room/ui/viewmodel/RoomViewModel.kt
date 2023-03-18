@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.domain.PeerOverview
 import com.example.domain.PeerState
+import com.example.domain.PomodoroTimerProperty
 import com.example.domain.WebRtcServerTimeZone
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.foundy.auth.data.repository.AuthRepository
@@ -115,6 +116,7 @@ class RoomViewModel @Inject constructor(
                         onKickUserClick = ::kickUser,
                         onBlockUserClick = ::blockUser,
                         onUnblockUserClick = ::unblockUser,
+                        onSavePomodoroTimerClick = ::updatePomodoroTimer,
                         pomodoroTimerEventDate = it.timerStartedDateTime,
                         pomodoroTimer = it.timerProperty,
                         pomodoroTimerState = it.timerState,
@@ -197,6 +199,10 @@ class RoomViewModel @Inject constructor(
                     RoomSideEffect.Message(defaultContentRes = R.string.failed_to_unblock_user)
                 )
             }
+    }
+
+    private fun updatePomodoroTimer(property: PomodoroTimerProperty) = intent {
+        roomService.updateAndStopTimer(newProperty = property)
     }
 
     private fun startPomodoroTimer() = intent {
@@ -304,7 +310,7 @@ class RoomViewModel @Inject constructor(
                     postSideEffect(RoomSideEffect.OnChatMessage(message = studyRoomEvent.message))
                 }
             }
-            is StudyRoomEvent.Timer -> {
+            is StudyRoomEvent.TimerStateChanged -> {
                 reduce {
                     uiState.copy(
                         pomodoroTimerEventDate = Clock.System.now().toLocalDateTime(
@@ -313,6 +319,12 @@ class RoomViewModel @Inject constructor(
                         pomodoroTimerState = studyRoomEvent.state
                     )
                 }
+            }
+            is StudyRoomEvent.TimerPropertyChanged -> {
+                reduce {
+                    uiState.copy(pomodoroTimer = studyRoomEvent.property)
+                }
+                postSideEffect(RoomSideEffect.Message(defaultContentRes = R.string.edited_timer))
             }
             is StudyRoomEvent.OnDisconnectPeer -> {
                 val newPeerStates = uiState.peerStates.filter {

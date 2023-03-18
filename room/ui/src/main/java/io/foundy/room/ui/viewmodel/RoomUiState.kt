@@ -95,6 +95,7 @@ sealed class RoomUiState {
         val onKickUserClick: (userId: String) -> Unit,
         val onBlockUserClick: (userId: String) -> Unit,
         val onUnblockUserClick: (userId: String) -> Unit,
+        val onSavePomodoroTimerClick: (PomodoroTimerProperty) -> Unit,
 
         // Chatting
         val chatMessageInput: String = "",

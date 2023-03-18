@@ -13,6 +13,7 @@ import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Send
 import androidx.compose.material.icons.filled.SwitchVideo
+import androidx.compose.material.icons.filled.Timer
 import androidx.compose.material.icons.filled.Videocam
 import androidx.compose.material.icons.filled.VideocamOff
 import androidx.compose.material.icons.outlined.Home
@@ -39,6 +40,7 @@ object CamstudyIcons {
     val Send = Icons.Default.Send.asCamstudyIcon()
     val Delete = Icons.Default.Delete.asCamstudyIcon()
     val Person = Icons.Default.Person.asCamstudyIcon()
+    val Timer = Icons.Default.Timer.asCamstudyIcon()
 }
 
 sealed class CamstudyIcon

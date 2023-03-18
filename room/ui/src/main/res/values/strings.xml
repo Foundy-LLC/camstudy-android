@@ -31,4 +31,18 @@
     <string name="blacklist">블랙리스트</string>
     <string name="failed_to_unblock_user">회원 차단 해제를 실패했습니다.</string>
     <string name="unblocked_user">차단을 해제했습니다.</string>
+
+    <string name="study_timer_length">공부 시간 길이</string>
+    <string name="short_break_length">짧은 휴식 길이</string>
+    <string name="long_break_length">긴 휴식 길이</string>
+    <string name="long_break_interval">긴 휴식 주기</string>
+    <string name="timer_length_error">타이머 길이는 %d ~ %d분 사이로 해야합니다.</string>
+    <string name="short_break_length_error">짧은 휴식 길이는 %d ~ %d분 사이로 해야합니다.</string>
+    <string name="long_break_length_error">긴 휴식 길이는 %d ~ %d분 사이로 해야합니다.</string>
+    <string name="long_break_interval_error">긴 휴식 주기는 %d ~ %d회 사이로 해야합니다.</string>
+    <string name="save">저장</string>
+    <string name="edit_pomodoro_timer">뽀모도로 타이머 편집</string>
+    <string name="edited_timer">타이머가 수정되었습니다.</string>
+    <string name="are_you_sure_do_not_save_timer">타이머 수정을 그만둘까요?</string>
+    <string name="quit">그만두기</string>
 </resources>

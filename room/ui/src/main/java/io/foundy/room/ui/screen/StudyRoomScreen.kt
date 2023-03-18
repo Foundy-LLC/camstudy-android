@@ -46,7 +46,9 @@ import io.foundy.core.designsystem.icon.CamstudyIcons
 import io.foundy.room.ui.R
 import io.foundy.room.ui.component.FloatingVideoRenderer
 import io.foundy.room.ui.component.MediaController
+import io.foundy.room.ui.component.PomodoroTimerEditBottomSheet
 import io.foundy.room.ui.component.VideoRenderer
+import io.foundy.room.ui.component.rememberPomodoroTimerEditBottomSheetState
 import io.foundy.room.ui.media.LocalMediaManager
 import io.foundy.room.ui.peer.PeerUiState
 import io.foundy.room.ui.viewmodel.RoomUiState
@@ -77,6 +79,7 @@ fun StudyRoomScreen(
     val enabledLocalHeadset = mediaManager.enabledLocalHeadset
     val localVideoTrack = mediaManager.localVideoTrackFlow.collectAsState(initial = null).value
     var showBlacklistBottomSheet by remember { mutableStateOf(false) }
+    var showPomodoroTimerEditBottomSheet by remember { mutableStateOf(false) }
     var parentBounds: IntSize by remember { mutableStateOf(IntSize(0, 0)) }
 
     if (showBlacklistBottomSheet) {
@@ -91,6 +94,7 @@ fun StudyRoomScreen(
     }
 
     if (uiState.isCurrentUserKicked) {
+        // TODO: 아래 코드 다른 composable 함수로 분리하기
         AlertDialog(
             title = { Text(text = stringResource(id = R.string.master_kicked_you)) },
             confirmButton = {
@@ -104,6 +108,7 @@ fun StudyRoomScreen(
 
     val userToKick = kickUserRecheckDialogState.user
     if (userToKick != null) {
+        // TODO: 아래 코드 다른 composable 함수로 분리하기
         var checkedBlock by remember { mutableStateOf(false) }
         AlertDialog(
             title = {
@@ -147,6 +152,7 @@ fun StudyRoomScreen(
 
     val selectedUser = userBottomSheetState.selectedUser
     if (selectedUser != null) {
+        // TODO: 아래 코드 다른 composable 함수로 분리하기
         BottomSheetDialog(onDismissRequest = userBottomSheetState::hide) {
             Button(
                 onClick = {
@@ -160,6 +166,17 @@ fun StudyRoomScreen(
                 Text(stringResource(R.string.kick_user))
             }
         }
+    }
+
+    if (showPomodoroTimerEditBottomSheet) {
+        PomodoroTimerEditBottomSheet(
+            state = rememberPomodoroTimerEditBottomSheetState(uiState.pomodoroTimer),
+            onSaveClick = { property ->
+                uiState.onSavePomodoroTimerClick(property)
+                showPomodoroTimerEditBottomSheet = false
+            },
+            onDismiss = { showPomodoroTimerEditBottomSheet = false }
+        )
     }
 
     Box(
@@ -199,6 +216,12 @@ fun StudyRoomScreen(
                     CamstudyIcon(
                         icon = CamstudyIcons.Person,
                         contentDescription = stringResource(R.string.blacklist)
+                    )
+                }
+                IconButton(onClick = { showPomodoroTimerEditBottomSheet = true }) {
+                    CamstudyIcon(
+                        icon = CamstudyIcons.Timer,
+                        contentDescription = stringResource(R.string.edit_pomodoro_timer)
                     )
                 }
             }
@@ -332,7 +355,7 @@ private fun BlacklistBottomSheet(
         onDismissRequest = onDismissRequest
     ) {
         Column {
-            Text("블랙리스트")
+            Text(stringResource(id = R.string.blacklist))
             LazyColumn {
                 items(items = blacklist) { peer ->
                     BlacklistItem(

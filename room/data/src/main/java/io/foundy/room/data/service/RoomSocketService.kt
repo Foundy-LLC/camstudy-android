@@ -2,6 +2,7 @@ package io.foundy.room.data.service
 
 import com.example.domain.ChatMessage
 import com.example.domain.PeerState
+import com.example.domain.PomodoroTimerProperty
 import com.example.domain.PomodoroTimerState
 import io.foundy.room.data.BuildConfig
 import io.foundy.room.data.extension.emit
@@ -47,8 +48,6 @@ import org.webrtc.VideoTrack
 import java.net.URI
 import javax.inject.Inject
 
-// TODO: 차단 해제하는 기능 구현
-// TODO: 타이머 편집하는 기능 구현
 @OptIn(ExperimentalCoroutinesApi::class)
 class RoomSocketService @Inject constructor() : RoomService {
 
@@ -218,6 +217,10 @@ class RoomSocketService @Inject constructor() : RoomService {
             }
         }
 
+    override suspend fun updateAndStopTimer(newProperty: PomodoroTimerProperty) {
+        socket.emit(Protocol.EDIT_AND_STOP_TIMER, JSONObject(newProperty.toJson()))
+    }
+
     private fun listenRoomEvents(currentUserId: String) = with(socket) {
         on(Protocol.PEER_STATE_CHANGED) { state: PeerState ->
             if (state.uid == currentUserId) {
@@ -255,13 +258,16 @@ class RoomSocketService @Inject constructor() : RoomService {
             eventFlow.tryEmit(StudyRoomEvent.OnReceiveChatMessage(message = message))
         }
         on(Protocol.START_TIMER) {
-            eventFlow.tryEmit(StudyRoomEvent.Timer(state = PomodoroTimerState.STARTED))
+            eventFlow.tryEmit(StudyRoomEvent.TimerStateChanged(PomodoroTimerState.STARTED))
         }
         on(Protocol.START_SHORT_BREAK) {
-            eventFlow.tryEmit(StudyRoomEvent.Timer(state = PomodoroTimerState.SHORT_BREAK))
+            eventFlow.tryEmit(StudyRoomEvent.TimerStateChanged(PomodoroTimerState.SHORT_BREAK))
         }
         on(Protocol.START_LONG_BREAK) {
-            eventFlow.tryEmit(StudyRoomEvent.Timer(state = PomodoroTimerState.LONG_BREAK))
+            eventFlow.tryEmit(StudyRoomEvent.TimerStateChanged(PomodoroTimerState.LONG_BREAK))
+        }
+        on(Protocol.EDIT_AND_STOP_TIMER) { newProperty: PomodoroTimerProperty ->
+            eventFlow.tryEmit(StudyRoomEvent.TimerPropertyChanged(newProperty))
         }
         on(Protocol.OTHER_PEER_DISCONNECTED) { response: OtherPeerDisconnectedResponse ->
             val disposedPeerId = response.disposedPeerId

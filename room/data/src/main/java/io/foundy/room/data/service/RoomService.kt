@@ -1,5 +1,6 @@
 package io.foundy.room.data.service
 
+import com.example.domain.PomodoroTimerProperty
 import io.foundy.room.data.model.JoinRoomSuccessResponse
 import io.foundy.room.data.model.RoomEvent
 import io.foundy.room.data.model.WaitingRoomData
@@ -51,6 +52,8 @@ interface RoomService {
     suspend fun blockUser(userId: String)
 
     suspend fun unblockUser(userId: String): Result<Unit>
+
+    suspend fun updateAndStopTimer(newProperty: PomodoroTimerProperty)
 
     fun disconnect()
 }
