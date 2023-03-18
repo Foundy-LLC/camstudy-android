@@ -1,6 +1,7 @@
 package io.foundy.auth.ui
 
 import android.content.Intent
+import android.util.Log
 import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.ActivityResult
@@ -52,8 +53,7 @@ fun LoginRoute(
         onFailure = {
             scope.launch {
                 snackbarHostState.showSnackbar(
-                    // TODO: 에러 메시지 손보기
-                    it.message ?: context.getString(R.string.unknown_error)
+                    context.getString(R.string.failed_to_sign_in, it.statusCode)
                 )
             }
         }
@@ -118,6 +118,7 @@ private fun rememberSignInWithGoogleLauncher(
             val credential = GoogleAuthProvider.getCredential(account.idToken, null)
             Firebase.auth.signInWithCredential(credential)
         } catch (e: ApiException) {
+            Log.e("rememberSignInWithGoogleLauncher", e.toString())
             onFailure(e)
         }
     }
