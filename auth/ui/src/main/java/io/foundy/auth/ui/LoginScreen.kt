@@ -52,6 +52,7 @@ fun LoginRoute(
         onFailure = {
             scope.launch {
                 snackbarHostState.showSnackbar(
+                    // TODO: 에러 메시지 손보기
                     it.message ?: context.getString(R.string.unknown_error)
                 )
             }
