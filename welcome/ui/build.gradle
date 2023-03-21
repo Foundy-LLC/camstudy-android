@@ -52,6 +52,7 @@ dependencies {
     implementation project(path: ':core:common')
     implementation project(path: ':auth:data')
     implementation project(path: ':user:domain')
+    implementation project(path: ':welcome:data')
 
     testImplementation project(path: ':user:data')
     testImplementation project(path: ':core:test')

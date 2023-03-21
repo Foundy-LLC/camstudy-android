@@ -6,6 +6,7 @@ import io.foundy.core.test.MainDispatcherRule
 import io.foundy.user.domain.usecase.PostUserInitInfoUseCase
 import io.foundy.welcome.ui.fake.FakeAuthRepository
 import io.foundy.welcome.ui.fake.FakeUserRepository
+import io.foundy.welcome.ui.fake.FakeWelcomeRepository
 import org.junit.Rule
 import org.junit.Test
 import org.mockito.kotlin.mock
@@ -19,6 +20,8 @@ class WelcomeViewModelTest {
     private val userRepository = FakeUserRepository()
 
     private val authRepository = FakeAuthRepository()
+
+    private val welcomeRepository = FakeWelcomeRepository()
 
     private lateinit var viewModel: WelcomeViewModel
 
@@ -45,6 +48,7 @@ class WelcomeViewModelTest {
         viewModel = WelcomeViewModel(
             postUserInitInfoUseCase = PostUserInitInfoUseCase(userRepository = userRepository),
             authRepository = authRepository,
+            welcomeRepository = welcomeRepository,
             convertBitmapToFileUseCase = ConvertBitmapToFileUseCase(context)
         )
     }

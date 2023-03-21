@@ -2,6 +2,7 @@ package io.foundy.welcome.ui
 
 import android.graphics.Bitmap
 import androidx.annotation.StringRes
+import io.foundy.core.model.Tag
 import io.foundy.core.model.constant.UserConstants
 
 data class WelcomeUiState(
@@ -9,6 +10,7 @@ data class WelcomeUiState(
     val selectedProfileImage: Bitmap? = null,
     val introduceInput: String = "",
     val tagInput: String = "",
+    val recommendedTags: List<Tag> = emptyList(),
     val addedTags: List<String> = emptyList(),
     val didFocusNameInput: Boolean = false,
     @StringRes val nameErrorMessageRes: Int? = null,

@@ -2,12 +2,17 @@ package io.foundy.welcome.ui
 
 import android.graphics.Bitmap
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.foundy.auth.data.repository.AuthRepository
 import io.foundy.core.common.util.ConvertBitmapToFileUseCase
 import io.foundy.core.model.constant.UserConstants
 import io.foundy.user.domain.usecase.PostUserInitInfoUseCase
+import io.foundy.welcome.data.repository.WelcomeRepository
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
 import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.syntax.simple.intent
@@ -20,11 +25,14 @@ import javax.inject.Inject
 class WelcomeViewModel @Inject constructor(
     private val postUserInitInfoUseCase: PostUserInitInfoUseCase,
     private val authRepository: AuthRepository,
+    private val welcomeRepository: WelcomeRepository,
     private val convertBitmapToFileUseCase: ConvertBitmapToFileUseCase
 ) : ViewModel(), ContainerHost<WelcomeUiState, WelcomeSideEffect> {
 
     override val container: Container<WelcomeUiState, WelcomeSideEffect> =
         container(WelcomeUiState())
+
+    private var tagSearchJob: Job? = null
 
     fun updateSelectedProfileImage(image: Bitmap) = intent {
         reduce { state.copy(selectedProfileImage = image) }
@@ -54,6 +62,17 @@ class WelcomeViewModel @Inject constructor(
             return@intent
         }
         reduce { state.copy(tagInput = tag) }
+        fetchRecommendedTags(inputTag = tag)
+    }
+
+    private fun fetchRecommendedTags(inputTag: String) = intent {
+        tagSearchJob?.cancel()
+        tagSearchJob = viewModelScope.launch {
+            delay(300)
+            welcomeRepository.getTags(name = inputTag).onSuccess { tags ->
+                reduce { state.copy(recommendedTags = tags) }
+            }
+        }
     }
 
     fun addTag() = intent {

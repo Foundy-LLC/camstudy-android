@@ -155,6 +155,9 @@ fun WelcomeScreen(
                         }
                     }
                 )
+                for (tag in uiState.recommendedTags) {
+                    Text(modifier = Modifier.padding(4.dp), text = tag.name)
+                }
             }
             Row {
                 for (tag in uiState.addedTags) {
