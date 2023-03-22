@@ -38,6 +38,9 @@ dependencies {
     implementation project(path: ':core:data')
     implementation project(path: ':core:model')
 
+    // paging
+    implementation "androidx.paging:paging-common-ktx:$paging"
+
     // hilt
     implementation "com.google.dagger:hilt-android:$hilt_version"
     kapt "com.google.dagger:hilt-android-compiler:$hilt_version"
