@@ -5,6 +5,10 @@ plugins {
     id 'org.jlleitschuh.gradle.ktlint' version "$ktlint_version"
 }
 
+def localPropertiesFile = rootProject.file("local.properties")
+def localProperties = new Properties()
+localProperties.load(new FileInputStream(localPropertiesFile))
+
 android {
     def globalConfiguration = rootProject.extensions.getByName("ext")
 
@@ -20,9 +24,13 @@ android {
     }
 
     buildTypes {
+        debug {
+            buildConfigField("String", "API_SERVER_URL", localProperties['DEBUG_API_SERVER_BASE_URL'])
+        }
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            buildConfigField("String", "API_SERVER_URL", localProperties['RELEASE_API_SERVER_BASE_URL'])
         }
     }
     compileOptions {
