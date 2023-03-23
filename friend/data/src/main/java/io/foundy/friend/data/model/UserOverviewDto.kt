@@ -6,12 +6,12 @@ data class UserOverviewDto(
     val id: String,
     val name: String,
     val profileImage: String?,
-    val rankingScore: Int
+    val introduce: String?
 )
 
 fun UserOverviewDto.toEntity() = UserOverview(
     id = id,
     name = name,
     profileImage = profileImage,
-    rankingScore = rankingScore
+    introduce = introduce
 )

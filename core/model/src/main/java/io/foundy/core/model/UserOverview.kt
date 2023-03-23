@@ -4,5 +4,5 @@ data class UserOverview(
     val id: String,
     val name: String,
     val profileImage: String?,
-    val rankingScore: Int
+    val introduce: String?
 )

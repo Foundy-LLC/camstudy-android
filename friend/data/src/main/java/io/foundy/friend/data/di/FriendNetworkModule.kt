@@ -4,6 +4,7 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import io.foundy.auth.data.repository.AuthRepository
 import io.foundy.friend.data.api.FriendApi
 import io.foundy.friend.data.repository.FriendRepository
 import io.foundy.friend.data.repository.NetworkFriendRepository
@@ -22,7 +23,7 @@ class FriendNetworkModule {
 
     @Provides
     @Singleton
-    fun providesFriendRepository(api: FriendApi): FriendRepository {
-        return NetworkFriendRepository(api = api)
+    fun providesFriendRepository(api: FriendApi, authRepository: AuthRepository): FriendRepository {
+        return NetworkFriendRepository(api = api, authRepository = authRepository)
     }
 }

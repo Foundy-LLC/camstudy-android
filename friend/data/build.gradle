@@ -37,6 +37,7 @@ android {
 dependencies {
     implementation project(path: ':core:data')
     implementation project(path: ':core:model')
+    implementation project(path: ':auth:data')
 
     // paging
     implementation "androidx.paging:paging-common-ktx:$paging"

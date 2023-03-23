@@ -6,5 +6,8 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.emptyFlow
 
 data class FriendUiState(
-    val pagingDataFlow: Flow<PagingData<UserOverview>> = emptyFlow()
+    val friendPagingData: Flow<PagingData<UserOverview>> = emptyFlow(),
+    val friendRequestPagingData: Flow<PagingData<UserOverview>> = emptyFlow(),
+    val onAcceptClick: (String) -> Unit,
+    val acceptingIds: List<String> = emptyList()
 )
