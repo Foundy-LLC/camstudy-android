@@ -5,6 +5,7 @@ import com.ramcosta.composedestinations.spec.NavGraphSpec
 import com.ramcosta.composedestinations.spec.Route
 import io.foundy.friend.ui.destinations.FriendRouteDestination
 import io.foundy.room_list.ui.destinations.RoomListRouteDestination
+import io.foundy.search.ui.destinations.SearchRouteDestination
 
 object HomeNavGraph : NavGraphSpec {
 
@@ -14,6 +15,7 @@ object HomeNavGraph : NavGraphSpec {
 
     override val destinationsByRoute: Map<String, DestinationSpec<*>> = listOf(
         RoomListRouteDestination,
+        SearchRouteDestination,
         FriendRouteDestination
     ).associateBy { it.route }
 }

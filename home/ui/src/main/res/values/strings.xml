@@ -2,4 +2,5 @@
 <resources>
     <string name="home">홈</string>
     <string name="friend">친구</string>
+    <string name="search">검색</string>
 </resources>

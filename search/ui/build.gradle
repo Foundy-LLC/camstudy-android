@@ -46,6 +46,7 @@ android {
 }
 
 dependencies {
+    implementation project(path: ':core:designsystem')
     implementation project(path: ':core:model')
     implementation project(path: ':search:data')
 
@@ -60,6 +61,7 @@ dependencies {
 
     // hilt
     implementation "com.google.dagger:hilt-android:$hilt_version"
+    implementation "androidx.hilt:hilt-navigation-compose:$hilt_navigation_compose"
     kapt "com.google.dagger:hilt-android-compiler:$hilt_version"
     testImplementation "com.google.dagger:hilt-android-testing:$hilt_version"
     kaptTest "com.google.dagger:hilt-android-compiler:$hilt_version"

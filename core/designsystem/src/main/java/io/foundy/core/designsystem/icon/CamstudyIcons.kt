@@ -10,8 +10,12 @@ import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Mic
 import androidx.compose.material.icons.filled.MicOff
 import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material.icons.filled.Pending
 import androidx.compose.material.icons.filled.People
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.PersonAdd
+import androidx.compose.material.icons.filled.PersonRemove
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Send
 import androidx.compose.material.icons.filled.SwitchVideo
 import androidx.compose.material.icons.filled.Timer
@@ -19,6 +23,7 @@ import androidx.compose.material.icons.filled.Videocam
 import androidx.compose.material.icons.filled.VideocamOff
 import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.People
+import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.runtime.Composable
@@ -42,9 +47,14 @@ object CamstudyIcons {
     val Send = Icons.Default.Send.asCamstudyIcon()
     val Delete = Icons.Default.Delete.asCamstudyIcon()
     val Person = Icons.Default.Person.asCamstudyIcon()
+    val PersonAdd = Icons.Default.PersonAdd.asCamstudyIcon()
+    val Pending = Icons.Default.Pending.asCamstudyIcon()
+    val PersonRemove = Icons.Default.PersonRemove.asCamstudyIcon()
     val People = Icons.Default.People.asCamstudyIcon()
     val PeopleOutlined = Icons.Outlined.People.asCamstudyIcon()
     val Timer = Icons.Default.Timer.asCamstudyIcon()
+    val Search = Icons.Default.Search.asCamstudyIcon()
+    val SearchOutlined = Icons.Outlined.Search.asCamstudyIcon()
 }
 
 sealed class CamstudyIcon

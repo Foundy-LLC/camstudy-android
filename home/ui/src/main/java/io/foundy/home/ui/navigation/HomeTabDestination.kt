@@ -7,6 +7,7 @@ import io.foundy.core.designsystem.icon.CamstudyIcons
 import io.foundy.friend.ui.destinations.FriendRouteDestination
 import io.foundy.home.ui.R
 import io.foundy.room_list.ui.destinations.RoomListRouteDestination
+import io.foundy.search.ui.destinations.SearchRouteDestination
 
 enum class HomeTabDestination(
     val direction: DestinationSpec<*>,
@@ -19,6 +20,12 @@ enum class HomeTabDestination(
         selectedIcon = CamstudyIcons.Home,
         unselectedIcon = CamstudyIcons.HomeOutlined,
         label = R.string.home
+    ),
+    Search(
+        direction = SearchRouteDestination,
+        selectedIcon = CamstudyIcons.Search,
+        unselectedIcon = CamstudyIcons.SearchOutlined,
+        label = R.string.search
     ),
     Friend(
         direction = FriendRouteDestination,
