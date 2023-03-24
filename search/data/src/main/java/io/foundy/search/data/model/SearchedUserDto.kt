@@ -6,7 +6,7 @@ import io.foundy.core.model.SearchedUser
 data class SearchedUserDto(
     val id: String,
     val name: String,
-    val profileImage: String,
+    val profileImage: String?,
     @SerializedName("requestHistory") val friendStatus: FriendStatusDto
 )
 

@@ -9,6 +9,7 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -26,6 +27,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.ramcosta.composedestinations.annotation.Destination
 import io.foundy.core.designsystem.component.CamstudyTextField
 import io.foundy.core.designsystem.icon.CamstudyIcon
+import io.foundy.core.designsystem.icon.CamstudyIcons
+import io.foundy.core.model.FriendStatus
 import io.foundy.core.model.SearchedUser
 import kotlinx.coroutines.launch
 import org.orbitmvi.orbit.compose.collectAsState
@@ -82,7 +85,14 @@ fun SearchScreen(
             } else {
                 LazyColumn {
                     items(uiState.searchedUsers, key = { it.id }) { user ->
-                        User(searchedUser = user)
+                        User(
+                            searchedUser = user,
+                            enabledActionButton = uiState.actionPendingUserIds.none {
+                                it == user.id
+                            },
+                            onRequestClick = uiState.onFriendRequestClick,
+                            onRemoveClick = uiState.onRemoveFriendClick
+                        )
                     }
                 }
             }
@@ -92,12 +102,34 @@ fun SearchScreen(
 
 @Composable
 private fun User(
-    searchedUser: SearchedUser
+    searchedUser: SearchedUser,
+    enabledActionButton: Boolean,
+    onRequestClick: (id: String) -> Unit,
+    onRemoveClick: (id: String) -> Unit
 ) {
     Row {
         Text(text = searchedUser.name, modifier = Modifier.padding(4.dp))
-        IconButton(onClick = { /*TODO*/ }) {
-            CamstudyIcon(icon = searchedUser.friendStatus.buttonIcon, contentDescription = null)
+        when (searchedUser.friendStatus) {
+            FriendStatus.NONE -> IconButton(
+                onClick = { onRequestClick(searchedUser.id) },
+                enabled = enabledActionButton
+            ) {
+                CamstudyIcon(icon = CamstudyIcons.PersonAdd, contentDescription = null)
+            }
+            FriendStatus.REQUESTED -> CamstudyIcon(
+                icon = CamstudyIcons.Pending,
+                contentDescription = null
+            )
+            FriendStatus.ACCEPTED -> IconButton(
+                onClick = { onRemoveClick(searchedUser.id) },
+                enabled = enabledActionButton
+            ) {
+                CamstudyIcon(
+                    icon = CamstudyIcons.PersonRemove,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.error
+                )
+            }
         }
     }
 }

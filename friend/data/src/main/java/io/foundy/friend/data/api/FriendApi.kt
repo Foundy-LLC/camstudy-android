@@ -1,9 +1,12 @@
 package io.foundy.friend.data.api
 
 import io.foundy.core.data.model.ResponseBody
+import io.foundy.friend.data.model.FriendPostRequestBody
 import io.foundy.friend.data.model.UserOverviewDto
 import retrofit2.Response
+import retrofit2.http.Body
 import retrofit2.http.GET
+import retrofit2.http.POST
 import retrofit2.http.PUT
 import retrofit2.http.Path
 import retrofit2.http.Query
@@ -16,6 +19,12 @@ interface FriendApi {
         @Query("page") page: Int,
         @Query("accepted") accepted: Boolean
     ): Response<ResponseBody<List<UserOverviewDto>>>
+
+    @POST("users/{userId}/friends")
+    suspend fun requestFriend(
+        @Path("userId") requesterId: String,
+        @Body body: FriendPostRequestBody
+    ): Response<ResponseBody<Unit>>
 
     @PUT("users/{userId}/friends/{friendId}")
     suspend fun acceptRequest(
