@@ -2,10 +2,10 @@ package io.foundy.room.ui.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.domain.ChatMessage
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.foundy.room.data.model.StudyRoomEvent
 import io.foundy.room.data.service.RoomService
+import io.foundy.room.domain.ChatMessage
 import kotlinx.coroutines.launch
 import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.ContainerHost

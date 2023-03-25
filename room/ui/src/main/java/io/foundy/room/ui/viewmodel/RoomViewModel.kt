@@ -2,16 +2,16 @@ package io.foundy.room.ui.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.domain.PeerOverview
-import com.example.domain.PeerState
-import com.example.domain.PomodoroTimerProperty
-import com.example.domain.WebRtcServerTimeZone
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.foundy.auth.data.repository.AuthRepository
 import io.foundy.core.model.constant.RoomConstants
 import io.foundy.room.data.model.StudyRoomEvent
 import io.foundy.room.data.model.WaitingRoomEvent
 import io.foundy.room.data.service.RoomService
+import io.foundy.room.domain.PeerOverview
+import io.foundy.room.domain.PeerState
+import io.foundy.room.domain.PomodoroTimerProperty
+import io.foundy.room.domain.WebRtcServerTimeZone
 import io.foundy.room.ui.R
 import io.foundy.room.ui.peer.merge
 import io.foundy.room.ui.peer.toInitialUiState

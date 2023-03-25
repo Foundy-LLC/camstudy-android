@@ -7,9 +7,9 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.core.view.WindowCompat
-import com.example.domain.ChatMessage
 import dagger.hilt.android.AndroidEntryPoint
 import io.foundy.core.designsystem.theme.CamstudyTheme
+import io.foundy.room.domain.ChatMessage
 import io.foundy.room.ui.screen.ChatScreen
 import io.foundy.room.ui.viewmodel.ChatViewModel
 import kotlinx.serialization.decodeFromString

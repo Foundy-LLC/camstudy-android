@@ -1,7 +1,7 @@
 package io.foundy.room.ui.viewmodel
 
 import androidx.annotation.StringRes
-import com.example.domain.ChatMessage
+import io.foundy.room.domain.ChatMessage
 
 sealed class RoomSideEffect {
 

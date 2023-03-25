@@ -1,11 +1,11 @@
 package io.foundy.room.ui.viewmodel
 
 import androidx.annotation.StringRes
-import com.example.domain.ChatMessage
-import com.example.domain.PeerOverview
-import com.example.domain.PomodoroTimerProperty
-import com.example.domain.PomodoroTimerState
 import io.foundy.room.data.model.WaitingRoomData
+import io.foundy.room.domain.ChatMessage
+import io.foundy.room.domain.PeerOverview
+import io.foundy.room.domain.PomodoroTimerProperty
+import io.foundy.room.domain.PomodoroTimerState
 import io.foundy.room.ui.R
 import io.foundy.room.ui.peer.PeerUiState
 import kotlinx.datetime.LocalDateTime

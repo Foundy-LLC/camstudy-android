@@ -1,6 +1,6 @@
 package io.foundy.room.data.model
 
-import com.example.domain.PeerOverview
+import io.foundy.room.domain.PeerOverview
 import kotlinx.serialization.Serializable
 
 @Serializable

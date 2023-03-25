@@ -1,6 +1,6 @@
 package io.foundy.room.ui.peer
 
-import com.example.domain.PeerState
+import io.foundy.room.domain.PeerState
 import org.webrtc.AudioTrack
 import org.webrtc.VideoTrack
 

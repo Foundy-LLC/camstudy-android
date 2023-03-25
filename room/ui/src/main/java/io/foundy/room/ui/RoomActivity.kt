@@ -24,11 +24,11 @@ import androidx.compose.ui.layout.boundsInWindow
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.lifecycle.Lifecycle
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
-import com.example.domain.ChatMessage
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import dagger.hilt.android.AndroidEntryPoint
 import io.foundy.core.designsystem.theme.CamstudyTheme
+import io.foundy.room.domain.ChatMessage
 import io.foundy.room.ui.media.MediaManager
 import io.foundy.room.ui.peer.PeerConnectionFactoryWrapper
 import io.foundy.room.ui.receiver.AudioToggleReceiver

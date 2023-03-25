@@ -1,4 +1,4 @@
-package com.example.domain
+package io.foundy.room.domain
 
 @kotlinx.serialization.Serializable
 data class PeerOverview(

@@ -36,13 +36,13 @@ import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
-import com.example.domain.ChatMessage
-import com.example.domain.PeerOverview
-import com.example.domain.PomodoroTimerState
-import com.example.domain.WebRtcServerTimeZone
 import com.holix.android.bottomsheetdialog.compose.BottomSheetDialog
 import io.foundy.core.designsystem.icon.CamstudyIcon
 import io.foundy.core.designsystem.icon.CamstudyIcons
+import io.foundy.room.domain.ChatMessage
+import io.foundy.room.domain.PeerOverview
+import io.foundy.room.domain.PomodoroTimerState
+import io.foundy.room.domain.WebRtcServerTimeZone
 import io.foundy.room.ui.R
 import io.foundy.room.ui.component.FloatingVideoRenderer
 import io.foundy.room.ui.component.MediaController

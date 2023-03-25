@@ -17,9 +17,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
-import com.example.domain.PomodoroTimerProperty
 import com.holix.android.bottomsheetdialog.compose.BottomSheetDialog
 import io.foundy.core.designsystem.component.CamstudyTextField
+import io.foundy.room.domain.PomodoroTimerProperty
 import io.foundy.room.ui.R
 
 private val TimerLengthMinutesRange = IntRange(20, 50)

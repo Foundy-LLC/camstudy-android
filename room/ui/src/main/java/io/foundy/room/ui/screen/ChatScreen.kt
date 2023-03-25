@@ -14,10 +14,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
-import com.example.domain.ChatMessage
 import io.foundy.core.designsystem.component.CamstudyTextField
 import io.foundy.core.designsystem.icon.CamstudyIcon
 import io.foundy.core.designsystem.icon.CamstudyIcons
+import io.foundy.room.domain.ChatMessage
 import io.foundy.room.ui.R
 import io.foundy.room.ui.viewmodel.ChatUiState
 import io.foundy.room.ui.viewmodel.ChatViewModel

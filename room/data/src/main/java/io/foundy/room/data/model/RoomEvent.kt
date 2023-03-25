@@ -1,9 +1,9 @@
 package io.foundy.room.data.model
 
-import com.example.domain.ChatMessage
-import com.example.domain.PeerState
-import com.example.domain.PomodoroTimerProperty
-import com.example.domain.PomodoroTimerState
+import io.foundy.room.domain.ChatMessage
+import io.foundy.room.domain.PeerState
+import io.foundy.room.domain.PomodoroTimerProperty
+import io.foundy.room.domain.PomodoroTimerState
 import org.webrtc.MediaStreamTrack
 
 sealed class RoomEvent

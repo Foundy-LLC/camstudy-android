@@ -1,9 +1,9 @@
 package io.foundy.room.data.service
 
-import com.example.domain.PomodoroTimerProperty
 import io.foundy.room.data.model.JoinRoomSuccessResponse
 import io.foundy.room.data.model.RoomEvent
 import io.foundy.room.data.model.WaitingRoomData
+import io.foundy.room.domain.PomodoroTimerProperty
 import kotlinx.coroutines.flow.Flow
 import org.webrtc.AudioTrack
 import org.webrtc.VideoTrack

@@ -1,6 +1,6 @@
 package io.foundy.room.ui.viewmodel
 
-import com.example.domain.ChatMessage
+import io.foundy.room.domain.ChatMessage
 
 data class ChatUiState(
     val chatMessages: List<ChatMessage> = emptyList(),

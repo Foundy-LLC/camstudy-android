@@ -1,4 +1,4 @@
-package com.example.domain
+package io.foundy.room.domain
 
 import kotlinx.serialization.Serializable
 

@@ -1,9 +1,9 @@
 package io.foundy.room.data.model
 
-import com.example.domain.PeerState
-import com.example.domain.PomodoroTimerProperty
-import com.example.domain.PomodoroTimerState
-import com.example.domain.WebRtcServerTimeZone
+import io.foundy.room.domain.PeerState
+import io.foundy.room.domain.PomodoroTimerProperty
+import io.foundy.room.domain.PomodoroTimerState
+import io.foundy.room.domain.WebRtcServerTimeZone
 import kotlinx.datetime.Instant
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.toLocalDateTime

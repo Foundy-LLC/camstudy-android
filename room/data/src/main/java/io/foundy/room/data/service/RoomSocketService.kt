@@ -1,9 +1,5 @@
 package io.foundy.room.data.service
 
-import com.example.domain.ChatMessage
-import com.example.domain.PeerState
-import com.example.domain.PomodoroTimerProperty
-import com.example.domain.PomodoroTimerState
 import io.foundy.room.data.BuildConfig
 import io.foundy.room.data.extension.emit
 import io.foundy.room.data.extension.emitWithPrimitiveCallBack
@@ -28,6 +24,10 @@ import io.foundy.room.data.model.StudyRoomEvent
 import io.foundy.room.data.model.UserAndProducerId
 import io.foundy.room.data.model.WaitingRoomData
 import io.foundy.room.data.model.WaitingRoomEvent
+import io.foundy.room.domain.ChatMessage
+import io.foundy.room.domain.PeerState
+import io.foundy.room.domain.PomodoroTimerProperty
+import io.foundy.room.domain.PomodoroTimerState
 import io.getstream.log.taggedLogger
 import io.socket.client.Manager
 import io.socket.client.Socket
