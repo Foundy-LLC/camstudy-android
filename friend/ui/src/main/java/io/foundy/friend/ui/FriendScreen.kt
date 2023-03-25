@@ -10,6 +10,8 @@ import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -30,6 +32,8 @@ import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.items
 import com.ramcosta.composedestinations.annotation.Destination
+import io.foundy.core.designsystem.icon.CamstudyIcon
+import io.foundy.core.designsystem.icon.CamstudyIcons
 import io.foundy.core.model.UserOverview
 import kotlinx.coroutines.launch
 import org.orbitmvi.orbit.compose.collectAsState
@@ -56,7 +60,7 @@ fun FriendRoute(
 
     viewModel.collectSideEffect {
         when (it) {
-            FriendSideEffect.OnSuccessToAccept -> {
+            FriendSideEffect.RefreshPagingData -> {
                 // TODO: 새로고침 안되는 중... 고쳐야함
                 friendRequests.refresh()
                 friends.refresh()
@@ -72,8 +76,9 @@ fun FriendRoute(
     FriendScreen(
         friendRequests = friendRequests,
         friends = friends,
-        inAcceptingIds = uiState.acceptingIds,
+        inPendingUserIds = uiState.inPendingUserIds,
         onAcceptClick = uiState.onAcceptClick,
+        onRemoveFriendClick = uiState.onRemoveFriendClick,
         snackbarHostState = snackbarHostState
     )
 }
@@ -83,8 +88,9 @@ fun FriendRoute(
 fun FriendScreen(
     friendRequests: LazyPagingItems<UserOverview>,
     friends: LazyPagingItems<UserOverview>,
-    inAcceptingIds: List<String>,
+    inPendingUserIds: List<String>,
     onAcceptClick: (String) -> Unit,
+    onRemoveFriendClick: (String) -> Unit,
     snackbarHostState: SnackbarHostState
 ) {
     Scaffold(
@@ -102,7 +108,7 @@ fun FriendScreen(
                     }
                     FriendRequest(
                         user = user,
-                        enabledAcceptButton = inAcceptingIds.none { it == user.id },
+                        enabledAcceptButton = inPendingUserIds.none { it == user.id },
                         onAcceptClick = {
                             onAcceptClick(user.id)
                         }
@@ -117,7 +123,12 @@ fun FriendScreen(
                     Text("end")
                     return@items
                 }
-                User(user = user)
+                User(
+                    user = user,
+                    enabledRemoveButton = inPendingUserIds.none { it == user.id },
+                    // TODO: Show recheck dialog when click remove button
+                    onRemoveClick = onRemoveFriendClick
+                )
             }
             when (friends.loadState.refresh) { // FIRST LOAD
                 is LoadState.Error -> errorItem(friends.loadState)
@@ -134,8 +145,24 @@ fun FriendScreen(
 }
 
 @Composable
-private fun User(user: UserOverview) {
-    Text(modifier = Modifier.padding(12.dp), text = user.name)
+private fun User(
+    user: UserOverview,
+    enabledRemoveButton: Boolean,
+    onRemoveClick: (String) -> Unit
+) {
+    Row {
+        Text(modifier = Modifier.padding(12.dp), text = user.name)
+        IconButton(
+            onClick = { onRemoveClick(user.id) },
+            enabled = enabledRemoveButton
+        ) {
+            CamstudyIcon(
+                icon = CamstudyIcons.PersonRemove,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.error
+            )
+        }
+    }
 }
 
 @Composable

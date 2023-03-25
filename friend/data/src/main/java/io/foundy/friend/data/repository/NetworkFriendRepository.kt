@@ -18,6 +18,12 @@ class NetworkFriendRepository @Inject constructor(
     private val api: FriendApi
 ) : FriendRepository {
 
+    private suspend fun requireCurrentUserId(): String {
+        val currentUserId = authRepository.currentUserIdStream.firstOrNull()
+        check(currentUserId != null)
+        return currentUserId
+    }
+
     override fun getFriends(userId: String): Flow<PagingData<UserOverview>> {
         return Pager(
             config = PagingConfig(FriendPagingSource.PAGE_SIZE),
@@ -45,8 +51,7 @@ class NetworkFriendRepository @Inject constructor(
     }
 
     override suspend fun requestFriend(targetUserId: String): Result<Unit> {
-        val currentUserId = authRepository.currentUserIdStream.firstOrNull()
-        check(currentUserId != null)
+        val currentUserId = requireCurrentUserId()
         return runCatching {
             val response = api.requestFriend(
                 requesterId = currentUserId,
@@ -57,10 +62,17 @@ class NetworkFriendRepository @Inject constructor(
     }
 
     override suspend fun acceptFriendRequest(requesterId: String): Result<Unit> {
-        val currentUserId = authRepository.currentUserIdStream.firstOrNull()
-        check(currentUserId != null)
+        val currentUserId = requireCurrentUserId()
         return runCatching {
             val response = api.acceptRequest(userId = currentUserId, friendId = requesterId)
+            return@runCatching response.getDataOrThrowMessage()
+        }
+    }
+
+    override suspend fun deleteFriend(targetUserId: String): Result<Unit> {
+        val currentUserId = requireCurrentUserId()
+        return runCatching {
+            val response = api.deleteFriend(userId = currentUserId, friendId = targetUserId)
             return@runCatching response.getDataOrThrowMessage()
         }
     }

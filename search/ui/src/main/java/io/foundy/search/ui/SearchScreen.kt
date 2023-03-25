@@ -91,6 +91,9 @@ fun SearchScreen(
                                 it == user.id
                             },
                             onRequestClick = uiState.onFriendRequestClick,
+                            // TODO: Show recheck dialog when click cancel button
+                            onCancelRequestClick = uiState.onCancelFriendRequestClick,
+                            // TODO: Show recheck dialog when click remove button
                             onRemoveClick = uiState.onRemoveFriendClick
                         )
                     }
@@ -105,6 +108,7 @@ private fun User(
     searchedUser: SearchedUser,
     enabledActionButton: Boolean,
     onRequestClick: (id: String) -> Unit,
+    onCancelRequestClick: (id: String) -> Unit,
     onRemoveClick: (id: String) -> Unit
 ) {
     Row {
@@ -116,10 +120,15 @@ private fun User(
             ) {
                 CamstudyIcon(icon = CamstudyIcons.PersonAdd, contentDescription = null)
             }
-            FriendStatus.REQUESTED -> CamstudyIcon(
-                icon = CamstudyIcons.Pending,
-                contentDescription = null
-            )
+            FriendStatus.REQUESTED -> IconButton(
+                onClick = { onCancelRequestClick(searchedUser.id) },
+                enabled = enabledActionButton
+            ) {
+                CamstudyIcon(
+                    icon = CamstudyIcons.PersonRemove,
+                    contentDescription = null
+                )
+            }
             FriendStatus.ACCEPTED -> IconButton(
                 onClick = { onRemoveClick(searchedUser.id) },
                 enabled = enabledActionButton

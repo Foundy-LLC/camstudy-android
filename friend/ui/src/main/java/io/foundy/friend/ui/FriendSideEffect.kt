@@ -4,7 +4,7 @@ import androidx.annotation.StringRes
 
 sealed class FriendSideEffect {
 
-    object OnSuccessToAccept : FriendSideEffect()
+    object RefreshPagingData : FriendSideEffect()
 
     data class Message(
         val content: String? = null,

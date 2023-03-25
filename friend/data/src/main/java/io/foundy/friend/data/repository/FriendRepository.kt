@@ -9,4 +9,5 @@ interface FriendRepository {
     fun getFriendRequests(userId: String): Flow<PagingData<UserOverview>>
     suspend fun requestFriend(targetUserId: String): Result<Unit>
     suspend fun acceptFriendRequest(requesterId: String): Result<Unit>
+    suspend fun deleteFriend(targetUserId: String): Result<Unit>
 }

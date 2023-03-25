@@ -9,5 +9,6 @@ data class SearchUiState(
     val onQueryChanged: (String) -> Unit,
     val onSearchClick: (String) -> Unit,
     val onFriendRequestClick: (id: String) -> Unit,
+    val onCancelFriendRequestClick: (id: String) -> Unit,
     val onRemoveFriendClick: (id: String) -> Unit
 )

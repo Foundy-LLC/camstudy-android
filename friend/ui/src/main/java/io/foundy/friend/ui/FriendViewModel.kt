@@ -22,7 +22,8 @@ class FriendViewModel @Inject constructor(
 
     override val container: Container<FriendUiState, FriendSideEffect> = container(
         FriendUiState(
-            onAcceptClick = ::acceptFriendRequest
+            onAcceptClick = ::acceptFriendRequest,
+            onRemoveFriendClick = ::deleteFriend
         )
     )
 
@@ -41,11 +42,19 @@ class FriendViewModel @Inject constructor(
         }
     }
 
+    private fun addPendingUserId(userId: String) = intent {
+        reduce { state.copy(inPendingUserIds = state.inPendingUserIds + userId) }
+    }
+
+    private fun removePendingUserId(userId: String) = intent {
+        reduce { state.copy(inPendingUserIds = state.inPendingUserIds.filterNot { it == userId }) }
+    }
+
     private fun acceptFriendRequest(requesterId: String) = intent {
-        reduce { state.copy(acceptingIds = state.acceptingIds + requesterId) }
+        addPendingUserId(requesterId)
         friendRepository.acceptFriendRequest(requesterId)
             .onSuccess {
-                postSideEffect(FriendSideEffect.OnSuccessToAccept)
+                postSideEffect(FriendSideEffect.RefreshPagingData)
             }
             .onFailure {
                 postSideEffect(
@@ -55,6 +64,23 @@ class FriendViewModel @Inject constructor(
                     )
                 )
             }
-        reduce { state.copy(acceptingIds = state.acceptingIds.filterNot { it == requesterId }) }
+        removePendingUserId(requesterId)
+    }
+
+    private fun deleteFriend(targetUserId: String) = intent {
+        addPendingUserId(targetUserId)
+        friendRepository.deleteFriend(targetUserId)
+            .onSuccess {
+                postSideEffect(FriendSideEffect.RefreshPagingData)
+            }
+            .onFailure {
+                postSideEffect(
+                    FriendSideEffect.Message(
+                        content = it.message,
+                        defaultStringRes = R.string.failed_to_cancel_friend
+                    )
+                )
+            }
+        removePendingUserId(targetUserId)
     }
 }

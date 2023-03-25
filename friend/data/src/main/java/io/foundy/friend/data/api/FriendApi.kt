@@ -5,6 +5,7 @@ import io.foundy.friend.data.model.FriendPostRequestBody
 import io.foundy.friend.data.model.UserOverviewDto
 import retrofit2.Response
 import retrofit2.http.Body
+import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.PUT
@@ -28,6 +29,12 @@ interface FriendApi {
 
     @PUT("users/{userId}/friends/{friendId}")
     suspend fun acceptRequest(
+        @Path("userId") userId: String,
+        @Path("friendId") friendId: String
+    ): Response<ResponseBody<Unit>>
+
+    @DELETE("users/{userId}/friends/{friendId}")
+    suspend fun deleteFriend(
         @Path("userId") userId: String,
         @Path("friendId") friendId: String
     ): Response<ResponseBody<Unit>>

@@ -10,7 +10,6 @@ import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Mic
 import androidx.compose.material.icons.filled.MicOff
 import androidx.compose.material.icons.filled.MoreVert
-import androidx.compose.material.icons.filled.Pending
 import androidx.compose.material.icons.filled.People
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.PersonAdd
@@ -48,7 +47,6 @@ object CamstudyIcons {
     val Delete = Icons.Default.Delete.asCamstudyIcon()
     val Person = Icons.Default.Person.asCamstudyIcon()
     val PersonAdd = Icons.Default.PersonAdd.asCamstudyIcon()
-    val Pending = Icons.Default.Pending.asCamstudyIcon()
     val PersonRemove = Icons.Default.PersonRemove.asCamstudyIcon()
     val People = Icons.Default.People.asCamstudyIcon()
     val PeopleOutlined = Icons.Outlined.People.asCamstudyIcon()

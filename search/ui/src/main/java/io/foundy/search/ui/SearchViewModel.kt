@@ -1,5 +1,6 @@
 package io.foundy.search.ui
 
+import androidx.annotation.StringRes
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -28,7 +29,8 @@ class SearchViewModel @Inject constructor(
             onQueryChanged = ::updateQueryInput,
             onSearchClick = ::forceSearchUsers,
             onFriendRequestClick = ::requestFriend,
-            onRemoveFriendClick = ::removeFriend
+            onCancelFriendRequestClick = ::cancelFriendRequest,
+            onRemoveFriendClick = ::deleteFriend
         )
     )
 
@@ -71,24 +73,11 @@ class SearchViewModel @Inject constructor(
         }
     }
 
-    private fun requestFriend(userId: String) = intent {
+    private fun addPendingUserId(userId: String) = intent {
         reduce { state.copy(actionPendingUserIds = state.actionPendingUserIds + userId) }
-        friendRepository.requestFriend(targetUserId = userId).onSuccess {
-            val newSearchedUser = state.searchedUsers.map { user ->
-                if (user.id == userId) {
-                    return@map user.copy(friendStatus = FriendStatus.REQUESTED)
-                }
-                return@map user
-            }
-            reduce { state.copy(searchedUsers = newSearchedUser) }
-        }.onFailure {
-            postSideEffect(
-                SearchSideEffect.Message(
-                    content = it.message,
-                    defaultStringRes = R.string.failed_to_search_user
-                )
-            )
-        }
+    }
+
+    private fun removePendingUserId(userId: String) = intent {
         reduce {
             state.copy(
                 actionPendingUserIds = state.actionPendingUserIds.filterNot { it == userId }
@@ -96,7 +85,51 @@ class SearchViewModel @Inject constructor(
         }
     }
 
-    private fun removeFriend(userId: String) = intent {
-        // TODO
+    private fun requestFriend(userId: String) = intent {
+        addPendingUserId(userId = userId)
+        friendRepository.requestFriend(targetUserId = userId).onSuccess {
+            val newSearchedUser = state.searchedUsers.map { user ->
+                return@map if (user.id == userId) {
+                    user.copy(friendStatus = FriendStatus.REQUESTED)
+                } else user
+            }
+            reduce { state.copy(searchedUsers = newSearchedUser) }
+        }.onFailure {
+            postSideEffect(
+                SearchSideEffect.Message(
+                    content = it.message,
+                    defaultStringRes = R.string.failed_to_request_friend
+                )
+            )
+        }
+        removePendingUserId(userId = userId)
+    }
+
+    private fun cancelFriendRequest(userId: String) = intent {
+        deleteFriend(userId = userId, errorMessageRes = R.string.failed_to_cancel_friend_request)
+    }
+
+    private fun deleteFriend(userId: String) = intent {
+        deleteFriend(userId = userId, errorMessageRes = R.string.failed_to_cancel_friend)
+    }
+
+    private fun deleteFriend(userId: String, @StringRes errorMessageRes: Int) = intent {
+        addPendingUserId(userId = userId)
+        friendRepository.deleteFriend(targetUserId = userId).onSuccess {
+            val newSearchedUser = state.searchedUsers.map { user ->
+                return@map if (user.id == userId) {
+                    user.copy(friendStatus = FriendStatus.NONE)
+                } else user
+            }
+            reduce { state.copy(searchedUsers = newSearchedUser) }
+        }.onFailure {
+            postSideEffect(
+                SearchSideEffect.Message(
+                    content = it.message,
+                    defaultStringRes = errorMessageRes
+                )
+            )
+        }
+        removePendingUserId(userId = userId)
     }
 }

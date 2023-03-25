@@ -9,5 +9,6 @@ data class FriendUiState(
     val friendPagingData: Flow<PagingData<UserOverview>> = emptyFlow(),
     val friendRequestPagingData: Flow<PagingData<UserOverview>> = emptyFlow(),
     val onAcceptClick: (String) -> Unit,
-    val acceptingIds: List<String> = emptyList()
+    val inPendingUserIds: List<String> = emptyList(),
+    val onRemoveFriendClick: (String) -> Unit
 )
