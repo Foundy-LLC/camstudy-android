@@ -12,7 +12,7 @@ internal object RootNavGraph : NavGraphSpec {
 
     override val route: String = "root"
 
-    override val startRoute: Route = LoginRouteDestination
+    override val startRoute: Route = StartDestination
 
     override val destinationsByRoute: Map<String, DestinationSpec<*>> = listOf(
         HomeRouteDestination,

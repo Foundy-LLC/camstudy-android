@@ -15,6 +15,7 @@ import com.ramcosta.composedestinations.spec.DestinationStyle
 import com.ramcosta.composedestinations.spec.DirectionDestinationSpec
 import dagger.hilt.android.AndroidEntryPoint
 import io.foundy.auth.ui.destinations.LoginRouteDestination
+import io.foundy.camstudy.navigation.StartDestination
 import io.foundy.camstudy.ui.CamstudyApp
 import io.foundy.home.ui.destinations.HomeRouteDestination
 import io.foundy.welcome.ui.destinations.WelcomeRouteDestination
@@ -49,7 +50,7 @@ class MainActivity : ComponentActivity() {
                 override fun onPreDraw(): Boolean {
                     val startDestination = viewModel.startDestination
                     return if (startDestination != null) {
-                        if (startDestination !is LoginRouteDestination) {
+                        if (startDestination !is StartDestination) {
                             navigateAndPopUpTo(startDestination)
                         }
                         lifecycleScope.launch {
@@ -82,7 +83,7 @@ class MainActivity : ComponentActivity() {
 
     private fun navigateAndPopUpTo(destination: DirectionDestinationSpec) {
         navController.navigate(destination.route) {
-            popUpTo(LoginRouteDestination.route) {
+            popUpTo(StartDestination.route) {
                 inclusive = true
             }
             launchSingleTop = true
