@@ -1,9 +1,8 @@
 package io.foundy.friend.data.api
 
-import io.foundy.core.data.model.ResponseBody
+import io.foundy.core.data.util.CamstudyResponse
 import io.foundy.friend.data.model.FriendPostRequestBody
 import io.foundy.friend.data.model.UserOverviewDto
-import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
@@ -19,23 +18,23 @@ interface FriendApi {
         @Path("userId") userId: String,
         @Query("page") page: Int,
         @Query("accepted") accepted: Boolean
-    ): Response<ResponseBody<List<UserOverviewDto>>>
+    ): CamstudyResponse<List<UserOverviewDto>>
 
     @POST("users/{userId}/friends")
     suspend fun requestFriend(
         @Path("userId") requesterId: String,
         @Body body: FriendPostRequestBody
-    ): Response<ResponseBody<Unit>>
+    ): CamstudyResponse<Unit>
 
     @PUT("users/{userId}/friends/{friendId}")
     suspend fun acceptRequest(
         @Path("userId") userId: String,
         @Path("friendId") friendId: String
-    ): Response<ResponseBody<Unit>>
+    ): CamstudyResponse<Unit>
 
     @DELETE("users/{userId}/friends/{friendId}")
     suspend fun deleteFriend(
         @Path("userId") userId: String,
         @Path("friendId") friendId: String
-    ): Response<ResponseBody<Unit>>
+    ): CamstudyResponse<Unit>
 }
