@@ -38,6 +38,9 @@ dependencies {
     implementation project(path: ':core:data')
     implementation project(path: ':core:model')
 
+    // kotlinx datetime
+    implementation "org.jetbrains.kotlinx:kotlinx-datetime:$kotlin_datetime_version"
+
     // paging
     implementation "androidx.paging:paging-common-ktx:$paging"
 
