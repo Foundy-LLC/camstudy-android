@@ -1,6 +1,7 @@
 package io.foundy.home.ui.navigation
 
 import androidx.annotation.StringRes
+import androidx.compose.ui.graphics.Color
 import com.ramcosta.composedestinations.spec.DestinationSpec
 import io.foundy.core.designsystem.icon.CamstudyIcon
 import io.foundy.core.designsystem.icon.CamstudyIcons
@@ -11,26 +12,22 @@ import io.foundy.search.ui.destinations.SearchRouteDestination
 
 enum class HomeTabDestination(
     val direction: DestinationSpec<*>,
-    val selectedIcon: CamstudyIcon,
-    val unselectedIcon: CamstudyIcon,
+    val icon: CamstudyIcon,
     @StringRes val label: Int
 ) {
     RoomList(
         direction = RoomListRouteDestination,
-        selectedIcon = CamstudyIcons.Home,
-        unselectedIcon = CamstudyIcons.HomeOutlined,
-        label = R.string.home
+        icon = CamstudyIcons.StudyRoom,
+        label = R.string.study_room
     ),
     Search(
         direction = SearchRouteDestination,
-        selectedIcon = CamstudyIcons.Search,
-        unselectedIcon = CamstudyIcons.SearchOutlined,
+        icon = CamstudyIcons.Search,
         label = R.string.search
     ),
     Friend(
         direction = FriendRouteDestination,
-        selectedIcon = CamstudyIcons.People,
-        unselectedIcon = CamstudyIcons.PeopleOutlined,
+        icon = CamstudyIcons.People,
         label = R.string.friend
     )
 }

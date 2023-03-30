@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="home">홈</string>
+    <string name="study_room">공부방</string>
     <string name="friend">친구</string>
     <string name="search">검색</string>
 </resources>

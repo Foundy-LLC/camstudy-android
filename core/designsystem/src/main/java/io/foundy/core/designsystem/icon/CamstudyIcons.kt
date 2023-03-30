@@ -30,10 +30,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
+import io.foundy.core.designsystem.R
 
 object CamstudyIcons {
-    val Home = Icons.Default.Home.asCamstudyIcon()
-    val HomeOutlined = Icons.Outlined.Home.asCamstudyIcon()
+    val StudyRoom = R.drawable.ic_study_room.asCamstudyIcon()
     val VideoCam = Icons.Default.Videocam.asCamstudyIcon()
     val VideoCamOff = Icons.Default.VideocamOff.asCamstudyIcon()
     val Mic = Icons.Default.Mic.asCamstudyIcon()
@@ -49,21 +49,19 @@ object CamstudyIcons {
     val PersonAdd = Icons.Default.PersonAdd.asCamstudyIcon()
     val PersonRemove = Icons.Default.PersonRemove.asCamstudyIcon()
     val People = Icons.Default.People.asCamstudyIcon()
-    val PeopleOutlined = Icons.Outlined.People.asCamstudyIcon()
     val Timer = Icons.Default.Timer.asCamstudyIcon()
     val Search = Icons.Default.Search.asCamstudyIcon()
-    val SearchOutlined = Icons.Outlined.Search.asCamstudyIcon()
 }
 
 sealed class CamstudyIcon
 data class ImageVectorIcon(val imageVector: ImageVector) : CamstudyIcon()
 data class DrawableResourceIcon(@DrawableRes val id: Int) : CamstudyIcon()
 
-fun ImageVector.asCamstudyIcon(): CamstudyIcon {
+private fun ImageVector.asCamstudyIcon(): CamstudyIcon {
     return ImageVectorIcon(this)
 }
 
-fun @receiver:DrawableRes Int.asCamstudyIcon(): CamstudyIcon {
+private fun @receiver:DrawableRes Int.asCamstudyIcon(): CamstudyIcon {
     return DrawableResourceIcon(this)
 }
 
