@@ -1,7 +1,6 @@
 package io.foundy.home.ui.navigation
 
 import androidx.annotation.StringRes
-import androidx.compose.ui.graphics.Color
 import com.ramcosta.composedestinations.spec.DestinationSpec
 import io.foundy.core.designsystem.icon.CamstudyIcon
 import io.foundy.core.designsystem.icon.CamstudyIcons
