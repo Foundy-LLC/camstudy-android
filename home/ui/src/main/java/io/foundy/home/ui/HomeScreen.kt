@@ -16,6 +16,7 @@ import androidx.navigation.NavDestination.Companion.hierarchy
 import com.ramcosta.composedestinations.DestinationsNavHost
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.manualcomposablecalls.composable
+import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.ramcosta.composedestinations.spec.DestinationStyle
 import io.foundy.core.designsystem.icon.CamstudyIcon
 import io.foundy.friend.ui.FriendRoute
@@ -27,13 +28,20 @@ import io.foundy.room_list.ui.destinations.RoomListRouteDestination
 
 @Destination(style = DestinationStyle.Runtime::class)
 @Composable
-fun HomeRoute(viewModel: HomeViewModel = hiltViewModel()) {
-    HomeScreen(currentUserId = viewModel.currentUserId)
+fun HomeRoute(
+    navigator: DestinationsNavigator,
+    viewModel: HomeViewModel = hiltViewModel()
+) {
+    HomeScreen(
+        navigator = navigator,
+        currentUserId = viewModel.currentUserId
+    )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
+    navigator: DestinationsNavigator,
     currentUserId: String,
     homeScreenState: HomeScreenState = rememberHomeScreenState(),
 ) {
@@ -52,7 +60,7 @@ fun HomeScreen(
             modifier = Modifier.padding(padding),
         ) {
             composable(RoomListRouteDestination) {
-                RoomListRoute()
+                RoomListRoute(navigator = navigator)
             }
             composable(FriendRouteDestination) {
                 FriendRoute(userId = currentUserId)

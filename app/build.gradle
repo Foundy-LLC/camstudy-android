@@ -67,6 +67,7 @@ dependencies {
     implementation project(":home:ui")
     implementation project(":room-list:ui")
     implementation project(":room:ui")
+    implementation project(":organization:ui")
 
     // stream log
     implementation("io.getstream:stream-log-android:$stream_log_version")

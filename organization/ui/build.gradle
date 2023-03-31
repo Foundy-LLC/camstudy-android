@@ -48,10 +48,16 @@ android {
 dependencies {
     implementation project(path: ':core:navigation')
     implementation project(path: ':core:designsystem')
+    implementation project(path: ':core:model')
+    implementation project(path: ':organization:data')
 
     // compose destination
     implementation "io.github.raamcosta.compose-destinations:core:$compose_destination_version"
     ksp "io.github.raamcosta.compose-destinations:ksp:$compose_destination_version"
+
+    // paging
+    implementation "androidx.paging:paging-common-ktx:$paging"
+    implementation "androidx.paging:paging-compose:$paging_compose"
 
     // hilt
     implementation "com.google.dagger:hilt-android:$hilt_version"

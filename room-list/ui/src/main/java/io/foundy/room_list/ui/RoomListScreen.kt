@@ -47,10 +47,12 @@ import androidx.paging.compose.items
 import coil.compose.AsyncImage
 import com.holix.android.bottomsheetdialog.compose.BottomSheetDialog
 import com.ramcosta.composedestinations.annotation.Destination
+import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import io.foundy.core.common.util.toBitmap
 import io.foundy.core.designsystem.component.CamstudyTextField
 import io.foundy.core.model.RoomOverview
 import io.foundy.core.model.constant.RoomConstants
+import io.foundy.organization.ui.destinations.OrganizationRouteDestination
 import io.foundy.room.ui.RoomActivity
 import kotlinx.coroutines.launch
 import org.orbitmvi.orbit.compose.collectAsState
@@ -60,6 +62,7 @@ import java.util.Date
 @Destination
 @Composable
 fun RoomListRoute(
+    navigator: DestinationsNavigator,
     viewModel: RoomListViewModel = hiltViewModel()
 ) {
     val uiState = viewModel.collectAsState().value
@@ -90,6 +93,10 @@ fun RoomListRoute(
         onRoomClick = { id ->
             val intent = RoomActivity.getIntent(context, roomId = id)
             context.startActivity(intent)
+        },
+        onOrganizationClick = {
+            // TODO: 아래 코드 삭제시 organization module 의존성 제거하기
+            navigator.navigate(OrganizationRouteDestination)
         }
     )
 }
@@ -100,7 +107,8 @@ fun RoomListScreen(
     rooms: LazyPagingItems<RoomOverview>,
     roomCreateInput: RoomCreateInputUiState,
     snackbarHostState: SnackbarHostState,
-    onRoomClick: (id: String) -> Unit
+    onRoomClick: (id: String) -> Unit,
+    onOrganizationClick: () -> Unit
 ) {
     var showRoomCreateBottomSheet by remember { mutableStateOf(false) }
 
@@ -118,6 +126,12 @@ fun RoomListScreen(
             item {
                 TextButton(onClick = { showRoomCreateBottomSheet = true }) {
                     Text(text = "방 만들기")
+                }
+            }
+            // TODO: 개발용 버튼임 제거해야함
+            item {
+                TextButton(onClick = onOrganizationClick) {
+                    Text(text = "회사, 학교 조회")
                 }
             }
             item {
