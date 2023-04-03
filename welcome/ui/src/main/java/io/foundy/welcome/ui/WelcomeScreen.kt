@@ -19,7 +19,6 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -43,6 +42,7 @@ import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.spec.DestinationStyle
 import io.foundy.core.common.util.toBitmap
 import io.foundy.core.designsystem.component.CamstudyTextField
+import io.foundy.core.designsystem.theme.CamstudyTheme
 import kotlinx.coroutines.launch
 import org.orbitmvi.orbit.compose.collectAsState
 import org.orbitmvi.orbit.compose.collectSideEffect
@@ -218,8 +218,8 @@ private fun RemovableChip(
     Surface(
         modifier = Modifier.padding(8.dp),
         shape = CircleShape,
-        color = MaterialTheme.colorScheme.primary,
-        contentColor = MaterialTheme.colorScheme.onPrimary,
+        color = CamstudyTheme.colorScheme.primary,
+        contentColor = CamstudyTheme.colorScheme.text01,
     ) {
         Row(
             modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),

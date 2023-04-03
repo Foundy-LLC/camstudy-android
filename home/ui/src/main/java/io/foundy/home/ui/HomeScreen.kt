@@ -2,7 +2,6 @@ package io.foundy.home.ui
 
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
@@ -19,6 +18,7 @@ import com.ramcosta.composedestinations.manualcomposablecalls.composable
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.ramcosta.composedestinations.spec.DestinationStyle
 import io.foundy.core.designsystem.icon.CamstudyIcon
+import io.foundy.core.designsystem.theme.CamstudyTheme
 import io.foundy.friend.ui.FriendRoute
 import io.foundy.friend.ui.destinations.FriendRouteDestination
 import io.foundy.home.ui.navigation.HomeNavGraph
@@ -81,9 +81,9 @@ private fun CamstudyBottomBar(
                 it.route == destination.direction.route
             } == true
             val color = if (selected) {
-                MaterialTheme.colorScheme.primary
+                CamstudyTheme.colorScheme.primary
             } else {
-                MaterialTheme.colorScheme.onBackground.copy(alpha = 0.4f)
+                CamstudyTheme.colorScheme.text01
             }
             NavigationBarItem(
                 selected = selected,

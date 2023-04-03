@@ -6,13 +6,13 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import io.foundy.core.designsystem.icon.CamstudyIcon
+import io.foundy.core.designsystem.theme.CamstudyTheme
 
 @Composable
 fun ToggleIconButton(
@@ -22,8 +22,8 @@ fun ToggleIconButton(
     onClick: (enabled: Boolean) -> Unit
 ) {
     val (icon, backgroundColor) = when (enabled) {
-        true -> Pair(enabledIcon, MaterialTheme.colorScheme.onBackground)
-        false -> Pair(disabledIcon, MaterialTheme.colorScheme.error)
+        true -> Pair(enabledIcon, CamstudyTheme.colorScheme.text01)
+        false -> Pair(disabledIcon, CamstudyTheme.colorScheme.error)
     }
 
     Box(
@@ -37,7 +37,7 @@ fun ToggleIconButton(
             modifier = Modifier
                 .padding(10.dp)
                 .align(Alignment.Center),
-            tint = MaterialTheme.colorScheme.onError,
+            tint = CamstudyTheme.colorScheme.text01,
             icon = icon,
             contentDescription = null
         )

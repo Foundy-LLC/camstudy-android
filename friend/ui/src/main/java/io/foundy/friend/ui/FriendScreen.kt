@@ -11,7 +11,6 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -34,6 +33,7 @@ import androidx.paging.compose.items
 import com.ramcosta.composedestinations.annotation.Destination
 import io.foundy.core.designsystem.icon.CamstudyIcon
 import io.foundy.core.designsystem.icon.CamstudyIcons
+import io.foundy.core.designsystem.theme.CamstudyTheme
 import io.foundy.core.model.UserOverview
 import kotlinx.coroutines.launch
 import org.orbitmvi.orbit.compose.collectAsState
@@ -159,7 +159,7 @@ private fun User(
             CamstudyIcon(
                 icon = CamstudyIcons.PersonRemove,
                 contentDescription = null,
-                tint = MaterialTheme.colorScheme.error
+                tint = CamstudyTheme.colorScheme.error
             )
         }
     }
