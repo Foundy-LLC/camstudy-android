@@ -83,7 +83,7 @@ private fun CamstudyBottomBar(
             val color = if (selected) {
                 CamstudyTheme.colorScheme.primary
             } else {
-                CamstudyTheme.colorScheme.text01.copy(alpha = 0.4f)
+                CamstudyTheme.colorScheme.text01
             }
             NavigationBarItem(
                 selected = selected,
