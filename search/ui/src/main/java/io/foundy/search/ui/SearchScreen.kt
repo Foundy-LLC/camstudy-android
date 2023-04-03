@@ -9,7 +9,6 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -28,6 +27,7 @@ import com.ramcosta.composedestinations.annotation.Destination
 import io.foundy.core.designsystem.component.CamstudyTextField
 import io.foundy.core.designsystem.icon.CamstudyIcon
 import io.foundy.core.designsystem.icon.CamstudyIcons
+import io.foundy.core.designsystem.theme.CamstudyTheme
 import io.foundy.core.model.FriendStatus
 import io.foundy.core.model.SearchedUser
 import kotlinx.coroutines.launch
@@ -136,7 +136,7 @@ private fun User(
                 CamstudyIcon(
                     icon = CamstudyIcons.PersonRemove,
                     contentDescription = null,
-                    tint = MaterialTheme.colorScheme.error
+                    tint = CamstudyTheme.colorScheme.error
                 )
             }
         }

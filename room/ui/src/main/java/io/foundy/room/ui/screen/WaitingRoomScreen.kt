@@ -11,7 +11,6 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
@@ -19,6 +18,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.PasswordVisualTransformation
+import io.foundy.core.designsystem.theme.CamstudyTheme
 import io.foundy.room.ui.R
 import io.foundy.room.ui.component.MediaController
 import io.foundy.room.ui.component.VideoRenderer
@@ -60,7 +60,7 @@ fun WaitingRoomScreen(
                     height = maxHeight / 3
                 ),
                 colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.onBackground
+                    containerColor = CamstudyTheme.colorScheme.text01
                 )
             ) {
                 if (localVideoTrack != null && enabledLocalVideo) {

@@ -16,7 +16,6 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -39,6 +38,7 @@ import androidx.compose.ui.unit.dp
 import com.holix.android.bottomsheetdialog.compose.BottomSheetDialog
 import io.foundy.core.designsystem.icon.CamstudyIcon
 import io.foundy.core.designsystem.icon.CamstudyIcons
+import io.foundy.core.designsystem.theme.CamstudyTheme
 import io.foundy.room.domain.ChatMessage
 import io.foundy.room.domain.PeerOverview
 import io.foundy.room.domain.PomodoroTimerState
@@ -269,7 +269,7 @@ private fun RemotePeer(
 
     Surface(
         modifier = videoSizeModifier,
-        color = MaterialTheme.colorScheme.onBackground
+        color = CamstudyTheme.colorScheme.text01
     ) {
         if (peerState.videoTrack != null) {
             VideoRenderer(
@@ -282,14 +282,14 @@ private fun RemotePeer(
             if (!peerState.enabledMicrophone) {
                 CamstudyIcon(
                     icon = CamstudyIcons.MicOff,
-                    tint = MaterialTheme.colorScheme.background,
+                    tint = CamstudyTheme.colorScheme.systemBackground,
                     contentDescription = null
                 )
             }
             if (!peerState.enabledHeadset) {
                 CamstudyIcon(
                     icon = CamstudyIcons.HeadsetOff,
-                    tint = MaterialTheme.colorScheme.background,
+                    tint = CamstudyTheme.colorScheme.systemBackground,
                     contentDescription = null
                 )
             }
@@ -301,7 +301,7 @@ private fun RemotePeer(
             ) {
                 CamstudyIcon(
                     icon = CamstudyIcons.MoreVert,
-                    tint = MaterialTheme.colorScheme.background,
+                    tint = CamstudyTheme.colorScheme.systemBackground,
                     contentDescription = null
                 )
             }
@@ -325,10 +325,10 @@ private fun PomodoroTimer(
         }
     }
     val color = when (state) {
-        PomodoroTimerState.STOPPED -> MaterialTheme.colorScheme.onBackground
-        PomodoroTimerState.STARTED -> MaterialTheme.colorScheme.error
-        PomodoroTimerState.SHORT_BREAK -> MaterialTheme.colorScheme.primary
-        PomodoroTimerState.LONG_BREAK -> MaterialTheme.colorScheme.secondary
+        PomodoroTimerState.STOPPED -> CamstudyTheme.colorScheme.text01
+        PomodoroTimerState.STARTED -> CamstudyTheme.colorScheme.error
+        PomodoroTimerState.SHORT_BREAK -> CamstudyTheme.colorScheme.primary
+        PomodoroTimerState.LONG_BREAK -> CamstudyTheme.colorScheme.secondary
     }
     Text(
         text = elapsedTimeText,
@@ -454,7 +454,7 @@ fun StudyRoomContentInPip(
         )
         Surface(
             modifier = videoSizeModifier,
-            color = MaterialTheme.colorScheme.onBackground
+            color = CamstudyTheme.colorScheme.text01
         ) {
             if (localVideoTrack != null) {
                 VideoRenderer(
