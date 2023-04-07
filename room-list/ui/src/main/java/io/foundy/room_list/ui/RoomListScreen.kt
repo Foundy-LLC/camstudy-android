@@ -186,6 +186,7 @@ private fun RoomItem(
 ) {
     Surface(color = CamstudyTheme.colorScheme.systemBackground) {
         Column {
+            Divider(color = CamstudyTheme.colorScheme.systemUi03, thickness = 0.5.dp)
             Row(modifier = Modifier.padding(16.dp)) {
                 ThumbnailImage(
                     imageUrl = room.thumbnail,
@@ -209,7 +210,6 @@ private fun RoomItem(
                     onClick = onJoinClick
                 )
             }
-            Divider(color = CamstudyTheme.colorScheme.systemUi03, thickness = 0.5.dp)
         }
     }
 }
