@@ -12,6 +12,8 @@ import java.util.concurrent.TimeUnit
 
 data class RoomListUiState(
     val roomPagingDataStream: Flow<PagingData<RoomOverview>> = emptyFlow(),
+    val searchQuery: String = "",
+    val onSearchQueryChange: (String) -> Unit,
     val roomCreateInput: RoomCreateInputUiState
 )
 

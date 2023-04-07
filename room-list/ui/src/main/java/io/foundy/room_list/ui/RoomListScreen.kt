@@ -105,8 +105,8 @@ fun RoomListRoute(
     }
 
     RoomListScreen(
+        uiState = uiState,
         rooms = rooms,
-        roomCreateInput = uiState.roomCreateInput,
         snackbarHostState = snackbarHostState,
         onRoomClick = { id ->
             val intent = RoomActivity.getIntent(context, roomId = id)
@@ -122,12 +122,13 @@ fun RoomListRoute(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RoomListScreen(
+    uiState: RoomListUiState,
     rooms: LazyPagingItems<RoomOverview>,
-    roomCreateInput: RoomCreateInputUiState,
     snackbarHostState: SnackbarHostState,
     onRoomClick: (id: String) -> Unit,
     onOrganizationClick: () -> Unit
 ) {
+    val roomCreateInput = uiState.roomCreateInput
     var showRoomCreateBottomSheet by remember { mutableStateOf(false) }
 
     if (showRoomCreateBottomSheet) {
@@ -153,7 +154,7 @@ fun RoomListScreen(
                     Text(text = "회사, 학교 조회")
                 }
             }
-            headerItem(query = "", onQueryChange = { /* TODO: 구현 */ })
+            headerItem(query = uiState.searchQuery, onQueryChange = uiState.onSearchQueryChange)
             items(
                 items = rooms,
                 key = { it.id }

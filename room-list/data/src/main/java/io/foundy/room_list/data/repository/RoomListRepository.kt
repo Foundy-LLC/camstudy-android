@@ -8,7 +8,7 @@ import java.io.File
 
 interface RoomListRepository {
 
-    fun getRooms(): Flow<PagingData<RoomOverview>>
+    fun getRooms(query: String): Flow<PagingData<RoomOverview>>
 
     suspend fun createRoom(
         createRequestBody: RoomCreateRequestBody,

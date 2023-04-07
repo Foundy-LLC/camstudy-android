@@ -19,10 +19,10 @@ class PagingRoomListRepository @Inject constructor(
     private val roomListApi: RoomListApi
 ) : RoomListRepository {
 
-    override fun getRooms(): Flow<PagingData<RoomOverview>> {
+    override fun getRooms(query: String): Flow<PagingData<RoomOverview>> {
         return Pager(
             config = PagingConfig(RoomPagingSource.PAGE_SIZE),
-            pagingSourceFactory = { RoomPagingSource(api = roomListApi) }
+            pagingSourceFactory = { RoomPagingSource(api = roomListApi, query = query) }
         ).flow
     }
 

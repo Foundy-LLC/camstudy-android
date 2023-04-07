@@ -9,7 +9,8 @@ import io.foundy.room_list.data.model.toEntity
 import javax.inject.Inject
 
 class RoomPagingSource @Inject constructor(
-    private val api: RoomListApi
+    private val api: RoomListApi,
+    private val query: String
 ) : PagingSource<Int, RoomOverview>() {
 
     companion object {
@@ -20,7 +21,7 @@ class RoomPagingSource @Inject constructor(
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, RoomOverview> {
         val page = params.key ?: START_PAGE
         runCatching {
-            api.getRooms(page = page).getDataOrThrowMessage()
+            api.getRooms(page = page, query = query).getDataOrThrowMessage()
         }.onSuccess {
             val roomOverviews = it.map { dto -> dto.toEntity() }
             val isEnd = roomOverviews.size < PAGE_SIZE

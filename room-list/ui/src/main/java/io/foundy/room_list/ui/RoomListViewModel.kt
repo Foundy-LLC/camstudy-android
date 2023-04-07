@@ -9,7 +9,10 @@ import io.foundy.auth.data.repository.AuthRepository
 import io.foundy.core.common.util.ConvertBitmapToFileUseCase
 import io.foundy.room_list.data.model.RoomCreateRequestBody
 import io.foundy.room_list.data.repository.RoomListRepository
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.launch
 import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.syntax.simple.intent
@@ -29,12 +32,31 @@ class RoomListViewModel @Inject constructor(
 ) : ViewModel(), ContainerHost<RoomListUiState, RoomListSideEffect> {
 
     override val container: Container<RoomListUiState, RoomListSideEffect> = container(
-        RoomListUiState(roomCreateInput = buildRoomCreateInput())
+        RoomListUiState(
+            onSearchQueryChange = ::updateSearchQuery,
+            roomCreateInput = buildRoomCreateInput()
+        )
     )
+
+    private var roomSearchJob: Job? = null
 
     init {
         intent {
-            val roomsStream = roomListRepository.getRooms().cachedIn(viewModelScope)
+            val roomsStream = roomListRepository.getRooms("").cachedIn(viewModelScope)
+            reduce { state.copy(roomPagingDataStream = roomsStream) }
+        }
+    }
+
+    private fun updateSearchQuery(query: String) = intent {
+        reduce { state.copy(searchQuery = query) }
+        searchRooms(query = query)
+    }
+
+    private fun searchRooms(query: String) = intent {
+        roomSearchJob?.cancel()
+        roomSearchJob = viewModelScope.launch {
+            delay(300)
+            val roomsStream = roomListRepository.getRooms(query)
             reduce { state.copy(roomPagingDataStream = roomsStream) }
         }
     }

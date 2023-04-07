@@ -15,7 +15,8 @@ interface RoomListApi {
 
     @GET("rooms")
     suspend fun getRooms(
-        @Query("page") page: Int = 0
+        @Query("page") page: Int = 0,
+        @Query("query") query: String,
     ): CamstudyResponse<List<RoomOverviewDto>>
 
     @POST("rooms")
