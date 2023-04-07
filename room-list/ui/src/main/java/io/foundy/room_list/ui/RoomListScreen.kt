@@ -138,7 +138,8 @@ fun RoomListScreen(
     }
 
     Scaffold(
-        snackbarHost = { SnackbarHost(hostState = snackbarHostState) }
+        snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
+        containerColor = CamstudyTheme.colorScheme.systemBackground
     ) { padding ->
         LazyColumn(Modifier.padding(padding)) {
             item {
@@ -152,9 +153,7 @@ fun RoomListScreen(
                     Text(text = "회사, 학교 조회")
                 }
             }
-            item {
-                Text("방목록")
-            }
+            headerItem(query = "", onQueryChange = { /* TODO: 구현 */ })
             items(
                 items = rooms,
                 key = { it.id }
@@ -175,6 +174,35 @@ fun RoomListScreen(
                 is LoadState.Loading -> loadingItem()
                 else -> {}
             }
+        }
+    }
+}
+
+private fun LazyListScope.headerItem(
+    query: String,
+    onQueryChange: (String) -> Unit
+) {
+    item {
+        Column(
+            modifier = Modifier.padding(
+                top = 16.dp,
+                start = 16.dp,
+                end = 16.dp,
+                bottom = 12.dp
+            )
+        ) {
+            CamstudyText(
+                text = stringResource(R.string.study_room_list_title),
+                style = CamstudyTheme.typography.titleMedium.copy(
+                    color = CamstudyTheme.colorScheme.systemUi07
+                )
+            )
+            Box(Modifier.height(12.dp))
+            CamstudyTextField(
+                value = query,
+                onValueChange = onQueryChange,
+                placeholder = stringResource(R.string.room_search_placeholder)
+            )
         }
     }
 }
