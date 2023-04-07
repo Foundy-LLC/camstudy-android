@@ -16,7 +16,7 @@ class FriendPagingSource @Inject constructor(
 
     companion object {
         private const val START_PAGE = 0
-        const val PAGE_SIZE = 30
+        const val PAGE_SIZE = 10
     }
 
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, UserOverview> {
