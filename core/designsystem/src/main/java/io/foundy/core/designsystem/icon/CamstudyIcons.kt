@@ -19,6 +19,7 @@ import androidx.compose.material.icons.filled.SwitchVideo
 import androidx.compose.material.icons.filled.Timer
 import androidx.compose.material.icons.filled.Videocam
 import androidx.compose.material.icons.filled.VideocamOff
+import androidx.compose.material.icons.sharp.Lock
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.runtime.Composable
@@ -47,6 +48,7 @@ object CamstudyIcons {
     val People = Icons.Default.People.asCamstudyIcon()
     val Timer = Icons.Default.Timer.asCamstudyIcon()
     val Search = Icons.Default.Search.asCamstudyIcon()
+    val LockSharp = Icons.Sharp.Lock.asCamstudyIcon()
 }
 
 sealed class CamstudyIcon

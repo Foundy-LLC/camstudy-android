@@ -3,6 +3,7 @@ package io.foundy.core.designsystem.theme
 import android.app.Activity
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Typography
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.ReadOnlyComposable
@@ -18,12 +19,19 @@ private val LightColorScheme = lightCamstudyColorScheme()
 
 internal val LocalCamstudyColorScheme = staticCompositionLocalOf { lightCamstudyColorScheme() }
 
+internal val LocalCamstudyTypography = staticCompositionLocalOf { Typography() }
+
 object CamstudyTheme {
 
     val colorScheme: CamstudyColorScheme
         @Composable
         @ReadOnlyComposable
         get() = LocalCamstudyColorScheme.current
+
+    val typography: Typography
+        @Composable
+        @ReadOnlyComposable
+        get() = LocalCamstudyTypography.current
 }
 
 @Composable
@@ -45,7 +53,8 @@ fun CamstudyTheme(
     }
 
     CompositionLocalProvider(
-        LocalCamstudyColorScheme provides colorScheme
+        LocalCamstudyColorScheme provides colorScheme,
+        LocalCamstudyTypography provides Typography
     ) {
         MaterialTheme(
             typography = Typography,

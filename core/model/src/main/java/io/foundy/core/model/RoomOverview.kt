@@ -7,6 +7,7 @@ data class RoomOverview(
     val hasPassword: Boolean,
     val thumbnail: String?,
     val joinCount: Int,
+    val joinedUsers: List<UserOverview>,
     val maxCount: Int,
     val tags: List<String>
 )

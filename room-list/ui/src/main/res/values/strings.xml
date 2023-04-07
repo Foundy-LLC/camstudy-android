@@ -9,4 +9,6 @@
     <string name="long_break_interval_error_message">긴 휴식 주기는 %d~%d회로 설정해야합니다.</string>
     <string name="failed_to_create_room">방 생성을 실패했습니다.</string>
     <string name="success_to_create_room">방 생성을 성공했습니다.</string>
+    <string name="room_thumbnail">%s 썸네일</string>
+    <string name="join">입장</string>
 </resources>

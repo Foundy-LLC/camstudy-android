@@ -7,21 +7,27 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
+import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberDatePickerState
@@ -33,10 +39,15 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.paging.CombinedLoadStates
@@ -49,8 +60,15 @@ import com.holix.android.bottomsheetdialog.compose.BottomSheetDialog
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import io.foundy.core.common.util.toBitmap
+import io.foundy.core.designsystem.component.CamstudyText
 import io.foundy.core.designsystem.component.CamstudyTextField
+import io.foundy.core.designsystem.component.ContainedButton
+import io.foundy.core.designsystem.icon.CamstudyIcon
+import io.foundy.core.designsystem.icon.CamstudyIcons
+import io.foundy.core.designsystem.theme.CamstudyTheme
+import io.foundy.core.designsystem.util.nonScaledSp
 import io.foundy.core.model.RoomOverview
+import io.foundy.core.model.UserOverview
 import io.foundy.core.model.constant.RoomConstants
 import io.foundy.organization.ui.destinations.OrganizationRouteDestination
 import io.foundy.room.ui.RoomActivity
@@ -145,7 +163,7 @@ fun RoomListScreen(
                     Text("End")
                     return@items
                 }
-                RoomItem(room = roomOverview, onClick = { onRoomClick(roomOverview.id) })
+                RoomItem(room = roomOverview, onJoinClick = { onRoomClick(roomOverview.id) })
             }
             when (rooms.loadState.refresh) { // FIRST LOAD
                 is LoadState.Error -> errorItem(rooms.loadState)
@@ -164,14 +182,146 @@ fun RoomListScreen(
 @Composable
 private fun RoomItem(
     room: RoomOverview,
-    onClick: () -> Unit
+    onJoinClick: () -> Unit
 ) {
-    Box(
-        Modifier
-            .clickable(onClick = onClick)
-            .padding(4.dp)
+    Surface(color = CamstudyTheme.colorScheme.systemBackground) {
+        Column {
+            Row(modifier = Modifier.padding(16.dp)) {
+                ThumbnailImage(
+                    imageUrl = room.thumbnail,
+                    contentDescription = stringResource(R.string.room_thumbnail, room.title)
+                )
+                Box(modifier = Modifier.width(12.dp))
+                Column(modifier = Modifier.weight(1.0f)) {
+                    RoomTitle(title = room.title, isPrivate = room.hasPassword)
+                    Box(modifier = Modifier.height(2.dp))
+                    Tags(tags = room.tags)
+                    Box(modifier = Modifier.height(4.dp))
+                    JoinerImages(
+                        joinerImages = room.joinedUsers.map { it.profileImage },
+                        maxCount = room.maxCount
+                    )
+                }
+                Box(modifier = Modifier.width(28.dp))
+                ContainedButton(
+                    modifier = Modifier.align(Alignment.Bottom),
+                    label = stringResource(R.string.join),
+                    onClick = onJoinClick
+                )
+            }
+            Divider(color = CamstudyTheme.colorScheme.systemUi03, thickness = 0.5.dp)
+        }
+    }
+}
+
+@Composable
+fun ThumbnailImage(imageUrl: String?, contentDescription: String) {
+    val thumbnailModifier = Modifier
+        .size(64.dp)
+        .clip(RoundedCornerShape(12.dp))
+
+    if (imageUrl != null) {
+        AsyncImage(
+            modifier = thumbnailModifier,
+            model = imageUrl,
+            contentScale = ContentScale.Crop,
+            contentDescription = contentDescription
+        )
+    } else {
+        Surface(
+            modifier = thumbnailModifier,
+            color = CamstudyTheme.colorScheme.systemUi02
+        ) {}
+    }
+}
+
+@Composable
+private fun RoomTitle(title: String, isPrivate: Boolean) {
+    val titleMedium = CamstudyTheme.typography.titleMedium
+    val color = CamstudyTheme.colorScheme.systemUi08
+
+    Row(
+        verticalAlignment = Alignment.CenterVertically
     ) {
-        Text(room.title)
+        CamstudyText(
+            modifier = Modifier.height(22.dp),
+            text = title,
+            style = titleMedium.copy(
+                fontWeight = FontWeight.Bold,
+                fontSize = titleMedium.fontSize.value.nonScaledSp,
+                color = color
+            ),
+        )
+        if (isPrivate) {
+            Box(modifier = Modifier.width(4.dp))
+            CamstudyIcon(
+                modifier = Modifier
+                    .size(20.dp)
+                    .padding(2.dp),
+                icon = CamstudyIcons.LockSharp,
+                tint = color,
+                contentDescription = null
+            )
+        }
+    }
+}
+
+@Composable
+private fun Tags(tags: List<String>) {
+    val labelMedium = CamstudyTheme.typography.labelMedium
+
+    CamstudyText(
+        modifier = Modifier.height(16.dp),
+        text = tags.map { "#$it" }.joinToString(" ") { it },
+        style = labelMedium.copy(
+            color = CamstudyTheme.colorScheme.systemUi05,
+            fontSize = labelMedium.fontSize.value.nonScaledSp
+        )
+    )
+}
+
+@Composable
+private fun JoinerImages(joinerImages: List<String?>, maxCount: Int) {
+    Row {
+        val modifier = Modifier
+            .size(20.dp)
+            .clip(RoundedCornerShape(4.dp))
+
+        repeat(maxCount) { index ->
+            val isLast = index != maxCount - 1
+            val rightPaddingBox: @Composable () -> Unit = {
+                if (isLast) Box(modifier = Modifier.width(4.dp))
+            }
+
+            if (joinerImages.size <= index) {
+                Row {
+                    Surface(
+                        modifier = modifier,
+                        color = CamstudyTheme.colorScheme.systemUi01
+                    ) {}
+                    rightPaddingBox()
+                }
+                return@repeat
+            }
+
+            Row {
+                Surface(
+                    modifier = modifier,
+                    color = CamstudyTheme.colorScheme.systemUi01
+                ) {
+                    AsyncImage(
+                        modifier = modifier,
+                        model = joinerImages[index],
+                        contentScale = ContentScale.Crop,
+                        placeholder = painterResource(
+                            id = io.foundy.core.designsystem.R.drawable.ic_person
+                        ),
+                        contentDescription = null
+                    )
+                }
+                rightPaddingBox()
+            }
+        }
     }
 }
 
@@ -402,5 +552,51 @@ private fun LazyListScope.loadingItem() {
             Text(text = "Pagination Loading")
             CircularProgressIndicator()
         }
+    }
+}
+
+@Preview(fontScale = 1.0f)
+@Composable
+private fun RoomItemPreview() {
+    CamstudyTheme {
+        RoomItem(
+            room = RoomOverview(
+                id = "id",
+                title = "공시족 모여라",
+                masterId = "id",
+                hasPassword = false,
+                thumbnail = null,
+                joinCount = 1,
+                joinedUsers = listOf(
+                    UserOverview(id = "id", name = "김민성", profileImage = null, introduce = null)
+                ),
+                maxCount = 4,
+                tags = listOf("공시", "자격증")
+            ),
+            onJoinClick = {}
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun PrivateRoomItemPreview() {
+    CamstudyTheme {
+        RoomItem(
+            room = RoomOverview(
+                id = "id",
+                title = "공시족 모여라",
+                masterId = "id",
+                hasPassword = true,
+                thumbnail = null,
+                joinCount = 1,
+                joinedUsers = listOf(
+                    UserOverview(id = "id", name = "김민성", profileImage = null, introduce = null)
+                ),
+                maxCount = 4,
+                tags = listOf("공시", "자격증")
+            ),
+            onJoinClick = {}
+        )
     }
 }
