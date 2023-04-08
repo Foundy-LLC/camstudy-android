@@ -30,6 +30,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import io.foundy.core.designsystem.theme.CamstudyTheme
 import io.foundy.room.domain.ChatMessage
 import io.foundy.room.ui.media.MediaManager
+import io.foundy.room.ui.media.MediaManagerImpl
 import io.foundy.room.ui.peer.PeerConnectionFactoryWrapper
 import io.foundy.room.ui.receiver.AudioToggleReceiver
 import io.foundy.room.ui.receiver.VideoToggleReceiver
@@ -78,7 +79,7 @@ class RoomActivity : ComponentActivity() {
         )
 
         val id = requireNotNull(intent.getStringExtra("roomId"))
-        _mediaManager = MediaManager(
+        _mediaManager = MediaManagerImpl(
             context = this,
             peerConnectionFactory = PeerConnectionFactoryWrapper(context = this),
             onToggleVideo = viewModel::onToggleVideo,

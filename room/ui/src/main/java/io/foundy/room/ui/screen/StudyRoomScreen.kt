@@ -20,6 +20,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.Stable
@@ -33,6 +34,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import com.holix.android.bottomsheetdialog.compose.BottomSheetDialog
@@ -41,6 +43,7 @@ import io.foundy.core.designsystem.icon.CamstudyIcons
 import io.foundy.core.designsystem.theme.CamstudyTheme
 import io.foundy.room.domain.ChatMessage
 import io.foundy.room.domain.PeerOverview
+import io.foundy.room.domain.PomodoroTimerProperty
 import io.foundy.room.domain.PomodoroTimerState
 import io.foundy.room.domain.WebRtcServerTimeZone
 import io.foundy.room.ui.R
@@ -49,6 +52,7 @@ import io.foundy.room.ui.component.MediaController
 import io.foundy.room.ui.component.PomodoroTimerEditBottomSheet
 import io.foundy.room.ui.component.VideoRenderer
 import io.foundy.room.ui.component.rememberPomodoroTimerEditBottomSheetState
+import io.foundy.room.ui.media.FakeMediaManager
 import io.foundy.room.ui.media.LocalMediaManager
 import io.foundy.room.ui.peer.PeerUiState
 import io.foundy.room.ui.viewmodel.RoomUiState
@@ -463,6 +467,38 @@ fun StudyRoomContentInPip(
                     videoTrack = localVideoTrack
                 )
             }
+        }
+    }
+}
+
+@Preview
+@Composable
+private fun StudyRoomScreenPreview() {
+    CompositionLocalProvider(LocalMediaManager provides FakeMediaManager()) {
+        CamstudyTheme {
+            StudyRoomScreen(
+                uiState = RoomUiState.StudyRoom(
+                    peerStates = listOf(),
+                    isCurrentUserMaster = false,
+                    blacklist = emptyList(),
+                    onKickUserClick = {},
+                    onSendChatClick = {},
+                    onStartPomodoroClick = {},
+                    onBlockUserClick = {},
+                    onSavePomodoroTimerClick = {},
+                    onUnblockUserClick = {},
+                    pomodoroTimerEventDate = null,
+                    pomodoroTimer = PomodoroTimerProperty(
+                        timerLengthMinutes = 25,
+                        shortBreakMinutes = 5,
+                        longBreakMinutes = 15,
+                        longBreakInterval = 4
+                    ),
+                    pomodoroTimerState = PomodoroTimerState.STOPPED
+                ),
+                onDismissKickedDialog = {},
+                startChatActivity = {}
+            )
         }
     }
 }
