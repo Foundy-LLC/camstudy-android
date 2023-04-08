@@ -16,8 +16,8 @@ enum class HomeTabDestination(
 ) {
     RoomList(
         direction = RoomListRouteDestination,
-        icon = CamstudyIcons.StudyRoom,
-        label = R.string.study_room
+        icon = CamstudyIcons.Home,
+        label = R.string.main
     ),
     Search(
         direction = SearchRouteDestination,

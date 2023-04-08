@@ -22,7 +22,6 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
-import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
@@ -60,6 +59,7 @@ import com.holix.android.bottomsheetdialog.compose.BottomSheetDialog
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import io.foundy.core.common.util.toBitmap
+import io.foundy.core.designsystem.component.CamstudyDivider
 import io.foundy.core.designsystem.component.CamstudyText
 import io.foundy.core.designsystem.component.CamstudyTextField
 import io.foundy.core.designsystem.component.ContainedButton
@@ -215,7 +215,7 @@ private fun RoomItem(
 ) {
     Surface(color = CamstudyTheme.colorScheme.systemBackground) {
         Column {
-            Divider(color = CamstudyTheme.colorScheme.systemUi03, thickness = 0.5.dp)
+            CamstudyDivider()
             Row(modifier = Modifier.padding(16.dp)) {
                 ThumbnailImage(
                     imageUrl = room.thumbnail,

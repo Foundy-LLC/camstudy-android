@@ -35,6 +35,7 @@ object CamstudyIcons {
     val VideoCamOff = Icons.Default.VideocamOff.asCamstudyIcon()
     val Mic = Icons.Default.Mic.asCamstudyIcon()
     val MicOff = Icons.Default.MicOff.asCamstudyIcon()
+    val Home = R.drawable.ic_home.asCamstudyIcon()
     val Headset = Icons.Default.Headset.asCamstudyIcon()
     val HeadsetOff = Icons.Default.HeadsetOff.asCamstudyIcon()
     val MoreVert = Icons.Default.MoreVert.asCamstudyIcon()
