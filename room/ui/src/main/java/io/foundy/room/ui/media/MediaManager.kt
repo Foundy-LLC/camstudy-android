@@ -1,5 +1,6 @@
 package io.foundy.room.ui.media
 
+import io.foundy.room.ui.peer.PeerUiState
 import kotlinx.coroutines.flow.Flow
 import org.webrtc.AudioTrack
 import org.webrtc.EglBase
@@ -12,6 +13,7 @@ interface MediaManager {
     val enabledLocalVideo: Boolean
     val enabledLocalAudio: Boolean
     val enabledLocalHeadset: Boolean
+    val currentUserState: PeerUiState
 
     val localVideoTrackFlow: Flow<VideoTrack?>
     val localAudioTrack: AudioTrack?

@@ -1,17 +1,18 @@
 package io.foundy.room.ui.screen
 
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Checkbox
@@ -29,13 +30,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import com.holix.android.bottomsheetdialog.compose.BottomSheetDialog
 import io.foundy.core.designsystem.icon.CamstudyIcon
@@ -47,8 +44,8 @@ import io.foundy.room.domain.PomodoroTimerProperty
 import io.foundy.room.domain.PomodoroTimerState
 import io.foundy.room.domain.WebRtcServerTimeZone
 import io.foundy.room.ui.R
-import io.foundy.room.ui.component.FloatingVideoRenderer
 import io.foundy.room.ui.component.MediaController
+import io.foundy.room.ui.component.PeerContent
 import io.foundy.room.ui.component.PomodoroTimerEditBottomSheet
 import io.foundy.room.ui.component.VideoRenderer
 import io.foundy.room.ui.component.rememberPomodoroTimerEditBottomSheetState
@@ -81,10 +78,8 @@ fun StudyRoomScreen(
     val enabledLocalVideo = mediaManager.enabledLocalVideo
     val enabledLocalAudio = mediaManager.enabledLocalAudio
     val enabledLocalHeadset = mediaManager.enabledLocalHeadset
-    val localVideoTrack = mediaManager.localVideoTrackFlow.collectAsState(initial = null).value
     var showBlacklistBottomSheet by remember { mutableStateOf(false) }
     var showPomodoroTimerEditBottomSheet by remember { mutableStateOf(false) }
-    var parentBounds: IntSize by remember { mutableStateOf(IntSize(0, 0)) }
 
     if (showBlacklistBottomSheet) {
         BlacklistBottomSheet(
@@ -183,131 +178,91 @@ fun StudyRoomScreen(
         )
     }
 
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .onSizeChanged { parentBounds = it }
-    ) {
-        if (localVideoTrack != null && enabledLocalVideo) {
-            FloatingVideoRenderer(
-                modifier = Modifier
-                    .size(width = 150.dp, height = 210.dp)
-                    .clip(RoundedCornerShape(16.dp))
-                    .align(Alignment.TopEnd),
-                eglBaseContext = mediaManager.eglBaseContext,
-                videoTrack = localVideoTrack,
-                parentBounds = parentBounds
+    Column {
+        PomodoroTimer(
+            state = uiState.pomodoroTimerState,
+            pomodoroTimerEventDate = uiState.pomodoroTimerEventDate
+        )
+        if (uiState.pomodoroTimerState == PomodoroTimerState.STOPPED) {
+            PomodoroTimerStartButton(
+                onStartClick = uiState.onStartPomodoroClick
             )
         }
-        Column {
-            PomodoroTimer(
-                state = uiState.pomodoroTimerState,
-                pomodoroTimerEventDate = uiState.pomodoroTimerEventDate
-            )
-            if (uiState.pomodoroTimerState == PomodoroTimerState.STOPPED) {
-                PomodoroTimerStartButton(
-                    onStartClick = uiState.onStartPomodoroClick
-                )
-            }
-            IconButton(onClick = mediaManager::switchCamera, enabled = enabledLocalVideo) {
-                CamstudyIcon(
-                    icon = CamstudyIcons.SwitchVideo,
-                    contentDescription = stringResource(R.string.switch_video)
-                )
-            }
-            if (uiState.isCurrentUserMaster) {
-                IconButton(onClick = { showBlacklistBottomSheet = true }) {
-                    CamstudyIcon(
-                        icon = CamstudyIcons.Person,
-                        contentDescription = stringResource(R.string.blacklist)
-                    )
-                }
-                IconButton(onClick = { showPomodoroTimerEditBottomSheet = true }) {
-                    CamstudyIcon(
-                        icon = CamstudyIcons.Timer,
-                        contentDescription = stringResource(R.string.edit_pomodoro_timer)
-                    )
-                }
-            }
-            IconButton(
-                onClick = {
-                    startChatActivity(uiState.chatMessages)
-                }
-            ) {
-                CamstudyIcon(
-                    icon = CamstudyIcons.Chat,
-                    contentDescription = stringResource(R.string.show_chat_messages)
-                )
-            }
-            LazyVerticalGrid(
-                columns = GridCells.Adaptive(minSize = 128.dp),
-            ) {
-                items(uiState.peerStates, key = { it.uid }) { peerState ->
-                    RemotePeer(
-                        peerState = peerState,
-                        isCurrentUserMaster = uiState.isCurrentUserMaster,
-                        onMoreButtonClick = userBottomSheetState::show
-                    )
-                }
-            }
-            MediaController(
-                enabledLocalVideo = enabledLocalVideo,
-                enabledLocalAudio = enabledLocalAudio,
-                enabledLocalHeadset = enabledLocalHeadset,
-                onToggleVideo = mediaManager::toggleVideo,
-                onToggleAudio = mediaManager::toggleMicrophone,
-                onToggleHeadset = mediaManager::toggleHeadset,
+        IconButton(onClick = mediaManager::switchCamera, enabled = enabledLocalVideo) {
+            CamstudyIcon(
+                icon = CamstudyIcons.SwitchVideo,
+                contentDescription = stringResource(R.string.switch_video)
             )
         }
+        if (uiState.isCurrentUserMaster) {
+            IconButton(onClick = { showBlacklistBottomSheet = true }) {
+                CamstudyIcon(
+                    icon = CamstudyIcons.Person,
+                    contentDescription = stringResource(R.string.blacklist)
+                )
+            }
+            IconButton(onClick = { showPomodoroTimerEditBottomSheet = true }) {
+                CamstudyIcon(
+                    icon = CamstudyIcons.Timer,
+                    contentDescription = stringResource(R.string.edit_pomodoro_timer)
+                )
+            }
+        }
+        IconButton(
+            onClick = {
+                startChatActivity(uiState.chatMessages)
+            }
+        ) {
+            CamstudyIcon(
+                icon = CamstudyIcons.Chat,
+                contentDescription = stringResource(R.string.show_chat_messages)
+            )
+        }
+        MediaController(
+            enabledLocalVideo = enabledLocalVideo,
+            enabledLocalAudio = enabledLocalAudio,
+            enabledLocalHeadset = enabledLocalHeadset,
+            onToggleVideo = mediaManager::toggleVideo,
+            onToggleAudio = mediaManager::toggleMicrophone,
+            onToggleHeadset = mediaManager::toggleHeadset,
+        )
+        PeerGridView(
+            peerStates = listOf(mediaManager.currentUserState) + uiState.peerStates,
+            isCurrentUserMaster = uiState.isCurrentUserMaster,
+            onMoreButtonClick = userBottomSheetState::show
+        )
     }
 }
 
 @Composable
-private fun RemotePeer(
-    peerState: PeerUiState,
+private fun PeerGridView(
+    modifier: Modifier = Modifier,
+    peerStates: List<PeerUiState>,
     isCurrentUserMaster: Boolean,
-    onMoreButtonClick: (userId: String, userName: String) -> Unit
+    onMoreButtonClick: (id: String, name: String) -> Unit
 ) {
-    val mediaManager = LocalMediaManager.current
-    val videoSizeModifier = Modifier.size(width = 128.dp, height = 200.dp)
-
     Surface(
-        modifier = videoSizeModifier,
-        color = CamstudyTheme.colorScheme.text01
+        color = CamstudyTheme.colorScheme.systemUi08
     ) {
-        if (peerState.videoTrack != null) {
-            VideoRenderer(
-                modifier = videoSizeModifier,
-                eglBaseContext = mediaManager.eglBaseContext,
-                videoTrack = peerState.videoTrack
-            )
-        }
-        Row {
-            if (!peerState.enabledMicrophone) {
-                CamstudyIcon(
-                    icon = CamstudyIcons.MicOff,
-                    tint = CamstudyTheme.colorScheme.systemBackground,
-                    contentDescription = null
-                )
-            }
-            if (!peerState.enabledHeadset) {
-                CamstudyIcon(
-                    icon = CamstudyIcons.HeadsetOff,
-                    tint = CamstudyTheme.colorScheme.systemBackground,
-                    contentDescription = null
-                )
-            }
-        }
+        BoxWithConstraints(
+            modifier = Modifier.fillMaxSize()
+        ) {
+            val width = maxWidth / 2
 
-        if (isCurrentUserMaster) {
-            IconButton(
-                onClick = { onMoreButtonClick(peerState.uid, peerState.name) },
+            LazyVerticalGrid(
+                modifier = modifier,
+                columns = GridCells.Adaptive(minSize = width),
             ) {
-                CamstudyIcon(
-                    icon = CamstudyIcons.MoreVert,
-                    tint = CamstudyTheme.colorScheme.systemBackground,
-                    contentDescription = null
-                )
+                items(peerStates, key = { it.uid }) { peerState ->
+                    PeerContent(
+                        modifier = Modifier
+                            .width(width)
+                            .height(maxHeight / 2),
+                        peerState = peerState,
+                        showMoreButton = isCurrentUserMaster,
+                        onMoreButtonClick = onMoreButtonClick
+                    )
+                }
             }
         }
     }
@@ -471,14 +426,46 @@ fun StudyRoomContentInPip(
     }
 }
 
-@Preview
+@Preview(widthDp = 300, heightDp = 400)
+@Composable
+private fun PeerGridViewPreview() {
+    CompositionLocalProvider(LocalMediaManager provides FakeMediaManager()) {
+        CamstudyTheme {
+            PeerGridView(
+                peerStates = listOf(
+                    PeerUiState(
+                        uid = "id",
+                        name = "홍길동",
+                        enabledMicrophone = false,
+                        enabledHeadset = false,
+                        audioTrack = null,
+                        videoTrack = null
+                    )
+                ),
+                isCurrentUserMaster = true,
+                onMoreButtonClick = { _, _ -> }
+            )
+        }
+    }
+}
+
+@Preview(showBackground = true)
 @Composable
 private fun StudyRoomScreenPreview() {
     CompositionLocalProvider(LocalMediaManager provides FakeMediaManager()) {
         CamstudyTheme {
             StudyRoomScreen(
                 uiState = RoomUiState.StudyRoom(
-                    peerStates = listOf(),
+                    peerStates = listOf(
+                        PeerUiState(
+                            uid = "id",
+                            name = "홍길동",
+                            enabledMicrophone = false,
+                            enabledHeadset = false,
+                            audioTrack = null,
+                            videoTrack = null
+                        )
+                    ),
                     isCurrentUserMaster = false,
                     blacklist = emptyList(),
                     onKickUserClick = {},

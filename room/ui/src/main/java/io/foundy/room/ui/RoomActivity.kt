@@ -78,7 +78,7 @@ class RoomActivity : ComponentActivity() {
             }
         )
 
-        val id = requireNotNull(intent.getStringExtra("roomId"))
+        val roomId = requireNotNull(intent.getStringExtra("roomId"))
         _mediaManager = MediaManagerImpl(
             context = this,
             peerConnectionFactory = PeerConnectionFactoryWrapper(context = this),
@@ -109,7 +109,7 @@ class RoomActivity : ComponentActivity() {
                                 )
                             }
                         },
-                        id = id,
+                        id = roomId,
                         popBackStack = ::finish,
                         viewModel = viewModel,
                         mediaManager = mediaManager,

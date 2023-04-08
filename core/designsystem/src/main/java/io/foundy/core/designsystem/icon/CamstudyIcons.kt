@@ -8,7 +8,7 @@ import androidx.compose.material.icons.filled.Headset
 import androidx.compose.material.icons.filled.HeadsetOff
 import androidx.compose.material.icons.filled.Mic
 import androidx.compose.material.icons.filled.MicOff
-import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material.icons.filled.MoreHoriz
 import androidx.compose.material.icons.filled.People
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.PersonAdd
@@ -38,7 +38,7 @@ object CamstudyIcons {
     val Home = R.drawable.ic_home.asCamstudyIcon()
     val Headset = Icons.Default.Headset.asCamstudyIcon()
     val HeadsetOff = Icons.Default.HeadsetOff.asCamstudyIcon()
-    val MoreVert = Icons.Default.MoreVert.asCamstudyIcon()
+    val MoreHoriz = Icons.Default.MoreHoriz.asCamstudyIcon()
     val SwitchVideo = Icons.Default.SwitchVideo.asCamstudyIcon()
     val Chat = Icons.Default.Chat.asCamstudyIcon()
     val Send = Icons.Default.Send.asCamstudyIcon()

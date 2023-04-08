@@ -13,9 +13,11 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.core.content.getSystemService
+import io.foundy.room.ui.R
 import io.foundy.room.ui.audio.AudioHandler
 import io.foundy.room.ui.audio.AudioSwitchHandler
 import io.foundy.room.ui.peer.PeerConnectionFactoryWrapper
+import io.foundy.room.ui.peer.PeerUiState
 import io.getstream.log.taggedLogger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -57,6 +59,15 @@ class MediaManagerImpl(
 
     override var enabledLocalHeadset by mutableStateOf(false)
         private set
+
+    override val currentUserState: PeerUiState
+        get() = PeerUiState(
+            uid = "currentUser", // Using mock user id
+            name = context.getString(R.string.me),
+            enabledMicrophone = enabledLocalAudio,
+            enabledHeadset = enabledLocalHeadset,
+            videoTrack = localVideoTrack
+        )
 
     // used to send local video track to the fragment
     private val _localVideoSinkFlow = MutableSharedFlow<VideoTrack?>(replay = 1)
@@ -119,9 +130,10 @@ class MediaManagerImpl(
             trackId = "Audio${UUID.randomUUID()}"
         )
     }
-    override val localAudioTrack: AudioTrack? get() = if (enabledLocalAudio) {
-        _localAudioTrack
-    } else null
+    override val localAudioTrack: AudioTrack?
+        get() = if (enabledLocalAudio) {
+            _localAudioTrack
+        } else null
 
     override fun onSessionScreenReady() {
         setupVideoTrack()

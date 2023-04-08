@@ -46,4 +46,5 @@
     <string name="are_you_sure_do_not_save_timer">타이머 수정을 그만둘까요?</string>
     <string name="quit">그만두기</string>
     <string name="not_exists_study_room">존재하지 않는 공부방입니다.</string>
+    <string name="me">나</string>
 </resources>
