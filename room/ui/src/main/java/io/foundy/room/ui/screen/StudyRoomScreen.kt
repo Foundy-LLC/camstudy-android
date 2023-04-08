@@ -4,8 +4,8 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
@@ -16,7 +16,9 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Checkbox
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -59,6 +61,7 @@ import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.toInstant
 import kotlinx.datetime.toLocalDateTime
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun StudyRoomScreen(
     uiState: RoomUiState.StudyRoom,
@@ -178,59 +181,62 @@ fun StudyRoomScreen(
         )
     }
 
-    Column {
-        PomodoroTimer(
-            state = uiState.pomodoroTimerState,
-            pomodoroTimerEventDate = uiState.pomodoroTimerEventDate
-        )
-        if (uiState.pomodoroTimerState == PomodoroTimerState.STOPPED) {
-            PomodoroTimerStartButton(
-                onStartClick = uiState.onStartPomodoroClick
+    Scaffold { innerPadding ->
+        Column(modifier = Modifier.padding(innerPadding)) {
+            PeerGridView(
+                modifier = Modifier.weight(1f),
+                peerStates = listOf(mediaManager.currentUserState) + uiState.peerStates,
+                isCurrentUserMaster = uiState.isCurrentUserMaster,
+                onMoreButtonClick = userBottomSheetState::show
             )
-        }
-        IconButton(onClick = mediaManager::switchCamera, enabled = enabledLocalVideo) {
-            CamstudyIcon(
-                icon = CamstudyIcons.SwitchVideo,
-                contentDescription = stringResource(R.string.switch_video)
+            PomodoroTimer(
+                state = uiState.pomodoroTimerState,
+                pomodoroTimerEventDate = uiState.pomodoroTimerEventDate
             )
-        }
-        if (uiState.isCurrentUserMaster) {
-            IconButton(onClick = { showBlacklistBottomSheet = true }) {
-                CamstudyIcon(
-                    icon = CamstudyIcons.Person,
-                    contentDescription = stringResource(R.string.blacklist)
+            if (uiState.pomodoroTimerState == PomodoroTimerState.STOPPED) {
+                PomodoroTimerStartButton(
+                    onStartClick = uiState.onStartPomodoroClick
                 )
             }
-            IconButton(onClick = { showPomodoroTimerEditBottomSheet = true }) {
+            IconButton(onClick = mediaManager::switchCamera, enabled = enabledLocalVideo) {
                 CamstudyIcon(
-                    icon = CamstudyIcons.Timer,
-                    contentDescription = stringResource(R.string.edit_pomodoro_timer)
+                    icon = CamstudyIcons.SwitchVideo,
+                    contentDescription = stringResource(R.string.switch_video)
                 )
             }
-        }
-        IconButton(
-            onClick = {
-                startChatActivity(uiState.chatMessages)
+            if (uiState.isCurrentUserMaster) {
+                IconButton(onClick = { showBlacklistBottomSheet = true }) {
+                    CamstudyIcon(
+                        icon = CamstudyIcons.Person,
+                        contentDescription = stringResource(R.string.blacklist)
+                    )
+                }
+                IconButton(onClick = { showPomodoroTimerEditBottomSheet = true }) {
+                    CamstudyIcon(
+                        icon = CamstudyIcons.Timer,
+                        contentDescription = stringResource(R.string.edit_pomodoro_timer)
+                    )
+                }
             }
-        ) {
-            CamstudyIcon(
-                icon = CamstudyIcons.Chat,
-                contentDescription = stringResource(R.string.show_chat_messages)
+            IconButton(
+                onClick = {
+                    startChatActivity(uiState.chatMessages)
+                }
+            ) {
+                CamstudyIcon(
+                    icon = CamstudyIcons.Chat,
+                    contentDescription = stringResource(R.string.show_chat_messages)
+                )
+            }
+            MediaController(
+                enabledLocalVideo = enabledLocalVideo,
+                enabledLocalAudio = enabledLocalAudio,
+                enabledLocalHeadset = enabledLocalHeadset,
+                onToggleVideo = mediaManager::toggleVideo,
+                onToggleAudio = mediaManager::toggleMicrophone,
+                onToggleHeadset = mediaManager::toggleHeadset,
             )
         }
-        MediaController(
-            enabledLocalVideo = enabledLocalVideo,
-            enabledLocalAudio = enabledLocalAudio,
-            enabledLocalHeadset = enabledLocalHeadset,
-            onToggleVideo = mediaManager::toggleVideo,
-            onToggleAudio = mediaManager::toggleMicrophone,
-            onToggleHeadset = mediaManager::toggleHeadset,
-        )
-        PeerGridView(
-            peerStates = listOf(mediaManager.currentUserState) + uiState.peerStates,
-            isCurrentUserMaster = uiState.isCurrentUserMaster,
-            onMoreButtonClick = userBottomSheetState::show
-        )
     }
 }
 
@@ -242,22 +248,21 @@ private fun PeerGridView(
     onMoreButtonClick: (id: String, name: String) -> Unit
 ) {
     Surface(
+        modifier = modifier,
         color = CamstudyTheme.colorScheme.systemUi08
     ) {
-        BoxWithConstraints(
-            modifier = Modifier.fillMaxSize()
-        ) {
+        BoxWithConstraints {
             val width = maxWidth / 2
+            val height = maxHeight / 2
 
             LazyVerticalGrid(
-                modifier = modifier,
                 columns = GridCells.Adaptive(minSize = width),
             ) {
                 items(peerStates, key = { it.uid }) { peerState ->
                     PeerContent(
                         modifier = Modifier
                             .width(width)
-                            .height(maxHeight / 2),
+                            .height(height),
                         peerState = peerState,
                         showMoreButton = isCurrentUserMaster,
                         onMoreButtonClick = onMoreButtonClick
