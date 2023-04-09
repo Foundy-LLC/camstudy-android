@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
@@ -86,19 +87,24 @@ private fun MediaState(
     enabledMicrophone: Boolean,
     enabledHeadset: Boolean
 ) {
+    val tint = Color.Unspecified
+    val modifier = Modifier.size(24.dp)
+
     Row {
         if (!enabledMicrophone) {
             CamstudyIcon(
+                modifier = modifier,
                 icon = CamstudyIcons.MicOff,
-                tint = Color.White,
+                tint = tint,
                 contentDescription = null
             )
         }
         if (!enabledHeadset) {
             Box(Modifier.padding(start = 8.dp))
             CamstudyIcon(
+                modifier = modifier,
                 icon = CamstudyIcons.HeadsetOff,
-                tint = Color.White,
+                tint = tint,
                 contentDescription = null
             )
         }
