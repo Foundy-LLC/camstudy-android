@@ -5,10 +5,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Chat
 import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.Headset
-import androidx.compose.material.icons.filled.HeadsetOff
-import androidx.compose.material.icons.filled.Mic
-import androidx.compose.material.icons.filled.MicOff
 import androidx.compose.material.icons.filled.MoreHoriz
 import androidx.compose.material.icons.filled.People
 import androidx.compose.material.icons.filled.Person
@@ -18,8 +14,6 @@ import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Send
 import androidx.compose.material.icons.filled.SwitchVideo
 import androidx.compose.material.icons.filled.Timer
-import androidx.compose.material.icons.filled.Videocam
-import androidx.compose.material.icons.filled.VideocamOff
 import androidx.compose.material.icons.sharp.Lock
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalContentColor
@@ -33,13 +27,13 @@ import io.foundy.core.designsystem.R
 object CamstudyIcons {
     val ArrowBack = Icons.Default.ArrowBack.asCamstudyIcon()
     val StudyRoom = R.drawable.ic_study_room.asCamstudyIcon()
-    val VideoCam = Icons.Default.Videocam.asCamstudyIcon()
-    val VideoCamOff = Icons.Default.VideocamOff.asCamstudyIcon()
-    val Mic = Icons.Default.Mic.asCamstudyIcon()
-    val MicOff = Icons.Default.MicOff.asCamstudyIcon()
+    val VideoCam = R.drawable.ic_video.asCamstudyIcon()
+    val VideoCamOff = R.drawable.ic_video_off.asCamstudyIcon()
+    val Mic = R.drawable.ic_mic.asCamstudyIcon()
+    val MicOff = R.drawable.ic_mic_off.asCamstudyIcon()
     val Home = R.drawable.ic_home.asCamstudyIcon()
-    val Headset = Icons.Default.Headset.asCamstudyIcon()
-    val HeadsetOff = Icons.Default.HeadsetOff.asCamstudyIcon()
+    val Headset = R.drawable.ic_headset.asCamstudyIcon()
+    val HeadsetOff = R.drawable.ic_headset_off.asCamstudyIcon()
     val MoreHoriz = Icons.Default.MoreHoriz.asCamstudyIcon()
     val SwitchVideo = Icons.Default.SwitchVideo.asCamstudyIcon()
     val Chat = Icons.Default.Chat.asCamstudyIcon()

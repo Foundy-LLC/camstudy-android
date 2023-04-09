@@ -20,7 +20,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import io.foundy.core.designsystem.theme.CamstudyTheme
 import io.foundy.room.ui.R
-import io.foundy.room.ui.component.MediaController
+import io.foundy.room.ui.component.ActionBar
 import io.foundy.room.ui.component.VideoRenderer
 import io.foundy.room.ui.media.LocalMediaManager
 import io.foundy.room.ui.viewmodel.RoomUiState
@@ -71,7 +71,7 @@ fun WaitingRoomScreen(
                     )
                 }
             }
-            MediaController(
+            ActionBar(
                 enabledLocalVideo = enabledLocalVideo,
                 enabledLocalAudio = enabledLocalAudio,
                 enabledLocalHeadset = enabledLocalHeadset,

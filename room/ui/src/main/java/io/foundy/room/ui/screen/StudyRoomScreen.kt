@@ -15,7 +15,6 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Checkbox
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -44,7 +43,7 @@ import io.foundy.room.domain.PomodoroTimerProperty
 import io.foundy.room.domain.PomodoroTimerState
 import io.foundy.room.domain.WebRtcServerTimeZone
 import io.foundy.room.ui.R
-import io.foundy.room.ui.component.MediaController
+import io.foundy.room.ui.component.ActionBar
 import io.foundy.room.ui.component.PeerContent
 import io.foundy.room.ui.component.PomodoroTimerEditBottomSheet
 import io.foundy.room.ui.component.VideoRenderer
@@ -59,7 +58,6 @@ import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.toInstant
 import kotlinx.datetime.toLocalDateTime
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun StudyRoomScreen(
     uiState: RoomUiState.StudyRoom,
@@ -186,6 +184,14 @@ fun StudyRoomScreen(
             isCurrentUserMaster = uiState.isCurrentUserMaster,
             onMoreButtonClick = userBottomSheetState::show
         )
+        ActionBar(
+            enabledLocalVideo = enabledLocalVideo,
+            enabledLocalAudio = enabledLocalAudio,
+            enabledLocalHeadset = enabledLocalHeadset,
+            onToggleVideo = mediaManager::toggleVideo,
+            onToggleAudio = mediaManager::toggleMicrophone,
+            onToggleHeadset = mediaManager::toggleHeadset,
+        )
         PomodoroTimer(
             state = uiState.pomodoroTimerState,
             pomodoroTimerEventDate = uiState.pomodoroTimerEventDate
@@ -225,14 +231,6 @@ fun StudyRoomScreen(
                 contentDescription = stringResource(R.string.show_chat_messages)
             )
         }
-        MediaController(
-            enabledLocalVideo = enabledLocalVideo,
-            enabledLocalAudio = enabledLocalAudio,
-            enabledLocalHeadset = enabledLocalHeadset,
-            onToggleVideo = mediaManager::toggleVideo,
-            onToggleAudio = mediaManager::toggleMicrophone,
-            onToggleHeadset = mediaManager::toggleHeadset,
-        )
     }
 }
 
