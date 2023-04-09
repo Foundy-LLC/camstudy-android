@@ -59,9 +59,10 @@ class RoomActivity : ComponentActivity() {
         const val VIDEO_TOGGLE_ACTION = "video_toggle_action"
         const val AUDIO_TOGGLE_ACTION = "audio_toggle_action"
 
-        fun getIntent(context: Context, roomId: String): Intent {
+        fun getIntent(context: Context, roomId: String, roomTitle: String): Intent {
             return Intent(context, RoomActivity::class.java).apply {
                 putExtra("roomId", roomId)
+                putExtra("roomTitle", roomTitle)
             }
         }
     }
@@ -79,6 +80,7 @@ class RoomActivity : ComponentActivity() {
         )
 
         val roomId = requireNotNull(intent.getStringExtra("roomId"))
+        val roomTitle = requireNotNull(intent.getStringExtra("roomTitle"))
         _mediaManager = MediaManagerImpl(
             context = this,
             peerConnectionFactory = PeerConnectionFactoryWrapper(context = this),
@@ -97,7 +99,7 @@ class RoomActivity : ComponentActivity() {
                 )
 
                 if (permissionsState.allPermissionsGranted) {
-                    RoomContent(
+                    RoomScreen(
                         modifier = Modifier.onGloballyPositioned {
                             videoViewBounds = run {
                                 val boundsInWindow = it.boundsInWindow()
@@ -109,7 +111,8 @@ class RoomActivity : ComponentActivity() {
                                 )
                             }
                         },
-                        id = roomId,
+                        roomId = roomId,
+                        roomTitle = roomTitle,
                         popBackStack = ::finish,
                         viewModel = viewModel,
                         mediaManager = mediaManager,

@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
@@ -18,7 +17,6 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -181,62 +179,60 @@ fun StudyRoomScreen(
         )
     }
 
-    Scaffold { innerPadding ->
-        Column(modifier = Modifier.padding(innerPadding)) {
-            PeerGridView(
-                modifier = Modifier.weight(1f),
-                peerStates = listOf(mediaManager.currentUserState) + uiState.peerStates,
-                isCurrentUserMaster = uiState.isCurrentUserMaster,
-                onMoreButtonClick = userBottomSheetState::show
-            )
-            PomodoroTimer(
-                state = uiState.pomodoroTimerState,
-                pomodoroTimerEventDate = uiState.pomodoroTimerEventDate
-            )
-            if (uiState.pomodoroTimerState == PomodoroTimerState.STOPPED) {
-                PomodoroTimerStartButton(
-                    onStartClick = uiState.onStartPomodoroClick
-                )
-            }
-            IconButton(onClick = mediaManager::switchCamera, enabled = enabledLocalVideo) {
-                CamstudyIcon(
-                    icon = CamstudyIcons.SwitchVideo,
-                    contentDescription = stringResource(R.string.switch_video)
-                )
-            }
-            if (uiState.isCurrentUserMaster) {
-                IconButton(onClick = { showBlacklistBottomSheet = true }) {
-                    CamstudyIcon(
-                        icon = CamstudyIcons.Person,
-                        contentDescription = stringResource(R.string.blacklist)
-                    )
-                }
-                IconButton(onClick = { showPomodoroTimerEditBottomSheet = true }) {
-                    CamstudyIcon(
-                        icon = CamstudyIcons.Timer,
-                        contentDescription = stringResource(R.string.edit_pomodoro_timer)
-                    )
-                }
-            }
-            IconButton(
-                onClick = {
-                    startChatActivity(uiState.chatMessages)
-                }
-            ) {
-                CamstudyIcon(
-                    icon = CamstudyIcons.Chat,
-                    contentDescription = stringResource(R.string.show_chat_messages)
-                )
-            }
-            MediaController(
-                enabledLocalVideo = enabledLocalVideo,
-                enabledLocalAudio = enabledLocalAudio,
-                enabledLocalHeadset = enabledLocalHeadset,
-                onToggleVideo = mediaManager::toggleVideo,
-                onToggleAudio = mediaManager::toggleMicrophone,
-                onToggleHeadset = mediaManager::toggleHeadset,
+    Column {
+        PeerGridView(
+            modifier = Modifier.weight(1f),
+            peerStates = listOf(mediaManager.currentUserState) + uiState.peerStates,
+            isCurrentUserMaster = uiState.isCurrentUserMaster,
+            onMoreButtonClick = userBottomSheetState::show
+        )
+        PomodoroTimer(
+            state = uiState.pomodoroTimerState,
+            pomodoroTimerEventDate = uiState.pomodoroTimerEventDate
+        )
+        if (uiState.pomodoroTimerState == PomodoroTimerState.STOPPED) {
+            PomodoroTimerStartButton(
+                onStartClick = uiState.onStartPomodoroClick
             )
         }
+        IconButton(onClick = mediaManager::switchCamera, enabled = enabledLocalVideo) {
+            CamstudyIcon(
+                icon = CamstudyIcons.SwitchVideo,
+                contentDescription = stringResource(R.string.switch_video)
+            )
+        }
+        if (uiState.isCurrentUserMaster) {
+            IconButton(onClick = { showBlacklistBottomSheet = true }) {
+                CamstudyIcon(
+                    icon = CamstudyIcons.Person,
+                    contentDescription = stringResource(R.string.blacklist)
+                )
+            }
+            IconButton(onClick = { showPomodoroTimerEditBottomSheet = true }) {
+                CamstudyIcon(
+                    icon = CamstudyIcons.Timer,
+                    contentDescription = stringResource(R.string.edit_pomodoro_timer)
+                )
+            }
+        }
+        IconButton(
+            onClick = {
+                startChatActivity(uiState.chatMessages)
+            }
+        ) {
+            CamstudyIcon(
+                icon = CamstudyIcons.Chat,
+                contentDescription = stringResource(R.string.show_chat_messages)
+            )
+        }
+        MediaController(
+            enabledLocalVideo = enabledLocalVideo,
+            enabledLocalAudio = enabledLocalAudio,
+            enabledLocalHeadset = enabledLocalHeadset,
+            onToggleVideo = mediaManager::toggleVideo,
+            onToggleAudio = mediaManager::toggleMicrophone,
+            onToggleHeadset = mediaManager::toggleHeadset,
+        )
     }
 }
 

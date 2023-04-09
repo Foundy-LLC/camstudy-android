@@ -108,8 +108,8 @@ fun RoomListRoute(
         uiState = uiState,
         rooms = rooms,
         snackbarHostState = snackbarHostState,
-        onRoomClick = { id ->
-            val intent = RoomActivity.getIntent(context, roomId = id)
+        onRoomClick = { room ->
+            val intent = RoomActivity.getIntent(context, roomId = room.id, roomTitle = room.title)
             context.startActivity(intent)
         },
         onOrganizationClick = {
@@ -125,7 +125,7 @@ fun RoomListScreen(
     uiState: RoomListUiState,
     rooms: LazyPagingItems<RoomOverview>,
     snackbarHostState: SnackbarHostState,
-    onRoomClick: (id: String) -> Unit,
+    onRoomClick: (room: RoomOverview) -> Unit,
     onOrganizationClick: () -> Unit
 ) {
     val roomCreateInput = uiState.roomCreateInput
@@ -163,7 +163,7 @@ fun RoomListScreen(
                     Text("End")
                     return@items
                 }
-                RoomItem(room = roomOverview, onJoinClick = { onRoomClick(roomOverview.id) })
+                RoomItem(room = roomOverview, onJoinClick = { onRoomClick(roomOverview) })
             }
             when (rooms.loadState.refresh) { // FIRST LOAD
                 is LoadState.Error -> errorItem(rooms.loadState)

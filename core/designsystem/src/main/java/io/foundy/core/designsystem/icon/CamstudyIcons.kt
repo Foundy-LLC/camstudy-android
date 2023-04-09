@@ -2,6 +2,7 @@ package io.foundy.core.designsystem.icon
 
 import androidx.annotation.DrawableRes
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Chat
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Headset
@@ -30,6 +31,7 @@ import androidx.compose.ui.res.painterResource
 import io.foundy.core.designsystem.R
 
 object CamstudyIcons {
+    val ArrowBack = Icons.Default.ArrowBack.asCamstudyIcon()
     val StudyRoom = R.drawable.ic_study_room.asCamstudyIcon()
     val VideoCam = Icons.Default.Videocam.asCamstudyIcon()
     val VideoCamOff = Icons.Default.VideocamOff.asCamstudyIcon()
