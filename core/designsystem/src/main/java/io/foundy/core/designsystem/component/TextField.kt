@@ -1,5 +1,6 @@
 package io.foundy.core.designsystem.component
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
@@ -13,7 +14,6 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.LocalTextStyle
-import androidx.compose.material3.Surface
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldColors
 import androidx.compose.material3.TextFieldDefaults
@@ -152,6 +152,7 @@ fun CamstudyTextField(
         isError -> colorScheme.danger
         else -> colorScheme.systemUi04
     }
+    val textStyle = typography.titleSmall.copy(color = textColor)
 
     Column(modifier = modifier.padding(vertical = 4.dp)) {
         label?.let {
@@ -161,32 +162,31 @@ fun CamstudyTextField(
             )
             Box(modifier = Modifier.height(6.dp))
         }
-        Surface(
+        BasicTextField(
             modifier = Modifier
                 .fillMaxWidth()
                 .clip(borderShape)
-                .border(width = 1.dp, color = borderColor, shape = borderShape),
-            color = colorScheme.systemUi01
-        ) {
-            Box(modifier = Modifier.padding(horizontal = 16.dp, vertical = 15.dp)) {
-                val textStyle = typography.titleSmall.copy(color = textColor)
-                // TODO: 터치 영역 더 키우기
-                BasicTextField(
-                    modifier = modifier
-                        .focusRequester(FocusRequester())
-                        .onFocusChanged { focusState ->
-                            isFocused = focusState.isFocused
-                        },
-                    value = value,
-                    onValueChange = onValueChange,
-                    textStyle = textStyle,
-                    cursorBrush = SolidColor(colorScheme.primary),
-                )
-                if (value.isEmpty() && placeholder != null) {
-                    CamstudyText(text = placeholder, style = textStyle)
+                .border(width = 1.dp, color = borderColor, shape = borderShape)
+                .background(color = colorScheme.systemUi01)
+                .focusRequester(FocusRequester())
+                .onFocusChanged { focusState ->
+                    isFocused = focusState.isFocused
+                },
+            value = value,
+            onValueChange = onValueChange,
+            enabled = enabled,
+            textStyle = textStyle,
+            cursorBrush = SolidColor(colorScheme.primary),
+            decorationBox = {
+                Box(Modifier.padding(horizontal = 16.dp, vertical = 15.dp)) {
+                    if (value.isEmpty() && placeholder != null) {
+                        CamstudyText(text = placeholder, style = textStyle)
+                    } else {
+                        it()
+                    }
                 }
             }
-        }
+        )
         supportingText?.let {
             Box(modifier = Modifier.height(4.dp))
             CamstudyText(
@@ -195,65 +195,6 @@ fun CamstudyTextField(
             )
         }
     }
-
-//    BasicTextField(
-//        value = value,
-//        onValueChange = onValueChange,
-//        modifier = modifier.onFocusChanged {
-//            if (previousFocusState?.isFocused == true && !it.isFocused) {
-//                onLostFocus?.invoke()
-//            }
-//            previousFocusState = it
-//        },
-//        enabled = enabled,
-//        readOnly = readOnly,
-//        textStyle = textStyle,
-//        label = {
-//            label?.let {
-//                val color = if (isError) colorScheme.error else colorScheme.systemUi05
-//                Text(
-//                    text = it,
-//                    style = typography.labelMedium.copy(color = color)
-//                )
-//            }
-//        },
-//        placeholder = {
-//            placeholder?.let {
-//                val color = when {
-//                    !enabled -> colorScheme.systemUi03
-//                    isError -> colorScheme.systemUi08
-//                    else -> colorScheme.systemUi05
-//                }
-//                Text(
-//                    text = it,
-//                    style = typography.titleSmall.copy(color = color)
-//                )
-//            }
-//        },
-//        leadingIcon = leadingIcon,
-//        trailingIcon = trailingIcon,
-//        prefix = prefix,
-//        suffix = suffix,
-//        supportingText = {
-//            supportingText?.let {
-//                val color = if (isError) colorScheme.error else colorScheme.systemUi04
-//                Text(
-//                    text = it,
-//                    style = typography.labelMedium.copy(color = color)
-//                )
-//            }
-//        },
-//        isError = isError,
-//        visualTransformation = visualTransformation,
-//        keyboardOptions = keyboardOptions,
-//        keyboardActions = keyboardActions,
-//        singleLine = singleLine,
-//        maxLines = maxLines,
-//        minLines = minLines,
-//        interactionSource = interactionSource,
-//        shape = shape,
-//        colors = colors
-//    )
 }
 
 @Preview(showBackground = true)
