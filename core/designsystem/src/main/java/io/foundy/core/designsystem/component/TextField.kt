@@ -153,7 +153,7 @@ fun CamstudyTextField(
         else -> colorScheme.systemUi04
     }
 
-    Column(modifier = Modifier.padding(vertical = 4.dp)) {
+    Column(modifier = modifier.padding(vertical = 4.dp)) {
         label?.let {
             CamstudyText(
                 text = it,
@@ -168,12 +168,11 @@ fun CamstudyTextField(
                 .border(width = 1.dp, color = borderColor, shape = borderShape),
             color = colorScheme.systemUi01
         ) {
-            Box(modifier = modifier.padding(horizontal = 16.dp, vertical = 15.dp)) {
+            Box(modifier = Modifier.padding(horizontal = 16.dp, vertical = 15.dp)) {
                 val textStyle = typography.titleSmall.copy(color = textColor)
-
+                // TODO: 터치 영역 더 키우기
                 BasicTextField(
-                    modifier = Modifier
-                        .fillMaxWidth()
+                    modifier = modifier
                         .focusRequester(FocusRequester())
                         .onFocusChanged { focusState ->
                             isFocused = focusState.isFocused

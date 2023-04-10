@@ -48,4 +48,6 @@
     <string name="not_exists_study_room">존재하지 않는 공부방입니다.</string>
     <string name="me">나</string>
     <string name="back_button">뒤로가기 버튼</string>
+    <string name="send_chat">채팅 보내기</string>
+    <string name="chat_placeholder_text">채팅 내용을 입력하세요</string>
 </resources>

@@ -44,6 +44,7 @@ import io.foundy.room.domain.PomodoroTimerState
 import io.foundy.room.domain.WebRtcServerTimeZone
 import io.foundy.room.ui.R
 import io.foundy.room.ui.component.ActionBar
+import io.foundy.room.ui.component.ChatDivide
 import io.foundy.room.ui.component.PeerContent
 import io.foundy.room.ui.component.PomodoroTimerEditBottomSheet
 import io.foundy.room.ui.component.VideoRenderer
@@ -221,16 +222,21 @@ fun StudyRoomScreen(
                 )
             }
         }
-        IconButton(
-            onClick = {
-                startChatActivity(uiState.chatMessages)
-            }
-        ) {
-            CamstudyIcon(
-                icon = CamstudyIcons.Chat,
-                contentDescription = stringResource(R.string.show_chat_messages)
-            )
-        }
+        ChatDivide(
+            chatInput = "sample input", // TODO: Pass actual value
+            onChatInputChange = { /* TODO: Implement*/ },
+            onSendClick = { /* TODO: Implement*/ }
+        )
+//        IconButton(
+//            onClick = {
+//                startChatActivity(uiState.chatMessages)
+//            }
+//        ) {
+//            CamstudyIcon(
+//                icon = CamstudyIcons.Chat,
+//                contentDescription = stringResource(R.string.show_chat_messages)
+//            )
+//        }
     }
 }
 
