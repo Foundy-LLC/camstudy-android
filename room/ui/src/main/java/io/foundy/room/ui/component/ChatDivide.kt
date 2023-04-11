@@ -4,7 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -119,11 +119,17 @@ private fun ExpandedMessageHolder(
     onCollapseClick: () -> Unit
 ) {
     Box(modifier = modifier) {
-        Row {
+        if (messages.isEmpty()) {
+            CamstudyText(
+                modifier = Modifier.align(Alignment.Center),
+                text = stringResource(R.string.there_is_no_message),
+                style = CamstudyTheme.typography.titleLarge.copy(
+                    color = CamstudyTheme.colorScheme.systemUi05
+                )
+            )
+        } else {
             LazyColumn(
-                modifier = Modifier
-                    .weight(1f)
-                    .fillMaxHeight(),
+                modifier = Modifier.fillMaxSize(),
                 reverseLayout = true
             ) {
                 item {
@@ -328,6 +334,17 @@ private fun ExpandedMessageHolderPreview() {
     CamstudyTheme {
         ExpandedMessageHolder(
             messages = messages,
+            onCollapseClick = {}
+        )
+    }
+}
+
+@Preview(showBackground = true, heightDp = 300)
+@Composable
+private fun EmptyExpandedMessageHolderPreview() {
+    CamstudyTheme {
+        ExpandedMessageHolder(
+            messages = emptyList(),
             onCollapseClick = {}
         )
     }

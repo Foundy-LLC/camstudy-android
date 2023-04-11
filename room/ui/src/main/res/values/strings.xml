@@ -50,4 +50,5 @@
     <string name="back_button">뒤로가기 버튼</string>
     <string name="send_chat">채팅 보내기</string>
     <string name="chat_placeholder_text">채팅 내용을 입력하세요</string>
+    <string name="there_is_no_message">아직 메시지가 없어요</string>
 </resources>
