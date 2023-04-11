@@ -5,6 +5,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Chat
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.KeyboardArrowDown
+import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.filled.MoreHoriz
 import androidx.compose.material.icons.filled.People
 import androidx.compose.material.icons.filled.Person
@@ -46,6 +48,8 @@ object CamstudyIcons {
     val Timer = Icons.Default.Timer.asCamstudyIcon()
     val Search = Icons.Default.Search.asCamstudyIcon()
     val LockSharp = Icons.Sharp.Lock.asCamstudyIcon()
+    val KeyboardArrowUp = Icons.Default.KeyboardArrowUp.asCamstudyIcon()
+    val KeyboardArrowDown = Icons.Default.KeyboardArrowDown.asCamstudyIcon()
 }
 
 sealed class CamstudyIcon

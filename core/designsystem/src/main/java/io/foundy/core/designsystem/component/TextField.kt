@@ -6,7 +6,6 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
@@ -154,13 +153,13 @@ fun CamstudyTextField(
     }
     val textStyle = typography.titleSmall.copy(color = textColor)
 
-    Column(modifier = modifier.padding(vertical = 4.dp)) {
+    Column(modifier = modifier) {
         label?.let {
             CamstudyText(
+                modifier = Modifier.padding(top = 4.dp, bottom = 6.dp),
                 text = it,
                 style = typography.labelMedium.copy(color = labelColor)
             )
-            Box(modifier = Modifier.height(6.dp))
         }
         BasicTextField(
             modifier = Modifier
@@ -188,8 +187,8 @@ fun CamstudyTextField(
             }
         )
         supportingText?.let {
-            Box(modifier = Modifier.height(4.dp))
             CamstudyText(
+                modifier = Modifier.padding(vertical = 4.dp),
                 text = it,
                 style = typography.labelMedium.copy(color = supportingTextColor)
             )
@@ -206,6 +205,18 @@ fun CamstudyTextFieldPreview() {
             label = "레이블",
             placeholder = "플레이스 홀더",
             supportingText = "보조/알림 텍스트",
+            onValueChange = {}
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun PureCamstudyTextFieldPreview() {
+    CamstudyTheme {
+        CamstudyTextField(
+            value = "text",
+            placeholder = "플레이스 홀더",
             onValueChange = {}
         )
     }

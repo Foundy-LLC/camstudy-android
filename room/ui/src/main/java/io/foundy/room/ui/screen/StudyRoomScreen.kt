@@ -224,8 +224,12 @@ fun StudyRoomScreen(
         }
         ChatDivide(
             chatInput = "sample input", // TODO: Pass actual value
-            onChatInputChange = { /* TODO: Implement*/ },
-            onSendClick = { /* TODO: Implement*/ }
+            onChatInputChange = { /* TODO: Implement */ },
+            onSendClick = { /* TODO: Implement */ },
+            messages = emptyList(), // TODO: Implement
+            expanded = false, // TODO: Implement
+            onExpandClick = { /* TODO: Implement */ },
+            onCollapseClick = { /* TODO: Implement */ }
         )
 //        IconButton(
 //            onClick = {
