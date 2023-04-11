@@ -173,6 +173,7 @@ fun CamstudyTextField(
                     isFocused = focusState.isFocused
                 },
             value = value,
+            maxLines = maxLines,
             onValueChange = onValueChange,
             enabled = enabled,
             textStyle = textStyle,

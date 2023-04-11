@@ -91,7 +91,6 @@ sealed class RoomUiState {
         val isCurrentUserMaster: Boolean,
         val isCurrentUserKicked: Boolean = false,
         val isPipMode: Boolean = false,
-        val shouldShowChatSnackbar: Boolean = true,
 
         // Master's features
         val blacklist: List<PeerOverview>,
@@ -102,6 +101,7 @@ sealed class RoomUiState {
 
         // Chatting
         val chatMessageInput: String = "",
+        val onChatMessageInputChange: (String) -> Unit,
         val onSendChatClick: (String) -> Unit,
         val chatMessages: List<ChatMessage> = emptyList(),
 

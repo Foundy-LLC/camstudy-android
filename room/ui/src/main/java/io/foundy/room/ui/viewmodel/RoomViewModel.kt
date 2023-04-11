@@ -125,7 +125,8 @@ class RoomViewModel @Inject constructor(
                         pomodoroTimer = it.timerProperty,
                         pomodoroTimerState = it.timerState,
                         onStartPomodoroClick = ::startPomodoroTimer,
-                        onSendChatClick = ::sendChat
+                        onSendChatClick = ::sendChat,
+                        onChatMessageInputChange = ::updateChatMessageInput
                     )
                 }
             }.onFailure {
@@ -213,7 +214,14 @@ class RoomViewModel @Inject constructor(
         roomService.startPomodoroTimer()
     }
 
+    private fun updateChatMessageInput(message: String) = intent {
+        val uiState = state
+        check(uiState is RoomUiState.StudyRoom)
+        reduce { uiState.copy(chatMessageInput = message) }
+    }
+
     private fun sendChat(message: String) = intent {
+        updateChatMessageInput("")
         roomService.sendChat(message)
     }
 
@@ -221,14 +229,6 @@ class RoomViewModel @Inject constructor(
         val uiState = state
         check(uiState is RoomUiState.StudyRoom)
         reduce { uiState.copy(isPipMode = isPipMode) }
-    }
-
-    fun updateChatSnackbarVisible(visible: Boolean) = intent {
-        val uiState = state
-        if (uiState !is RoomUiState.StudyRoom) {
-            return@intent
-        }
-        reduce { uiState.copy(shouldShowChatSnackbar = visible) }
     }
 
     private fun handleWaitingRoomEvent(waitingRoomEvent: WaitingRoomEvent) = intent {
@@ -309,9 +309,6 @@ class RoomViewModel @Inject constructor(
             is StudyRoomEvent.OnReceiveChatMessage -> {
                 reduce {
                     uiState.copy(chatMessages = uiState.chatMessages + studyRoomEvent.message)
-                }
-                if (uiState.shouldShowChatSnackbar) {
-                    postSideEffect(RoomSideEffect.OnChatMessage(message = studyRoomEvent.message))
                 }
             }
             is StudyRoomEvent.TimerStateChanged -> {

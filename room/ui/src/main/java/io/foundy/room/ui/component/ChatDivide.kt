@@ -20,6 +20,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import io.foundy.core.designsystem.component.CamstudyDivider
@@ -30,6 +31,8 @@ import io.foundy.core.designsystem.icon.CamstudyIcons
 import io.foundy.core.designsystem.theme.CamstudyTheme
 import io.foundy.room.domain.ChatMessage
 import io.foundy.room.ui.R
+
+private val ShadeOverlayHeight = 48.dp
 
 @Composable
 fun ChatDivide(
@@ -77,7 +80,35 @@ private fun ExpandableMessageHolder(
             onCollapseClick = onCollapseClick
         )
     } else {
-        CollapsedMessageHolder(onExpandClick = onExpandClick)
+        CollapsedMessageHolder(
+            lastMessage = messages.lastOrNull(),
+            onExpandClick = onExpandClick
+        )
+    }
+}
+
+@Composable
+private fun MessageContent(
+    modifier: Modifier = Modifier,
+    message: ChatMessage,
+    maxLines: Int = Int.MAX_VALUE
+) {
+    val textStyle = CamstudyTheme.typography.titleSmall
+
+    Row(
+        modifier = modifier,
+    ) {
+        CamstudyText(
+            text = message.authorName,
+            style = textStyle.copy(color = CamstudyTheme.colorScheme.systemUi05)
+        )
+        Box(modifier = Modifier.width(8.dp))
+        CamstudyText(
+            text = message.content,
+            style = textStyle.copy(color = CamstudyTheme.colorScheme.systemUi09),
+            maxLines = maxLines,
+            overflow = TextOverflow.Ellipsis
+        )
     }
 }
 
@@ -87,8 +118,6 @@ private fun ExpandedMessageHolder(
     messages: List<ChatMessage>,
     onCollapseClick: () -> Unit
 ) {
-    val textStyle = CamstudyTheme.typography.titleSmall
-
     Box(modifier = modifier) {
         Row {
             LazyColumn(
@@ -101,25 +130,19 @@ private fun ExpandedMessageHolder(
                     Box(modifier = Modifier.height(12.dp))
                 }
                 items(items = messages, key = { it.id }) { message ->
-                    Row(
+                    MessageContent(
                         modifier = Modifier.padding(start = 16.dp, end = 52.dp, top = 8.dp),
-                    ) {
-                        CamstudyText(
-                            text = message.authorName,
-                            style = textStyle.copy(color = CamstudyTheme.colorScheme.systemUi05)
-                        )
-                        Box(modifier = Modifier.width(8.dp))
-                        CamstudyText(
-                            text = message.content,
-                            style = textStyle.copy(color = CamstudyTheme.colorScheme.systemUi09)
-                        )
-                    }
+                        message = message,
+                    )
+                }
+                item {
+                    Box(modifier = Modifier.height(ShadeOverlayHeight))
                 }
             }
         }
         Box(
             modifier = Modifier
-                .height(48.dp)
+                .height(ShadeOverlayHeight)
                 .fillMaxWidth()
                 .background(
                     brush = Brush.verticalGradient(
@@ -127,8 +150,7 @@ private fun ExpandedMessageHolder(
                             CamstudyTheme.colorScheme.systemBackground,
                             CamstudyTheme.colorScheme.systemBackground.copy(alpha = 0.0f)
                         )
-                    ),
-                    alpha = 1f
+                    )
                 )
         )
         IconButton(
@@ -148,18 +170,30 @@ private fun ExpandedMessageHolder(
 }
 
 @Composable
-fun CollapsedMessageHolder(onExpandClick: () -> Unit) {
+fun CollapsedMessageHolder(
+    lastMessage: ChatMessage?,
+    onExpandClick: () -> Unit
+) {
     Row(
         modifier = Modifier.padding(start = 16.dp, end = 4.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        CamstudyText(
-            modifier = Modifier.weight(1f),
-            text = "채팅을 보려면 우측 화살표를 눌러 펼처주세요",
-            style = CamstudyTheme.typography.titleSmall.copy(
-                color = CamstudyTheme.colorScheme.systemUi05
+        if (lastMessage != null) {
+            MessageContent(
+                modifier = Modifier.weight(1f),
+                maxLines = 1,
+                message = lastMessage,
             )
-        )
+        } else {
+            CamstudyText(
+                modifier = Modifier.weight(1f),
+                text = "채팅을 보려면 우측 화살표를 눌러 펼처주세요",
+                style = CamstudyTheme.typography.titleSmall.copy(
+                    color = CamstudyTheme.colorScheme.systemUi05
+                )
+            )
+        }
+        Box(Modifier.width(8.dp))
         IconButton(onClick = onExpandClick) {
             CamstudyIcon(
                 modifier = Modifier.size(24.dp),
@@ -201,6 +235,7 @@ private fun ChatInputBar(
                     modifier = Modifier.weight(1f),
                     value = input,
                     placeholder = stringResource(R.string.chat_placeholder_text),
+                    maxLines = 3,
                     onValueChange = onInputChange
                 )
                 Box(modifier = Modifier.width(6.dp))
@@ -260,6 +295,13 @@ private fun CollapsedChatDividePreview() {
                     authorName = "홍길동",
                     content = "안녕하세요~!",
                     sentAt = "2022-05-08T19:57:12.123+09:00"
+                ),
+                ChatMessage(
+                    id = "2",
+                    authorId = "uid",
+                    authorName = "박민성",
+                    content = "네 반가워요반가워요반가워요반가워요반가워요반가워요반가워요반가워요반가워요반가워요반가워요.",
+                    sentAt = "2022-05-08T19:57:12.123+09:00"
                 )
             ),
             chatInput = "",
@@ -296,6 +338,7 @@ private fun ExpandedMessageHolderPreview() {
 private fun CollapsedMessageHolderPreview() {
     CamstudyTheme {
         CollapsedMessageHolder(
+            lastMessage = null,
             onExpandClick = {}
         )
     }

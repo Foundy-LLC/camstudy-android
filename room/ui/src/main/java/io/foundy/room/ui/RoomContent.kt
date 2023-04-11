@@ -19,7 +19,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import io.foundy.core.designsystem.component.CamstudyTopAppBar
 import io.foundy.core.designsystem.theme.CamstudyTheme
-import io.foundy.room.domain.ChatMessage
 import io.foundy.room.domain.PomodoroTimerProperty
 import io.foundy.room.domain.PomodoroTimerState
 import io.foundy.room.ui.media.FakeMediaManager
@@ -41,7 +40,6 @@ fun RoomScreen(
     roomId: String,
     roomTitle: String,
     popBackStack: () -> Unit,
-    startChatActivity: (List<ChatMessage>) -> Unit,
     viewModel: RoomViewModel,
     mediaManager: MediaManager,
 ) {
@@ -55,12 +53,6 @@ fun RoomScreen(
             is RoomSideEffect.Message -> coroutineScope.launch {
                 snackbarHostState.showSnackbar(
                     it.content ?: context.getString(it.defaultContentRes, it.stringResArgs)
-                )
-            }
-            is RoomSideEffect.OnChatMessage -> coroutineScope.launch {
-                snackbarHostState.currentSnackbarData?.dismiss()
-                snackbarHostState.showSnackbar(
-                    "${it.message.authorName}: ${it.message.content}"
                 )
             }
         }
@@ -87,7 +79,6 @@ fun RoomScreen(
             roomId = roomId,
             uiState = uiState,
             snackbarHostState = snackbarHostState,
-            startChatActivity = startChatActivity,
             popBackStack = popBackStack
         )
     }
@@ -101,7 +92,6 @@ private fun RoomContent(
     roomId: String,
     uiState: RoomUiState,
     snackbarHostState: SnackbarHostState,
-    startChatActivity: (List<ChatMessage>) -> Unit,
     popBackStack: () -> Unit,
 ) {
     Scaffold(
@@ -127,7 +117,6 @@ private fun RoomContent(
                     onDismissKickedDialog = {
                         popBackStack()
                     },
-                    startChatActivity = startChatActivity
                 )
             }
         }
@@ -168,10 +157,10 @@ private fun RoomContentPreview() {
                         longBreakMinutes = 15,
                         longBreakInterval = 4
                     ),
-                    pomodoroTimerState = PomodoroTimerState.STOPPED
+                    pomodoroTimerState = PomodoroTimerState.STOPPED,
+                    onChatMessageInputChange = {}
                 ),
                 snackbarHostState = SnackbarHostState(),
-                startChatActivity = {},
                 popBackStack = {}
             )
         }

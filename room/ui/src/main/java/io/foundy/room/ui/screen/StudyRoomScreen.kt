@@ -1,5 +1,6 @@
 package io.foundy.room.ui.screen
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
@@ -37,7 +38,6 @@ import com.holix.android.bottomsheetdialog.compose.BottomSheetDialog
 import io.foundy.core.designsystem.icon.CamstudyIcon
 import io.foundy.core.designsystem.icon.CamstudyIcons
 import io.foundy.core.designsystem.theme.CamstudyTheme
-import io.foundy.room.domain.ChatMessage
 import io.foundy.room.domain.PeerOverview
 import io.foundy.room.domain.PomodoroTimerProperty
 import io.foundy.room.domain.PomodoroTimerState
@@ -62,12 +62,30 @@ import kotlinx.datetime.toLocalDateTime
 @Composable
 fun StudyRoomScreen(
     uiState: RoomUiState.StudyRoom,
+    onDismissKickedDialog: () -> Unit,
+) {
+    var shouldExpandChatDivide by remember { mutableStateOf(false) }
+
+    StudyRoomContent(
+        uiState = uiState,
+        shouldExpandChatDivide = shouldExpandChatDivide,
+        onChatExpandClick = { shouldExpandChatDivide = true },
+        onChatCollapseClick = { shouldExpandChatDivide = false },
+        onDismissKickedDialog = onDismissKickedDialog
+    )
+}
+
+@Composable
+fun StudyRoomContent(
+    uiState: RoomUiState.StudyRoom,
+    shouldExpandChatDivide: Boolean,
+    onChatExpandClick: () -> Unit,
+    onChatCollapseClick: () -> Unit,
     userBottomSheetState: UserBottomSheetState = remember { UserBottomSheetState() },
     kickUserRecheckDialogState: KickUserRecheckDialogState = remember {
         KickUserRecheckDialogState()
     },
     onDismissKickedDialog: () -> Unit,
-    startChatActivity: (List<ChatMessage>) -> Unit,
 ) {
     if (uiState.isPipMode) {
         StudyRoomContentInPip(uiState = uiState)
@@ -80,6 +98,10 @@ fun StudyRoomScreen(
     val enabledLocalHeadset = mediaManager.enabledLocalHeadset
     var showBlacklistBottomSheet by remember { mutableStateOf(false) }
     var showPomodoroTimerEditBottomSheet by remember { mutableStateOf(false) }
+
+    BackHandler(enabled = shouldExpandChatDivide) {
+        onChatCollapseClick()
+    }
 
     if (showBlacklistBottomSheet) {
         BlacklistBottomSheet(
@@ -179,12 +201,14 @@ fun StudyRoomScreen(
     }
 
     Column {
-        PeerGridView(
-            modifier = Modifier.weight(1f),
-            peerStates = listOf(mediaManager.currentUserState) + uiState.peerStates,
-            isCurrentUserMaster = uiState.isCurrentUserMaster,
-            onMoreButtonClick = userBottomSheetState::show
-        )
+        if (!shouldExpandChatDivide) {
+            PeerGridView(
+                modifier = Modifier.weight(1f),
+                peerStates = listOf(mediaManager.currentUserState) + uiState.peerStates,
+                isCurrentUserMaster = uiState.isCurrentUserMaster,
+                onMoreButtonClick = userBottomSheetState::show
+            )
+        }
         ActionBar(
             enabledLocalVideo = enabledLocalVideo,
             enabledLocalAudio = enabledLocalAudio,
@@ -223,24 +247,14 @@ fun StudyRoomScreen(
             }
         }
         ChatDivide(
-            chatInput = "sample input", // TODO: Pass actual value
-            onChatInputChange = { /* TODO: Implement */ },
-            onSendClick = { /* TODO: Implement */ },
-            messages = emptyList(), // TODO: Implement
-            expanded = false, // TODO: Implement
-            onExpandClick = { /* TODO: Implement */ },
-            onCollapseClick = { /* TODO: Implement */ }
+            chatInput = uiState.chatMessageInput,
+            onChatInputChange = uiState.onChatMessageInputChange,
+            onSendClick = uiState.onSendChatClick,
+            messages = uiState.chatMessages,
+            expanded = shouldExpandChatDivide,
+            onExpandClick = onChatExpandClick,
+            onCollapseClick = onChatCollapseClick
         )
-//        IconButton(
-//            onClick = {
-//                startChatActivity(uiState.chatMessages)
-//            }
-//        ) {
-//            CamstudyIcon(
-//                icon = CamstudyIcons.Chat,
-//                contentDescription = stringResource(R.string.show_chat_messages)
-//            )
-//        }
     }
 }
 
@@ -463,7 +477,7 @@ private fun PeerGridViewPreview() {
 private fun StudyRoomScreenPreview() {
     CompositionLocalProvider(LocalMediaManager provides FakeMediaManager()) {
         CamstudyTheme {
-            StudyRoomScreen(
+            StudyRoomContent(
                 uiState = RoomUiState.StudyRoom(
                     peerStates = listOf(
                         PeerUiState(
@@ -482,6 +496,7 @@ private fun StudyRoomScreenPreview() {
                     onStartPomodoroClick = {},
                     onBlockUserClick = {},
                     onSavePomodoroTimerClick = {},
+                    onChatMessageInputChange = {},
                     onUnblockUserClick = {},
                     pomodoroTimerEventDate = null,
                     pomodoroTimer = PomodoroTimerProperty(
@@ -492,8 +507,54 @@ private fun StudyRoomScreenPreview() {
                     ),
                     pomodoroTimerState = PomodoroTimerState.STOPPED
                 ),
+                shouldExpandChatDivide = false,
+                onChatCollapseClick = {},
+                onChatExpandClick = {},
                 onDismissKickedDialog = {},
-                startChatActivity = {}
+            )
+        }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun ExpandedChatStudyRoomScreenPreview() {
+    CompositionLocalProvider(LocalMediaManager provides FakeMediaManager()) {
+        CamstudyTheme {
+            StudyRoomContent(
+                uiState = RoomUiState.StudyRoom(
+                    peerStates = listOf(
+                        PeerUiState(
+                            uid = "id",
+                            name = "홍길동",
+                            enabledMicrophone = false,
+                            enabledHeadset = false,
+                            audioTrack = null,
+                            videoTrack = null
+                        )
+                    ),
+                    isCurrentUserMaster = false,
+                    blacklist = emptyList(),
+                    onKickUserClick = {},
+                    onSendChatClick = {},
+                    onStartPomodoroClick = {},
+                    onBlockUserClick = {},
+                    onSavePomodoroTimerClick = {},
+                    onChatMessageInputChange = {},
+                    onUnblockUserClick = {},
+                    pomodoroTimerEventDate = null,
+                    pomodoroTimer = PomodoroTimerProperty(
+                        timerLengthMinutes = 25,
+                        shortBreakMinutes = 5,
+                        longBreakMinutes = 15,
+                        longBreakInterval = 4
+                    ),
+                    pomodoroTimerState = PomodoroTimerState.STOPPED
+                ),
+                shouldExpandChatDivide = true,
+                onChatCollapseClick = {},
+                onChatExpandClick = {},
+                onDismissKickedDialog = {},
             )
         }
     }

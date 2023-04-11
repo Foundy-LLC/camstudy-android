@@ -22,13 +22,13 @@ import androidx.annotation.RequiresApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.boundsInWindow
 import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.core.view.WindowCompat
 import androidx.lifecycle.Lifecycle
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import dagger.hilt.android.AndroidEntryPoint
 import io.foundy.core.designsystem.theme.CamstudyTheme
-import io.foundy.room.domain.ChatMessage
 import io.foundy.room.ui.media.MediaManager
 import io.foundy.room.ui.media.MediaManagerImpl
 import io.foundy.room.ui.peer.PeerConnectionFactoryWrapper
@@ -70,6 +70,8 @@ class RoomActivity : ComponentActivity() {
     @OptIn(ExperimentalPermissionsApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        WindowCompat.setDecorFitsSystemWindows(window, true)
 
         LocalBroadcastManager.getInstance(this).registerReceiver(
             broadcastReceiver,
@@ -116,7 +118,6 @@ class RoomActivity : ComponentActivity() {
                         popBackStack = ::finish,
                         viewModel = viewModel,
                         mediaManager = mediaManager,
-                        startChatActivity = ::startChatActivity
                     )
                 } else {
                     PermissionRequestScreen(
@@ -126,16 +127,6 @@ class RoomActivity : ComponentActivity() {
                 }
             }
         }
-    }
-
-    override fun onResume() {
-        super.onResume()
-        viewModel.updateChatSnackbarVisible(true)
-    }
-
-    override fun onPause() {
-        super.onPause()
-        viewModel.updateChatSnackbarVisible(false)
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -250,13 +241,5 @@ class RoomActivity : ComponentActivity() {
                 else -> throw IllegalArgumentException()
             }
         }
-    }
-
-    private fun startChatActivity(chatMessages: List<ChatMessage>) {
-        val intent = ChatActivity.getIntent(
-            context = this,
-            chatMessages = chatMessages
-        )
-        startActivity(intent)
     }
 }
