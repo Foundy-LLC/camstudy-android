@@ -91,19 +91,19 @@ private fun MediaState(
     val modifier = Modifier.size(24.dp)
 
     Row {
-        if (!enabledMicrophone) {
-            CamstudyIcon(
-                modifier = modifier,
-                icon = CamstudyIcons.MicOff,
-                tint = tint,
-                contentDescription = null
-            )
-        }
         if (!enabledHeadset) {
             Box(Modifier.padding(start = 8.dp))
             CamstudyIcon(
                 modifier = modifier,
                 icon = CamstudyIcons.HeadsetOff,
+                tint = tint,
+                contentDescription = null
+            )
+        }
+        if (!enabledMicrophone) {
+            CamstudyIcon(
+                modifier = modifier,
+                icon = CamstudyIcons.MicOff,
                 tint = tint,
                 contentDescription = null
             )
