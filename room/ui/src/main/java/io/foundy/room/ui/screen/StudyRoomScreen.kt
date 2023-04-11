@@ -2,6 +2,7 @@ package io.foundy.room.ui.screen
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -30,7 +31,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -75,6 +79,7 @@ fun StudyRoomScreen(
     )
 }
 
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun StudyRoomContent(
     uiState: RoomUiState.StudyRoom,
@@ -93,11 +98,18 @@ fun StudyRoomContent(
     }
 
     val mediaManager = LocalMediaManager.current
+    val focusManager = LocalFocusManager.current
+    val keyboardController = LocalSoftwareKeyboardController.current
     val enabledLocalVideo = mediaManager.enabledLocalVideo
     val enabledLocalAudio = mediaManager.enabledLocalAudio
     val enabledLocalHeadset = mediaManager.enabledLocalHeadset
     var showBlacklistBottomSheet by remember { mutableStateOf(false) }
     var showPomodoroTimerEditBottomSheet by remember { mutableStateOf(false) }
+
+    val freeChatFocus: () -> Unit = {
+        focusManager.clearFocus(force = true)
+        keyboardController?.hide()
+    }
 
     BackHandler(enabled = shouldExpandChatDivide) {
         onChatCollapseClick()
@@ -200,7 +212,13 @@ fun StudyRoomContent(
         )
     }
 
-    Column {
+    Column(
+        modifier = Modifier.clickable(
+            interactionSource = remember { MutableInteractionSource() },
+            indication = null,
+            onClick = freeChatFocus
+        )
+    ) {
         if (!shouldExpandChatDivide) {
             PeerGridView(
                 modifier = Modifier.weight(1f),
