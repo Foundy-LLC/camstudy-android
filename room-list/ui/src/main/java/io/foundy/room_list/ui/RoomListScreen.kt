@@ -201,6 +201,7 @@ private fun LazyListScope.headerItem(
             Box(Modifier.height(12.dp))
             CamstudyTextField(
                 value = query,
+                // TODO: IME action 변경하기
                 onValueChange = onQueryChange,
                 placeholder = stringResource(R.string.room_search_placeholder)
             )

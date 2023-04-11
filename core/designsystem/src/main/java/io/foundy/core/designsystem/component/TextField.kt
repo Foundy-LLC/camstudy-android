@@ -97,6 +97,7 @@ fun CamstudyTextField(
     )
 }
 
+// TODO: 문자열 입력하고 다 지운 후 다시 입력을 하면 앱 종료되는 문제 해결하기
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CamstudyTextField(
