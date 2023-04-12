@@ -1,5 +1,15 @@
 package io.foundy.room.ui.component
 
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.ContentTransform
+import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.animation.SizeTransform
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
+import androidx.compose.animation.with
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -16,6 +26,8 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
@@ -31,6 +43,7 @@ import io.foundy.core.designsystem.icon.CamstudyIcons
 import io.foundy.core.designsystem.theme.CamstudyTheme
 import io.foundy.room.domain.ChatMessage
 import io.foundy.room.ui.R
+import kotlin.random.Random
 
 private val ShadeOverlayHeight = 48.dp
 
@@ -175,6 +188,7 @@ private fun ExpandedMessageHolder(
     }
 }
 
+@OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun CollapsedMessageHolder(
     lastMessage: ChatMessage?,
@@ -184,20 +198,26 @@ fun CollapsedMessageHolder(
         modifier = Modifier.padding(start = 16.dp, end = 4.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        if (lastMessage != null) {
-            MessageContent(
-                modifier = Modifier.weight(1f),
-                maxLines = 1,
-                message = lastMessage,
-            )
-        } else {
-            CamstudyText(
-                modifier = Modifier.weight(1f),
-                text = stringResource(R.string.collapsed_message_holder_help_text),
-                style = CamstudyTheme.typography.titleSmall.copy(
-                    color = CamstudyTheme.colorScheme.systemUi05
+        AnimatedContent(
+            targetState = lastMessage,
+            modifier = Modifier.weight(1f),
+            transitionSpec = {
+                createVerticalSlideAnimation().using(SizeTransform(clip = false))
+            }
+        ) { lastMessage ->
+            if (lastMessage != null) {
+                MessageContent(
+                    maxLines = 1,
+                    message = lastMessage,
                 )
-            )
+            } else {
+                CamstudyText(
+                    text = stringResource(R.string.collapsed_message_holder_help_text),
+                    style = CamstudyTheme.typography.titleSmall.copy(
+                        color = CamstudyTheme.colorScheme.systemUi05
+                    )
+                )
+            }
         }
         Box(Modifier.width(8.dp))
         IconButton(onClick = onExpandClick) {
@@ -209,6 +229,19 @@ fun CollapsedMessageHolder(
             )
         }
     }
+}
+
+@ExperimentalAnimationApi
+private fun createVerticalSlideAnimation(duration: Int = 300): ContentTransform {
+    return slideInVertically(animationSpec = tween(durationMillis = duration)) { height ->
+        height
+    } + fadeIn(
+        animationSpec = tween(durationMillis = duration)
+    ) with slideOutVertically(animationSpec = tween(durationMillis = duration)) { height ->
+        -height
+    } + fadeOut(
+        animationSpec = tween(durationMillis = duration)
+    )
 }
 
 @Composable
@@ -291,28 +324,42 @@ private fun ExpandedChatDividePreview() {
 @Preview
 @Composable
 private fun CollapsedChatDividePreview() {
+    val messages = remember {
+        mutableStateListOf(
+            ChatMessage(
+                id = "1",
+                authorId = "uid",
+                authorName = "홍길동",
+                content = "안녕하세요~!",
+                sentAt = "2022-05-08T19:57:12.123+09:00"
+            ),
+            ChatMessage(
+                id = "2",
+                authorId = "uid",
+                authorName = "박민성",
+                content = "네 반가워요.",
+                sentAt = "2022-05-08T19:57:12.123+09:00"
+            )
+        )
+    }
     CamstudyTheme {
         ChatDivide(
             expanded = false,
-            messages = listOf(
-                ChatMessage(
-                    id = "1",
-                    authorId = "uid",
-                    authorName = "홍길동",
-                    content = "안녕하세요~!",
-                    sentAt = "2022-05-08T19:57:12.123+09:00"
-                ),
-                ChatMessage(
-                    id = "2",
-                    authorId = "uid",
-                    authorName = "박민성",
-                    content = "네 반가워요반가워요반가워요반가워요반가워요반가워요반가워요반가워요반가워요반가워요반가워요.",
-                    sentAt = "2022-05-08T19:57:12.123+09:00"
-                )
-            ),
-            chatInput = "",
+            messages = messages,
+            chatInput = "wow",
             onChatInputChange = {},
-            onSendClick = {},
+            onSendClick = {
+                messages.add(
+                    index = 0,
+                    element = ChatMessage(
+                        id = Random.nextInt().toString(),
+                        authorId = "uid",
+                        authorName = "박민성",
+                        content = it,
+                        sentAt = "2022-05-08T19:57:12.123+09:00"
+                    )
+                )
+            },
             onCollapseClick = {},
             onExpandClick = {}
         )
