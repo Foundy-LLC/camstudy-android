@@ -40,7 +40,7 @@ fun PeerContent(
         Box {
             if (peerState.videoTrack != null) {
                 VideoRenderer(
-                    modifier = modifier,
+                    modifier = Modifier.fillMaxWidth(),
                     eglBaseContext = eglBaseContext,
                     videoTrack = peerState.videoTrack
                 )

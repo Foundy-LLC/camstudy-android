@@ -287,7 +287,7 @@ private fun PeerGridView(
                 .height(height)
 
             LazyVerticalGrid(
-                columns = GridCells.Adaptive(minSize = width),
+                columns = GridCells.Fixed(count = 2),
             ) {
                 items(peerStates, key = { it.uid }) { peerState ->
                     PeerContent(
