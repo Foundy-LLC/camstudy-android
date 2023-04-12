@@ -81,7 +81,7 @@ private fun ExpandableMessageHolder(
         )
     } else {
         CollapsedMessageHolder(
-            lastMessage = messages.lastOrNull(),
+            lastMessage = messages.firstOrNull(),
             onExpandClick = onExpandClick
         )
     }

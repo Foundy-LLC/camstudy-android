@@ -308,7 +308,9 @@ class RoomViewModel @Inject constructor(
             }
             is StudyRoomEvent.OnReceiveChatMessage -> {
                 reduce {
-                    uiState.copy(chatMessages = uiState.chatMessages + studyRoomEvent.message)
+                    uiState.copy(
+                        chatMessages = listOf(studyRoomEvent.message) + uiState.chatMessages
+                    )
                 }
             }
             is StudyRoomEvent.TimerStateChanged -> {
