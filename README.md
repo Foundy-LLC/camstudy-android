@@ -6,4 +6,4 @@
 
 # Demo
 
-![demo_gif](https://user-images.githubusercontent.com/57604817/231461180-7123b3f0-d289-4d2b-9c59-6ac8d0ba5fb5.gif)
+![demo_gif](https://user-images.githubusercontent.com/57604817/231464158-a70e0103-98d4-46bd-8097-d58332922294.gif)
