@@ -92,7 +92,6 @@ private fun MediaState(
 
     Row {
         if (!enabledHeadset) {
-            Box(Modifier.padding(start = 8.dp))
             CamstudyIcon(
                 modifier = modifier,
                 icon = CamstudyIcons.HeadsetOff,
@@ -101,6 +100,7 @@ private fun MediaState(
             )
         }
         if (!enabledMicrophone) {
+            Box(Modifier.padding(start = 8.dp))
             CamstudyIcon(
                 modifier = modifier,
                 icon = CamstudyIcons.MicOff,
