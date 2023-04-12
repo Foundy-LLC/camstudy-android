@@ -10,6 +10,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -20,6 +22,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -82,6 +86,15 @@ fun WaitingRoomScreen(
             onCheckChange = mediaManager::toggleMicrophone
         )
     )
+    val onJoinClick: () -> Unit = {
+        if (uiState is RoomUiState.WaitingRoom.Connected) {
+            uiState.onJoinClick(
+                localVideoTrack,
+                mediaManager.localAudioTrack,
+                uiState.passwordInput
+            )
+        }
+    }
 
     Box(
         modifier = Modifier
@@ -135,6 +148,13 @@ fun WaitingRoomScreen(
                     placeholder = stringResource(R.string.input_password_of_study_room),
                     singleLine = true,
                     visualTransformation = PasswordVisualTransformation(),
+                    keyboardOptions = KeyboardOptions(
+                        imeAction = ImeAction.Go,
+                        keyboardType = KeyboardType.Password
+                    ),
+                    keyboardActions = KeyboardActions(
+                        onGo = { onJoinClick() }
+                    )
                 )
             }
             Spacer(modifier = Modifier.height(24.dp))
@@ -161,15 +181,7 @@ fun WaitingRoomScreen(
             enabled = uiState.enableJoinButton,
             label = stringResource(id = uiState.cannotJoinMessage ?: uiState.joinButtonTextRes),
             shape = RectangleShape,
-            onClick = {
-                if (uiState is RoomUiState.WaitingRoom.Connected) {
-                    uiState.onJoinClick(
-                        localVideoTrack,
-                        mediaManager.localAudioTrack,
-                        uiState.passwordInput
-                    )
-                }
-            }
+            onClick = onJoinClick
         )
     }
 }

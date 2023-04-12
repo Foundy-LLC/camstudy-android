@@ -97,8 +97,6 @@ fun CamstudyTextField(
     )
 }
 
-// TODO: 문자열 입력하고 다 지운 후 다시 입력을 하면 앱 종료되는 문제 해결하기
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CamstudyTextField(
     value: String,
@@ -121,8 +119,6 @@ fun CamstudyTextField(
     maxLines: Int = if (singleLine) 1 else Int.MAX_VALUE,
     minLines: Int = 1,
     interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
-    shape: Shape = TextFieldDefaults.filledShape,
-    onLostFocus: (() -> Unit)? = null
 ) {
     var isFocused by remember { mutableStateOf(false) }
     val focusRequester = remember { FocusRequester() }
@@ -174,10 +170,16 @@ fun CamstudyTextField(
                     isFocused = focusState.isFocused
                 },
             value = value,
+            readOnly = readOnly,
             maxLines = maxLines,
+            minLines = minLines,
             onValueChange = onValueChange,
             enabled = enabled,
             textStyle = textStyle,
+            keyboardOptions = keyboardOptions,
+            keyboardActions = keyboardActions,
+            interactionSource =interactionSource,
+            visualTransformation = visualTransformation,
             cursorBrush = SolidColor(colorScheme.primary),
             decorationBox = { innerTextField ->
                 Box(Modifier.padding(horizontal = 16.dp, vertical = 15.dp)) {
