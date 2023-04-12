@@ -55,7 +55,7 @@ class RoomSocketService @Inject constructor() : RoomService {
 
     private val socket: Socket = Manager(URI(URL)).socket(Protocol.NAME_SPACE)
 
-    override val eventFlow: MutableSharedFlow<RoomEvent> = MutableSharedFlow(replay = 1)
+    override val eventFlow: MutableSharedFlow<RoomEvent> = MutableSharedFlow(replay = 8)
 
     private var _device: Device? = null
     private val device: Device get() = requireNotNull(_device)
