@@ -15,7 +15,7 @@ import androidx.compose.material.icons.filled.PersonRemove
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Send
 import androidx.compose.material.icons.filled.SwitchVideo
-import androidx.compose.material.icons.filled.Timer
+import androidx.compose.material.icons.outlined.Timer
 import androidx.compose.material.icons.sharp.Lock
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalContentColor
@@ -36,6 +36,8 @@ object CamstudyIcons {
     val Home = R.drawable.ic_home.asCamstudyIcon()
     val Headset = R.drawable.ic_headset.asCamstudyIcon()
     val HeadsetOff = R.drawable.ic_headset_off.asCamstudyIcon()
+    val StartTimer = R.drawable.ic_start_timer.asCamstudyIcon()
+    val StartTimerPressed = R.drawable.ic_start_timer_pressed.asCamstudyIcon()
     val MoreHoriz = Icons.Default.MoreHoriz.asCamstudyIcon()
     val SwitchVideo = Icons.Default.SwitchVideo.asCamstudyIcon()
     val Chat = Icons.Default.Chat.asCamstudyIcon()
@@ -45,7 +47,7 @@ object CamstudyIcons {
     val PersonAdd = Icons.Default.PersonAdd.asCamstudyIcon()
     val PersonRemove = Icons.Default.PersonRemove.asCamstudyIcon()
     val People = Icons.Default.People.asCamstudyIcon()
-    val Timer = Icons.Default.Timer.asCamstudyIcon()
+    val Timer = Icons.Outlined.Timer.asCamstudyIcon()
     val Search = Icons.Default.Search.asCamstudyIcon()
     val LockSharp = Icons.Sharp.Lock.asCamstudyIcon()
     val KeyboardArrowUp = Icons.Default.KeyboardArrowUp.asCamstudyIcon()

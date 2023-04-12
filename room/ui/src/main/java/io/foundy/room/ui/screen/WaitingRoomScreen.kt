@@ -20,7 +20,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import io.foundy.core.designsystem.theme.CamstudyTheme
 import io.foundy.room.ui.R
-import io.foundy.room.ui.component.ActionBar
 import io.foundy.room.ui.component.VideoRenderer
 import io.foundy.room.ui.media.LocalMediaManager
 import io.foundy.room.ui.viewmodel.RoomUiState
@@ -71,14 +70,16 @@ fun WaitingRoomScreen(
                     )
                 }
             }
-            ActionBar(
-                enabledLocalVideo = enabledLocalVideo,
-                enabledLocalAudio = enabledLocalAudio,
-                enabledLocalHeadset = enabledLocalHeadset,
-                onToggleVideo = mediaManager::toggleVideo,
-                onToggleAudio = mediaManager::toggleMicrophone,
-                onToggleHeadset = mediaManager::toggleHeadset,
-            )
+            // TODO: 다른 액션바 구현하기
+//            ActionBar(
+//
+//                enabledLocalVideo = enabledLocalVideo,
+//                enabledLocalAudio = enabledLocalAudio,
+//                enabledLocalHeadset = enabledLocalHeadset,
+//                onToggleVideo = mediaManager::toggleVideo,
+//                onToggleAudio = mediaManager::toggleMicrophone,
+//                onToggleHeadset = mediaManager::toggleHeadset,
+//            )
 
             Text(text = uiState.toString())
             uiState.cannotJoinMessage?.let { Text(text = stringResource(id = it)) }

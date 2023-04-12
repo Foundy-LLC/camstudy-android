@@ -24,7 +24,6 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.Immutable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -45,7 +44,6 @@ import io.foundy.core.designsystem.theme.CamstudyTheme
 import io.foundy.room.domain.PeerOverview
 import io.foundy.room.domain.PomodoroTimerProperty
 import io.foundy.room.domain.PomodoroTimerState
-import io.foundy.room.domain.WebRtcServerTimeZone
 import io.foundy.room.ui.R
 import io.foundy.room.ui.component.ActionBar
 import io.foundy.room.ui.component.ChatDivide
@@ -57,11 +55,6 @@ import io.foundy.room.ui.media.FakeMediaManager
 import io.foundy.room.ui.media.LocalMediaManager
 import io.foundy.room.ui.peer.PeerUiState
 import io.foundy.room.ui.viewmodel.RoomUiState
-import kotlinx.coroutines.delay
-import kotlinx.datetime.Clock
-import kotlinx.datetime.LocalDateTime
-import kotlinx.datetime.toInstant
-import kotlinx.datetime.toLocalDateTime
 
 @Composable
 fun StudyRoomScreen(
@@ -93,7 +86,7 @@ fun StudyRoomContent(
     onDismissKickedDialog: () -> Unit,
 ) {
     if (uiState.isPipMode) {
-        StudyRoomContentInPip(uiState = uiState)
+        StudyRoomContentInPip()
         return
     }
 
@@ -228,6 +221,9 @@ fun StudyRoomContent(
             )
         }
         ActionBar(
+            timerState = uiState.pomodoroTimerState,
+            timerEventDate = uiState.pomodoroTimerEventDate,
+            onStartTimerClick = uiState.onStartPomodoroClick,
             enabledLocalVideo = enabledLocalVideo,
             enabledLocalAudio = enabledLocalAudio,
             enabledLocalHeadset = enabledLocalHeadset,
@@ -235,15 +231,6 @@ fun StudyRoomContent(
             onToggleAudio = mediaManager::toggleMicrophone,
             onToggleHeadset = mediaManager::toggleHeadset,
         )
-        PomodoroTimer(
-            state = uiState.pomodoroTimerState,
-            pomodoroTimerEventDate = uiState.pomodoroTimerEventDate
-        )
-        if (uiState.pomodoroTimerState == PomodoroTimerState.STOPPED) {
-            PomodoroTimerStartButton(
-                onStartClick = uiState.onStartPomodoroClick
-            )
-        }
         IconButton(onClick = mediaManager::switchCamera, enabled = enabledLocalVideo) {
             CamstudyIcon(
                 icon = CamstudyIcons.SwitchVideo,
@@ -310,42 +297,6 @@ private fun PeerGridView(
 }
 
 @Composable
-private fun PomodoroTimer(
-    state: PomodoroTimerState,
-    pomodoroTimerEventDate: LocalDateTime?,
-) {
-    var elapsedTimeText by remember { mutableStateOf(pomodoroTimerEventDate.elapsedTimeText) }
-
-    if (state != PomodoroTimerState.STOPPED) {
-        LaunchedEffect(pomodoroTimerEventDate) {
-            while (true) {
-                delay(1_000)
-                elapsedTimeText = pomodoroTimerEventDate.elapsedTimeText
-            }
-        }
-    }
-    val color = when (state) {
-        PomodoroTimerState.STOPPED -> CamstudyTheme.colorScheme.text01
-        PomodoroTimerState.STARTED -> CamstudyTheme.colorScheme.error
-        PomodoroTimerState.SHORT_BREAK -> CamstudyTheme.colorScheme.primary
-        PomodoroTimerState.LONG_BREAK -> CamstudyTheme.colorScheme.secondary
-    }
-    Text(
-        text = elapsedTimeText,
-        color = color
-    )
-}
-
-@Composable
-fun PomodoroTimerStartButton(
-    onStartClick: () -> Unit
-) {
-    Button(onClick = onStartClick) {
-        Text(text = "시작")
-    }
-}
-
-@Composable
 private fun BlacklistBottomSheet(
     blacklist: List<PeerOverview>,
     onDeleteClick: (PeerOverview) -> Unit,
@@ -382,20 +333,6 @@ private fun BlacklistItem(
         }
     }
 }
-
-private val LocalDateTime?.elapsedTimeText: String
-    get() {
-        if (this == null) {
-            return "00:00"
-        }
-        val currentTime = Clock.System.now().toLocalDateTime(WebRtcServerTimeZone)
-        val instantDiff = currentTime.toInstant(WebRtcServerTimeZone) -
-            this.toInstant(WebRtcServerTimeZone)
-        val diffWholeSeconds = instantDiff.inWholeSeconds
-        val minutes = diffWholeSeconds / 60
-        val seconds = diffWholeSeconds % 60
-        return "%02d:%02d".format(minutes, seconds)
-    }
 
 @Immutable
 data class UserState(
@@ -440,29 +377,21 @@ class KickUserRecheckDialogState {
 }
 
 @Composable
-fun StudyRoomContentInPip(
-    uiState: RoomUiState.StudyRoom
-) {
+fun StudyRoomContentInPip() {
     val mediaManager = LocalMediaManager.current
     val videoSizeModifier = Modifier.size(width = 128.dp, height = 128.dp)
     val localVideoTrack = mediaManager.localVideoTrackFlow.collectAsState(initial = null).value
 
-    Row {
-        PomodoroTimer(
-            state = uiState.pomodoroTimerState,
-            pomodoroTimerEventDate = uiState.pomodoroTimerEventDate
-        )
-        Surface(
-            modifier = videoSizeModifier,
-            color = CamstudyTheme.colorScheme.text01
-        ) {
-            if (localVideoTrack != null) {
-                VideoRenderer(
-                    modifier = videoSizeModifier,
-                    eglBaseContext = mediaManager.eglBaseContext,
-                    videoTrack = localVideoTrack
-                )
-            }
+    Surface(
+        modifier = videoSizeModifier,
+        color = CamstudyTheme.colorScheme.text01
+    ) {
+        if (localVideoTrack != null) {
+            VideoRenderer(
+                modifier = videoSizeModifier,
+                eglBaseContext = mediaManager.eglBaseContext,
+                videoTrack = localVideoTrack
+            )
         }
     }
 }
