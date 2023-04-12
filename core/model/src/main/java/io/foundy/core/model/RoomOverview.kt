@@ -10,4 +10,4 @@ data class RoomOverview(
     val joinedUsers: List<UserOverview>,
     val maxCount: Int,
     val tags: List<String>
-)
+) : java.io.Serializable

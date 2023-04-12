@@ -15,10 +15,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import io.foundy.core.designsystem.component.CamstudyTopAppBar
 import io.foundy.core.designsystem.theme.CamstudyTheme
+import io.foundy.core.model.RoomOverview
+import io.foundy.core.model.constant.RoomConstants
 import io.foundy.room.domain.PomodoroTimerProperty
 import io.foundy.room.domain.PomodoroTimerState
 import io.foundy.room.ui.media.FakeMediaManager
@@ -37,8 +40,7 @@ import org.orbitmvi.orbit.compose.collectSideEffect
 @Composable
 fun RoomScreen(
     modifier: Modifier = Modifier,
-    roomId: String,
-    roomTitle: String,
+    room: RoomOverview,
     popBackStack: () -> Unit,
     viewModel: RoomViewModel,
     mediaManager: MediaManager,
@@ -58,8 +60,8 @@ fun RoomScreen(
         }
     }
 
-    LaunchedEffect(roomId) {
-        viewModel.connect(roomId)
+    LaunchedEffect(room.id) {
+        viewModel.connect(room.id)
     }
 
     LaunchedEffect(Unit) {
@@ -75,8 +77,7 @@ fun RoomScreen(
     CompositionLocalProvider(LocalMediaManager provides mediaManager) {
         RoomContent(
             modifier = modifier,
-            title = roomTitle,
-            roomId = roomId,
+            room = room,
             uiState = uiState,
             snackbarHostState = snackbarHostState,
             popBackStack = popBackStack
@@ -88,8 +89,7 @@ fun RoomScreen(
 @Composable
 private fun RoomContent(
     modifier: Modifier = Modifier,
-    title: String,
-    roomId: String,
+    room: RoomOverview,
     uiState: RoomUiState,
     snackbarHostState: SnackbarHostState,
     popBackStack: () -> Unit,
@@ -97,6 +97,10 @@ private fun RoomContent(
     Scaffold(
         modifier = modifier,
         topBar = {
+            val title = when (uiState) {
+                is RoomUiState.WaitingRoom -> stringResource(R.string.join_study_room)
+                is RoomUiState.StudyRoom -> room.title
+            }
             CamstudyTopAppBar(
                 onBackClick = popBackStack,
                 title = {
@@ -109,7 +113,7 @@ private fun RoomContent(
         Box(Modifier.padding(padding)) {
             when (uiState) {
                 is RoomUiState.WaitingRoom -> WaitingRoomScreen(
-                    roomTitle = roomId,
+                    room = room,
                     uiState = uiState
                 )
                 is RoomUiState.StudyRoom -> StudyRoomScreen(
@@ -129,8 +133,17 @@ private fun RoomContentPreview() {
     CompositionLocalProvider(LocalMediaManager provides FakeMediaManager()) {
         CamstudyTheme {
             RoomContent(
-                title = "방제목",
-                roomId = "id",
+                room = RoomOverview(
+                    id = "id",
+                    title = "방제목",
+                    masterId = "id",
+                    hasPassword = true,
+                    thumbnail = null,
+                    joinCount = 0,
+                    joinedUsers = emptyList(),
+                    maxCount = RoomConstants.MaxPeerCount,
+                    tags = listOf("tag1")
+                ),
                 uiState = RoomUiState.StudyRoom(
                     peerStates = listOf(
                         PeerUiState(

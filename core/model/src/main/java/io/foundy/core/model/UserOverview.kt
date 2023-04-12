@@ -5,4 +5,4 @@ data class UserOverview(
     val name: String,
     val profileImage: String?,
     val introduce: String?
-)
+) : java.io.Serializable

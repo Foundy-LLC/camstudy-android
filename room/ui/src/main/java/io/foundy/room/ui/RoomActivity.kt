@@ -28,7 +28,9 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import dagger.hilt.android.AndroidEntryPoint
+import io.foundy.core.common.util.serializable
 import io.foundy.core.designsystem.theme.CamstudyTheme
+import io.foundy.core.model.RoomOverview
 import io.foundy.room.ui.media.MediaManager
 import io.foundy.room.ui.media.MediaManagerImpl
 import io.foundy.room.ui.peer.PeerConnectionFactoryWrapper
@@ -59,10 +61,9 @@ class RoomActivity : ComponentActivity() {
         const val VIDEO_TOGGLE_ACTION = "video_toggle_action"
         const val AUDIO_TOGGLE_ACTION = "audio_toggle_action"
 
-        fun getIntent(context: Context, roomId: String, roomTitle: String): Intent {
+        fun getIntent(context: Context, room: RoomOverview): Intent {
             return Intent(context, RoomActivity::class.java).apply {
-                putExtra("roomId", roomId)
-                putExtra("roomTitle", roomTitle)
+                putExtra("room", room)
             }
         }
     }
@@ -81,8 +82,7 @@ class RoomActivity : ComponentActivity() {
             }
         )
 
-        val roomId = requireNotNull(intent.getStringExtra("roomId"))
-        val roomTitle = requireNotNull(intent.getStringExtra("roomTitle"))
+        val room = requireNotNull(intent.serializable<RoomOverview>("room"))
         _mediaManager = MediaManagerImpl(
             context = this,
             peerConnectionFactory = PeerConnectionFactoryWrapper(context = this),
@@ -113,8 +113,7 @@ class RoomActivity : ComponentActivity() {
                                 )
                             }
                         },
-                        roomId = roomId,
-                        roomTitle = roomTitle,
+                        room = room,
                         popBackStack = ::finish,
                         viewModel = viewModel,
                         mediaManager = mediaManager,

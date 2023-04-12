@@ -7,6 +7,7 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import io.foundy.core.designsystem.theme.CamstudyTheme
@@ -15,6 +16,7 @@ import io.foundy.core.designsystem.theme.CamstudyTheme
 fun ContainedButton(
     modifier: Modifier = Modifier,
     label: String,
+    shape: Shape = RoundedCornerShape(8.dp),
     enabled: Boolean = true,
     onClick: () -> Unit
 ) {
@@ -23,7 +25,7 @@ fun ContainedButton(
     Button(
         modifier = modifier,
         onClick = onClick,
-        shape = RoundedCornerShape(8.dp),
+        shape = shape,
         enabled = enabled,
         colors = ButtonDefaults.buttonColors(
             containerColor = colorScheme.primaryPress,

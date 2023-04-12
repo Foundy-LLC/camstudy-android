@@ -1,16 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="failed_to_connect_server">서버와의 연결을 실패했습니다.</string>
-    <string name="failed_to_join_waiting_room">대기실 입장을 실패했습니다.</string>
+    <string name="failed_to_connect_server">서버와의 연결을 실패했습니다</string>
+    <string name="failed_to_join_waiting_room">대기실 입장을 실패했습니다</string>
     <string name="room_is_full">방 정원이 가득 찼습니다.</string>
     <string name="cannot_join_because_blocked">방에 차단되어 입장할 수 없습니다.</string>
     <string name="loading">로딩중…</string>
-    <string name="input_password">방 비밀번호를 입력해주세요.</string>
-    <string name="timeout_to_join_study_room">시간초과가 발생하여 공부방 입장을 실패했습니다.</string>
-    <string name="failed_to_join_study_room">공부방 입장을 실패했습니다.</string>
-    <string name="already_joined">이미 접속한 방입니다.</string>
+    <string name="input_password_of_study_room">스터디 룸 비밀번호를 입력하세요</string>
+    <string name="input_password">방 비밀번호를 입력해주세요</string>
+    <string name="timeout_to_join_study_room">시간초과가 발생하여 공부방 입장을 실패했습니다</string>
+    <string name="failed_to_join_study_room">공부방 입장을 실패했습니다</string>
+    <string name="already_joined">이미 접속한 방입니다</string>
     <string name="joining">입장중…</string>
     <string name="join">입장</string>
+    <string name="cam_title">캠</string>
+    <string name="cam_subtitle">다른 사용자들에게 내 캠 화면을 보입니다</string>
+    <string name="mic_title">마이크</string>
+    <string name="mic_subtitle">다른 사용자들에게 내 음성이 들립니다</string>
     <string name="turn_on_video">비디오 켜기</string>
     <string name="turn_off_video">비디오 끄기</string>
     <string name="turn_on_mic">마이크 켜기</string>
@@ -52,4 +57,5 @@
     <string name="chat_placeholder_text">채팅 내용을 입력하세요</string>
     <string name="there_is_no_message">아직 메시지가 없어요</string>
     <string name="start_timer">타이머 시작</string>
+    <string name="join_study_room">스터디 룸 입장</string>
 </resources>
