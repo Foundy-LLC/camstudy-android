@@ -28,7 +28,7 @@ fun ContainedButton(
         shape = shape,
         enabled = enabled,
         colors = ButtonDefaults.buttonColors(
-            containerColor = colorScheme.primaryPress,
+            containerColor = colorScheme.primary,
             contentColor = colorScheme.systemBackground,
             disabledContainerColor = colorScheme.systemUi02,
             disabledContentColor = colorScheme.systemUi05
