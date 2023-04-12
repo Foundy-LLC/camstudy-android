@@ -178,7 +178,7 @@ fun CamstudyTextField(
             textStyle = textStyle,
             keyboardOptions = keyboardOptions,
             keyboardActions = keyboardActions,
-            interactionSource =interactionSource,
+            interactionSource = interactionSource,
             visualTransformation = visualTransformation,
             cursorBrush = SolidColor(colorScheme.primary),
             decorationBox = { innerTextField ->
