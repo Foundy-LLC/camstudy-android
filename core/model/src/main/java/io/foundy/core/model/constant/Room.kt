@@ -1,6 +1,7 @@
 package io.foundy.core.model.constant
 
 object RoomConstants {
+    const val MaxPeerCount = 4
     const val MaxTitleLength = 50
     const val MaxPasswordLength = 255
     val TimerLengthRange = 20..50

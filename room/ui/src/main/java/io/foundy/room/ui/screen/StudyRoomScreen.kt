@@ -1,8 +1,10 @@
 package io.foundy.room.ui.screen
 
 import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -30,6 +32,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
@@ -41,6 +44,7 @@ import com.holix.android.bottomsheetdialog.compose.BottomSheetDialog
 import io.foundy.core.designsystem.icon.CamstudyIcon
 import io.foundy.core.designsystem.icon.CamstudyIcons
 import io.foundy.core.designsystem.theme.CamstudyTheme
+import io.foundy.core.model.constant.RoomConstants.MaxPeerCount
 import io.foundy.room.domain.PeerOverview
 import io.foundy.room.domain.PomodoroTimerProperty
 import io.foundy.room.domain.PomodoroTimerState
@@ -277,19 +281,36 @@ private fun PeerGridView(
         BoxWithConstraints {
             val width = maxWidth / 2
             val height = maxHeight / 2
+            val sizeModifier = Modifier
+                .width(width)
+                .height(height)
 
             LazyVerticalGrid(
                 columns = GridCells.Adaptive(minSize = width),
             ) {
                 items(peerStates, key = { it.uid }) { peerState ->
                     PeerContent(
-                        modifier = Modifier
-                            .width(width)
-                            .height(height),
+                        modifier = sizeModifier,
                         peerState = peerState,
                         showMoreButton = isCurrentUserMaster,
                         onMoreButtonClick = onMoreButtonClick
                     )
+                }
+                items(MaxPeerCount - peerStates.size) {
+                    Box(
+                        modifier = sizeModifier.background(
+                            color = CamstudyTheme.colorScheme.systemUi09
+                        )
+                    ) {
+                        CamstudyIcon(
+                            modifier = Modifier
+                                .size(120.dp)
+                                .align(Alignment.Center),
+                            icon = CamstudyIcons.PersonOff,
+                            tint = CamstudyTheme.colorScheme.systemUi08,
+                            contentDescription = null
+                        )
+                    }
                 }
             }
         }

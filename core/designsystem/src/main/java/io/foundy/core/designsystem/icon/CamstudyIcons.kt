@@ -11,6 +11,7 @@ import androidx.compose.material.icons.filled.MoreHoriz
 import androidx.compose.material.icons.filled.People
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.PersonAdd
+import androidx.compose.material.icons.filled.PersonOff
 import androidx.compose.material.icons.filled.PersonRemove
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Send
@@ -46,6 +47,7 @@ object CamstudyIcons {
     val Person = Icons.Default.Person.asCamstudyIcon()
     val PersonAdd = Icons.Default.PersonAdd.asCamstudyIcon()
     val PersonRemove = Icons.Default.PersonRemove.asCamstudyIcon()
+    val PersonOff = Icons.Default.PersonOff.asCamstudyIcon()
     val People = Icons.Default.People.asCamstudyIcon()
     val Timer = Icons.Outlined.Timer.asCamstudyIcon()
     val Search = Icons.Default.Search.asCamstudyIcon()
