@@ -61,9 +61,9 @@ class RoomActivity : ComponentActivity() {
         const val VIDEO_TOGGLE_ACTION = "video_toggle_action"
         const val AUDIO_TOGGLE_ACTION = "audio_toggle_action"
 
-        fun getIntent(context: Context, room: RoomOverview): Intent {
+        fun getIntent(context: Context, roomOverview: RoomOverview): Intent {
             return Intent(context, RoomActivity::class.java).apply {
-                putExtra("room", room)
+                putExtra("roomOverview", roomOverview)
             }
         }
     }
@@ -82,7 +82,7 @@ class RoomActivity : ComponentActivity() {
             }
         )
 
-        val room = requireNotNull(intent.serializable<RoomOverview>("room"))
+        val roomOverview = requireNotNull(intent.serializable<RoomOverview>("roomOverview"))
         _mediaManager = MediaManagerImpl(
             context = this,
             peerConnectionFactory = PeerConnectionFactoryWrapper(context = this),
@@ -113,7 +113,7 @@ class RoomActivity : ComponentActivity() {
                                 )
                             }
                         },
-                        room = room,
+                        roomOverview = roomOverview,
                         popBackStack = ::finish,
                         viewModel = viewModel,
                         mediaManager = mediaManager,

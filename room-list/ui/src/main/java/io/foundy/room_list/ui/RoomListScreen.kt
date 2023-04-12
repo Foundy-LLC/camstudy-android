@@ -99,7 +99,7 @@ fun RoomListRoute(
         rooms = rooms,
         snackbarHostState = snackbarHostState,
         onRoomClick = { room ->
-            val intent = RoomActivity.getIntent(context, room = room)
+            val intent = RoomActivity.getIntent(context, roomOverview = room)
             context.startActivity(intent)
         },
         onOrganizationClick = {

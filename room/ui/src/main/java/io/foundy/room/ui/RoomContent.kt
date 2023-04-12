@@ -40,7 +40,7 @@ import org.orbitmvi.orbit.compose.collectSideEffect
 @Composable
 fun RoomScreen(
     modifier: Modifier = Modifier,
-    room: RoomOverview,
+    roomOverview: RoomOverview,
     popBackStack: () -> Unit,
     viewModel: RoomViewModel,
     mediaManager: MediaManager,
@@ -60,8 +60,8 @@ fun RoomScreen(
         }
     }
 
-    LaunchedEffect(room.id) {
-        viewModel.connect(room.id)
+    LaunchedEffect(roomOverview.id) {
+        viewModel.connect(roomOverview.id)
     }
 
     LaunchedEffect(Unit) {
@@ -77,7 +77,7 @@ fun RoomScreen(
     CompositionLocalProvider(LocalMediaManager provides mediaManager) {
         RoomContent(
             modifier = modifier,
-            room = room,
+            roomOverview = roomOverview,
             uiState = uiState,
             snackbarHostState = snackbarHostState,
             popBackStack = popBackStack
@@ -89,7 +89,7 @@ fun RoomScreen(
 @Composable
 private fun RoomContent(
     modifier: Modifier = Modifier,
-    room: RoomOverview,
+    roomOverview: RoomOverview,
     uiState: RoomUiState,
     snackbarHostState: SnackbarHostState,
     popBackStack: () -> Unit,
@@ -99,7 +99,7 @@ private fun RoomContent(
         topBar = {
             val title = when (uiState) {
                 is RoomUiState.WaitingRoom -> stringResource(R.string.join_study_room)
-                is RoomUiState.StudyRoom -> room.title
+                is RoomUiState.StudyRoom -> roomOverview.title
             }
             CamstudyTopAppBar(
                 onBackClick = popBackStack,
@@ -113,7 +113,7 @@ private fun RoomContent(
         Box(Modifier.padding(padding)) {
             when (uiState) {
                 is RoomUiState.WaitingRoom -> WaitingRoomScreen(
-                    room = room,
+                    roomOverview = roomOverview,
                     uiState = uiState
                 )
                 is RoomUiState.StudyRoom -> StudyRoomScreen(
@@ -133,7 +133,7 @@ private fun RoomContentPreview() {
     CompositionLocalProvider(LocalMediaManager provides FakeMediaManager()) {
         CamstudyTheme {
             RoomContent(
-                room = RoomOverview(
+                roomOverview = RoomOverview(
                     id = "id",
                     title = "방제목",
                     masterId = "id",

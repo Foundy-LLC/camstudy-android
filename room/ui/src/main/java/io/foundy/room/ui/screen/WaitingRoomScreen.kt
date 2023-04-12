@@ -38,6 +38,7 @@ import io.foundy.room.data.model.WaitingRoomData
 import io.foundy.room.ui.R
 import io.foundy.room.ui.component.PeerContentIcon
 import io.foundy.room.ui.component.VideoRenderer
+import io.foundy.room.ui.mapper.toUserOverviewWithoutIntroduce
 import io.foundy.room.ui.media.FakeMediaManager
 import io.foundy.room.ui.media.LocalMediaManager
 import io.foundy.room.ui.viewmodel.RoomUiState
@@ -54,7 +55,7 @@ private val JoinButtonHeight = 48.dp
 
 @Composable
 fun WaitingRoomScreen(
-    room: RoomOverview,
+    roomOverview: RoomOverview,
     uiState: RoomUiState.WaitingRoom,
 ) {
     if (uiState is RoomUiState.WaitingRoom.NotExists) {
@@ -65,6 +66,7 @@ fun WaitingRoomScreen(
     val enabledLocalVideo = mediaManager.enabledLocalVideo
     val enabledLocalAudio = mediaManager.enabledLocalAudio
     val localVideoTrack = mediaManager.localVideoTrackFlow.collectAsState(initial = null).value
+    val connectedWaitingRoomUiState = uiState as? RoomUiState.WaitingRoom.Connected
 
     val actions: List<Action> = listOf(
         Action(
@@ -113,11 +115,17 @@ fun WaitingRoomScreen(
             Spacer(modifier = Modifier.height(20.dp))
             RoomItem(
                 modifier = Modifier.padding(horizontal = 16.dp),
-                room = room
+                room = if (connectedWaitingRoomUiState != null) {
+                    roomOverview.copy(
+                        joinedUsers = connectedWaitingRoomUiState.data.joinerList.map {
+                            it.toUserOverviewWithoutIntroduce()
+                        }
+                    )
+                } else {
+                    roomOverview
+                }
             )
-            if (room.hasPassword) {
-                val connectedWaitingRoomUiState = uiState as? RoomUiState.WaitingRoom.Connected
-
+            if (roomOverview.hasPassword) {
                 Spacer(modifier = Modifier.height(20.dp))
                 CamstudyTextField(
                     modifier = Modifier.padding(horizontal = 16.dp),
@@ -177,7 +185,7 @@ private fun WaitingRoomScreenPreview() {
     CompositionLocalProvider(LocalMediaManager provides FakeMediaManager()) {
         CamstudyTheme {
             WaitingRoomScreen(
-                room = RoomOverview(
+                roomOverview = RoomOverview(
                     id = "id",
                     title = "방제목",
                     masterId = "id",
@@ -201,7 +209,8 @@ private fun WaitingRoomScreenPreview() {
                         joinerList = listOf(
                             RoomJoiner(
                                 id = "id3",
-                                name = "홍길동"
+                                name = "홍길동",
+                                profileImage = null
                             )
                         ),
                         capacity = RoomConstants.MaxPeerCount,
