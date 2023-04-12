@@ -31,6 +31,7 @@ import io.foundy.core.designsystem.R
 object CamstudyIcons {
     val ArrowBack = Icons.Default.ArrowBack.asCamstudyIcon()
     val StudyRoom = R.drawable.ic_study_room.asCamstudyIcon()
+    val RoomDefault = R.drawable.ic_room_default.asCamstudyIcon()
     val VideoCam = R.drawable.ic_video.asCamstudyIcon()
     val VideoCamOff = R.drawable.ic_video_off.asCamstudyIcon()
     val MaterialVideoCamOff = Icons.Default.VideocamOff.asCamstudyIcon()

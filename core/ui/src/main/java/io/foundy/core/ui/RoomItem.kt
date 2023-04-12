@@ -1,5 +1,6 @@
 package io.foundy.core.ui
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
@@ -15,6 +16,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -68,10 +70,18 @@ fun ThumbnailImage(imageUrl: String?, contentDescription: String) {
             contentDescription = contentDescription
         )
     } else {
-        Surface(
-            modifier = thumbnailModifier,
-            color = CamstudyTheme.colorScheme.systemUi02
-        ) {}
+        Box(
+            modifier = thumbnailModifier.background(color = CamstudyTheme.colorScheme.systemUi01)
+        ) {
+            CamstudyIcon(
+                modifier = Modifier
+                    .size(48.dp)
+                    .align(Alignment.Center),
+                icon = CamstudyIcons.RoomDefault,
+                tint = Color.Unspecified,
+                contentDescription = null
+            )
+        }
     }
 }
 
@@ -142,6 +152,7 @@ private fun JoinerImages(joinerImages: List<String?>, maxCount: Int) {
         val modifier = Modifier
             .size(20.dp)
             .clip(RoundedCornerShape(4.dp))
+            .background(color = CamstudyTheme.colorScheme.systemUi01)
 
         repeat(maxCount) { index ->
             val isLast = index != maxCount - 1
@@ -151,28 +162,30 @@ private fun JoinerImages(joinerImages: List<String?>, maxCount: Int) {
 
             if (joinerImages.size <= index) {
                 Row {
-                    Surface(
-                        modifier = modifier,
-                        color = CamstudyTheme.colorScheme.systemUi01
-                    ) {}
+                    Box(modifier = modifier)
                     rightPaddingBox()
                 }
                 return@repeat
             }
 
+            val imageUrl = joinerImages[index]
             Row {
-                Surface(
-                    modifier = modifier,
-                    color = CamstudyTheme.colorScheme.systemUi01
-                ) {
+                if (imageUrl != null) {
                     AsyncImage(
                         modifier = modifier,
-                        model = joinerImages[index],
+                        model = imageUrl,
                         contentScale = ContentScale.Crop,
-                        placeholder = painterResource(
+                        fallback = painterResource(
                             id = io.foundy.core.designsystem.R.drawable.ic_person
                         ),
                         contentDescription = null
+                    )
+                } else {
+                    CamstudyIcon(
+                        modifier = modifier,
+                        icon = CamstudyIcons.Person,
+                        contentDescription = null,
+                        tint = CamstudyTheme.colorScheme.systemUi03
                     )
                 }
                 rightPaddingBox()
