@@ -1,5 +1,6 @@
 package io.foundy.room.ui.component
 
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -13,7 +14,9 @@ fun PeerContentIcon(
     icon: CamstudyIcon
 ) {
     CamstudyIcon(
-        modifier = modifier.size(120.dp),
+        modifier = modifier
+            .padding(16.dp)
+            .size(120.dp),
         icon = icon,
         contentDescription = null,
         tint = CamstudyTheme.colorScheme.systemUi08
