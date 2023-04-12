@@ -193,7 +193,7 @@ fun CollapsedMessageHolder(
         } else {
             CamstudyText(
                 modifier = Modifier.weight(1f),
-                text = "채팅을 보려면 우측 화살표를 눌러 펼처주세요",
+                text = stringResource(R.string.collapsed_message_holder_help_text),
                 style = CamstudyTheme.typography.titleSmall.copy(
                     color = CamstudyTheme.colorScheme.systemUi05
                 )

@@ -58,4 +58,5 @@
     <string name="there_is_no_message">아직 메시지가 없어요</string>
     <string name="start_timer">타이머 시작</string>
     <string name="join_study_room">스터디 룸 입장</string>
+    <string name="collapsed_message_holder_help_text">채팅을 보려면 우측 화살표를 눌러 펼처주세요</string>
 </resources>
