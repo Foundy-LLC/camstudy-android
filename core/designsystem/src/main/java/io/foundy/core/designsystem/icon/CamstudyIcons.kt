@@ -16,6 +16,7 @@ import androidx.compose.material.icons.filled.PersonRemove
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Send
 import androidx.compose.material.icons.filled.SwitchVideo
+import androidx.compose.material.icons.filled.VideocamOff
 import androidx.compose.material.icons.outlined.Timer
 import androidx.compose.material.icons.sharp.Lock
 import androidx.compose.material3.Icon
@@ -32,6 +33,7 @@ object CamstudyIcons {
     val StudyRoom = R.drawable.ic_study_room.asCamstudyIcon()
     val VideoCam = R.drawable.ic_video.asCamstudyIcon()
     val VideoCamOff = R.drawable.ic_video_off.asCamstudyIcon()
+    val MaterialVideoCamOff = Icons.Default.VideocamOff.asCamstudyIcon()
     val Mic = R.drawable.ic_mic.asCamstudyIcon()
     val MicOff = R.drawable.ic_mic_off.asCamstudyIcon()
     val Home = R.drawable.ic_home.asCamstudyIcon()

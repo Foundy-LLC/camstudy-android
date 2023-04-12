@@ -35,7 +35,7 @@ fun PeerContent(
 
     Surface(
         modifier = modifier,
-        color = CamstudyTheme.colorScheme.text01
+        color = CamstudyTheme.colorScheme.systemUi09
     ) {
         Box {
             if (peerState.videoTrack != null) {
@@ -43,6 +43,11 @@ fun PeerContent(
                     modifier = modifier,
                     eglBaseContext = eglBaseContext,
                     videoTrack = peerState.videoTrack
+                )
+            } else {
+                PeerContentIcon(
+                    modifier = Modifier.align(Alignment.Center),
+                    icon = CamstudyIcons.MaterialVideoCamOff,
                 )
             }
 

@@ -52,6 +52,7 @@ import io.foundy.room.ui.R
 import io.foundy.room.ui.component.ActionBar
 import io.foundy.room.ui.component.ChatDivide
 import io.foundy.room.ui.component.PeerContent
+import io.foundy.room.ui.component.PeerContentIcon
 import io.foundy.room.ui.component.PomodoroTimerEditBottomSheet
 import io.foundy.room.ui.component.VideoRenderer
 import io.foundy.room.ui.component.rememberPomodoroTimerEditBottomSheetState
@@ -302,13 +303,9 @@ private fun PeerGridView(
                             color = CamstudyTheme.colorScheme.systemUi09
                         )
                     ) {
-                        CamstudyIcon(
-                            modifier = Modifier
-                                .size(120.dp)
-                                .align(Alignment.Center),
-                            icon = CamstudyIcons.PersonOff,
-                            tint = CamstudyTheme.colorScheme.systemUi08,
-                            contentDescription = null
+                        PeerContentIcon(
+                            modifier = Modifier.align(Alignment.Center),
+                            icon = CamstudyIcons.PersonOff
                         )
                     }
                 }
