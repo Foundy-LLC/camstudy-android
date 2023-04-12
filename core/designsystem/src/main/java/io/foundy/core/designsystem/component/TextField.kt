@@ -125,6 +125,7 @@ fun CamstudyTextField(
     onLostFocus: (() -> Unit)? = null
 ) {
     var isFocused by remember { mutableStateOf(false) }
+    val focusRequester = remember { FocusRequester() }
     val colorScheme = CamstudyTheme.colorScheme
     val typography = CamstudyTheme.typography
 
@@ -142,8 +143,8 @@ fun CamstudyTextField(
         else -> colorScheme.systemUi05
     }
     val textColor = when {
+        isError || isFocused || value.isNotEmpty() -> colorScheme.systemUi08
         !enabled -> colorScheme.systemUi03
-        isError || isFocused -> colorScheme.systemUi08
         else -> colorScheme.systemUi05
     }
     val supportingTextColor = when {
@@ -168,7 +169,7 @@ fun CamstudyTextField(
                 .clip(borderShape)
                 .border(width = 1.dp, color = borderColor, shape = borderShape)
                 .background(color = colorScheme.systemUi01)
-                .focusRequester(FocusRequester())
+                .focusRequester(focusRequester)
                 .onFocusChanged { focusState ->
                     isFocused = focusState.isFocused
                 },
@@ -178,13 +179,12 @@ fun CamstudyTextField(
             enabled = enabled,
             textStyle = textStyle,
             cursorBrush = SolidColor(colorScheme.primary),
-            decorationBox = {
+            decorationBox = { innerTextField ->
                 Box(Modifier.padding(horizontal = 16.dp, vertical = 15.dp)) {
                     if (value.isEmpty() && placeholder != null) {
                         CamstudyText(text = placeholder, style = textStyle)
-                    } else {
-                        it()
                     }
+                    innerTextField()
                 }
             }
         )
