@@ -12,9 +12,9 @@
     <string name="already_joined">이미 접속한 방입니다</string>
     <string name="joining">입장중…</string>
     <string name="join">입장</string>
-    <string name="cam_title">캠</string>
+    <string name="cam_title">내 캠 켜기</string>
     <string name="cam_subtitle">다른 사용자들에게 내 캠 화면을 보입니다</string>
-    <string name="mic_title">마이크</string>
+    <string name="mic_title">내 마이크 켜기</string>
     <string name="mic_subtitle">다른 사용자들에게 내 음성이 들립니다</string>
     <string name="turn_on_video">캠 켜기</string>
     <string name="turn_off_video">캠 끄기</string>
