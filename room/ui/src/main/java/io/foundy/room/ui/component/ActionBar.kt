@@ -101,10 +101,10 @@ private fun PomodoroTimer(
 ) {
     var elapsedTimeText by remember { mutableStateOf(pomodoroTimerEventDate.elapsedTimeText) }
     val color = when (state) {
-        PomodoroTimerState.STOPPED -> CamstudyTheme.colorScheme.systemBackground
-        PomodoroTimerState.STARTED -> CamstudyTheme.colorScheme.error
-        PomodoroTimerState.SHORT_BREAK -> CamstudyTheme.colorScheme.primary
-        PomodoroTimerState.LONG_BREAK -> CamstudyTheme.colorScheme.primaryPress
+        PomodoroTimerState.STOPPED -> Color.White
+        PomodoroTimerState.STARTED -> CamstudyTheme.colorScheme.primary
+        PomodoroTimerState.SHORT_BREAK -> Color(0xFF35DC8C)
+        PomodoroTimerState.LONG_BREAK -> Color(0xFF2A8CFE)
     }
     val shouldShowStartButton = state == PomodoroTimerState.STOPPED
     val startButtonInteractionSource = remember { MutableInteractionSource() }
