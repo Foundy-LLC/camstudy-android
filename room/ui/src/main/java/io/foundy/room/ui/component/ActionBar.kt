@@ -12,6 +12,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -52,6 +54,7 @@ fun ActionBar(
     onToggleVideo: (Boolean) -> Unit,
     onToggleAudio: (Boolean) -> Unit,
     onToggleHeadset: (Boolean) -> Unit,
+    onFlipCamera: () -> Unit
 ) {
     Surface(
         modifier = Modifier.fillMaxWidth(),
@@ -70,6 +73,19 @@ fun ActionBar(
                 modifier = Modifier.weight(1f),
                 horizontalArrangement = Arrangement.End
             ) {
+                IconButton(
+                    onClick = onFlipCamera,
+                    enabled = enabledLocalVideo,
+                    colors = IconButtonDefaults.iconButtonColors(
+                        contentColor = Color.White
+                    )
+                ) {
+                    CamstudyIcon(
+                        modifier = Modifier.size(32.dp),
+                        icon = CamstudyIcons.FlipCamera,
+                        contentDescription = stringResource(R.string.switch_video)
+                    )
+                }
                 ToggleIconButton(
                     enabled = enabledLocalVideo,
                     enabledIcon = CamstudyIcons.VideoCam,
@@ -205,7 +221,30 @@ private fun ActionBarPreview() {
             enabledLocalHeadset = true,
             onToggleVideo = {},
             onToggleAudio = {},
-            onToggleHeadset = {}
+            onToggleHeadset = {},
+            onFlipCamera = {}
+        )
+    }
+}
+
+@Preview(widthDp = 400)
+@Composable
+private fun ActionBarDisabledVideoPreview() {
+    var state by remember { mutableStateOf(PomodoroTimerState.STOPPED) }
+    CamstudyTheme {
+        ActionBar(
+            timerState = state,
+            timerEventDate = null,
+            onStartTimerClick = {
+                state = PomodoroTimerState.STARTED
+            },
+            enabledLocalVideo = false,
+            enabledLocalAudio = true,
+            enabledLocalHeadset = true,
+            onToggleVideo = {},
+            onToggleAudio = {},
+            onToggleHeadset = {},
+            onFlipCamera = {}
         )
     }
 }
@@ -223,7 +262,8 @@ private fun TimerStartedActionBarPreview() {
             enabledLocalHeadset = true,
             onToggleVideo = {},
             onToggleAudio = {},
-            onToggleHeadset = {}
+            onToggleHeadset = {},
+            onFlipCamera = {}
         )
     }
 }
@@ -241,7 +281,8 @@ private fun TimerShortBreakActionBarPreview() {
             enabledLocalHeadset = true,
             onToggleVideo = {},
             onToggleAudio = {},
-            onToggleHeadset = {}
+            onToggleHeadset = {},
+            onFlipCamera = {}
         )
     }
 }
@@ -259,7 +300,8 @@ private fun TimerLongBreakActionBarPreview() {
             enabledLocalHeadset = true,
             onToggleVideo = {},
             onToggleAudio = {},
-            onToggleHeadset = {}
+            onToggleHeadset = {},
+            onFlipCamera = {}
         )
     }
 }

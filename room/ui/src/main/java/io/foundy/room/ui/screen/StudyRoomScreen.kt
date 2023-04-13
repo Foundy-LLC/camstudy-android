@@ -235,13 +235,8 @@ fun StudyRoomContent(
             onToggleVideo = mediaManager::toggleVideo,
             onToggleAudio = mediaManager::toggleMicrophone,
             onToggleHeadset = mediaManager::toggleHeadset,
+            onFlipCamera = mediaManager::switchCamera
         )
-        IconButton(onClick = mediaManager::switchCamera, enabled = enabledLocalVideo) {
-            CamstudyIcon(
-                icon = CamstudyIcons.SwitchVideo,
-                contentDescription = stringResource(R.string.switch_video)
-            )
-        }
         if (uiState.isCurrentUserMaster) {
             IconButton(onClick = { showBlacklistBottomSheet = true }) {
                 CamstudyIcon(

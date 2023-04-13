@@ -5,6 +5,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Chat
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.FlipCameraAndroid
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.filled.MoreHoriz
@@ -43,7 +44,7 @@ object CamstudyIcons {
     val StartTimer = R.drawable.ic_start_timer.asCamstudyIcon()
     val StartTimerPressed = R.drawable.ic_start_timer_pressed.asCamstudyIcon()
     val MoreHoriz = Icons.Default.MoreHoriz.asCamstudyIcon()
-    val SwitchVideo = Icons.Default.SwitchVideo.asCamstudyIcon()
+    val FlipCamera = Icons.Default.FlipCameraAndroid.asCamstudyIcon()
     val Chat = Icons.Default.Chat.asCamstudyIcon()
     val Send = Icons.Default.Send.asCamstudyIcon()
     val Delete = Icons.Default.Delete.asCamstudyIcon()
