@@ -16,7 +16,6 @@ import androidx.compose.material.icons.filled.PersonOff
 import androidx.compose.material.icons.filled.PersonRemove
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Send
-import androidx.compose.material.icons.filled.SwitchVideo
 import androidx.compose.material.icons.filled.VideocamOff
 import androidx.compose.material.icons.outlined.Timer
 import androidx.compose.material.icons.sharp.Lock

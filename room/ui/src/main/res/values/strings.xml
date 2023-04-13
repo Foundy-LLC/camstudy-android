@@ -16,10 +16,12 @@
     <string name="cam_subtitle">다른 사용자들에게 내 캠 화면을 보입니다</string>
     <string name="mic_title">마이크</string>
     <string name="mic_subtitle">다른 사용자들에게 내 음성이 들립니다</string>
-    <string name="turn_on_video">비디오 켜기</string>
-    <string name="turn_off_video">비디오 끄기</string>
-    <string name="turn_on_mic">마이크 켜기</string>
-    <string name="turn_off_mic">마이크 끄기</string>
+    <string name="turn_on_video">캠 켜기</string>
+    <string name="turn_off_video">캠 끄기</string>
+    <string name="turn_on_mic">음소거 해제</string>
+    <string name="turn_off_mic">음소거</string>
+    <string name="turn_on_headset">헤드셋 음소거 해제</string>
+    <string name="turn_off_headset">헤드셋 음소거</string>
 
     <string name="user_has_been_kicked">%s님이 강퇴되었습니다.</string>
     <string name="master_kicked_you">방장이 회원님을 강퇴했습니다.</string>
@@ -30,7 +32,6 @@
     <string name="cancel">취소</string>
     <string name="kick">강퇴</string>
     <string name="block_user">해당 회원 차단하기</string>
-    <string name="switch_video">카메라 전환</string>
     <string name="send_message">메시지 전송</string>
     <string name="show_chat_messages">채팅 보기</string>
     <string name="blacklist">블랙리스트</string>
@@ -59,4 +60,5 @@
     <string name="start_timer">타이머 시작</string>
     <string name="join_study_room">스터디 룸 입장</string>
     <string name="collapsed_message_holder_help_text">채팅을 보려면 우측 화살표를 눌러 펼처주세요</string>
+    <string name="flip_camera">카메라 전환</string>
 </resources>

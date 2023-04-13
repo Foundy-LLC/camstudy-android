@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.Surface
@@ -30,6 +31,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import io.foundy.core.designsystem.component.CamstudyTooltipBox
 import io.foundy.core.designsystem.icon.CamstudyIcon
 import io.foundy.core.designsystem.icon.CamstudyIcons
 import io.foundy.core.designsystem.theme.CamstudyTheme
@@ -43,6 +45,7 @@ import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.toInstant
 import kotlinx.datetime.toLocalDateTime
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ActionBar(
     timerState: PomodoroTimerState,
@@ -73,33 +76,61 @@ fun ActionBar(
                 modifier = Modifier.weight(1f),
                 horizontalArrangement = Arrangement.End
             ) {
-                IconButton(
-                    onClick = onFlipCamera,
-                    enabled = enabledLocalVideo,
-                    colors = IconButtonDefaults.iconButtonColors(
-                        contentColor = Color.White
-                    )
+                CamstudyTooltipBox(
+                    tooltip = {
+                        Text(text = stringResource(R.string.flip_camera))
+                    }
                 ) {
-                    CamstudyIcon(
-                        modifier = Modifier.size(32.dp),
-                        icon = CamstudyIcons.FlipCamera,
-                        contentDescription = stringResource(R.string.switch_video)
-                    )
+                    IconButton(
+                        modifier = Modifier.tooltipAnchor(),
+                        onClick = onFlipCamera,
+                        enabled = enabledLocalVideo,
+                        colors = IconButtonDefaults.iconButtonColors(
+                            contentColor = Color.White
+                        )
+                    ) {
+                        CamstudyIcon(
+                            modifier = Modifier.size(32.dp),
+                            icon = CamstudyIcons.FlipCamera,
+                            contentDescription = stringResource(R.string.flip_camera)
+                        )
+                    }
                 }
                 ToggleIconButton(
                     enabled = enabledLocalVideo,
+                    tooltipMessage = stringResource(
+                        id = if (enabledLocalVideo) {
+                            R.string.turn_off_video
+                        } else {
+                            R.string.turn_on_video
+                        }
+                    ),
                     enabledIcon = CamstudyIcons.VideoCam,
                     disabledIcon = CamstudyIcons.VideoCamOff,
                     onClick = onToggleVideo
                 )
                 ToggleIconButton(
                     enabled = enabledLocalHeadset,
+                    tooltipMessage = stringResource(
+                        id = if (enabledLocalHeadset) {
+                            R.string.turn_off_headset
+                        } else {
+                            R.string.turn_on_headset
+                        }
+                    ),
                     enabledIcon = CamstudyIcons.Headset,
                     disabledIcon = CamstudyIcons.HeadsetOff,
                     onClick = onToggleHeadset
                 )
                 ToggleIconButton(
                     enabled = enabledLocalAudio,
+                    tooltipMessage = stringResource(
+                        id = if (enabledLocalAudio) {
+                            R.string.turn_off_mic
+                        } else {
+                            R.string.turn_on_mic
+                        }
+                    ),
                     enabledIcon = CamstudyIcons.Mic,
                     disabledIcon = CamstudyIcons.MicOff,
                     onClick = onToggleAudio
@@ -109,6 +140,7 @@ fun ActionBar(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun PomodoroTimer(
     state: PomodoroTimerState,
@@ -146,31 +178,36 @@ private fun PomodoroTimer(
                 val coroutineScope = rememberCoroutineScope()
                 var enabled by remember { mutableStateOf(true) }
 
-                CamstudyIcon(
-                    modifier = Modifier
-                        .size(iconWidth, height = iconHeight)
-                        .clickable(
-                            enabled = enabled,
-                            onClick = {
-                                onStartClick()
-                                // Prevent multiple clicking
-                                enabled = false
-                                coroutineScope.launch {
-                                    delay(500)
-                                    enabled = true
-                                }
-                            },
-                            interactionSource = startButtonInteractionSource,
-                            indication = null
-                        ),
-                    icon = if (startButtonPressed) {
-                        CamstudyIcons.StartTimerPressed
-                    } else {
-                        CamstudyIcons.StartTimer
-                    },
-                    tint = Color.Unspecified,
-                    contentDescription = stringResource(R.string.start_timer)
-                )
+                CamstudyTooltipBox(
+                    tooltip = { Text(text = stringResource(id = R.string.start_timer)) }
+                ) {
+                    CamstudyIcon(
+                        modifier = Modifier
+                            .size(iconWidth, height = iconHeight)
+                            .clickable(
+                                enabled = enabled,
+                                onClick = {
+                                    // Prevent multiple clicking
+                                    enabled = false
+                                    onStartClick()
+                                    coroutineScope.launch {
+                                        delay(500)
+                                        enabled = true
+                                    }
+                                },
+                                interactionSource = startButtonInteractionSource,
+                                indication = null
+                            )
+                            .tooltipAnchor(),
+                        icon = if (startButtonPressed) {
+                            CamstudyIcons.StartTimerPressed
+                        } else {
+                            CamstudyIcons.StartTimer
+                        },
+                        tint = Color.Unspecified,
+                        contentDescription = stringResource(R.string.start_timer)
+                    )
+                }
             } else {
                 CamstudyIcon(
                     modifier = Modifier.size(iconWidth, height = iconHeight),
