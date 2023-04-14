@@ -49,7 +49,6 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.items
 import coil.compose.AsyncImage
 import com.holix.android.bottomsheetdialog.compose.BottomSheetDialog
-import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import io.foundy.core.common.util.toBitmap
 import io.foundy.core.designsystem.component.CamstudyDivider
@@ -67,7 +66,6 @@ import org.orbitmvi.orbit.compose.collectAsState
 import org.orbitmvi.orbit.compose.collectSideEffect
 import java.util.Date
 
-@Destination
 @Composable
 fun RoomListRoute(
     navigator: DestinationsNavigator,

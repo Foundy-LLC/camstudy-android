@@ -4,17 +4,17 @@ import com.ramcosta.composedestinations.spec.DestinationSpec
 import com.ramcosta.composedestinations.spec.NavGraphSpec
 import com.ramcosta.composedestinations.spec.Route
 import io.foundy.friend.ui.destinations.FriendRouteDestination
-import io.foundy.room_list.ui.destinations.RoomListRouteDestination
+import io.foundy.home.ui.destinations.MainTabRouteDestination
 import io.foundy.search.ui.destinations.SearchRouteDestination
 
 object HomeNavGraph : NavGraphSpec {
 
     override val route: String = "home"
 
-    override val startRoute: Route = RoomListRouteDestination
+    override val startRoute: Route = MainTabRouteDestination
 
     override val destinationsByRoute: Map<String, DestinationSpec<*>> = listOf(
-        RoomListRouteDestination,
+        MainTabRouteDestination,
         SearchRouteDestination,
         FriendRouteDestination
     ).associateBy { it.route }

@@ -32,10 +32,10 @@ import io.foundy.core.designsystem.icon.CamstudyIcon
 import io.foundy.core.designsystem.theme.CamstudyTheme
 import io.foundy.friend.ui.FriendRoute
 import io.foundy.friend.ui.destinations.FriendRouteDestination
+import io.foundy.home.ui.destinations.MainTabRouteDestination
+import io.foundy.home.ui.main.MainTabRoute
 import io.foundy.home.ui.navigation.HomeNavGraph
 import io.foundy.home.ui.navigation.HomeTabDestination
-import io.foundy.room_list.ui.RoomListRoute
-import io.foundy.room_list.ui.destinations.RoomListRouteDestination
 
 @Destination(style = DestinationStyle.Runtime::class)
 @Composable
@@ -70,8 +70,8 @@ fun HomeScreen(
             navController = homeScreenState.navController,
             modifier = Modifier.padding(padding),
         ) {
-            composable(RoomListRouteDestination) {
-                RoomListRoute(navigator = navigator)
+            composable(MainTabRouteDestination) {
+                MainTabRoute(navigator = navigator)
             }
             composable(FriendRouteDestination) {
                 FriendRoute(userId = currentUserId)
@@ -150,7 +150,7 @@ private fun CamstudyNavigationBarPreview() {
         CamstudyNavigationBar(
             destinations = HomeTabDestination.values().toList(),
             onNavigateToDestination = {},
-            currentDestination = NavDestination(navigatorName = HomeTabDestination.RoomList.name)
+            currentDestination = NavDestination(navigatorName = HomeTabDestination.Main.name)
         )
     }
 }
