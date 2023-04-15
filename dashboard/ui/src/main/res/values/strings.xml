@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="weekly_study_minutes">주간 공부시간</string>
+    <string name="weekly_ranking">이번주 랭킹 %s위</string>
+    <string name="see_ranking">랭킹 보러가기</string>
+    <string name="no_growing_crop">기르는 작물이 없습니다</string>
+    <string name="current_growing_crop_prefix">현재 내 작물은&#160;</string>
+    <string name="current_growing_crop">%s %d단계</string>
+    <string name="plant_crop">작물 심으러가기</string>
+    <string name="manage_plant">작물 관리하기</string>
+</resources>

@@ -1,4 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="room_thumbnail">%s 썸네일</string>
+    <string name="strawberry">딸기</string>
+    <string name="tomato">토마토</string>
+    <string name="carrot">당근</string>
+    <string name="pumpkin">호박</string>
+    <string name="cabbage">양배추</string>
 </resources>

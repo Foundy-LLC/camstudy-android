@@ -3,6 +3,7 @@ package io.foundy.core.designsystem.icon
 import androidx.annotation.DrawableRes
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.ArrowForwardIos
 import androidx.compose.material.icons.filled.Chat
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.FlipCameraAndroid
@@ -30,6 +31,7 @@ import io.foundy.core.designsystem.R
 
 object CamstudyIcons {
     val ArrowBack = Icons.Default.ArrowBack.asCamstudyIcon()
+    val ArrowForward = Icons.Default.ArrowForwardIos.asCamstudyIcon()
     val StudyRoom = R.drawable.ic_study_room.asCamstudyIcon()
     val RoomDefault = R.drawable.ic_room_default.asCamstudyIcon()
     val VideoCam = R.drawable.ic_video.asCamstudyIcon()
@@ -42,6 +44,7 @@ object CamstudyIcons {
     val HeadsetOff = R.drawable.ic_headset_off.asCamstudyIcon()
     val StartTimer = R.drawable.ic_start_timer.asCamstudyIcon()
     val StartTimerPressed = R.drawable.ic_start_timer_pressed.asCamstudyIcon()
+    val EmptyCrop = R.drawable.ic_empty_crop.asCamstudyIcon()
     val MoreHoriz = Icons.Default.MoreHoriz.asCamstudyIcon()
     val FlipCamera = Icons.Default.FlipCameraAndroid.asCamstudyIcon()
     val Chat = Icons.Default.Chat.asCamstudyIcon()
