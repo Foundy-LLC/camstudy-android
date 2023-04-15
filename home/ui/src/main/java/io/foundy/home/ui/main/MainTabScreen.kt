@@ -5,14 +5,13 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.material3.Tab
-import androidx.compose.material3.TabRow
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.res.stringResource
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import io.foundy.core.designsystem.component.CamstudyTab
+import io.foundy.core.designsystem.component.CamstudyTabRow
 import io.foundy.dashboard.ui.DashboardRoute
 import io.foundy.room_list.ui.RoomListRoute
 import kotlinx.coroutines.launch
@@ -37,19 +36,19 @@ fun HomeTabScreen(
     val coroutineScope = rememberCoroutineScope()
 
     Column {
-        TabRow(
+        CamstudyTabRow(
             selectedTabIndex = pagerState.currentPage,
         ) {
             for (destination in MainTabDestination.values) {
                 val index = MainTabDestination.indexOf(destination)
-                Tab(
+                CamstudyTab(
                     selected = pagerState.currentPage == index,
                     onClick = {
                         coroutineScope.launch {
                             pagerState.animateScrollToPage(index)
                         }
                     },
-                    text = { Text(text = stringResource(id = destination.labelRes)) }
+                    text = stringResource(id = destination.labelRes)
                 )
             }
         }
