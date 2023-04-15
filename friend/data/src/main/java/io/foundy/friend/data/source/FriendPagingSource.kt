@@ -25,7 +25,7 @@ class FriendPagingSource @Inject constructor(
             val response = api.getFriends(page = page, userId = userId, accepted = accepted)
             response.getDataOrThrowMessage()
         }.onSuccess {
-            val roomOverviews = it.map { dto -> dto.toEntity() }
+            val roomOverviews = it.friends.map { dto -> dto.toEntity() }
             val isEnd = roomOverviews.size < PAGE_SIZE
 
             return LoadResult.Page(

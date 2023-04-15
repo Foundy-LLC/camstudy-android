@@ -2,7 +2,7 @@ package io.foundy.friend.data.api
 
 import io.foundy.core.data.util.CamstudyResponse
 import io.foundy.friend.data.model.FriendPostRequestBody
-import io.foundy.friend.data.model.UserOverviewDto
+import io.foundy.friend.data.model.GetFriendsResponse
 import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
@@ -18,7 +18,7 @@ interface FriendApi {
         @Path("userId") userId: String,
         @Query("page") page: Int,
         @Query("accepted") accepted: Boolean
-    ): CamstudyResponse<List<UserOverviewDto>>
+    ): CamstudyResponse<GetFriendsResponse>
 
     @POST("users/{userId}/friends")
     suspend fun requestFriend(
