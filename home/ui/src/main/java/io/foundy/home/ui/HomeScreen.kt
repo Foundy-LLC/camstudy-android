@@ -15,6 +15,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -28,7 +29,9 @@ import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.ramcosta.composedestinations.spec.DestinationStyle
 import io.foundy.core.designsystem.component.CamstudyDivider
 import io.foundy.core.designsystem.component.CamstudyText
+import io.foundy.core.designsystem.component.CamstudyTopAppBar
 import io.foundy.core.designsystem.icon.CamstudyIcon
+import io.foundy.core.designsystem.icon.CamstudyIcons
 import io.foundy.core.designsystem.theme.CamstudyTheme
 import io.foundy.friend.ui.FriendRoute
 import io.foundy.friend.ui.destinations.FriendRouteDestination
@@ -57,6 +60,17 @@ fun HomeScreen(
     homeScreenState: HomeScreenState = rememberHomeScreenState(),
 ) {
     Scaffold(
+        topBar = {
+            CamstudyTopAppBar(
+                title = {
+                    CamstudyIcon(
+                        icon = CamstudyIcons.AppTitle,
+                        tint = Color.Unspecified,
+                        contentDescription = null,
+                    )
+                }
+            )
+        },
         bottomBar = {
             CamstudyNavigationBar(
                 destinations = homeScreenState.tabDestinations,
