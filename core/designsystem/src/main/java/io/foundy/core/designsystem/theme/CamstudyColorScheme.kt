@@ -136,7 +136,7 @@ fun lightCamstudyColorScheme(): CamstudyColorScheme {
         tertiary = Color(0xFFFFFFFF),
         tertiaryPress = Color(0xFFE0E0E0),
         success = Color(0xFF0FBEC9),
-        error = Color(0xFFDD1A0E),
+        error = Color(0xFFFF5C00),
         cancel = Color(0xFFC1C1C1),
         cancelPress = Color(0xFFA2A2A2),
         danger = Color(0xFFDD1A0E),
