@@ -18,7 +18,7 @@ class NetworkSearchRepository @Inject constructor(
         check(currentUserId != null)
         return runCatching {
             val response = api.searchUsers(name = userName, exceptUserId = currentUserId)
-            response.getDataOrThrowMessage().map { it.toEntity() }
+            response.getDataOrThrowMessage().users.map { it.toEntity() }
         }
     }
 }
