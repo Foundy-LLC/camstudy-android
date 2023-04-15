@@ -54,6 +54,7 @@ fun CamstudyTabRow(
     TabRow(
         selectedTabIndex = selectedTabIndex,
         modifier = modifier,
+        containerColor = CamstudyTheme.colorScheme.systemBackground,
         indicator = @Composable { tabPositions ->
             TabRowDefaults.Indicator(
                 Modifier.tabIndicatorOffset(tabPositions[selectedTabIndex]),
