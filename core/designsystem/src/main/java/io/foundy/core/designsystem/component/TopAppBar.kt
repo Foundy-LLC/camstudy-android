@@ -2,6 +2,7 @@ package io.foundy.core.designsystem.component
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -40,15 +41,17 @@ fun CamstudyTopAppBar(
                     .padding(horizontal = 4.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                onBackClick?.let { onClick ->
-                    IconButton(onClick = onClick) {
+                if (onBackClick != null) {
+                    IconButton(onClick = onBackClick) {
                         CamstudyIcon(
                             icon = CamstudyIcons.ArrowBack,
                             contentDescription = null,
                             tint = componentColor
                         )
                     }
-                    Box(Modifier.width(4.dp))
+                    Spacer(Modifier.width(4.dp))
+                } else {
+                    Spacer(modifier = Modifier.width(16.dp))
                 }
                 Box(modifier = Modifier.weight(1f)) {
                     ProvideTextStyle(
@@ -66,14 +69,32 @@ fun CamstudyTopAppBar(
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
-@Preview(showBackground = true)
+@Preview(showBackground = true, heightDp = 300)
+@Composable
+fun CamstudyTopAppBarWithBackButtonPreview() {
+    CamstudyTheme {
+        Scaffold(
+            topBar = {
+                CamstudyTopAppBar(
+                    onBackClick = {},
+                    title = { Text(text = "앱바 타이틀") }
+                )
+            }
+        ) {
+            Box(Modifier.padding(it))
+        }
+    }
+}
+
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Preview(showBackground = true, heightDp = 300)
 @Composable
 fun CamstudyTopAppBarPreview() {
     CamstudyTheme {
         Scaffold(
             topBar = {
                 CamstudyTopAppBar(
-                    onBackClick = {},
                     title = { Text(text = "앱바 타이틀") }
                 )
             }
