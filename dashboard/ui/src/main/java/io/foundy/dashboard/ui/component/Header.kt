@@ -49,12 +49,7 @@ fun Header(
             .background(color = CamstudyTheme.colorScheme.systemBackground)
             .padding(top = 20.dp, start = 16.dp, end = 16.dp, bottom = 16.dp)
     ) {
-        CamstudyText(
-            text = stringResource(R.string.weekly_study_minutes),
-            style = CamstudyTheme.typography.titleMedium.copy(
-                color = CamstudyTheme.colorScheme.systemUi07
-            )
-        )
+        DivideTitle(text = stringResource(R.string.weekly_study_minutes))
         Row(
             verticalAlignment = Alignment.CenterVertically
         ) {

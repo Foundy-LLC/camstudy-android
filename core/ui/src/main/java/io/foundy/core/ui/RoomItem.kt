@@ -17,12 +17,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import io.foundy.core.designsystem.component.CamstudyText
@@ -37,7 +39,7 @@ import io.foundy.core.model.UserOverview
 fun RoomItem(modifier: Modifier = Modifier, room: RoomOverview) {
     Surface(modifier = modifier, color = CamstudyTheme.colorScheme.systemBackground) {
         Row {
-            ThumbnailImage(
+            RoomThumbnailImage(
                 imageUrl = room.thumbnail,
                 contentDescription = stringResource(R.string.room_thumbnail, room.title)
             )
@@ -45,7 +47,7 @@ fun RoomItem(modifier: Modifier = Modifier, room: RoomOverview) {
             Column(modifier = Modifier.weight(1.0f)) {
                 RoomTitle(title = room.title, isPrivate = room.hasPassword)
                 Box(modifier = Modifier.height(2.dp))
-                Tags(tags = room.tags)
+                RoomTags(tags = room.tags)
                 Box(modifier = Modifier.height(4.dp))
                 JoinerImages(
                     joinerImages = room.joinedUsers.map { it.profileImage },
@@ -57,10 +59,15 @@ fun RoomItem(modifier: Modifier = Modifier, room: RoomOverview) {
 }
 
 @Composable
-fun ThumbnailImage(imageUrl: String?, contentDescription: String) {
+fun RoomThumbnailImage(
+    imageUrl: String?,
+    contentDescription: String?,
+    size: Dp = 64.dp,
+    shape: Shape = RoundedCornerShape(12.dp)
+) {
     val thumbnailModifier = Modifier
-        .size(64.dp)
-        .clip(RoundedCornerShape(12.dp))
+        .size(size)
+        .clip(shape)
 
     if (imageUrl != null) {
         AsyncImage(
@@ -75,7 +82,7 @@ fun ThumbnailImage(imageUrl: String?, contentDescription: String) {
         ) {
             CamstudyIcon(
                 modifier = Modifier
-                    .size(48.dp)
+                    .size(size)
                     .align(Alignment.Center),
                 icon = CamstudyIcons.RoomDefault,
                 tint = Color.Unspecified,
@@ -133,7 +140,7 @@ private fun RoomTitle(title: String, isPrivate: Boolean) {
 }
 
 @Composable
-private fun Tags(tags: List<String>) {
+fun RoomTags(tags: List<String>) {
     val labelMedium = CamstudyTheme.typography.labelMedium
 
     CamstudyText(

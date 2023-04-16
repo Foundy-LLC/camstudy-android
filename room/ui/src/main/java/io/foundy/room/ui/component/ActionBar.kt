@@ -242,7 +242,7 @@ private val LocalDateTime?.elapsedTimeText: String
         return "%02d:%02d".format(minutes, seconds)
     }
 
-@Preview(widthDp = 400)
+@Preview(widthDp = 320)
 @Composable
 private fun ActionBarPreview() {
     var state by remember { mutableStateOf(PomodoroTimerState.STOPPED) }
