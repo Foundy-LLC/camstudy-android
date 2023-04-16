@@ -33,6 +33,7 @@ import io.foundy.core.designsystem.theme.CamstudyTheme
 import io.foundy.core.model.CropType
 import io.foundy.core.model.GrowingCrop
 import io.foundy.core.ui.getName
+import io.foundy.core.ui.imageIcon
 import io.foundy.dashboard.ui.R
 import java.util.Calendar
 
@@ -118,12 +119,7 @@ fun GrowingCropTile(
     crop: GrowingCrop?,
     onClick: () -> Unit
 ) {
-    val icon = if (crop == null) {
-        CamstudyIcons.EmptyCrop
-    } else {
-        // TODO: 성장중인 작물 아이콘으로 바꾸기
-        CamstudyIcons.EmptyCrop
-    }
+    val icon = crop?.imageIcon ?: CamstudyIcons.EmptyCrop
     val text = if (crop == null) {
         buildAnnotatedString { append(stringResource(R.string.no_growing_crop)) }
     } else {
@@ -197,9 +193,9 @@ fun HeaderPreview() {
             growingCrop = GrowingCrop(
                 id = "id",
                 ownerId = "id",
-                type = CropType.CABBAGE,
+                type = CropType.CARROT,
                 plantedAt = Calendar.getInstance().apply {
-                    set(2023, 3, 10, 2, 12)
+                    set(2023, 3, 1, 2, 12)
                 }.time
             ),
             onCropTileClick = {}

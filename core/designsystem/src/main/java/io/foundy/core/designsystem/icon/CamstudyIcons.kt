@@ -67,11 +67,11 @@ sealed class CamstudyIcon
 data class ImageVectorIcon(val imageVector: ImageVector) : CamstudyIcon()
 data class DrawableResourceIcon(@DrawableRes val id: Int) : CamstudyIcon()
 
-private fun ImageVector.asCamstudyIcon(): CamstudyIcon {
+fun ImageVector.asCamstudyIcon(): CamstudyIcon {
     return ImageVectorIcon(this)
 }
 
-private fun @receiver:DrawableRes Int.asCamstudyIcon(): CamstudyIcon {
+fun @receiver:DrawableRes Int.asCamstudyIcon(): CamstudyIcon {
     return DrawableResourceIcon(this)
 }
 
