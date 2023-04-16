@@ -19,6 +19,6 @@ data class GrowingCrop(
             return@run type.maxLevel
         }
         val oneLevelPercent = 100 / type.maxLevel
-        return@run (currentProgressPercent / oneLevelPercent).toInt()
+        return@run (currentProgressPercent / oneLevelPercent).toInt() + 1
     }
 }
