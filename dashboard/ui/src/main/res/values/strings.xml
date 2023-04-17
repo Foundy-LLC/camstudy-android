@@ -10,4 +10,6 @@
     <string name="manage_plant">작물 관리하기</string>
     <string name="recent_study_room">최근 공부했던 룸</string>
     <string name="recommended_rooms">추천 스터디 룸</string>
+    <string name="no_recent_rooms">기록이 존재하지 않습니다</string>
+    <string name="no_recommended_rooms">추천 방이 아직 없습니다</string>
 </resources>

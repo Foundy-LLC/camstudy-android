@@ -29,34 +29,7 @@ internal enum class DivideKey {
 
 @Composable
 fun DashboardRoute() {
-    val recommendedRoomFlow = flowOf(
-        PagingData.from(
-            listOf(
-                RoomOverview(
-                    id = "id",
-                    title = "방제목",
-                    masterId = "id",
-                    hasPassword = true,
-                    thumbnail = null,
-                    joinCount = 0,
-                    joinedUsers = emptyList(),
-                    maxCount = RoomConstants.MaxPeerCount,
-                    tags = listOf("tag1")
-                ),
-                RoomOverview(
-                    id = "id2",
-                    title = "방제목2",
-                    masterId = "id",
-                    hasPassword = true,
-                    thumbnail = null,
-                    joinCount = 0,
-                    joinedUsers = emptyList(),
-                    maxCount = RoomConstants.MaxPeerCount,
-                    tags = listOf("tag1")
-                ),
-            )
-        )
-    )
+    val recommendedRoomFlow = flowOf(PagingData.from(emptyList<RoomOverview>()))
     val recommendedRooms = recommendedRoomFlow.collectAsLazyPagingItems()
 
     DashboardScreen(recommendedRooms = recommendedRooms)

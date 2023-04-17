@@ -44,8 +44,14 @@ fun LazyListScope.recentRoomDivide(
             text = stringResource(R.string.recent_study_room)
         )
     }
-    items(items = rooms, key = { "${DivideKey.RecentRooms}${it.id}" }) { room ->
-        RecentRoomTile(room = room, onClick = onRoomClick)
+    if (rooms.isEmpty()) {
+        item {
+            EmptyDivideContent(text = stringResource(R.string.no_recent_rooms))
+        }
+    } else {
+        items(items = rooms, key = { "${DivideKey.RecentRooms}${it.id}" }) { room ->
+            RecentRoomTile(room = room, onClick = onRoomClick)
+        }
     }
 }
 
@@ -108,6 +114,19 @@ private fun RecentRoomsPreview() {
                         tags = listOf("공부원", "공시")
                     )
                 ),
+                onRoomClick = {}
+            )
+        }
+    }
+}
+
+@Preview
+@Composable
+private fun EmptyRecentRoomsPreview() {
+    CamstudyTheme {
+        LazyColumn {
+            recentRoomDivide(
+                rooms = emptyList(),
                 onRoomClick = {}
             )
         }

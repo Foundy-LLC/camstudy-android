@@ -37,20 +37,26 @@ fun LazyListScope.recommendedRoomDivide(
             text = stringResource(R.string.recommended_rooms)
         )
     }
-    items(items = rooms, key = { "${DivideKey.RecommendedRooms}${it.id}" }) { room ->
-        if (room == null) {
-            // TODO: Doing something
-            return@items
+    if (rooms.itemCount == 0) {
+        item {
+            EmptyDivideContent(text = stringResource(R.string.no_recommended_rooms))
         }
-        Box {
-            RoomTileWithJoinButton(
-                modifier = Modifier.fillMaxWidth(),
-                room = room,
-                onJoinClick = onJoinClick
-            )
-            CamstudyDivider()
+    } else {
+        items(items = rooms, key = { "${DivideKey.RecommendedRooms}${it.id}" }) { room ->
+            if (room == null) {
+                // TODO: Doing something
+                return@items
+            }
+            Box {
+                RoomTileWithJoinButton(
+                    modifier = Modifier.fillMaxWidth(),
+                    room = room,
+                    onJoinClick = onJoinClick
+                )
+                CamstudyDivider()
+            }
+            // TODO: Maybe show the loadindg progress bar
         }
-        // TODO: Maybe show the loadindg progress bar
     }
 }
 
