@@ -50,6 +50,7 @@ dependencies {
     implementation project(path: ':core:designsystem')
     implementation project(path: ':dashboard:ui')
     implementation project(path: ':room-list:ui')
+    implementation project(path: ':crop:ui')
     implementation project(path: ':search:ui')
     implementation project(path: ':friend:ui')
     implementation project(path: ':auth:data')

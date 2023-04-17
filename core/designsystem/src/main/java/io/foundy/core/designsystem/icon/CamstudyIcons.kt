@@ -45,6 +45,7 @@ object CamstudyIcons {
     val StartTimer = R.drawable.ic_start_timer.asCamstudyIcon()
     val StartTimerPressed = R.drawable.ic_start_timer_pressed.asCamstudyIcon()
     val EmptyCrop = R.drawable.ic_empty_crop.asCamstudyIcon()
+    val Crop = R.drawable.ic_crop.asCamstudyIcon()
     val MoreHoriz = Icons.Default.MoreHoriz.asCamstudyIcon()
     val FlipCamera = Icons.Default.FlipCameraAndroid.asCamstudyIcon()
     val Chat = Icons.Default.Chat.asCamstudyIcon()
