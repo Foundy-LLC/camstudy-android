@@ -36,7 +36,7 @@ import io.foundy.core.designsystem.theme.CamstudyTheme
 import io.foundy.core.model.RoomOverview
 import io.foundy.core.model.UserOverview
 import io.foundy.core.model.constant.RoomConstants
-import io.foundy.core.ui.RoomItem
+import io.foundy.core.ui.RoomTile
 import io.foundy.room.data.model.RoomJoiner
 import io.foundy.room.data.model.WaitingRoomData
 import io.foundy.room.ui.R
@@ -126,7 +126,7 @@ fun WaitingRoomScreen(
                 }
             }
             Spacer(modifier = Modifier.height(20.dp))
-            RoomItem(
+            RoomTile(
                 modifier = Modifier.padding(horizontal = 16.dp),
                 room = if (connectedWaitingRoomUiState != null) {
                     roomOverview.copy(

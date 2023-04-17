@@ -46,6 +46,10 @@ dependencies {
     implementation project(path: ':core:model')
     implementation project(path: ':core:ui')
 
+    // paging
+    implementation "androidx.paging:paging-common-ktx:$paging"
+    implementation "androidx.paging:paging-compose:$paging_compose"
+
     // coil
     implementation("io.coil-kt:coil-compose:$coil_version")
 

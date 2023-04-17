@@ -9,4 +9,5 @@
     <string name="plant_crop">작물 심으러가기</string>
     <string name="manage_plant">작물 관리하기</string>
     <string name="recent_study_room">최근 공부했던 룸</string>
+    <string name="recommended_rooms">추천 스터디 룸</string>
 </resources>

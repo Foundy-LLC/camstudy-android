@@ -27,6 +27,7 @@ import io.foundy.core.designsystem.icon.CamstudyIcons
 import io.foundy.core.designsystem.theme.CamstudyTheme
 import io.foundy.core.ui.RoomTags
 import io.foundy.core.ui.RoomThumbnailImage
+import io.foundy.dashboard.ui.DivideKey
 import io.foundy.dashboard.ui.R
 import io.foundy.dashboard.ui.model.RecentRoom
 
@@ -43,7 +44,7 @@ fun LazyListScope.recentRoomDivide(
             text = stringResource(R.string.recent_study_room)
         )
     }
-    items(items = rooms, key = { it.id }) { room ->
+    items(items = rooms, key = { "${DivideKey.RecentRooms}${it.id}" }) { room ->
         RecentRoomTile(room = room, onClick = onRoomClick)
     }
 }

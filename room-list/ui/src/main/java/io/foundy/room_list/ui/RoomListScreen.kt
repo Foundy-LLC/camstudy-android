@@ -7,12 +7,10 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.text.KeyboardActions
@@ -54,11 +52,10 @@ import io.foundy.core.common.util.toBitmap
 import io.foundy.core.designsystem.component.CamstudyDivider
 import io.foundy.core.designsystem.component.CamstudyText
 import io.foundy.core.designsystem.component.CamstudyTextField
-import io.foundy.core.designsystem.component.ContainedButton
 import io.foundy.core.designsystem.theme.CamstudyTheme
 import io.foundy.core.model.RoomOverview
 import io.foundy.core.model.constant.RoomConstants
-import io.foundy.core.ui.RoomItem
+import io.foundy.core.ui.RoomTileWithJoinButton
 import io.foundy.organization.ui.destinations.OrganizationRouteDestination
 import io.foundy.room.ui.RoomActivity
 import kotlinx.coroutines.launch
@@ -96,7 +93,7 @@ fun RoomListRoute(
         uiState = uiState,
         rooms = rooms,
         snackbarHostState = snackbarHostState,
-        onRoomClick = { room ->
+        onRoomJoinClick = { room ->
             val intent = RoomActivity.getIntent(context, roomOverview = room)
             context.startActivity(intent)
         },
@@ -113,7 +110,7 @@ fun RoomListScreen(
     uiState: RoomListUiState,
     rooms: LazyPagingItems<RoomOverview>,
     snackbarHostState: SnackbarHostState,
-    onRoomClick: (room: RoomOverview) -> Unit,
+    onRoomJoinClick: (room: RoomOverview) -> Unit,
     onOrganizationClick: () -> Unit
 ) {
     val roomCreateInput = uiState.roomCreateInput
@@ -151,23 +148,12 @@ fun RoomListScreen(
                     Text("End")
                     return@items
                 }
-                Box(Modifier.fillMaxWidth()) {
-                    Row {
-                        RoomItem(
-                            Modifier
-                                .weight(1f)
-                                .padding(16.dp),
-                            room = roomOverview
-                        )
-                        Box(modifier = Modifier.width(28.dp))
-                        ContainedButton(
-                            modifier = Modifier
-                                .align(Alignment.Bottom)
-                                .padding(16.dp),
-                            label = stringResource(R.string.join),
-                            onClick = { onRoomClick(roomOverview) }
-                        )
-                    }
+                Box {
+                    RoomTileWithJoinButton(
+                        modifier = Modifier.fillMaxWidth(),
+                        room = roomOverview,
+                        onJoinClick = onRoomJoinClick
+                    )
                     CamstudyDivider()
                 }
             }

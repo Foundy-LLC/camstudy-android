@@ -28,6 +28,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import io.foundy.core.designsystem.component.CamstudyText
+import io.foundy.core.designsystem.component.ContainedButton
 import io.foundy.core.designsystem.icon.CamstudyIcon
 import io.foundy.core.designsystem.icon.CamstudyIcons
 import io.foundy.core.designsystem.theme.CamstudyTheme
@@ -36,7 +37,31 @@ import io.foundy.core.model.RoomOverview
 import io.foundy.core.model.UserOverview
 
 @Composable
-fun RoomItem(modifier: Modifier = Modifier, room: RoomOverview) {
+fun RoomTileWithJoinButton(
+    modifier: Modifier = Modifier,
+    room: RoomOverview,
+    onJoinClick: (RoomOverview) -> Unit
+) {
+    Row(modifier = modifier.background(color = CamstudyTheme.colorScheme.systemBackground)) {
+        RoomTile(
+            modifier = Modifier
+                .weight(1f)
+                .padding(16.dp),
+            room = room
+        )
+        Box(modifier = Modifier.width(28.dp))
+        ContainedButton(
+            modifier = Modifier
+                .align(Alignment.Bottom)
+                .padding(16.dp),
+            label = stringResource(R.string.join),
+            onClick = { onJoinClick(room) }
+        )
+    }
+}
+
+@Composable
+fun RoomTile(modifier: Modifier = Modifier, room: RoomOverview) {
     Surface(modifier = modifier, color = CamstudyTheme.colorScheme.systemBackground) {
         Row {
             RoomThumbnailImage(
@@ -203,9 +228,9 @@ private fun JoinerImages(joinerImages: List<String?>, maxCount: Int) {
 
 @Preview(fontScale = 1.0f)
 @Composable
-private fun RoomItemPreview() {
+private fun RoomTilePreview() {
     CamstudyTheme {
-        RoomItem(
+        RoomTile(
             room = RoomOverview(
                 id = "id",
                 title = "공시족 모여라",
@@ -225,9 +250,9 @@ private fun RoomItemPreview() {
 
 @Preview
 @Composable
-private fun PrivateRoomItemPreview() {
+private fun PrivateRoomTilePreview() {
     CamstudyTheme {
-        RoomItem(
+        RoomTile(
             room = RoomOverview(
                 id = "id",
                 title = "스터디",
