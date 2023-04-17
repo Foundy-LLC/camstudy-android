@@ -130,7 +130,7 @@ fun RowScope.CamstudyNavigationBarItem(
     onClick: () -> Unit,
 ) {
     val color = if (selected) {
-        CamstudyTheme.colorScheme.primaryPress
+        CamstudyTheme.colorScheme.primary
     } else {
         CamstudyTheme.colorScheme.systemUi03
     }
