@@ -14,11 +14,11 @@ data class GrowingCrop(
 
     val level: Int = run {
         val elapsedMilli = Date().time - plantedAt.time
-        val currentProgressPercent = (100 * elapsedMilli / dayToMilli(type.requiredDay))
+        val currentProgressPercent = (100f * elapsedMilli / dayToMilli(type.requiredDay))
         if (currentProgressPercent >= 100) {
             return@run type.maxLevel
         }
-        val oneLevelPercent = 100 / type.maxLevel
+        val oneLevelPercent = 100f / type.maxLevel
         return@run (currentProgressPercent / oneLevelPercent).toInt() + 1
     }
 }
