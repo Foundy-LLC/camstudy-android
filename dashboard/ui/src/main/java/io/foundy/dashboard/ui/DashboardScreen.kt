@@ -42,7 +42,7 @@ fun DashboardScreen(
 ) {
     LazyColumn(
         modifier = Modifier
-            .background(color = CamstudyTheme.colorScheme.systemUi02)
+            .background(color = CamstudyTheme.colorScheme.systemUi01)
             .fillMaxHeight()
     ) {
         item {
