@@ -33,7 +33,6 @@ object CamstudyIcons {
     val ArrowBack = Icons.Default.ArrowBack.asCamstudyIcon()
     val ArrowForward = Icons.Default.ArrowForwardIos.asCamstudyIcon()
     val StudyRoom = R.drawable.ic_study_room.asCamstudyIcon()
-    // TODO: 아래의 물음표는 다크모드를 대비하여 물음표만 아이콘으로 두고 배경은 따로 직접 그리기
     val RoomDefault = R.drawable.ic_room_default.asCamstudyIcon()
     val VideoCam = R.drawable.ic_video.asCamstudyIcon()
     val VideoCamOff = R.drawable.ic_video_off.asCamstudyIcon()
@@ -45,7 +44,6 @@ object CamstudyIcons {
     val HeadsetOff = R.drawable.ic_headset_off.asCamstudyIcon()
     val StartTimer = R.drawable.ic_start_timer.asCamstudyIcon()
     val StartTimerPressed = R.drawable.ic_start_timer_pressed.asCamstudyIcon()
-    // TODO: 아래의 물음표는 다크모드를 대비하여 물음표만 아이콘으로 두고 배경은 따로 직접 그리기
     val EmptyCrop = R.drawable.ic_empty_crop.asCamstudyIcon()
     val Crop = R.drawable.ic_crop.asCamstudyIcon()
     val MoreHoriz = Icons.Default.MoreHoriz.asCamstudyIcon()
