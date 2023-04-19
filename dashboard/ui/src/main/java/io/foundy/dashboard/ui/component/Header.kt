@@ -30,6 +30,7 @@ import io.foundy.core.designsystem.component.ContainedButton
 import io.foundy.core.designsystem.icon.CamstudyIcon
 import io.foundy.core.designsystem.icon.CamstudyIcons
 import io.foundy.core.designsystem.theme.CamstudyTheme
+import io.foundy.core.model.CropGrade
 import io.foundy.core.model.CropType
 import io.foundy.core.model.GrowingCrop
 import io.foundy.core.ui.getName
@@ -125,7 +126,7 @@ fun GrowingCropTile(
     } else {
         val stateText = stringResource(
             R.string.current_growing_crop,
-            crop.type.getName(),
+            crop.getName(),
             crop.level
         )
         buildAnnotatedString {
@@ -194,6 +195,9 @@ fun HeaderPreview() {
                 id = "id",
                 ownerId = "id",
                 type = CropType.CARROT,
+                level = 2,
+                expectedGrade = CropGrade.SILVER,
+                isDead = false,
                 plantedAt = Calendar.getInstance().apply {
                     set(2023, 3, 1, 2, 12)
                 }.time

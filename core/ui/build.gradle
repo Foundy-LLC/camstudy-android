@@ -42,6 +42,7 @@ android {
 dependencies {
     implementation project(path: ':core:designsystem')
     implementation project(path: ':core:model')
+    implementation project(path: ':core:common')
 
     // coil
     implementation("io.coil-kt:coil-compose:$coil_version")

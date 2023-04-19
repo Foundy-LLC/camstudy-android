@@ -1,4 +1,4 @@
-package io.foundy.dashboard.ui.component
+package io.foundy.crop.ui.component
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier

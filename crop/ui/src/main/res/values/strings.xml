@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="my_pot">내 화분</string>
+    <string name="crop_level">%d단계</string>
+    <string name="expected_plant_at">수확까지</string>
+    <string name="expected_plant_grade">예상 식물 등급</string>
+    <string name="growing_crop_plant_at_format">yyyy년 M월 d일 H시 m분</string>
+    <string name="pot_is_empty">화분이 비어있습니다</string>
+    <string name="plant_crop_into_pot">화분에 작물 심기</string>
+</resources>

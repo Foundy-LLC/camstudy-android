@@ -7,4 +7,14 @@
     <string name="carrot">당근</string>
     <string name="pumpkin">호박</string>
     <string name="cabbage">양배추</string>
+    <string name="can_harvest">수확 가능</string>
+    <string name="day">일</string>
+    <string name="hour">시간</string>
+    <string name="minute">분</string>
+    <string name="remaining_time">%s 남음</string>
+    <string name="not_fresh">시들음</string>
+    <string name="fresh">신선함</string>
+    <string name="silver">실버</string>
+    <string name="gold">골드</string>
+    <string name="diamond">다이아몬드</string>
 </resources>

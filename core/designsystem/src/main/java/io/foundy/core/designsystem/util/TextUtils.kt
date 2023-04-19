@@ -2,6 +2,7 @@ package io.foundy.core.designsystem.util
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.sp
 
 val Int.nonScaledSp
@@ -11,3 +12,7 @@ val Int.nonScaledSp
 val Float.nonScaledSp
     @Composable
     get() = this.toInt().nonScaledSp
+
+val TextUnit.nonScaledSp
+    @Composable
+    get() = this.value.nonScaledSp
