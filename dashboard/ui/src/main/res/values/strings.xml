@@ -7,7 +7,7 @@
     <string name="current_growing_crop_prefix">현재 내 작물은&#160;</string>
     <string name="current_growing_crop">%s %d단계</string>
     <string name="plant_crop">작물 심으러가기</string>
-    <string name="manage_plant">작물 관리하기</string>
+    <string name="manage_crop">작물 관리하기</string>
     <string name="recent_study_room">최근 공부했던 룸</string>
     <string name="recommended_rooms">추천 스터디 룸</string>
     <string name="no_recent_rooms">기록이 존재하지 않습니다</string>

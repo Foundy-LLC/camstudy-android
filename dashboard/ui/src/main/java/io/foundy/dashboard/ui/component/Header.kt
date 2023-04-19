@@ -139,7 +139,7 @@ fun GrowingCropTile(
     val navigationText = if (crop == null) {
         stringResource(R.string.plant_crop)
     } else {
-        stringResource(R.string.manage_plant)
+        stringResource(R.string.manage_crop)
     }
     Surface(
         modifier = Modifier
