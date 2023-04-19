@@ -2,11 +2,14 @@ package io.foundy.dashboard.ui.component
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -35,6 +38,7 @@ import io.foundy.core.model.CropType
 import io.foundy.core.model.GrowingCrop
 import io.foundy.core.ui.getName
 import io.foundy.core.ui.imageIcon
+import io.foundy.dashboard.ui.GrowingCropUiState
 import io.foundy.dashboard.ui.R
 import java.util.Calendar
 
@@ -42,7 +46,7 @@ import java.util.Calendar
 fun Header(
     weeklyStudyMinutes: Int,
     weeklyRanking: Int?,
-    growingCrop: GrowingCrop?,
+    growingCropUiState: GrowingCropUiState,
     onCropTileClick: () -> Unit
 ) {
     Column(
@@ -72,7 +76,7 @@ fun Header(
         Spacer(modifier = Modifier.height(16.dp))
         CamstudyDivider()
         Spacer(modifier = Modifier.height(20.dp))
-        GrowingCropTile(crop = growingCrop, onClick = onCropTileClick)
+        GrowingCropTile(growingCropUiState = growingCropUiState, onClick = onCropTileClick)
     }
 }
 
@@ -117,9 +121,30 @@ private fun Time(
 
 @Composable
 fun GrowingCropTile(
-    crop: GrowingCrop?,
+    growingCropUiState: GrowingCropUiState,
     onClick: () -> Unit
 ) {
+    when (growingCropUiState) {
+        GrowingCropUiState.Loading -> GrowingCropTileSurface {}
+        is GrowingCropUiState.Success -> GrowingCropTileContent(
+            crop = growingCropUiState.growingCrop,
+            onClick = onClick
+        )
+        is GrowingCropUiState.Failure -> GrowingCropTileSurface {
+            CamstudyText(
+                modifier = Modifier.align(Alignment.Center),
+                text = growingCropUiState.message
+                    ?: stringResource(R.string.failed_to_load_growing_crop),
+                style = CamstudyTheme.typography.titleMedium.copy(
+                    color = CamstudyTheme.colorScheme.systemUi06
+                )
+            )
+        }
+    }
+}
+
+@Composable
+private fun GrowingCropTileContent(crop: GrowingCrop?, onClick: () -> Unit) {
     val icon = crop?.imageIcon ?: CamstudyIcons.EmptyCrop
     val text = if (crop == null) {
         buildAnnotatedString { append(stringResource(R.string.no_growing_crop)) }
@@ -141,12 +166,8 @@ fun GrowingCropTile(
     } else {
         stringResource(R.string.manage_crop)
     }
-    Surface(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clip(RoundedCornerShape(12.dp))
-            .clickable(onClick = onClick),
-        color = CamstudyTheme.colorScheme.systemUi01
+    GrowingCropTileSurface(
+        onClick = onClick
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically
@@ -184,6 +205,26 @@ fun GrowingCropTile(
     }
 }
 
+@Composable
+private fun GrowingCropTileSurface(
+    onClick: (() -> Unit)? = null,
+    content: @Composable BoxScope.() -> Unit
+) {
+    var modifier = Modifier
+        .fillMaxWidth()
+        .heightIn(min = 52.dp)
+        .clip(RoundedCornerShape(12.dp))
+    if (onClick != null) {
+        modifier = modifier.clickable(onClick = onClick)
+    }
+    Surface(
+        modifier = modifier,
+        color = CamstudyTheme.colorScheme.systemUi01,
+    ) {
+        Box(content = content)
+    }
+}
+
 @Preview(widthDp = 360)
 @Composable
 fun HeaderPreview() {
@@ -191,16 +232,18 @@ fun HeaderPreview() {
         Header(
             weeklyStudyMinutes = 1132,
             weeklyRanking = 21,
-            growingCrop = GrowingCrop(
-                id = "id",
-                ownerId = "id",
-                type = CropType.CARROT,
-                level = 2,
-                expectedGrade = CropGrade.SILVER,
-                isDead = false,
-                plantedAt = Calendar.getInstance().apply {
-                    set(2023, 3, 1, 2, 12)
-                }.time
+            growingCropUiState = GrowingCropUiState.Success(
+                growingCrop = GrowingCrop(
+                    id = "id",
+                    ownerId = "id",
+                    type = CropType.CARROT,
+                    level = 2,
+                    expectedGrade = CropGrade.SILVER,
+                    isDead = false,
+                    plantedAt = Calendar.getInstance().apply {
+                        set(2023, 3, 1, 2, 12)
+                    }.time
+                )
             ),
             onCropTileClick = {}
         )
@@ -209,12 +252,25 @@ fun HeaderPreview() {
 
 @Preview(widthDp = 360)
 @Composable
-fun EmptyHeaderPreview() {
+fun GrowingCropErrorHeaderPreview() {
     CamstudyTheme {
         Header(
             weeklyStudyMinutes = 0,
             weeklyRanking = null,
-            growingCrop = null,
+            growingCropUiState = GrowingCropUiState.Failure(message = "서버 내부 에러가 발생했습니다."),
+            onCropTileClick = {}
+        )
+    }
+}
+
+@Preview(widthDp = 360)
+@Composable
+fun GrowingCropLoadingHeaderPreview() {
+    CamstudyTheme {
+        Header(
+            weeklyStudyMinutes = 0,
+            weeklyRanking = null,
+            growingCropUiState = GrowingCropUiState.Loading,
             onCropTileClick = {}
         )
     }

@@ -10,6 +10,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.paging.PagingData
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
@@ -21,6 +22,8 @@ import io.foundy.dashboard.ui.component.recentRoomDivide
 import io.foundy.dashboard.ui.component.recommendedRoomDivide
 import io.foundy.dashboard.ui.model.RecentRoom
 import kotlinx.coroutines.flow.flowOf
+import org.orbitmvi.orbit.compose.collectAsState
+import org.orbitmvi.orbit.compose.collectSideEffect
 
 internal enum class DivideKey {
     RecentRooms,
@@ -28,16 +31,31 @@ internal enum class DivideKey {
 }
 
 @Composable
-fun DashboardRoute() {
+fun DashboardRoute(
+    viewModel: DashboardViewModel = hiltViewModel()
+) {
     val recommendedRoomFlow = flowOf(PagingData.from(emptyList<RoomOverview>()))
     val recommendedRooms = recommendedRoomFlow.collectAsLazyPagingItems()
+    val uiState = viewModel.collectAsState().value
 
-    DashboardScreen(recommendedRooms = recommendedRooms)
+    viewModel.collectSideEffect {
+        when (it) {
+            else -> {
+                /* TODO */
+            }
+        }
+    }
+
+    DashboardScreen(
+        uiState = uiState,
+        recommendedRooms = recommendedRooms
+    )
 }
 
 // TODO: 실제 데이터 전달하기
 @Composable
 fun DashboardScreen(
+    uiState: DashboardUiState,
     recommendedRooms: LazyPagingItems<RoomOverview>
 ) {
     LazyColumn(
@@ -49,7 +67,7 @@ fun DashboardScreen(
             Header(
                 weeklyStudyMinutes = 2213,
                 weeklyRanking = 3,
-                growingCrop = null,
+                growingCropUiState = uiState.growingCropUiState,
                 onCropTileClick = { /* TODO: 구현하기 */ }
             )
         }
@@ -120,7 +138,8 @@ private fun DashboardScreenPreview() {
 
     CamstudyTheme {
         DashboardScreen(
-            recommendedRooms = recommendedRooms
+            recommendedRooms = recommendedRooms,
+            uiState = DashboardUiState()
         )
     }
 }
