@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -37,11 +38,12 @@ import io.foundy.core.ui.getFormattedPlantAt
 import io.foundy.core.ui.getName
 import io.foundy.core.ui.getRemainingTimeText
 import io.foundy.core.ui.imageIcon
+import io.foundy.crop.ui.GrowingCropUiState
 import io.foundy.crop.ui.R
 import java.util.Calendar
 
 @Composable
-fun GrowingCropDivide(growingCrop: GrowingCrop?) {
+fun GrowingCropDivide(growingCropUiState: GrowingCropUiState) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -50,14 +52,37 @@ fun GrowingCropDivide(growingCrop: GrowingCrop?) {
     ) {
         DivideTitle(text = stringResource(R.string.my_pot))
         Spacer(modifier = Modifier.height(16.dp))
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            GrowingCropIcon(growingCrop = growingCrop)
-            Spacer(modifier = Modifier.width(16.dp))
-            if (growingCrop != null) {
-                GrowingCropInfo(growingCrop = growingCrop)
-            } else {
-                EmptyGrowingCropInfo(onPlantClick = { /* TODO */ })
+        DivideContent(
+            growingCropUiState = growingCropUiState
+        )
+    }
+}
+
+@Composable
+private fun DivideContent(growingCropUiState: GrowingCropUiState) {
+    val growingCrop = (growingCropUiState as? GrowingCropUiState.Success)?.growingCrop
+
+    Row(verticalAlignment = Alignment.CenterVertically) {
+        GrowingCropIcon(growingCrop = growingCrop)
+        Spacer(modifier = Modifier.width(16.dp))
+        when (growingCropUiState) {
+            GrowingCropUiState.Loading -> Box(Modifier.fillMaxWidth()) {
+                CircularProgressIndicator(Modifier.align(Alignment.Center))
             }
+            is GrowingCropUiState.Success -> {
+                if (growingCropUiState.growingCrop != null) {
+                    GrowingCropInfo(growingCrop = growingCropUiState.growingCrop)
+                } else {
+                    EmptyGrowingCropInfo(onPlantClick = { /* TODO */ })
+                }
+            }
+            is GrowingCropUiState.Failure -> CamstudyText(
+                text = growingCropUiState.message ?: stringResource(R.string.failed_to_load_pot),
+                style = CamstudyTheme.typography.titleLarge.copy(
+                    color = CamstudyTheme.colorScheme.systemUi04,
+                    fontWeight = FontWeight.SemiBold
+                )
+            )
         }
     }
 }
@@ -200,19 +225,32 @@ private fun GrowingCropInfo(growingCrop: GrowingCrop) {
 @Preview
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
+fun LoadingGrowingCropDividePreview() {
+    CamstudyTheme {
+        GrowingCropDivide(
+            growingCropUiState = GrowingCropUiState.Loading
+        )
+    }
+}
+
+@Preview
+@Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Composable
 fun GrowingCropDividePreview() {
     CamstudyTheme {
         GrowingCropDivide(
-            growingCrop = GrowingCrop(
-                id = "id",
-                ownerId = "id",
-                type = CropType.CARROT,
-                level = 2,
-                expectedGrade = CropGrade.SILVER,
-                isDead = false,
-                plantedAt = Calendar.getInstance().apply {
-                    set(2023, 3, 14, 21, 59)
-                }.time
+            growingCropUiState = GrowingCropUiState.Success(
+                growingCrop = GrowingCrop(
+                    id = "id",
+                    ownerId = "id",
+                    type = CropType.CARROT,
+                    level = 2,
+                    expectedGrade = CropGrade.SILVER,
+                    isDead = false,
+                    plantedAt = Calendar.getInstance().apply {
+                        set(2023, 3, 14, 21, 59)
+                    }.time
+                )
             )
         )
     }
@@ -223,6 +261,18 @@ fun GrowingCropDividePreview() {
 @Composable
 fun EmptyGrowingCropDividePreview() {
     CamstudyTheme {
-        GrowingCropDivide(growingCrop = null)
+        GrowingCropDivide(
+            growingCropUiState = GrowingCropUiState.Success(
+                growingCrop = null
+            )
+        )
+    }
+}
+
+@Preview
+@Composable
+fun FailureGrowingCropDividePreview() {
+    CamstudyTheme {
+        GrowingCropDivide(growingCropUiState = GrowingCropUiState.Failure(message = null))
     }
 }

@@ -7,4 +7,5 @@
     <string name="growing_crop_plant_at_format">yyyy년 M월 d일 H시 m분</string>
     <string name="pot_is_empty">화분이 비어있습니다</string>
     <string name="plant_crop_into_pot">화분에 작물 심기</string>
+    <string name="failed_to_load_pot">화분을 불러오지 못했습니다</string>
 </resources>

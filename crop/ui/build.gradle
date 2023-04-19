@@ -49,6 +49,11 @@ dependencies {
     implementation project(path: ':core:designsystem')
     implementation project(path: ':core:model')
     implementation project(path: ':core:ui')
+    implementation project(path: ':crop:data')
+    implementation project(path: ':auth:data')
+
+    // navigation
+    implementation "androidx.hilt:hilt-navigation-compose:$hilt_navigation_compose"
 
     // compose destination
     implementation "io.github.raamcosta.compose-destinations:core:$compose_destination_version"
