@@ -21,4 +21,6 @@
     <string name="cabbage_description">식이섬유가 풍부하고 맛이 없어요(?)</string>
     <string name="crop_list">작물 목록</string>
     <string name="plant_selected_crop">%s 심기</string>
+    <string name="planting_selected_crop">%s 심는중…</string>
+    <string name="failed_to_plant_crop">작물 심기를 실패했습니다.</string>
 </resources>

@@ -13,4 +13,5 @@
     <string name="no_recent_rooms">기록이 존재하지 않습니다</string>
     <string name="no_recommended_rooms">추천 방이 아직 없습니다</string>
     <string name="failed_to_load_growing_crop">기르는 작물을 불러오지 못했습니다</string>
+    <string name="success_to_plant_crop">작물을 성공적으로 심었습니다.</string>
 </resources>

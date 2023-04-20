@@ -3,7 +3,8 @@ package io.foundy.dashboard.ui
 import io.foundy.core.model.GrowingCrop
 
 data class DashboardUiState(
-    val growingCropUiState: GrowingCropUiState = GrowingCropUiState.Loading
+    val growingCropUiState: GrowingCropUiState = GrowingCropUiState.Loading,
+    val fetchGrowingCrop: () -> Unit
 )
 
 sealed class GrowingCropUiState {

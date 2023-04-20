@@ -12,7 +12,9 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -26,6 +28,7 @@ import com.ramcosta.composedestinations.DestinationsNavHost
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.manualcomposablecalls.composable
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import com.ramcosta.composedestinations.result.OpenResultRecipient
 import com.ramcosta.composedestinations.spec.DestinationStyle
 import io.foundy.core.designsystem.component.CamstudyDivider
 import io.foundy.core.designsystem.component.CamstudyText
@@ -44,10 +47,12 @@ import io.foundy.home.ui.navigation.HomeTabDestination
 @Composable
 fun HomeRoute(
     navigator: DestinationsNavigator,
+    plantResultRecipient: OpenResultRecipient<Boolean>,
     viewModel: HomeViewModel = hiltViewModel()
 ) {
     HomeScreen(
         navigator = navigator,
+        plantResultRecipient = plantResultRecipient,
         currentUserId = viewModel.currentUserId
     )
 }
@@ -57,8 +62,11 @@ fun HomeRoute(
 fun HomeScreen(
     navigator: DestinationsNavigator,
     currentUserId: String,
+    plantResultRecipient: OpenResultRecipient<Boolean>,
     homeScreenState: HomeScreenState = rememberHomeScreenState(),
 ) {
+    val coroutineScope = rememberCoroutineScope()
+
     Scaffold(
         topBar = {
             CamstudyTopAppBar(
@@ -77,7 +85,8 @@ fun HomeScreen(
                 onNavigateToDestination = homeScreenState::navigate,
                 currentDestination = homeScreenState.currentDestination
             )
-        }
+        },
+        snackbarHost = { SnackbarHost(hostState = homeScreenState.snackbarHostState) }
     ) { padding ->
         DestinationsNavHost(
             navGraph = HomeNavGraph,
@@ -87,7 +96,9 @@ fun HomeScreen(
             composable(MainTabRouteDestination) {
                 MainTabRoute(
                     navigator = navigator,
-                    navigateToCropTab = { homeScreenState.navigate(HomeTabDestination.Crop) }
+                    plantResultRecipient = plantResultRecipient,
+                    navigateToCropTab = { homeScreenState.navigate(HomeTabDestination.Crop) },
+                    showSnackbar = homeScreenState::showSnackbar
                 )
             }
             composable(FriendRouteDestination) {

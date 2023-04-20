@@ -18,18 +18,23 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.ramcosta.composedestinations.annotation.Destination
-import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import com.ramcosta.composedestinations.result.ResultBackNavigator
 import io.foundy.core.designsystem.component.BottomContainedButton
 import io.foundy.core.designsystem.component.CamstudyDivider
 import io.foundy.core.designsystem.component.CamstudyText
@@ -43,19 +48,36 @@ import io.foundy.core.ui.maxLevelImageIcon
 import io.foundy.crop.ui.R
 import io.foundy.crop.ui.component.DivideTitle
 import io.foundy.crop.ui.extension.getDescription
+import kotlinx.coroutines.launch
 import org.orbitmvi.orbit.compose.collectAsState
+import org.orbitmvi.orbit.compose.collectSideEffect
 
 @Composable
 @Destination
 fun PlantCropRoute(
-    navigator: DestinationsNavigator,
+    resultNavigator: ResultBackNavigator<Boolean>,
     viewModel: PlantCropViewModel = hiltViewModel()
 ) {
     val uiState = viewModel.collectAsState().value
+    val snackbarHostState = remember { SnackbarHostState() }
+    val coroutineScope = rememberCoroutineScope()
+    val context = LocalContext.current
+
+    viewModel.collectSideEffect {
+        when (it) {
+            is PlantCropSideEffect.FailedToPlant -> coroutineScope.launch {
+                snackbarHostState.showSnackbar(
+                    it.message ?: context.getString(R.string.failed_to_plant_crop)
+                )
+            }
+            PlantCropSideEffect.SuccessToPlant -> resultNavigator.navigateBack(result = true)
+        }
+    }
 
     PlantCropScreen(
         uiState = uiState,
-        onBackClick = navigator::popBackStack
+        snackbarHostState = snackbarHostState,
+        onBackClick = resultNavigator::navigateBack
     )
 }
 
@@ -63,11 +85,13 @@ fun PlantCropRoute(
 @Composable
 fun PlantCropScreen(
     uiState: PlantCropUiState,
+    snackbarHostState: SnackbarHostState,
     onBackClick: () -> Unit
 ) {
     val selectedCropName = uiState.selectedCropType?.getName()
 
     Scaffold(
+        snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
         topBar = {
             CamstudyTopAppBar(
                 title = { CamstudyText(text = stringResource(R.string.plant_crop)) },
@@ -113,7 +137,11 @@ fun PlantCropScreen(
                 enabled = uiState.canPlant,
                 label = if (selectedCropName != null) {
                     stringResource(
-                        R.string.plant_selected_crop,
+                        if (uiState.isPlanting) {
+                            R.string.planting_selected_crop
+                        } else {
+                            R.string.plant_selected_crop
+                        },
                         selectedCropName
                     )
                 } else {
@@ -313,7 +341,25 @@ private fun PlantCropScreenPreview() {
                 onPlantClick = {},
                 onSelected = {}
             ),
-            onBackClick = {}
+            onBackClick = {},
+            snackbarHostState = SnackbarHostState()
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun PlantCropScreenInPlantingPreview() {
+    CamstudyTheme {
+        PlantCropScreen(
+            uiState = PlantCropUiState(
+                selectedCropType = CropType.STRAWBERRY,
+                isPlanting = true,
+                onPlantClick = {},
+                onSelected = {}
+            ),
+            onBackClick = {},
+            snackbarHostState = SnackbarHostState()
         )
     }
 }

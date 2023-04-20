@@ -30,3 +30,13 @@ fun CropTypeDto.toEntity(): CropType {
         CropTypeDto.CABBAGE -> CropType.CABBAGE
     }
 }
+
+fun CropType.toDto(): CropTypeDto {
+    return when (this) {
+        CropType.CARROT -> CropTypeDto.CARROT
+        CropType.TOMATO -> CropTypeDto.TOMATO
+        CropType.STRAWBERRY -> CropTypeDto.STRAWBERRY
+        CropType.PUMPKIN -> CropTypeDto.PUMPKIN
+        CropType.CABBAGE -> CropTypeDto.CABBAGE
+    }
+}

@@ -21,20 +21,21 @@ class DashboardViewModel @Inject constructor(
 ) : ViewModel(), ContainerHost<DashboardUiState, DashboardSideEffect> {
 
     override val container: Container<DashboardUiState, DashboardSideEffect> = container(
-        DashboardUiState()
+        DashboardUiState(fetchGrowingCrop = ::fetchGrowingCrop)
     )
+
+    private lateinit var currentUserId: String
 
     init {
         viewModelScope.launch {
-            val currentUserId = authRepository.currentUserIdStream.firstOrNull()
-            check(currentUserId != null) {
+            currentUserId = requireNotNull(authRepository.currentUserIdStream.firstOrNull()) {
                 "현재 회원 아이디를 얻을 수 없습니다. 로그인 하지 않고 대시보드에 접근했습니다."
             }
-            fetchGrowingCrop(currentUserId)
+            fetchGrowingCrop()
         }
     }
 
-    private fun fetchGrowingCrop(currentUserId: String) = intent {
+    private fun fetchGrowingCrop() = intent {
         cropRepository.getGrowingCrop(userId = currentUserId)
             .onSuccess { growingCrop ->
                 reduce {

@@ -8,12 +8,15 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.paging.PagingData
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
+import com.ramcosta.composedestinations.result.NavResult
+import com.ramcosta.composedestinations.result.OpenResultRecipient
 import io.foundy.core.designsystem.theme.CamstudyTheme
 import io.foundy.core.model.GrowingCrop
 import io.foundy.core.model.RoomOverview
@@ -34,12 +37,25 @@ internal enum class DivideKey {
 @Composable
 fun DashboardRoute(
     viewModel: DashboardViewModel = hiltViewModel(),
+    plantResultRecipient: OpenResultRecipient<Boolean>,
     navigateToCropTab: () -> Unit,
-    navigateToPlantCrop: () -> Unit
+    navigateToPlantCrop: () -> Unit,
+    showSnackbar: (String) -> Unit
 ) {
     val recommendedRoomFlow = flowOf(PagingData.from(emptyList<RoomOverview>()))
     val recommendedRooms = recommendedRoomFlow.collectAsLazyPagingItems()
     val uiState = viewModel.collectAsState().value
+    val context = LocalContext.current
+
+    plantResultRecipient.onNavResult {
+        when (it) {
+            is NavResult.Value -> {
+                uiState.fetchGrowingCrop()
+                showSnackbar(context.getString(R.string.success_to_plant_crop))
+            }
+            else -> {}
+        }
+    }
 
     viewModel.collectSideEffect {
         when (it) {
@@ -150,7 +166,9 @@ private fun DashboardScreenPreview() {
     CamstudyTheme {
         DashboardScreen(
             recommendedRooms = recommendedRooms,
-            uiState = DashboardUiState(),
+            uiState = DashboardUiState(
+                fetchGrowingCrop = {}
+            ),
             onCropTileClick = {}
         )
     }
