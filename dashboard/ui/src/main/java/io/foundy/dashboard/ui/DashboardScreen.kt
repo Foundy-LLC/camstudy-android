@@ -15,6 +15,7 @@ import androidx.paging.PagingData
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import io.foundy.core.designsystem.theme.CamstudyTheme
+import io.foundy.core.model.GrowingCrop
 import io.foundy.core.model.RoomOverview
 import io.foundy.core.model.constant.RoomConstants
 import io.foundy.dashboard.ui.component.Header
@@ -32,7 +33,8 @@ internal enum class DivideKey {
 
 @Composable
 fun DashboardRoute(
-    viewModel: DashboardViewModel = hiltViewModel()
+    viewModel: DashboardViewModel = hiltViewModel(),
+    navigateToCropTab: () -> Unit
 ) {
     val recommendedRoomFlow = flowOf(PagingData.from(emptyList<RoomOverview>()))
     val recommendedRooms = recommendedRoomFlow.collectAsLazyPagingItems()
@@ -48,7 +50,14 @@ fun DashboardRoute(
 
     DashboardScreen(
         uiState = uiState,
-        recommendedRooms = recommendedRooms
+        recommendedRooms = recommendedRooms,
+        onCropTileClick = { growingCrop ->
+            if (growingCrop != null) {
+                navigateToCropTab()
+            } else {
+                // TODO: 식물 심는 페이지로 네비게이션
+            }
+        }
     )
 }
 
@@ -56,7 +65,8 @@ fun DashboardRoute(
 @Composable
 fun DashboardScreen(
     uiState: DashboardUiState,
-    recommendedRooms: LazyPagingItems<RoomOverview>
+    recommendedRooms: LazyPagingItems<RoomOverview>,
+    onCropTileClick: (GrowingCrop?) -> Unit
 ) {
     LazyColumn(
         modifier = Modifier
@@ -68,7 +78,7 @@ fun DashboardScreen(
                 weeklyStudyMinutes = 2213,
                 weeklyRanking = 3,
                 growingCropUiState = uiState.growingCropUiState,
-                onCropTileClick = { /* TODO: 구현하기 */ }
+                onCropTileClick = onCropTileClick
             )
         }
         dividePadding()
@@ -139,7 +149,8 @@ private fun DashboardScreenPreview() {
     CamstudyTheme {
         DashboardScreen(
             recommendedRooms = recommendedRooms,
-            uiState = DashboardUiState()
+            uiState = DashboardUiState(),
+            onCropTileClick = {}
         )
     }
 }

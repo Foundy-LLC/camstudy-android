@@ -21,17 +21,23 @@ import kotlinx.coroutines.launch
 @Composable
 fun MainTabRoute(
     navigator: DestinationsNavigator,
+    navigateToCropTab: () -> Unit
 ) {
     val pagerState = rememberPagerState(0)
 
-    HomeTabScreen(pagerState = pagerState, navigator = navigator)
+    HomeTabScreen(
+        pagerState = pagerState,
+        navigator = navigator,
+        navigateToCropTab = navigateToCropTab
+    )
 }
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun HomeTabScreen(
     pagerState: PagerState,
-    navigator: DestinationsNavigator
+    navigator: DestinationsNavigator,
+    navigateToCropTab: () -> Unit
 ) {
     val coroutineScope = rememberCoroutineScope()
 
@@ -54,7 +60,9 @@ fun HomeTabScreen(
         }
         HorizontalPager(pageCount = MainTabDestination.values.size, state = pagerState) { page ->
             when (MainTabDestination.values[page]) {
-                MainTabDestination.Dashboard -> DashboardRoute()
+                MainTabDestination.Dashboard -> DashboardRoute(
+                    navigateToCropTab = navigateToCropTab
+                )
                 MainTabDestination.StudyRooms -> RoomListRoute(navigator = navigator)
             }
         }

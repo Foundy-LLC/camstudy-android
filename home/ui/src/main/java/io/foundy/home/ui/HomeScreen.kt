@@ -85,7 +85,10 @@ fun HomeScreen(
             modifier = Modifier.padding(padding),
         ) {
             composable(MainTabRouteDestination) {
-                MainTabRoute(navigator = navigator)
+                MainTabRoute(
+                    navigator = navigator,
+                    navigateToCropTab = { homeScreenState.navigate(HomeTabDestination.Crop) }
+                )
             }
             composable(FriendRouteDestination) {
                 FriendRoute(userId = currentUserId)

@@ -47,7 +47,7 @@ fun Header(
     weeklyStudyMinutes: Int,
     weeklyRanking: Int?,
     growingCropUiState: GrowingCropUiState,
-    onCropTileClick: () -> Unit
+    onCropTileClick: (GrowingCrop?) -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -122,13 +122,13 @@ private fun Time(
 @Composable
 fun GrowingCropTile(
     growingCropUiState: GrowingCropUiState,
-    onClick: () -> Unit
+    onClick: (GrowingCrop?) -> Unit
 ) {
     when (growingCropUiState) {
         GrowingCropUiState.Loading -> GrowingCropTileSurface {}
         is GrowingCropUiState.Success -> GrowingCropTileContent(
             crop = growingCropUiState.growingCrop,
-            onClick = onClick
+            onClick = { onClick(growingCropUiState.growingCrop) }
         )
         is GrowingCropUiState.Failure -> GrowingCropTileSurface {
             CamstudyText(
