@@ -34,7 +34,8 @@ internal enum class DivideKey {
 @Composable
 fun DashboardRoute(
     viewModel: DashboardViewModel = hiltViewModel(),
-    navigateToCropTab: () -> Unit
+    navigateToCropTab: () -> Unit,
+    navigateToPlantCrop: () -> Unit
 ) {
     val recommendedRoomFlow = flowOf(PagingData.from(emptyList<RoomOverview>()))
     val recommendedRooms = recommendedRoomFlow.collectAsLazyPagingItems()
@@ -55,7 +56,7 @@ fun DashboardRoute(
             if (growingCrop != null) {
                 navigateToCropTab()
             } else {
-                // TODO: 식물 심는 페이지로 네비게이션
+                navigateToPlantCrop()
             }
         }
     )

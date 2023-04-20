@@ -12,6 +12,7 @@ import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import io.foundy.core.designsystem.component.CamstudyTab
 import io.foundy.core.designsystem.component.CamstudyTabRow
+import io.foundy.crop.ui.destinations.PlantCropRouteDestination
 import io.foundy.dashboard.ui.DashboardRoute
 import io.foundy.room_list.ui.RoomListRoute
 import kotlinx.coroutines.launch
@@ -61,7 +62,8 @@ fun HomeTabScreen(
         HorizontalPager(pageCount = MainTabDestination.values.size, state = pagerState) { page ->
             when (MainTabDestination.values[page]) {
                 MainTabDestination.Dashboard -> DashboardRoute(
-                    navigateToCropTab = navigateToCropTab
+                    navigateToCropTab = navigateToCropTab,
+                    navigateToPlantCrop = { navigator.navigate(PlantCropRouteDestination) }
                 )
                 MainTabDestination.StudyRooms -> RoomListRoute(navigator = navigator)
             }

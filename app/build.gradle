@@ -68,6 +68,8 @@ dependencies {
     implementation project(":room-list:ui")
     implementation project(":room:ui")
     implementation project(":organization:ui")
+    implementation project(":crop:ui")
+    implementation project(path: ':dashboard:ui')
 
     // stream log
     implementation("io.getstream:stream-log-android:$stream_log_version")

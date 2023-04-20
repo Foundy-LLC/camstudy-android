@@ -4,6 +4,7 @@ import com.ramcosta.composedestinations.spec.DestinationSpec
 import com.ramcosta.composedestinations.spec.NavGraphSpec
 import com.ramcosta.composedestinations.spec.Route
 import io.foundy.auth.ui.destinations.LoginRouteDestination
+import io.foundy.crop.ui.destinations.PlantCropRouteDestination
 import io.foundy.home.ui.destinations.HomeRouteDestination
 import io.foundy.home.ui.navigation.HomeNavGraph
 import io.foundy.organization.ui.destinations.OrganizationRouteDestination
@@ -19,7 +20,8 @@ internal object RootNavGraph : NavGraphSpec {
         HomeRouteDestination,
         LoginRouteDestination,
         WelcomeRouteDestination,
-        OrganizationRouteDestination
+        OrganizationRouteDestination,
+        PlantCropRouteDestination
     ).associateBy { it.route }
 
     override val nestedNavGraphs: List<NavGraphSpec> = listOf(
