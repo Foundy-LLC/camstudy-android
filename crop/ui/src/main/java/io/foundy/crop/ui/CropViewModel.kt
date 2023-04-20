@@ -20,19 +20,22 @@ class CropViewModel @Inject constructor(
     private val cropRepository: CropRepository
 ) : ViewModel(), ContainerHost<CropUiState, CropSideEffect> {
 
-    override val container: Container<CropUiState, CropSideEffect> = container(CropUiState())
+    override val container: Container<CropUiState, CropSideEffect> = container(
+        CropUiState(fetchGrowingCrop = ::fetchGrowingCrop)
+    )
+
+    private lateinit var currentUserId: String
 
     init {
         viewModelScope.launch {
-            val currentUserId = authRepository.currentUserIdStream.firstOrNull()
-            check(currentUserId != null) {
+            currentUserId = requireNotNull(authRepository.currentUserIdStream.firstOrNull()) {
                 "현재 로그인한 회원 아이디를 얻을 수 없습니다. 로그인 하지 않고 작물을 보려 했습니다."
             }
-            fetchGrowingCrop(currentUserId = currentUserId)
+            fetchGrowingCrop()
         }
     }
 
-    private fun fetchGrowingCrop(currentUserId: String) = intent {
+    private fun fetchGrowingCrop() = intent {
         cropRepository.getGrowingCrop(userId = currentUserId)
             .onSuccess { growingCrop ->
                 reduce {

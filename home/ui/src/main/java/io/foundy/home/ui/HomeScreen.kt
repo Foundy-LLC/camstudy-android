@@ -14,7 +14,6 @@ import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -36,6 +35,8 @@ import io.foundy.core.designsystem.component.CamstudyTopAppBar
 import io.foundy.core.designsystem.icon.CamstudyIcon
 import io.foundy.core.designsystem.icon.CamstudyIcons
 import io.foundy.core.designsystem.theme.CamstudyTheme
+import io.foundy.crop.ui.CropRoute
+import io.foundy.crop.ui.destinations.CropRouteDestination
 import io.foundy.friend.ui.FriendRoute
 import io.foundy.friend.ui.destinations.FriendRouteDestination
 import io.foundy.home.ui.destinations.MainTabRouteDestination
@@ -65,8 +66,6 @@ fun HomeScreen(
     plantResultRecipient: OpenResultRecipient<Boolean>,
     homeScreenState: HomeScreenState = rememberHomeScreenState(),
 ) {
-    val coroutineScope = rememberCoroutineScope()
-
     Scaffold(
         topBar = {
             CamstudyTopAppBar(
@@ -98,6 +97,13 @@ fun HomeScreen(
                     navigator = navigator,
                     plantResultRecipient = plantResultRecipient,
                     navigateToCropTab = { homeScreenState.navigate(HomeTabDestination.Crop) },
+                    showSnackbar = homeScreenState::showSnackbar
+                )
+            }
+            composable(CropRouteDestination) {
+                CropRoute(
+                    navigator = navigator,
+                    plantResultRecipient = plantResultRecipient,
                     showSnackbar = homeScreenState::showSnackbar
                 )
             }

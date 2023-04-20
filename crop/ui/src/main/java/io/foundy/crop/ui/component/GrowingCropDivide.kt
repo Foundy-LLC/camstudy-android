@@ -43,7 +43,10 @@ import io.foundy.crop.ui.R
 import java.util.Calendar
 
 @Composable
-fun GrowingCropDivide(growingCropUiState: GrowingCropUiState) {
+fun GrowingCropDivide(
+    growingCropUiState: GrowingCropUiState,
+    onPlantClick: () -> Unit
+) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -53,13 +56,17 @@ fun GrowingCropDivide(growingCropUiState: GrowingCropUiState) {
         DivideTitle(text = stringResource(R.string.my_pot))
         Spacer(modifier = Modifier.height(16.dp))
         DivideContent(
-            growingCropUiState = growingCropUiState
+            growingCropUiState = growingCropUiState,
+            onPlantClick = onPlantClick
         )
     }
 }
 
 @Composable
-private fun DivideContent(growingCropUiState: GrowingCropUiState) {
+private fun DivideContent(
+    growingCropUiState: GrowingCropUiState,
+    onPlantClick: () -> Unit
+) {
     val growingCrop = (growingCropUiState as? GrowingCropUiState.Success)?.growingCrop
 
     Row(verticalAlignment = Alignment.CenterVertically) {
@@ -73,7 +80,7 @@ private fun DivideContent(growingCropUiState: GrowingCropUiState) {
                 if (growingCropUiState.growingCrop != null) {
                     GrowingCropInfo(growingCrop = growingCropUiState.growingCrop)
                 } else {
-                    EmptyGrowingCropInfo(onPlantClick = { /* TODO */ })
+                    EmptyGrowingCropInfo(onPlantClick = onPlantClick)
                 }
             }
             is GrowingCropUiState.Failure -> CamstudyText(
@@ -228,7 +235,8 @@ private fun GrowingCropInfo(growingCrop: GrowingCrop) {
 fun LoadingGrowingCropDividePreview() {
     CamstudyTheme {
         GrowingCropDivide(
-            growingCropUiState = GrowingCropUiState.Loading
+            growingCropUiState = GrowingCropUiState.Loading,
+            onPlantClick = {}
         )
     }
 }
@@ -251,7 +259,8 @@ fun GrowingCropDividePreview() {
                         set(2023, 3, 14, 21, 59)
                     }.time
                 )
-            )
+            ),
+            onPlantClick = {}
         )
     }
 }
@@ -264,7 +273,8 @@ fun EmptyGrowingCropDividePreview() {
         GrowingCropDivide(
             growingCropUiState = GrowingCropUiState.Success(
                 growingCrop = null
-            )
+            ),
+            onPlantClick = {}
         )
     }
 }
@@ -273,6 +283,9 @@ fun EmptyGrowingCropDividePreview() {
 @Composable
 fun FailureGrowingCropDividePreview() {
     CamstudyTheme {
-        GrowingCropDivide(growingCropUiState = GrowingCropUiState.Failure(message = null))
+        GrowingCropDivide(
+            growingCropUiState = GrowingCropUiState.Failure(message = null),
+            onPlantClick = {}
+        )
     }
 }
