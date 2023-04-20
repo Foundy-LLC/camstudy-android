@@ -8,6 +8,7 @@ import io.foundy.crop.data.api.CropApi
 import io.foundy.crop.data.model.PlantCropRequestBody
 import io.foundy.crop.data.model.toDto
 import io.foundy.crop.data.model.toEntity
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.firstOrNull
 import javax.inject.Inject
 
@@ -16,13 +17,23 @@ class NetworkCropRepository @Inject constructor(
     private val cropApi: CropApi
 ) : CropRepository {
 
+    override val currentUserGrowingCropFlow: MutableSharedFlow<GrowingCrop?> = MutableSharedFlow(1)
+
     override suspend fun getGrowingCrop(userId: String): Result<GrowingCrop?> {
+        val isCurrentUser = userId == authRepository.currentUserIdStream.firstOrNull()
         return runCatching {
             val response = cropApi.getGrowingCrop(userId = userId)
             if (response.code() == 404) {
+                if (isCurrentUser) {
+                    currentUserGrowingCropFlow.emit(null)
+                }
                 return@runCatching null
             }
-            return@runCatching response.getDataOrThrowMessage().toEntity()
+            val growingCrop = response.getDataOrThrowMessage().toEntity()
+            if (isCurrentUser) {
+                currentUserGrowingCropFlow.emit(growingCrop)
+            }
+            return@runCatching growingCrop
         }
     }
 

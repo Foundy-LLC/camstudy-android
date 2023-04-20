@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.foundy.auth.data.repository.AuthRepository
 import io.foundy.crop.data.repository.CropRepository
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 import org.orbitmvi.orbit.Container
@@ -33,17 +34,24 @@ class CropViewModel @Inject constructor(
             }
             fetchGrowingCrop()
         }
+        viewModelScope.launch {
+            cropRepository.currentUserGrowingCropFlow.collectLatest { growingCrop ->
+                intent {
+                    reduce {
+                        state.copy(
+                            growingCropUiState = GrowingCropUiState.Success(
+                                growingCrop = growingCrop
+                            )
+                        )
+                    }
+                }
+            }
+        }
     }
 
     private fun fetchGrowingCrop() = intent {
         cropRepository.getGrowingCrop(userId = currentUserId)
-            .onSuccess { growingCrop ->
-                reduce {
-                    state.copy(
-                        growingCropUiState = GrowingCropUiState.Success(growingCrop = growingCrop)
-                    )
-                }
-            }.onFailure { throwable ->
+            .onFailure { throwable ->
                 reduce {
                     state.copy(
                         growingCropUiState = GrowingCropUiState.Failure(throwable.message)
