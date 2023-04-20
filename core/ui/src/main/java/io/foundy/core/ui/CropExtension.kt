@@ -17,6 +17,17 @@ private fun throwInvalidLevelException(level: Int): Nothing {
     error("There is invalid level of the crop. Level: $level")
 }
 
+val CropType.maxLevelImageIcon
+    get(): CamstudyIcon {
+        return when (this) {
+            CropType.CARROT -> R.drawable.plant_carrot_3
+            CropType.TOMATO -> R.drawable.plant_tomato_5
+            CropType.STRAWBERRY -> R.drawable.plant_strawberry_5
+            CropType.PUMPKIN -> R.drawable.plant_pumpkin_5
+            CropType.CABBAGE -> R.drawable.plant_cabbage_5
+        }.asCamstudyIcon()
+    }
+
 val GrowingCrop.imageIcon
     get(): CamstudyIcon {
         val currentLevel = this.level

@@ -2,7 +2,6 @@ package io.foundy.room.ui.screen
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -27,9 +26,10 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import io.foundy.core.designsystem.component.BottomContainedButton
+import io.foundy.core.designsystem.component.BottomContainedButtonBoxHeight
 import io.foundy.core.designsystem.component.CamstudyDivider
 import io.foundy.core.designsystem.component.CamstudyTextField
-import io.foundy.core.designsystem.component.ContainedButton
 import io.foundy.core.designsystem.component.SelectableTile
 import io.foundy.core.designsystem.icon.CamstudyIcons
 import io.foundy.core.designsystem.theme.CamstudyTheme
@@ -54,8 +54,6 @@ private data class Action(
     val checked: Boolean,
     val onCheckChange: (Boolean) -> Unit
 )
-
-private val JoinButtonBoxHeight = 72.dp
 
 @Composable
 fun WaitingRoomScreen(
@@ -105,7 +103,7 @@ fun WaitingRoomScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .verticalScroll(rememberScrollState())
-                .padding(bottom = JoinButtonBoxHeight)
+                .padding(bottom = BottomContainedButtonBoxHeight)
         ) {
             Box(
                 modifier = Modifier
@@ -177,32 +175,6 @@ fun WaitingRoomScreen(
             enabled = uiState.enableJoinButton,
             label = stringResource(id = uiState.cannotJoinMessage ?: uiState.joinButtonTextRes),
             onClick = onJoinClick
-        )
-    }
-}
-
-@Composable
-private fun BoxScope.BottomContainedButton(
-    enabled: Boolean = true,
-    label: String,
-    onClick: () -> Unit
-) {
-    Box(
-        modifier = Modifier
-            .height(JoinButtonBoxHeight)
-            .align(Alignment.BottomCenter)
-            .background(color = CamstudyTheme.colorScheme.systemBackground)
-    ) {
-        CamstudyDivider()
-        ContainedButton(
-            modifier = Modifier
-                .align(Alignment.Center)
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp, vertical = 12.dp)
-                .height(48.dp),
-            enabled = enabled,
-            label = label,
-            onClick = onClick
         )
     }
 }

@@ -8,4 +8,17 @@
     <string name="pot_is_empty">화분이 비어있습니다</string>
     <string name="plant_crop_into_pot">화분에 작물 심기</string>
     <string name="failed_to_load_pot">화분을 불러오지 못했습니다</string>
+    <string name="plant_crop">작물 심기</string>
+    <string name="selected_crop">선택한 작물</string>
+    <string name="selected_crop_max_level">총 %d단계</string>
+    <string name="required_day_to_harvest">수확 소요일</string>
+    <string name="required_day">%d일</string>
+    <string name="select_crop_in_list">목록에서 작물을 선택하세요</string>
+    <string name="carrot_description">말이 좋아하는 간식. 홍당무로도 불려요</string>
+    <string name="momato_description">안 그래 보여도 가지과에 속해요</string>
+    <string name="strawberry_description">사실 겉면의 깨알들이 진짜 열매랍니다</string>
+    <string name="pumpkin_description">세계에서 가장 큰 열매를 맺는 식물</string>
+    <string name="cabbage_description">식이섬유가 풍부하고 맛이 없어요(?)</string>
+    <string name="crop_list">작물 목록</string>
+    <string name="plant_selected_crop">%s 심기</string>
 </resources>
