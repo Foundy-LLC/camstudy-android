@@ -27,11 +27,12 @@ import io.foundy.core.model.CropType
 import io.foundy.core.model.HarvestedCrop
 import io.foundy.core.ui.gridItems
 import io.foundy.core.ui.imageIcon
+import io.foundy.crop.ui.HarvestedCropsUiState
 import io.foundy.crop.ui.R
 import java.util.Calendar
 import java.util.Date
 
-fun LazyListScope.harvestedCropGridDivide(crops: List<HarvestedCrop>) {
+fun LazyListScope.harvestedCropGridDivide(harvestedCropsUiState: HarvestedCropsUiState) {
     item {
         DivideTitle(
             modifier = Modifier
@@ -42,15 +43,31 @@ fun LazyListScope.harvestedCropGridDivide(crops: List<HarvestedCrop>) {
         )
         CamstudyDivider()
     }
-    if (crops.isEmpty()) {
-        emptyHarvestedCrops()
-    } else {
-        gridItems(
-            items = crops,
-            nColumns = 4,
-            contentPadding = PaddingValues(horizontal = 10.dp, vertical = 8.dp)
-        ) { crop ->
-            HarvestedCropItem(crop)
+    when (harvestedCropsUiState) {
+        HarvestedCropsUiState.Loading -> item {
+            EmptyHarvestedCrops(message = "")
+        }
+        is HarvestedCropsUiState.Success -> {
+            val crops = harvestedCropsUiState.harvestedCrops
+            if (crops.isEmpty()) {
+                item {
+                    EmptyHarvestedCrops(message = stringResource(id = R.string.no_harvested_crops))
+                }
+            } else {
+                gridItems(
+                    items = crops,
+                    nColumns = 4,
+                    contentPadding = PaddingValues(horizontal = 10.dp, vertical = 8.dp)
+                ) { crop ->
+                    HarvestedCropItem(crop)
+                }
+            }
+        }
+        is HarvestedCropsUiState.Failure -> item {
+            EmptyHarvestedCrops(
+                message = harvestedCropsUiState.message
+                    ?: stringResource(R.string.failed_to_load_harvested_crops)
+            )
         }
     }
 }
@@ -72,22 +89,33 @@ private fun HarvestedCropItem(
     }
 }
 
-private fun LazyListScope.emptyHarvestedCrops() {
-    item {
-        Box(
+@Composable
+private fun EmptyHarvestedCrops(message: String) {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(color = CamstudyTheme.colorScheme.systemBackground)
+    ) {
+        CamstudyText(
             modifier = Modifier
-                .fillMaxWidth()
-                .background(color = CamstudyTheme.colorScheme.systemBackground)
-        ) {
-            CamstudyText(
-                modifier = Modifier
-                    .padding(vertical = 60.dp)
-                    .align(Alignment.Center),
-                text = stringResource(R.string.no_harvested_crops),
-                style = CamstudyTheme.typography.titleLarge.copy(
-                    color = CamstudyTheme.colorScheme.systemUi03,
-                    fontWeight = FontWeight.SemiBold
-                )
+                .padding(vertical = 60.dp, horizontal = 16.dp)
+                .align(Alignment.Center),
+            text = message,
+            style = CamstudyTheme.typography.titleLarge.copy(
+                color = CamstudyTheme.colorScheme.systemUi03,
+                fontWeight = FontWeight.SemiBold
+            )
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun LoadingHarvestedCropGridDividePreview() {
+    CamstudyTheme {
+        LazyColumn {
+            harvestedCropGridDivide(
+                harvestedCropsUiState = HarvestedCropsUiState.Loading
             )
         }
     }
@@ -110,7 +138,7 @@ private fun HarvestedCropGridDividePreview() {
     CamstudyTheme {
         LazyColumn {
             harvestedCropGridDivide(
-                crops = items.toList()
+                harvestedCropsUiState = HarvestedCropsUiState.Success(items.toList())
             )
         }
     }
@@ -122,7 +150,7 @@ private fun EmptyHarvestedCropGridDividePreview() {
     CamstudyTheme {
         LazyColumn {
             harvestedCropGridDivide(
-                crops = emptyList()
+                harvestedCropsUiState = HarvestedCropsUiState.Success(emptyList())
             )
         }
     }

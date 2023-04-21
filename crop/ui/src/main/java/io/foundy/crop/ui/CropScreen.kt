@@ -19,12 +19,14 @@ import io.foundy.core.designsystem.theme.CamstudyTheme
 import io.foundy.core.model.CropGrade
 import io.foundy.core.model.CropType
 import io.foundy.core.model.GrowingCrop
+import io.foundy.core.model.HarvestedCrop
 import io.foundy.crop.ui.component.GrowingCropDivide
 import io.foundy.crop.ui.component.harvestedCropGridDivide
 import io.foundy.crop.ui.destinations.PlantCropRouteDestination
 import org.orbitmvi.orbit.compose.collectAsState
 import org.orbitmvi.orbit.compose.collectSideEffect
 import java.util.Calendar
+import java.util.Date
 
 @Destination
 @Composable
@@ -57,6 +59,7 @@ fun CropRoute(
 
     CropScreen(
         growingCropUiState = uiState.growingCropUiState,
+        harvestedCropsUiState = uiState.harvestedCropsUiState,
         onPlantClick = { navigator.navigate(PlantCropRouteDestination) }
     )
 }
@@ -64,6 +67,7 @@ fun CropRoute(
 @Composable
 fun CropScreen(
     growingCropUiState: GrowingCropUiState,
+    harvestedCropsUiState: HarvestedCropsUiState,
     onPlantClick: () -> Unit
 ) {
     LazyColumn(
@@ -78,7 +82,7 @@ fun CropScreen(
             )
         }
         item { Spacer(modifier = Modifier.height(8.dp)) }
-        harvestedCropGridDivide(crops = emptyList()) // TODO: 실제 데이터 전달하기
+        harvestedCropGridDivide(harvestedCropsUiState = harvestedCropsUiState)
     }
 }
 
@@ -99,6 +103,18 @@ private fun CropScreenPreview() {
                         set(2023, 3, 14, 21, 59)
                     }.time
                 ),
+            ),
+            harvestedCropsUiState = HarvestedCropsUiState.Success(
+                harvestedCrops = listOf(
+                    HarvestedCrop(
+                        type = CropType.CARROT,
+                        grade = CropGrade.GOLD,
+                        plantedAt = Calendar.getInstance().apply {
+                            set(2023, 3, 1, 2, 2)
+                        }.time,
+                        harvestedAt = Date()
+                    )
+                )
             ),
             onPlantClick = {}
         )

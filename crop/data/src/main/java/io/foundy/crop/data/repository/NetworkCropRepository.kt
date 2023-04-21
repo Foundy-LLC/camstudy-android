@@ -4,6 +4,7 @@ import io.foundy.auth.data.repository.AuthRepository
 import io.foundy.core.data.extension.getDataOrThrowMessage
 import io.foundy.core.model.CropType
 import io.foundy.core.model.GrowingCrop
+import io.foundy.core.model.HarvestedCrop
 import io.foundy.crop.data.api.CropApi
 import io.foundy.crop.data.model.PlantCropRequestBody
 import io.foundy.crop.data.model.toDto
@@ -34,6 +35,13 @@ class NetworkCropRepository @Inject constructor(
                 currentUserGrowingCropFlow.emit(growingCrop)
             }
             return@runCatching growingCrop
+        }
+    }
+
+    override suspend fun getHarvestedCrops(userId: String): Result<List<HarvestedCrop>> {
+        return runCatching {
+            val response = cropApi.getHarvestedCrops(userId = userId)
+            response.getDataOrThrowMessage().map { it.toEntity() }
         }
     }
 

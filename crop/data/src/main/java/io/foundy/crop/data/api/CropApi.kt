@@ -2,6 +2,7 @@ package io.foundy.crop.data.api
 
 import io.foundy.core.data.util.CamstudyResponse
 import io.foundy.crop.data.model.GrowingCropDto
+import io.foundy.crop.data.model.HarvestedCropDto
 import io.foundy.crop.data.model.PlantCropRequestBody
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -14,6 +15,11 @@ interface CropApi {
     suspend fun getGrowingCrop(
         @Path("userId") userId: String
     ): CamstudyResponse<GrowingCropDto>
+
+    @GET("crops/{userId}")
+    suspend fun getHarvestedCrops(
+        @Path("userId") userId: String
+    ): CamstudyResponse<List<HarvestedCropDto>>
 
     @POST("crops")
     suspend fun plantCrop(

@@ -33,6 +33,7 @@ class CropViewModel @Inject constructor(
                 "현재 로그인한 회원 아이디를 얻을 수 없습니다. 로그인 하지 않고 작물을 보려 했습니다."
             }
             fetchGrowingCrop()
+            fetchHarvestedCrops()
         }
         viewModelScope.launch {
             cropRepository.currentUserGrowingCropFlow.collectLatest { growingCrop ->
@@ -55,6 +56,25 @@ class CropViewModel @Inject constructor(
                 reduce {
                     state.copy(
                         growingCropUiState = GrowingCropUiState.Failure(throwable.message)
+                    )
+                }
+            }
+    }
+
+    private fun fetchHarvestedCrops() = intent {
+        cropRepository.getHarvestedCrops(userId = currentUserId)
+            .onSuccess { crops ->
+                reduce {
+                    state.copy(
+                        harvestedCropsUiState = HarvestedCropsUiState.Success(
+                            harvestedCrops = crops
+                        )
+                    )
+                }
+            }.onFailure {
+                reduce {
+                    state.copy(
+                        harvestedCropsUiState = HarvestedCropsUiState.Failure(message = it.message)
                     )
                 }
             }
