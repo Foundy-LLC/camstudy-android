@@ -9,6 +9,7 @@ import io.foundy.core.designsystem.icon.asCamstudyIcon
 import io.foundy.core.model.CropGrade
 import io.foundy.core.model.CropType
 import io.foundy.core.model.GrowingCrop
+import io.foundy.core.model.HarvestedCrop
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.concurrent.TimeUnit
@@ -16,6 +17,18 @@ import java.util.concurrent.TimeUnit
 private fun throwInvalidLevelException(level: Int): Nothing {
     error("There is invalid level of the crop. Level: $level")
 }
+
+val HarvestedCrop.imageIcon
+    get(): CamstudyIcon {
+        // TODO: 등급별 이미지 디자인 나오면 수정하기
+        return when (this.type) {
+            CropType.CARROT -> R.drawable.plant_carrot_3
+            CropType.TOMATO -> R.drawable.plant_tomato_5
+            CropType.STRAWBERRY -> R.drawable.plant_strawberry_5
+            CropType.PUMPKIN -> R.drawable.plant_pumpkin_5
+            CropType.CABBAGE -> R.drawable.plant_cabbage_5
+        }.asCamstudyIcon()
+    }
 
 val CropType.maxLevelImageIcon
     get(): CamstudyIcon {

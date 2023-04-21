@@ -24,4 +24,6 @@
     <string name="planting_selected_crop">%s 심는중…</string>
     <string name="failed_to_plant_crop">작물 심기를 실패했습니다.</string>
     <string name="success_to_plant_crop">작물을 성공적으로 심었습니다.</string>
+    <string name="my_crops">내 작물</string>
+    <string name="no_harvested_crops">수확한 작물이 없습니다</string>
 </resources>
