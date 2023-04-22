@@ -24,7 +24,7 @@ import io.foundy.core.model.constant.RoomConstants
 import io.foundy.dashboard.ui.component.Header
 import io.foundy.dashboard.ui.component.recentRoomDivide
 import io.foundy.dashboard.ui.component.recommendedRoomDivide
-import io.foundy.dashboard.ui.model.RecentRoom
+import io.foundy.room.ui.RoomActivity
 import kotlinx.coroutines.flow.flowOf
 import org.orbitmvi.orbit.compose.collectAsState
 import org.orbitmvi.orbit.compose.collectSideEffect
@@ -40,7 +40,7 @@ fun DashboardRoute(
     plantResultRecipient: OpenResultRecipient<Boolean>,
     navigateToCropTab: () -> Unit,
     navigateToPlantCrop: () -> Unit,
-    showSnackbar: (String) -> Unit
+    showSnackbar: (id: String) -> Unit
 ) {
     val recommendedRoomFlow = flowOf(PagingData.from(emptyList<RoomOverview>()))
     val recommendedRooms = recommendedRoomFlow.collectAsLazyPagingItems()
@@ -74,6 +74,10 @@ fun DashboardRoute(
             } else {
                 navigateToPlantCrop()
             }
+        },
+        onRecentRoomClick = { roomOverview ->
+            val intent = RoomActivity.getIntent(context, roomOverview = roomOverview)
+            context.startActivity(intent)
         }
     )
 }
@@ -83,7 +87,8 @@ fun DashboardRoute(
 fun DashboardScreen(
     uiState: DashboardUiState,
     recommendedRooms: LazyPagingItems<RoomOverview>,
-    onCropTileClick: (GrowingCrop?) -> Unit
+    onCropTileClick: (GrowingCrop?) -> Unit,
+    onRecentRoomClick: (RoomOverview) -> Unit
 ) {
     LazyColumn(
         modifier = Modifier
@@ -100,21 +105,8 @@ fun DashboardScreen(
         }
         dividePadding()
         recentRoomDivide(
-            rooms = listOf(
-                RecentRoom(
-                    id = "id",
-                    thumbnail = null,
-                    title = "방제목1",
-                    tags = listOf("안드로이드", "개발")
-                ),
-                RecentRoom(
-                    id = "id2",
-                    thumbnail = null,
-                    title = "방제목2",
-                    tags = listOf("공부원", "공시")
-                )
-            ),
-            onRoomClick = { /* TODO: 구현하기 */ }
+            recentRoomsUiState = uiState.recentRoomsUiState,
+            onRoomClick = onRecentRoomClick
         )
         dividePadding()
         recommendedRoomDivide(
@@ -169,7 +161,8 @@ private fun DashboardScreenPreview() {
             uiState = DashboardUiState(
                 fetchGrowingCrop = {}
             ),
-            onCropTileClick = {}
+            onCropTileClick = {},
+            onRecentRoomClick = {}
         )
     }
 }

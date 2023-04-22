@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.foundy.auth.data.repository.AuthRepository
 import io.foundy.crop.data.repository.CropRepository
+import io.foundy.room_list.data.repository.RoomListRepository
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
@@ -18,7 +19,8 @@ import javax.inject.Inject
 @HiltViewModel
 class DashboardViewModel @Inject constructor(
     private val authRepository: AuthRepository,
-    private val cropRepository: CropRepository
+    private val cropRepository: CropRepository,
+    private val roomListRepository: RoomListRepository
 ) : ViewModel(), ContainerHost<DashboardUiState, DashboardSideEffect> {
 
     override val container: Container<DashboardUiState, DashboardSideEffect> = container(
@@ -33,6 +35,7 @@ class DashboardViewModel @Inject constructor(
                 "현재 회원 아이디를 얻을 수 없습니다. 로그인 하지 않고 대시보드에 접근했습니다."
             }
             fetchGrowingCrop()
+            fetchRecentRooms()
         }
         viewModelScope.launch {
             cropRepository.currentUserGrowingCropFlow.collectLatest { growingCrop ->
@@ -55,6 +58,25 @@ class DashboardViewModel @Inject constructor(
                 reduce {
                     state.copy(
                         growingCropUiState = GrowingCropUiState.Failure(throwable.message)
+                    )
+                }
+            }
+    }
+
+    private fun fetchRecentRooms() = intent {
+        roomListRepository.getRecentRooms(userId = currentUserId)
+            .onSuccess { rooms ->
+                reduce {
+                    state.copy(
+                        recentRoomsUiState = RecentRoomsUiState.Success(
+                            recentRooms = rooms
+                        )
+                    )
+                }
+            }.onFailure {
+                reduce {
+                    state.copy(
+                        recentRoomsUiState = RecentRoomsUiState.Failure(message = it.message)
                     )
                 }
             }

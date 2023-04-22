@@ -25,15 +25,17 @@ import io.foundy.core.designsystem.component.CamstudyText
 import io.foundy.core.designsystem.icon.CamstudyIcon
 import io.foundy.core.designsystem.icon.CamstudyIcons
 import io.foundy.core.designsystem.theme.CamstudyTheme
+import io.foundy.core.model.RoomOverview
+import io.foundy.core.model.UserOverview
 import io.foundy.core.ui.RoomTags
 import io.foundy.core.ui.RoomThumbnailImage
 import io.foundy.dashboard.ui.DivideKey
 import io.foundy.dashboard.ui.R
-import io.foundy.dashboard.ui.model.RecentRoom
+import io.foundy.dashboard.ui.RecentRoomsUiState
 
 fun LazyListScope.recentRoomDivide(
-    rooms: List<RecentRoom>,
-    onRoomClick: (RecentRoom) -> Unit
+    recentRoomsUiState: RecentRoomsUiState,
+    onRoomClick: (RoomOverview) -> Unit
 ) {
     item {
         DivideTitle(
@@ -44,19 +46,33 @@ fun LazyListScope.recentRoomDivide(
             text = stringResource(R.string.recent_study_room)
         )
     }
-    if (rooms.isEmpty()) {
-        item {
-            EmptyDivideContent(text = stringResource(R.string.no_recent_rooms))
+    when (recentRoomsUiState) {
+        RecentRoomsUiState.Loading -> item {
+            EmptyDivideContent(text = "")
         }
-    } else {
-        items(items = rooms, key = { "${DivideKey.RecentRooms}${it.id}" }) { room ->
-            RecentRoomTile(room = room, onClick = onRoomClick)
+        is RecentRoomsUiState.Success -> {
+            val rooms = recentRoomsUiState.recentRooms
+            if (rooms.isEmpty()) {
+                item {
+                    EmptyDivideContent(text = stringResource(R.string.no_recent_rooms))
+                }
+            } else {
+                items(items = rooms, key = { "${DivideKey.RecentRooms}${it.id}" }) { room ->
+                    RecentRoomTile(room = room, onClick = onRoomClick)
+                }
+            }
+        }
+        is RecentRoomsUiState.Failure -> item {
+            EmptyDivideContent(
+                text = recentRoomsUiState.message
+                    ?: stringResource(R.string.failed_to_load_recent_room)
+            )
         }
     }
 }
 
 @Composable
-private fun RecentRoomTile(room: RecentRoom, onClick: (RecentRoom) -> Unit) {
+private fun RecentRoomTile(room: RoomOverview, onClick: (RoomOverview) -> Unit) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -100,18 +116,44 @@ private fun RecentRoomsPreview() {
     CamstudyTheme {
         LazyColumn {
             recentRoomDivide(
-                rooms = listOf(
-                    RecentRoom(
-                        id = "id",
-                        thumbnail = null,
-                        title = "방제목1",
-                        tags = listOf("안드로이드", "개발")
-                    ),
-                    RecentRoom(
-                        id = "id2",
-                        thumbnail = null,
-                        title = "방제목2",
-                        tags = listOf("공부원", "공시")
+                recentRoomsUiState = RecentRoomsUiState.Success(
+                    recentRooms = listOf(
+                        RoomOverview(
+                            id = "id",
+                            title = "스터디",
+                            masterId = "id",
+                            hasPassword = true,
+                            thumbnail = null,
+                            joinCount = 1,
+                            joinedUsers = listOf(
+                                UserOverview(
+                                    id = "id",
+                                    name = "김민성",
+                                    profileImage = null,
+                                    introduce = null
+                                )
+                            ),
+                            maxCount = 4,
+                            tags = listOf("공시", "자격증")
+                        ),
+                        RoomOverview(
+                            id = "id2",
+                            title = "스터디",
+                            masterId = "id",
+                            hasPassword = true,
+                            thumbnail = null,
+                            joinCount = 1,
+                            joinedUsers = listOf(
+                                UserOverview(
+                                    id = "id",
+                                    name = "김민성",
+                                    profileImage = null,
+                                    introduce = null
+                                )
+                            ),
+                            maxCount = 4,
+                            tags = listOf("공시", "자격증")
+                        )
                     )
                 ),
                 onRoomClick = {}
@@ -126,7 +168,7 @@ private fun EmptyRecentRoomsPreview() {
     CamstudyTheme {
         LazyColumn {
             recentRoomDivide(
-                rooms = emptyList(),
+                recentRoomsUiState = RecentRoomsUiState.Success(recentRooms = emptyList()),
                 onRoomClick = {}
             )
         }
@@ -138,11 +180,18 @@ private fun EmptyRecentRoomsPreview() {
 private fun RecentRoomTilePreview() {
     CamstudyTheme {
         RecentRoomTile(
-            RecentRoom(
+            RoomOverview(
                 id = "id",
+                title = "스터디",
+                masterId = "id",
+                hasPassword = true,
                 thumbnail = null,
-                title = "방제목",
-                tags = listOf("안드로이드", "개발")
+                joinCount = 1,
+                joinedUsers = listOf(
+                    UserOverview(id = "id", name = "김민성", profileImage = null, introduce = null)
+                ),
+                maxCount = 4,
+                tags = listOf("공시", "자격증")
             ),
             onClick = {}
         )

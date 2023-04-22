@@ -7,6 +7,7 @@ import io.foundy.core.data.extension.getDataOrThrowMessage
 import io.foundy.core.model.RoomOverview
 import io.foundy.room_list.data.api.RoomListApi
 import io.foundy.room_list.data.model.RoomCreateRequestBody
+import io.foundy.room_list.data.model.toEntity
 import io.foundy.room_list.data.source.RoomPagingSource
 import kotlinx.coroutines.flow.Flow
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
@@ -24,6 +25,13 @@ class PagingRoomListRepository @Inject constructor(
             config = PagingConfig(RoomPagingSource.PAGE_SIZE),
             pagingSourceFactory = { RoomPagingSource(api = roomListApi, query = query) }
         ).flow
+    }
+
+    override suspend fun getRecentRooms(userId: String): Result<List<RoomOverview>> {
+        return runCatching {
+            val response = roomListApi.getRecentRooms(userId = userId)
+            response.getDataOrThrowMessage().map { it.toEntity() }
+        }
     }
 
     override suspend fun createRoom(

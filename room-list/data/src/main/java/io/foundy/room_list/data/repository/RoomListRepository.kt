@@ -10,6 +10,8 @@ interface RoomListRepository {
 
     fun getRooms(query: String): Flow<PagingData<RoomOverview>>
 
+    suspend fun getRecentRooms(userId: String): Result<List<RoomOverview>>
+
     suspend fun createRoom(
         createRequestBody: RoomCreateRequestBody,
         thumbnail: File?
