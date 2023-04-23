@@ -33,11 +33,11 @@ import io.foundy.core.designsystem.util.nonScaledSp
 import io.foundy.core.model.CropGrade
 import io.foundy.core.model.CropType
 import io.foundy.core.model.GrowingCrop
-import io.foundy.core.ui.getExpectedGradeText
-import io.foundy.core.ui.getFormattedPlantAt
-import io.foundy.core.ui.getName
-import io.foundy.core.ui.getRemainingTimeText
-import io.foundy.core.ui.imageIcon
+import io.foundy.core.ui.crop.getExpectedGradeText
+import io.foundy.core.ui.crop.getFormattedPlantAt
+import io.foundy.core.ui.crop.getName
+import io.foundy.core.ui.crop.getRemainingTimeText
+import io.foundy.core.ui.crop.imageIcon
 import io.foundy.crop.ui.GrowingCropUiState
 import io.foundy.crop.ui.R
 import java.util.Calendar

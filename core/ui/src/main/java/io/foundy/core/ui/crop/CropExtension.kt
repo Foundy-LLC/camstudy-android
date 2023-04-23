@@ -1,89 +1,33 @@
-package io.foundy.core.ui
+package io.foundy.core.ui.crop
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import io.foundy.core.common.util.currentLocale
 import io.foundy.core.designsystem.icon.CamstudyIcon
-import io.foundy.core.designsystem.icon.asCamstudyIcon
 import io.foundy.core.model.CropGrade
 import io.foundy.core.model.CropType
 import io.foundy.core.model.GrowingCrop
 import io.foundy.core.model.HarvestedCrop
+import io.foundy.core.ui.R
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.concurrent.TimeUnit
 
-private fun throwInvalidLevelException(level: Int): Nothing {
-    error("There is invalid level of the crop. Level: $level")
-}
-
 val HarvestedCrop.imageIcon
     get(): CamstudyIcon {
-        // TODO: 등급별 이미지 디자인 나오면 수정하기
-        return when (this.type) {
-            CropType.CARROT -> R.drawable.plant_carrot_3
-            CropType.TOMATO -> R.drawable.plant_tomato_5
-            CropType.STRAWBERRY -> R.drawable.plant_strawberry_5
-            CropType.PUMPKIN -> R.drawable.plant_pumpkin_5
-            CropType.CABBAGE -> R.drawable.plant_cabbage_5
-        }.asCamstudyIcon()
+        return this.type.cropImageContainer.getHarvestedImageBy(this.grade)
     }
 
-val CropType.maxLevelImageIcon
+val CropType.maxGrowingLevelImageIcon
     get(): CamstudyIcon {
-        return when (this) {
-            CropType.CARROT -> R.drawable.plant_carrot_3
-            CropType.TOMATO -> R.drawable.plant_tomato_5
-            CropType.STRAWBERRY -> R.drawable.plant_strawberry_5
-            CropType.PUMPKIN -> R.drawable.plant_pumpkin_5
-            CropType.CABBAGE -> R.drawable.plant_cabbage_5
-        }.asCamstudyIcon()
+        return this.cropImageContainer.maxGrowingLevelIcon
     }
 
 val GrowingCrop.imageIcon
     get(): CamstudyIcon {
         val currentLevel = this.level
-        return when (this.type) {
-            CropType.STRAWBERRY -> when (currentLevel) {
-                1 -> R.drawable.plant_strawberry_1
-                2 -> R.drawable.plant_strawberry_2
-                3 -> R.drawable.plant_strawberry_3
-                4 -> R.drawable.plant_strawberry_4
-                CropType.STRAWBERRY.maxLevel -> R.drawable.plant_strawberry_5
-                else -> throwInvalidLevelException(this.level)
-            }
-            CropType.TOMATO -> when (currentLevel) {
-                1 -> R.drawable.plant_tomato_1
-                2 -> R.drawable.plant_tomato_2
-                3 -> R.drawable.plant_tomato_3
-                4 -> R.drawable.plant_tomato_4
-                CropType.TOMATO.maxLevel -> R.drawable.plant_tomato_5
-                else -> throwInvalidLevelException(this.level)
-            }
-            CropType.CARROT -> when (currentLevel) {
-                1 -> R.drawable.plant_carrot_1
-                2 -> R.drawable.plant_carrot_2
-                CropType.CARROT.maxLevel -> R.drawable.plant_carrot_3
-                else -> throwInvalidLevelException(this.level)
-            }
-            CropType.PUMPKIN -> when (currentLevel) {
-                1 -> R.drawable.plant_pumpkin_1
-                2 -> R.drawable.plant_pumpkin_2
-                3 -> R.drawable.plant_pumpkin_3
-                4 -> R.drawable.plant_pumpkin_4
-                CropType.PUMPKIN.maxLevel -> R.drawable.plant_pumpkin_5
-                else -> throwInvalidLevelException(this.level)
-            }
-            CropType.CABBAGE -> when (currentLevel) {
-                1 -> R.drawable.plant_cabbage_1
-                2 -> R.drawable.plant_cabbage_2
-                3 -> R.drawable.plant_cabbage_3
-                4 -> R.drawable.plant_cabbage_4
-                CropType.CABBAGE.maxLevel -> R.drawable.plant_cabbage_5
-                else -> throwInvalidLevelException(this.level)
-            }
-        }.asCamstudyIcon()
+        return this.type.cropImageContainer.getGrowingImageBy(level = currentLevel)
     }
 
 @Composable

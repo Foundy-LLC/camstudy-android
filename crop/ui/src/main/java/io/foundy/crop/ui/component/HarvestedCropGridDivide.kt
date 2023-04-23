@@ -25,8 +25,8 @@ import io.foundy.core.designsystem.theme.CamstudyTheme
 import io.foundy.core.model.CropGrade
 import io.foundy.core.model.CropType
 import io.foundy.core.model.HarvestedCrop
+import io.foundy.core.ui.crop.imageIcon
 import io.foundy.core.ui.gridItems
-import io.foundy.core.ui.imageIcon
 import io.foundy.crop.ui.HarvestedCropsUiState
 import io.foundy.crop.ui.R
 import java.util.Calendar
