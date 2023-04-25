@@ -113,6 +113,7 @@ class RoomListViewModel @Inject constructor(
                 },
                 title = roomCreateInput.title,
                 password = roomCreateInput.password.ifEmpty { null },
+                tags = listOf(), // TODO: 사용자에게 태그 입력받아 실제 데이터 전달하기
                 timer = roomCreateInput.timer.toInt(),
                 shortBreak = roomCreateInput.shortBreak.toInt(),
                 longBreak = roomCreateInput.longBreak.toInt(),

@@ -10,6 +10,7 @@ data class RoomCreateRequestBody(
     val shortBreak: Int,
     val longBreak: Int,
     val longBreakInterval: Int,
+    val tags: List<String>,
     val expiredAt: String,
 ) {
     init {
