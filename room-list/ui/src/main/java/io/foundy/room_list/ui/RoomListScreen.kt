@@ -80,11 +80,11 @@ fun RoomListRoute(
                 snackbarHostState.currentSnackbarData?.dismiss()
                 snackbarHostState.showSnackbar(it.content ?: context.getString(it.defaultRes))
             }
-            RoomListSideEffect.SuccessToCreateRoom -> coroutineScope.launch {
-                snackbarHostState.currentSnackbarData?.dismiss()
-                snackbarHostState.showSnackbar(context.getString(R.string.success_to_create_room))
+            is RoomListSideEffect.SuccessToCreateRoom -> coroutineScope.launch {
                 // TODO: Refresh is NOT working!!!
                 rooms.refresh()
+                val intent = RoomActivity.getIntent(context, roomOverview = it.createdRoom)
+                context.startActivity(intent)
             }
         }
     }

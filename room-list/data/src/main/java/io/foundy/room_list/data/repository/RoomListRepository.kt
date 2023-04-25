@@ -15,5 +15,5 @@ interface RoomListRepository {
     suspend fun createRoom(
         createRequestBody: RoomCreateRequestBody,
         thumbnail: File?
-    ): Result<Unit>
+    ): Result<RoomOverview>
 }

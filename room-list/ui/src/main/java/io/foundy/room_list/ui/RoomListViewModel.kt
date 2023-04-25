@@ -123,9 +123,9 @@ class RoomListViewModel @Inject constructor(
             thumbnail = roomCreateInput.thumbnail?.let {
                 convertBitmapToFileUseCase(it, "thumbnail.png")
             }
-        ).onSuccess {
+        ).onSuccess { roomOverview ->
             reduce { state.copy(roomCreateInput = buildRoomCreateInput()) }
-            postSideEffect(RoomListSideEffect.SuccessToCreateRoom)
+            postSideEffect(RoomListSideEffect.SuccessToCreateRoom(createdRoom = roomOverview))
         }.onFailure {
             postSideEffect(
                 RoomListSideEffect.Message(

@@ -37,26 +37,21 @@ class PagingRoomListRepository @Inject constructor(
     override suspend fun createRoom(
         createRequestBody: RoomCreateRequestBody,
         thumbnail: File?
-    ): Result<Unit> {
-        runCatching {
+    ): Result<RoomOverview> {
+        return runCatching {
             val response = roomListApi.createRoom(body = createRequestBody)
-            response.getDataOrThrowMessage()
-        }.onFailure {
-            return Result.failure(it)
-        }
-        if (thumbnail != null) {
-            runCatching {
+            val roomOverviewDto = response.getDataOrThrowMessage()
+
+            if (thumbnail != null) {
                 val multipart = MultipartBody.Part.createFormData(
                     ROOM_THUMBNAIL_KEY,
                     thumbnail.name,
                     thumbnail.asRequestBody("multipart/form-data".toMediaTypeOrNull())
                 )
                 roomListApi.postRoomThumbnail(multipart).getDataOrThrowMessage()
-            }.onFailure {
-                return Result.failure(it)
             }
+            return@runCatching roomOverviewDto.toEntity()
         }
-        return Result.success(Unit)
     }
 
     companion object {

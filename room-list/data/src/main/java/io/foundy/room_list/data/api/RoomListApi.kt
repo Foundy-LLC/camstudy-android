@@ -28,7 +28,7 @@ interface RoomListApi {
     @POST("rooms")
     suspend fun createRoom(
         @Body body: RoomCreateRequestBody
-    ): CamstudyResponse<Unit>
+    ): CamstudyResponse<RoomOverviewDto>
 
     @Multipart
     @POST("rooms/{roomId}/thumbnail")
