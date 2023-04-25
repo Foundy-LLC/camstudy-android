@@ -35,7 +35,7 @@ buildscript {
         accompanist_permission_version = "0.29.1-alpha"
         mockito_version = "4.1.0"
         kotlin_datetime_version = "0.3.2"
-        bottom_sheet_dialog_version = "1.2.0"
+        bottom_sheet_dialog_version = "1.2.1"
     }
     dependencies {
 
