@@ -33,19 +33,13 @@ class RoomListViewModel @Inject constructor(
 
     override val container: Container<RoomListUiState, RoomListSideEffect> = container(
         RoomListUiState(
+            roomPagingDataStream = roomListRepository.getRooms("").cachedIn(viewModelScope),
             onSearchQueryChange = ::updateSearchQuery,
             roomCreateInput = buildRoomCreateInput()
         )
     )
 
     private var roomSearchJob: Job? = null
-
-    init {
-        intent {
-            val roomsStream = roomListRepository.getRooms("").cachedIn(viewModelScope)
-            reduce { state.copy(roomPagingDataStream = roomsStream) }
-        }
-    }
 
     private fun updateSearchQuery(query: String) = intent {
         reduce { state.copy(searchQuery = query) }

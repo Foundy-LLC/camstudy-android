@@ -30,7 +30,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -58,7 +57,6 @@ import io.foundy.core.model.constant.RoomConstants
 import io.foundy.core.ui.RoomTileWithJoinButton
 import io.foundy.organization.ui.destinations.OrganizationRouteDestination
 import io.foundy.room.ui.RoomActivity
-import kotlinx.coroutines.launch
 import org.orbitmvi.orbit.compose.collectAsState
 import org.orbitmvi.orbit.compose.collectSideEffect
 import java.util.Date
@@ -72,17 +70,14 @@ fun RoomListRoute(
     val rooms = uiState.roomPagingDataStream.collectAsLazyPagingItems()
     val context = LocalContext.current
     val snackbarHostState = remember { SnackbarHostState() }
-    val coroutineScope = rememberCoroutineScope()
 
     viewModel.collectSideEffect {
         when (it) {
-            is RoomListSideEffect.Message -> coroutineScope.launch {
+            is RoomListSideEffect.Message -> {
                 snackbarHostState.currentSnackbarData?.dismiss()
                 snackbarHostState.showSnackbar(it.content ?: context.getString(it.defaultRes))
             }
-            is RoomListSideEffect.SuccessToCreateRoom -> coroutineScope.launch {
-                // TODO: Refresh is NOT working!!!
-                rooms.refresh()
+            is RoomListSideEffect.SuccessToCreateRoom -> {
                 val intent = RoomActivity.getIntent(context, roomOverview = it.createdRoom)
                 context.startActivity(intent)
             }

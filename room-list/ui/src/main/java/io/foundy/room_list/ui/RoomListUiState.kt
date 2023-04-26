@@ -5,13 +5,12 @@ import androidx.paging.PagingData
 import io.foundy.core.model.RoomOverview
 import io.foundy.core.model.constant.RoomConstants
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.emptyFlow
 import java.lang.System.currentTimeMillis
 import java.util.Date
 import java.util.concurrent.TimeUnit
 
 data class RoomListUiState(
-    val roomPagingDataStream: Flow<PagingData<RoomOverview>> = emptyFlow(),
+    val roomPagingDataStream: Flow<PagingData<RoomOverview>>,
     val searchQuery: String = "",
     val onSearchQueryChange: (String) -> Unit,
     val roomCreateInput: RoomCreateInputUiState
