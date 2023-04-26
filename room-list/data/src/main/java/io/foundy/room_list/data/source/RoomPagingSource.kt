@@ -15,7 +15,7 @@ class RoomPagingSource @Inject constructor(
 
     companion object {
         private const val START_PAGE = 0
-        const val PAGE_SIZE = 20
+        const val PAGE_SIZE = 30
     }
 
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, RoomOverview> {
