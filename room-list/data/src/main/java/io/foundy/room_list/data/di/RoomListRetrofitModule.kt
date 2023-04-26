@@ -4,6 +4,7 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import io.foundy.core.data.di.DefaultRetrofit
 import io.foundy.room_list.data.api.RoomListApi
 import retrofit2.Retrofit
 import javax.inject.Singleton
@@ -14,7 +15,7 @@ class RoomListRetrofitModule {
 
     @Provides
     @Singleton
-    fun providesRoomListApi(retrofit: Retrofit): RoomListApi {
+    fun providesRoomListApi(@DefaultRetrofit retrofit: Retrofit): RoomListApi {
         return retrofit.create(RoomListApi::class.java)
     }
 }

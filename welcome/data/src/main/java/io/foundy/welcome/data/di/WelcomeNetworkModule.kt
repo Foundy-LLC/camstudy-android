@@ -4,6 +4,7 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import io.foundy.core.data.di.DefaultRetrofit
 import io.foundy.welcome.data.api.WelcomeApi
 import io.foundy.welcome.data.repository.NetworkWelcomeRepository
 import io.foundy.welcome.data.repository.WelcomeRepository
@@ -16,7 +17,7 @@ class WelcomeNetworkModule {
 
     @Provides
     @Singleton
-    fun provideUserApiService(retrofit: Retrofit): WelcomeApi {
+    fun provideUserApiService(@DefaultRetrofit retrofit: Retrofit): WelcomeApi {
         return retrofit.create(WelcomeApi::class.java)
     }
 

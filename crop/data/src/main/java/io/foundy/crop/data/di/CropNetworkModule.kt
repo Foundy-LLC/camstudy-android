@@ -4,6 +4,7 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import io.foundy.core.data.di.DefaultRetrofit
 import io.foundy.crop.data.api.CropApi
 import retrofit2.Retrofit
 import javax.inject.Singleton
@@ -14,7 +15,7 @@ class CropNetworkModule {
 
     @Singleton
     @Provides
-    fun providesCropApi(retrofit: Retrofit): CropApi {
+    fun providesCropApi(@DefaultRetrofit retrofit: Retrofit): CropApi {
         return retrofit.create(CropApi::class.java)
     }
 }

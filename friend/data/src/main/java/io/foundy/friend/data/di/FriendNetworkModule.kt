@@ -5,6 +5,7 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import io.foundy.auth.data.repository.AuthRepository
+import io.foundy.core.data.di.DefaultRetrofit
 import io.foundy.friend.data.api.FriendApi
 import io.foundy.friend.data.repository.FriendRepository
 import io.foundy.friend.data.repository.NetworkFriendRepository
@@ -17,7 +18,7 @@ class FriendNetworkModule {
 
     @Provides
     @Singleton
-    fun providesFriendApiService(retrofit: Retrofit): FriendApi {
+    fun providesFriendApiService(@DefaultRetrofit retrofit: Retrofit): FriendApi {
         return retrofit.create(FriendApi::class.java)
     }
 

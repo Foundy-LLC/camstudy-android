@@ -18,7 +18,8 @@ import javax.inject.Singleton
 class RetrofitModule {
 
     companion object {
-        private const val BASE_URL = BuildConfig.API_SERVER_URL
+        private const val API_SERVER_BASE_URL = BuildConfig.API_SERVER_URL
+        private const val RANKING_SERVER_BASE_URL = BuildConfig.RANKING_SERVER_URL
     }
 
     @Provides
@@ -42,10 +43,23 @@ class RetrofitModule {
     }
 
     @Provides
+    @DefaultRetrofit
     @Singleton
-    fun provideRetrofit(okHttpClient: OkHttpClient): Retrofit {
+    fun provideDefaultApiRetrofit(okHttpClient: OkHttpClient): Retrofit {
         return Retrofit.Builder()
-            .baseUrl(BASE_URL)
+            .baseUrl(API_SERVER_BASE_URL)
+            .client(okHttpClient)
+            .addConverterFactory(GsonConverterFactory.create())
+            .addConverterFactory(EnumConverterFactory())
+            .build()
+    }
+
+    @Provides
+    @RankingRetrofit
+    @Singleton
+    fun provideRankingApiRetrofit(okHttpClient: OkHttpClient): Retrofit {
+        return Retrofit.Builder()
+            .baseUrl(RANKING_SERVER_BASE_URL)
             .client(okHttpClient)
             .addConverterFactory(GsonConverterFactory.create())
             .addConverterFactory(EnumConverterFactory())

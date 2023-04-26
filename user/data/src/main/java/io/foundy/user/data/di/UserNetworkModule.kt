@@ -4,6 +4,7 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import io.foundy.core.data.di.DefaultRetrofit
 import io.foundy.user.data.api.UserApi
 import io.foundy.user.data.source.RetrofitUserDataSource
 import io.foundy.user.data.source.UserRemoteDataSource
@@ -16,7 +17,7 @@ class UserNetworkModule {
 
     @Provides
     @Singleton
-    fun provideUserApiService(retrofit: Retrofit): UserApi {
+    fun provideUserApiService(@DefaultRetrofit retrofit: Retrofit): UserApi {
         return retrofit.create(UserApi::class.java)
     }
 
