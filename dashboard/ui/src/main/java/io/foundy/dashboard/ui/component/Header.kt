@@ -27,9 +27,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import io.foundy.core.designsystem.component.CamstudyContainedButton
 import io.foundy.core.designsystem.component.CamstudyDivider
 import io.foundy.core.designsystem.component.CamstudyText
-import io.foundy.core.designsystem.component.CamstudyContainedButton
 import io.foundy.core.designsystem.icon.CamstudyIcon
 import io.foundy.core.designsystem.icon.CamstudyIcons
 import io.foundy.core.designsystem.theme.CamstudyTheme
