@@ -61,4 +61,6 @@
     <string name="join_study_room">스터디 룸 입장</string>
     <string name="collapsed_message_holder_help_text">채팅을 보려면 우측 화살표를 눌러 펼처주세요</string>
     <string name="flip_camera">카메라 전환</string>
+    <string name="exit">나가기</string>
+    <string name="recheck_dialog_content">공부를 종료하고 방을 나갑니다.</string>
 </resources>

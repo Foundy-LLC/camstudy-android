@@ -11,13 +11,17 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
+import io.foundy.core.designsystem.component.CamstudyDialog
 import io.foundy.core.designsystem.component.CamstudyTopAppBar
 import io.foundy.core.designsystem.theme.CamstudyTheme
 import io.foundy.core.model.RoomOverview
@@ -49,6 +53,14 @@ fun RoomScreen(
     val context = LocalContext.current
     val snackbarHostState = remember { SnackbarHostState() }
     val coroutineScope = rememberCoroutineScope()
+    var showRecheckDialog by remember { mutableStateOf(false) }
+    val handleBackClick = {
+        if (uiState is RoomUiState.StudyRoom) {
+            showRecheckDialog = !showRecheckDialog
+        } else {
+            popBackStack()
+        }
+    }
 
     viewModel.collectSideEffect {
         when (it) {
@@ -69,9 +81,19 @@ fun RoomScreen(
     }
 
     BackHandler {
-        // TODO: 사용자에게 한 번 더 확인하기
-        mediaManager.disconnect()
-        popBackStack()
+        handleBackClick()
+    }
+
+    if (showRecheckDialog) {
+        CamstudyDialog(
+            content = stringResource(R.string.recheck_dialog_content),
+            confirmText = stringResource(R.string.exit),
+            onCancel = { showRecheckDialog = false },
+            onConfirm = {
+                mediaManager.disconnect()
+                popBackStack()
+            }
+        )
     }
 
     CompositionLocalProvider(LocalMediaManager provides mediaManager) {
@@ -80,6 +102,7 @@ fun RoomScreen(
             roomOverview = roomOverview,
             uiState = uiState,
             snackbarHostState = snackbarHostState,
+            onBackClick = handleBackClick,
             popBackStack = popBackStack
         )
     }
@@ -92,6 +115,7 @@ private fun RoomContent(
     roomOverview: RoomOverview,
     uiState: RoomUiState,
     snackbarHostState: SnackbarHostState,
+    onBackClick: () -> Unit,
     popBackStack: () -> Unit,
 ) {
     Scaffold(
@@ -102,7 +126,7 @@ private fun RoomContent(
                 is RoomUiState.StudyRoom -> roomOverview.title
             }
             CamstudyTopAppBar(
-                onBackClick = popBackStack,
+                onBackClick = onBackClick,
                 title = {
                     Text(text = title, maxLines = 1, overflow = TextOverflow.Ellipsis)
                 }
@@ -174,6 +198,7 @@ private fun RoomContentPreview() {
                     onChatMessageInputChange = {}
                 ),
                 snackbarHostState = SnackbarHostState(),
+                onBackClick = {},
                 popBackStack = {}
             )
         }
