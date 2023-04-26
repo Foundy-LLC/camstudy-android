@@ -28,7 +28,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import io.foundy.core.designsystem.component.CamstudyText
-import io.foundy.core.designsystem.component.ContainedButton
+import io.foundy.core.designsystem.component.CamstudyContainedButton
 import io.foundy.core.designsystem.icon.CamstudyIcon
 import io.foundy.core.designsystem.icon.CamstudyIcons
 import io.foundy.core.designsystem.theme.CamstudyTheme
@@ -50,7 +50,7 @@ fun RoomTileWithJoinButton(
             room = room
         )
         Box(modifier = Modifier.width(28.dp))
-        ContainedButton(
+        CamstudyContainedButton(
             modifier = Modifier
                 .align(Alignment.Bottom)
                 .padding(16.dp),

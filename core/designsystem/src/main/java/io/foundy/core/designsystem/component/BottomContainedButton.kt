@@ -27,7 +27,7 @@ fun BoxScope.BottomContainedButton(
             .background(color = CamstudyTheme.colorScheme.systemBackground)
     ) {
         CamstudyDivider()
-        ContainedButton(
+        CamstudyContainedButton(
             modifier = Modifier
                 .align(Alignment.Center)
                 .fillMaxWidth()
