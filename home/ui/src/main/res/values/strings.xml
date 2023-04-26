@@ -6,4 +6,5 @@
     <string name="main">메인</string>
     <string name="dashboard">대시보드</string>
     <string name="my_crop">내 작물</string>
+    <string name="ranking">랭킹</string>
 </resources>

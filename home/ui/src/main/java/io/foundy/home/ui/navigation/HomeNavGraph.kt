@@ -3,10 +3,7 @@ package io.foundy.home.ui.navigation
 import com.ramcosta.composedestinations.spec.DestinationSpec
 import com.ramcosta.composedestinations.spec.NavGraphSpec
 import com.ramcosta.composedestinations.spec.Route
-import io.foundy.crop.ui.destinations.CropRouteDestination
-import io.foundy.friend.ui.destinations.FriendRouteDestination
 import io.foundy.home.ui.destinations.MainTabRouteDestination
-import io.foundy.search.ui.destinations.SearchRouteDestination
 
 object HomeNavGraph : NavGraphSpec {
 
@@ -14,10 +11,8 @@ object HomeNavGraph : NavGraphSpec {
 
     override val startRoute: Route = MainTabRouteDestination
 
-    override val destinationsByRoute: Map<String, DestinationSpec<*>> = listOf(
-        MainTabRouteDestination,
-        CropRouteDestination,
-        SearchRouteDestination,
-        FriendRouteDestination
-    ).associateBy { it.route }
+    override val destinationsByRoute: Map<String, DestinationSpec<*>> = HomeTabDestination.values()
+        .map { it.direction }
+        .toList()
+        .associateBy { it.route }
 }

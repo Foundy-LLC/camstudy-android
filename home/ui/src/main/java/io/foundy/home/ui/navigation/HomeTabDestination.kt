@@ -8,6 +8,7 @@ import io.foundy.crop.ui.destinations.CropRouteDestination
 import io.foundy.friend.ui.destinations.FriendRouteDestination
 import io.foundy.home.ui.R
 import io.foundy.home.ui.destinations.MainTabRouteDestination
+import io.foundy.ranking.ui.destinations.RankingRouteDestination
 import io.foundy.search.ui.destinations.SearchRouteDestination
 
 enum class HomeTabDestination(
@@ -24,6 +25,11 @@ enum class HomeTabDestination(
         direction = CropRouteDestination,
         icon = CamstudyIcons.Crop,
         label = R.string.my_crop
+    ),
+    Ranking(
+        direction = RankingRouteDestination,
+        icon = CamstudyIcons.Ranking,
+        label = R.string.ranking
     ),
     Search(
         direction = SearchRouteDestination,
