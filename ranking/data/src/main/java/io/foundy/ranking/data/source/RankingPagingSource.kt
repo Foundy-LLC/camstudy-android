@@ -21,7 +21,7 @@ class RankingPagingSource(
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, UserRankingOverview> {
         val page = params.key ?: START_PAGE
         runCatching {
-            val response = api.getUserRanking(
+            val response = api.getUserRankingList(
                 page = page,
                 organizationId = organizationId,
                 isWeekly = isWeekly

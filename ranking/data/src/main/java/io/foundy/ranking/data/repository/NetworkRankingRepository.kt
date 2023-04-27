@@ -13,7 +13,7 @@ class NetworkRankingRepository @Inject constructor(
     private val rankingApi: RankingApi
 ) : RankingRepository {
 
-    override fun getUserRanking(
+    override fun getUserRankingStream(
         organizationId: String?,
         isWeekly: Boolean
     ): Flow<PagingData<UserRankingOverview>> {

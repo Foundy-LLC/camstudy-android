@@ -8,7 +8,7 @@ import retrofit2.http.Query
 interface RankingApi {
 
     @GET("ranking")
-    fun getUserRanking(
+    fun getUserRankingList(
         @Query("organizationId") organizationId: String? = null,
         @Query("page") page: Int = 0,
         @Query("weekly") isWeekly: Boolean = false
