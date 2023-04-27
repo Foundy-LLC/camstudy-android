@@ -6,7 +6,7 @@ import kotlinx.coroutines.flow.Flow
 
 interface RankingRepository {
 
-    fun getUserRankingStream(
+    fun getUserRankingList(
         organizationId: String?,
         isWeekly: Boolean
     ): Flow<PagingData<UserRankingOverview>>
