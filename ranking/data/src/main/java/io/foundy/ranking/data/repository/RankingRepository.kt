@@ -11,7 +11,7 @@ interface RankingRepository {
         isWeekly: Boolean
     ): Flow<PagingData<UserRankingOverview>>
 
-    fun getUserRanking(
+    suspend fun getUserRanking(
         userId: String,
         isWeekly: Boolean
     ): Result<UserRankingOverview>

@@ -40,6 +40,7 @@ fun DashboardRoute(
     plantResultRecipient: OpenResultRecipient<Boolean>,
     navigateToCropTab: () -> Unit,
     navigateToPlantCrop: () -> Unit,
+    navigateToRankingTab: () -> Unit,
     showSnackbar: (id: String) -> Unit
 ) {
     val recommendedRoomFlow = flowOf(PagingData.from(emptyList<RoomOverview>()))
@@ -78,7 +79,8 @@ fun DashboardRoute(
         onRecentRoomClick = { roomOverview ->
             val intent = RoomActivity.getIntent(context, roomOverview = roomOverview)
             context.startActivity(intent)
-        }
+        },
+        onSeeRankingClick = navigateToRankingTab
     )
 }
 
@@ -88,7 +90,8 @@ fun DashboardScreen(
     uiState: DashboardUiState,
     recommendedRooms: LazyPagingItems<RoomOverview>,
     onCropTileClick: (GrowingCrop?) -> Unit,
-    onRecentRoomClick: (RoomOverview) -> Unit
+    onRecentRoomClick: (RoomOverview) -> Unit,
+    onSeeRankingClick: () -> Unit
 ) {
     LazyColumn(
         modifier = Modifier
@@ -97,10 +100,10 @@ fun DashboardScreen(
     ) {
         item {
             Header(
-                weeklyStudyMinutes = 2213,
-                weeklyRanking = 3,
+                userRankingUiState = uiState.userRankingUiState,
                 growingCropUiState = uiState.growingCropUiState,
-                onCropTileClick = onCropTileClick
+                onCropTileClick = onCropTileClick,
+                onSeeRankingClick = onSeeRankingClick
             )
         }
         dividePadding()
@@ -162,7 +165,8 @@ private fun DashboardScreenPreview() {
                 fetchGrowingCrop = {}
             ),
             onCropTileClick = {},
-            onRecentRoomClick = {}
+            onRecentRoomClick = {},
+            onSeeRankingClick = {}
         )
     }
 }

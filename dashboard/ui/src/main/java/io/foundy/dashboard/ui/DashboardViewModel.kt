@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.foundy.auth.data.repository.AuthRepository
 import io.foundy.crop.data.repository.CropRepository
+import io.foundy.ranking.data.repository.RankingRepository
 import io.foundy.room_list.data.repository.RoomListRepository
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.firstOrNull
@@ -20,6 +21,7 @@ import javax.inject.Inject
 class DashboardViewModel @Inject constructor(
     private val authRepository: AuthRepository,
     private val cropRepository: CropRepository,
+    private val rankingRepository: RankingRepository,
     private val roomListRepository: RoomListRepository
 ) : ViewModel(), ContainerHost<DashboardUiState, DashboardSideEffect> {
 
@@ -34,6 +36,7 @@ class DashboardViewModel @Inject constructor(
             currentUserId = requireNotNull(authRepository.currentUserIdStream.firstOrNull()) {
                 "현재 회원 아이디를 얻을 수 없습니다. 로그인 하지 않고 대시보드에 접근했습니다."
             }
+            fetchUserRanking()
             fetchGrowingCrop()
             fetchRecentRooms()
         }
@@ -50,6 +53,23 @@ class DashboardViewModel @Inject constructor(
                 }
             }
         }
+    }
+
+    private fun fetchUserRanking() = intent {
+        rankingRepository.getUserRanking(userId = currentUserId, isWeekly = true)
+            .onSuccess { userRanking ->
+                reduce {
+                    state.copy(
+                        userRankingUiState = UserRankingUiState.Success(userRanking = userRanking)
+                    )
+                }
+            }.onFailure {
+                reduce {
+                    state.copy(
+                        userRankingUiState = UserRankingUiState.Failure(message = it.message)
+                    )
+                }
+            }
     }
 
     private fun fetchGrowingCrop() = intent {

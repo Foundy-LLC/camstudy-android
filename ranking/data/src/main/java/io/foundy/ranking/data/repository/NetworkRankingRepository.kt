@@ -31,10 +31,13 @@ class NetworkRankingRepository @Inject constructor(
         ).flow
     }
 
-    override fun getUserRanking(userId: String, isWeekly: Boolean): Result<UserRankingOverview> {
+    override suspend fun getUserRanking(
+        userId: String,
+        isWeekly: Boolean
+    ): Result<UserRankingOverview> {
         return runCatching {
             val response = rankingApi.getUserRanking(userId = userId, isWeekly = isWeekly)
-            response.getDataOrThrowMessage().toEntity()
+            response.getDataOrThrowMessage().user.toEntity()
         }
     }
 }

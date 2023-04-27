@@ -25,6 +25,7 @@ fun MainTabRoute(
     navigator: DestinationsNavigator,
     plantResultRecipient: OpenResultRecipient<Boolean>,
     navigateToCropTab: () -> Unit,
+    navigateToRankingTab: () -> Unit,
     showSnackbar: (String) -> Unit
 ) {
     val pagerState = rememberPagerState(0)
@@ -34,6 +35,7 @@ fun MainTabRoute(
         navigator = navigator,
         plantResultRecipient = plantResultRecipient,
         navigateToCropTab = navigateToCropTab,
+        navigateToRankingTab = navigateToRankingTab,
         showSnackbar = showSnackbar
     )
 }
@@ -45,6 +47,7 @@ fun HomeTabScreen(
     plantResultRecipient: OpenResultRecipient<Boolean>,
     navigator: DestinationsNavigator,
     navigateToCropTab: () -> Unit,
+    navigateToRankingTab: () -> Unit,
     showSnackbar: (String) -> Unit
 ) {
     val coroutineScope = rememberCoroutineScope()
@@ -71,6 +74,7 @@ fun HomeTabScreen(
                 MainTabDestination.Dashboard -> DashboardRoute(
                     navigateToCropTab = navigateToCropTab,
                     navigateToPlantCrop = { navigator.navigate(PlantCropRouteDestination) },
+                    navigateToRankingTab = navigateToRankingTab,
                     plantResultRecipient = plantResultRecipient,
                     showSnackbar = showSnackbar
                 )

@@ -16,10 +16,16 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -27,27 +33,32 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.valentinilk.shimmer.shimmer
 import io.foundy.core.designsystem.component.CamstudyContainedButton
 import io.foundy.core.designsystem.component.CamstudyDivider
 import io.foundy.core.designsystem.component.CamstudyText
 import io.foundy.core.designsystem.icon.CamstudyIcon
 import io.foundy.core.designsystem.icon.CamstudyIcons
 import io.foundy.core.designsystem.theme.CamstudyTheme
+import io.foundy.core.designsystem.util.nonScaledSp
 import io.foundy.core.model.CropGrade
 import io.foundy.core.model.CropType
 import io.foundy.core.model.GrowingCrop
+import io.foundy.core.model.UserRankingOverview
 import io.foundy.core.ui.crop.getName
 import io.foundy.core.ui.crop.imageIcon
 import io.foundy.dashboard.ui.GrowingCropUiState
 import io.foundy.dashboard.ui.R
+import io.foundy.dashboard.ui.UserRankingUiState
+import kotlinx.coroutines.delay
 import java.util.Calendar
 
 @Composable
 fun Header(
-    weeklyStudyMinutes: Int,
-    weeklyRanking: Int?,
+    userRankingUiState: UserRankingUiState,
     growingCropUiState: GrowingCropUiState,
-    onCropTileClick: (GrowingCrop?) -> Unit
+    onCropTileClick: (GrowingCrop?) -> Unit,
+    onSeeRankingClick: () -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -55,28 +66,94 @@ fun Header(
             .background(color = CamstudyTheme.colorScheme.systemBackground)
             .padding(top = 20.dp, start = 16.dp, end = 16.dp, bottom = 16.dp)
     ) {
-        DivideTitle(text = stringResource(R.string.weekly_study_minutes))
-        Row(
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Time(minutes = weeklyStudyMinutes)
-            Spacer(modifier = Modifier.width(12.dp))
-            CamstudyContainedButton(
-                label = stringResource(R.string.see_ranking),
-                onClick = { /* TODO */ }
-            )
-        }
-        Spacer(modifier = Modifier.height(4.dp))
-        CamstudyText(
-            text = stringResource(R.string.weekly_ranking, weeklyRanking?.toString() ?: "-"),
-            style = CamstudyTheme.typography.titleSmall.copy(
-                color = CamstudyTheme.colorScheme.systemUi07
-            )
+        UserRankingTile(
+            userRankingUiState = userRankingUiState,
+            onSeeRankingClick = onSeeRankingClick
         )
         Spacer(modifier = Modifier.height(16.dp))
         CamstudyDivider()
         Spacer(modifier = Modifier.height(20.dp))
         GrowingCropTile(growingCropUiState = growingCropUiState, onClick = onCropTileClick)
+    }
+}
+
+@Composable
+private fun UserRankingTile(userRankingUiState: UserRankingUiState, onSeeRankingClick: () -> Unit) {
+    when (userRankingUiState) {
+        UserRankingUiState.Loading -> {
+            ShimmerUserRankingTile()
+        }
+        is UserRankingUiState.Failure -> {
+            Column {
+                CamstudyText(
+                    text = userRankingUiState.message
+                        ?: stringResource(R.string.failed_to_load_header_info),
+                    style = CamstudyTheme.typography.titleLarge.copy(
+                        color = CamstudyTheme.colorScheme.systemUi04,
+                        fontWeight = FontWeight.Bold
+                    )
+                )
+            }
+        }
+        is UserRankingUiState.Success -> {
+            val weeklyStudySeconds = userRankingUiState.userRanking.weeklyStudyTimeSec
+            val weeklyRanking = userRankingUiState.userRanking.ranking
+
+            Column {
+                DivideTitle(text = stringResource(R.string.weekly_study_minutes))
+                Row(
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Time(minutes = weeklyStudySeconds / 60)
+                    Spacer(modifier = Modifier.width(12.dp))
+                    CamstudyContainedButton(
+                        label = stringResource(R.string.see_ranking),
+                        onClick = onSeeRankingClick
+                    )
+                }
+                Spacer(modifier = Modifier.height(4.dp))
+                CamstudyText(
+                    text = stringResource(R.string.weekly_ranking, weeklyRanking.toString()),
+                    style = CamstudyTheme.typography.titleSmall.copy(
+                        color = CamstudyTheme.colorScheme.systemUi07
+                    )
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun ShimmerUserRankingTile() {
+    val fontScale = LocalDensity.current.fontScale
+    val color = CamstudyTheme.colorScheme.systemUi01
+    Column {
+        Box(
+            modifier = Modifier
+                .height(22.dp * fontScale)
+                .width(84.dp)
+                .clip(RoundedCornerShape(4.dp))
+                .background(color = color)
+                .shimmer()
+        )
+        Spacer(modifier = Modifier.height(8.dp))
+        Box(
+            modifier = Modifier
+                .height(42.dp * fontScale)
+                .width(130.dp)
+                .clip(RoundedCornerShape(8.dp))
+                .background(color = color)
+                .shimmer()
+        )
+        Spacer(modifier = Modifier.height(4.dp))
+        Box(
+            modifier = Modifier
+                .height(18.dp * fontScale)
+                .width(88.dp)
+                .clip(RoundedCornerShape(4.dp))
+                .background(color = color)
+                .shimmer()
+        )
     }
 }
 
@@ -184,13 +261,15 @@ private fun GrowingCropTileContent(crop: GrowingCrop?, onClick: () -> Unit) {
                 modifier = Modifier.weight(1f),
                 text = text,
                 style = CamstudyTheme.typography.titleSmall.copy(
-                    color = CamstudyTheme.colorScheme.systemUi07
+                    color = CamstudyTheme.colorScheme.systemUi07,
+                    fontSize = CamstudyTheme.typography.titleSmall.fontSize.nonScaledSp
                 )
             )
             CamstudyText(
                 text = navigationText,
                 style = CamstudyTheme.typography.labelMedium.copy(
-                    color = CamstudyTheme.colorScheme.systemUi05
+                    color = CamstudyTheme.colorScheme.systemUi05,
+                    fontSize = CamstudyTheme.typography.labelMedium.fontSize.nonScaledSp
                 )
             )
             Spacer(modifier = Modifier.width(8.dp))
@@ -227,11 +306,20 @@ private fun GrowingCropTileSurface(
 
 @Preview(widthDp = 360)
 @Composable
-fun HeaderPreview() {
+private fun HeaderPreview() {
     CamstudyTheme {
         Header(
-            weeklyStudyMinutes = 1132,
-            weeklyRanking = 21,
+            userRankingUiState = UserRankingUiState.Success(
+                userRanking = UserRankingOverview(
+                    id = "idid",
+                    name = "name",
+                    profileImage = null,
+                    introduce = "hi",
+                    score = 230,
+                    ranking = 2,
+                    weeklyStudyTimeSec = 24210
+                )
+            ),
             growingCropUiState = GrowingCropUiState.Success(
                 growingCrop = GrowingCrop(
                     id = "id",
@@ -245,33 +333,53 @@ fun HeaderPreview() {
                     }.time
                 )
             ),
-            onCropTileClick = {}
+            onCropTileClick = {},
+            onSeeRankingClick = {}
         )
     }
 }
 
 @Preview(widthDp = 360)
 @Composable
-fun GrowingCropErrorHeaderPreview() {
-    CamstudyTheme {
-        Header(
-            weeklyStudyMinutes = 0,
-            weeklyRanking = null,
-            growingCropUiState = GrowingCropUiState.Failure(message = "서버 내부 에러가 발생했습니다."),
-            onCropTileClick = {}
+fun LoadingHeaderPreview() {
+    var userRankingUiState by remember {
+        mutableStateOf<UserRankingUiState>(UserRankingUiState.Loading)
+    }
+
+    LaunchedEffect(Unit) {
+        delay(2_000)
+        userRankingUiState = UserRankingUiState.Success(
+            userRanking = UserRankingOverview(
+                id = "idid",
+                name = "name",
+                profileImage = null,
+                introduce = "hi",
+                score = 230,
+                ranking = 2,
+                weeklyStudyTimeSec = 24210
+            )
         )
     }
-}
 
-@Preview(widthDp = 360)
-@Composable
-fun GrowingCropLoadingHeaderPreview() {
     CamstudyTheme {
         Header(
-            weeklyStudyMinutes = 0,
-            weeklyRanking = null,
+            userRankingUiState = userRankingUiState,
             growingCropUiState = GrowingCropUiState.Loading,
-            onCropTileClick = {}
+            onCropTileClick = {},
+            onSeeRankingClick = {}
+        )
+    }
+}
+
+@Preview(widthDp = 360)
+@Composable
+fun ErrorHeaderPreview() {
+    CamstudyTheme {
+        Header(
+            userRankingUiState = UserRankingUiState.Failure(message = "서버 에러"),
+            growingCropUiState = GrowingCropUiState.Failure(message = "서버 에러"),
+            onCropTileClick = {},
+            onSeeRankingClick = {}
         )
     }
 }

@@ -15,4 +15,5 @@
     <string name="failed_to_load_growing_crop">기르는 작물을 불러오지 못했습니다</string>
     <string name="success_to_plant_crop">작물을 성공적으로 심었습니다.</string>
     <string name="failed_to_load_recent_room">최근 공부했던 룸을 불러오지 못했습니다</string>
+    <string name="failed_to_load_header_info">정보를 불러오지 못했어요</string>
 </resources>

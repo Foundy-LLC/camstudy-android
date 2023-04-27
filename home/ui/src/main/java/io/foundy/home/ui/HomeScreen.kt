@@ -97,6 +97,7 @@ fun HomeScreen(
                     navigator = navigator,
                     plantResultRecipient = plantResultRecipient,
                     navigateToCropTab = { homeScreenState.navigate(HomeTabDestination.Crop) },
+                    navigateToRankingTab = { homeScreenState.navigate(HomeTabDestination.Ranking) },
                     showSnackbar = homeScreenState::showSnackbar
                 )
             }

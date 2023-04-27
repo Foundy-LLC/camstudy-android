@@ -26,7 +26,7 @@ class RankingPagingSource(
                 organizationId = organizationId,
                 isWeekly = isWeekly
             )
-            response.getDataOrThrowMessage()
+            response.getDataOrThrowMessage().users
         }.onSuccess {
             val users = it.map { dto -> dto.toEntity() }
             val isEnd = users.size < PAGE_SIZE
