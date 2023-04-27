@@ -10,4 +10,9 @@ interface RankingRepository {
         organizationId: String?,
         isWeekly: Boolean
     ): Flow<PagingData<UserRankingOverview>>
+
+    fun getUserRanking(
+        userId: String,
+        isWeekly: Boolean
+    ): Result<UserRankingOverview>
 }

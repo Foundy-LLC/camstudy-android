@@ -7,14 +7,18 @@ data class UserRankingOverviewDto(
     val id: String,
     val name: String,
     val profileImage: String?,
+    val introduce: String,
     @SerializedName("rankingScore") val score: Int,
-    val ranking: Int
+    val ranking: Int,
+    @SerializedName("studyTime") val weeklyStudyTimeSec: Int
 )
 
 fun UserRankingOverviewDto.toEntity() = UserRankingOverview(
     id = id,
     name = name,
     profileImage = profileImage,
+    introduce = introduce,
     score = score,
-    ranking = ranking
+    ranking = ranking,
+    weeklyStudyTimeSec = weeklyStudyTimeSec
 )
