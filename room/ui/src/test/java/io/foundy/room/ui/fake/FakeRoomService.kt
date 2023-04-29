@@ -23,7 +23,7 @@ class FakeRoomService : RoomService {
 
     var onConnect: suspend () -> Unit = {}
 
-    override suspend fun connect() {
+    override suspend fun connect(roomId: String) {
         onConnect()
         return
     }

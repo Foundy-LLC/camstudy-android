@@ -20,6 +20,7 @@ class RetrofitModule {
     companion object {
         private const val API_SERVER_BASE_URL = BuildConfig.API_SERVER_URL
         private const val RANKING_SERVER_BASE_URL = BuildConfig.RANKING_SERVER_URL
+        private const val MEDIA_ROUTING_SERVER_BASE_URL = BuildConfig.MEDIA_ROUTING_SERVER_URL
     }
 
     @Provides
@@ -60,6 +61,18 @@ class RetrofitModule {
     fun provideRankingApiRetrofit(okHttpClient: OkHttpClient): Retrofit {
         return Retrofit.Builder()
             .baseUrl(RANKING_SERVER_BASE_URL)
+            .client(okHttpClient)
+            .addConverterFactory(GsonConverterFactory.create())
+            .addConverterFactory(EnumConverterFactory())
+            .build()
+    }
+
+    @Provides
+    @MediaRoutingRetrofit
+    @Singleton
+    fun provideMediaRoutingApiRetrofit(okHttpClient: OkHttpClient): Retrofit {
+        return Retrofit.Builder()
+            .baseUrl(MEDIA_ROUTING_SERVER_BASE_URL)
             .client(okHttpClient)
             .addConverterFactory(GsonConverterFactory.create())
             .addConverterFactory(EnumConverterFactory())

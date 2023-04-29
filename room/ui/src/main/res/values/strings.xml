@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="timeout_on_connect_server">서버 연결에 시간초과가 발생했습니다</string>
     <string name="failed_to_connect_server">서버와의 연결을 실패했습니다</string>
     <string name="failed_to_join_waiting_room">대기실 입장을 실패했습니다</string>
     <string name="room_is_full">방 정원이 가득 찼습니다.</string>

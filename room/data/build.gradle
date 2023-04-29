@@ -25,13 +25,9 @@ android {
     }
 
     buildTypes {
-        debug {
-            buildConfigField("String", "SERVER_URL", localProperties['DEBUG_WEBRTC_SERVER_BASE_URL'])
-        }
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-            buildConfigField("String", "SERVER_URL", localProperties['RELEASE_WEBRTC_SERVER_BASE_URL'])
         }
     }
     compileOptions {
@@ -45,6 +41,11 @@ android {
 
 dependencies {
     implementation project(path: ':room:domain')
+    implementation project(path: ':core:data')
+
+    // retrofit2
+    implementation "com.squareup.retrofit2:retrofit:$retrofit_version"
+    implementation "com.squareup.retrofit2:converter-gson:$retrofit_version"
 
     // kotlinx datetime
     implementation "org.jetbrains.kotlinx:kotlinx-datetime:$kotlin_datetime_version"

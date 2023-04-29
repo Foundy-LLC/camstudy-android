@@ -9,3 +9,7 @@ annotation class DefaultRetrofit
 @Retention(AnnotationRetention.BINARY)
 @Qualifier
 annotation class RankingRetrofit
+
+@Retention(AnnotationRetention.BINARY)
+@Qualifier
+annotation class MediaRoutingRetrofit

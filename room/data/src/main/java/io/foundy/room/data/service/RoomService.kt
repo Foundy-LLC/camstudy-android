@@ -14,7 +14,7 @@ interface RoomService {
     /**
      * 공부방 소켓 서버에 연결을 시도한다.
      */
-    suspend fun connect()
+    suspend fun connect(roomId: String)
 
     /**
      * 대기실에 입장한다.
