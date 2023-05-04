@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="total_ranking_tab">전체 랭킹</string>
+    <string name="weekly_ranking_tab">주간 랭킹</string>
+    <string name="organization_ranking_tab">소속 랭킹</string>
+</resources>
