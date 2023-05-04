@@ -62,9 +62,11 @@ class RoomViewModel @Inject constructor(
 
     fun connect(roomId: String) = intent {
         try {
-            roomService.connect()
+            roomService.connect(roomId)
             joinToWaitingRoom(roomId)
         } catch (e: TimeoutCancellationException) {
+            reduce { RoomUiState.WaitingRoom.FailedToConnect(R.string.timeout_on_connect_server) }
+        } catch (e: Exception) {
             reduce { RoomUiState.WaitingRoom.FailedToConnect(R.string.failed_to_connect_server) }
         }
     }

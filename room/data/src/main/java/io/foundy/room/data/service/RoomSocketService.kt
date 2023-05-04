@@ -1,6 +1,8 @@
 package io.foundy.room.data.service
 
+import io.foundy.core.data.extension.getDataOrThrowMessage
 import io.foundy.room.data.BuildConfig
+import io.foundy.room.data.api.MediaRoutingApi
 import io.foundy.room.data.extension.emit
 import io.foundy.room.data.extension.emitWithPrimitiveCallBack
 import io.foundy.room.data.extension.on
@@ -49,11 +51,14 @@ import java.net.URI
 import javax.inject.Inject
 
 @OptIn(ExperimentalCoroutinesApi::class)
-class RoomSocketService @Inject constructor() : RoomService {
+class RoomSocketService @Inject constructor(
+    private val mediaRoutingApi: MediaRoutingApi
+) : RoomService {
 
     private val logger by taggedLogger("Call:RoomSocketService")
 
-    private val socket: Socket = Manager(URI(URL)).socket(Protocol.NAME_SPACE)
+    private var _socket: Socket? = null
+    private val socket: Socket get() = requireNotNull(_socket)
 
     override val eventFlow: MutableSharedFlow<RoomEvent> = MutableSharedFlow(replay = 8)
 
@@ -67,14 +72,20 @@ class RoomSocketService @Inject constructor() : RoomService {
 
     private var mutedHeadset: Boolean = false
 
-    override suspend fun connect() = suspendCoroutineWithTimeout { continuation ->
-        socket.run {
-            connect()
+    override suspend fun connect(roomId: String) {
+        val response = mediaRoutingApi.getMediaServer(roomId = roomId)
+        val url = response.getDataOrThrowMessage().url
+        _socket = Manager(URI(url)).socket(Protocol.NAME_SPACE)
 
-            on(Protocol.CONNECTION_SUCCESS) {
-                logger.d { "Connected socket server." }
-                off(Protocol.CONNECTION_SUCCESS)
-                continuation.resume(Unit) {}
+        suspendCoroutineWithTimeout { continuation ->
+            socket.run {
+                connect()
+
+                on(Protocol.CONNECTION_SUCCESS) {
+                    logger.d { "Connected socket server." }
+                    off(Protocol.CONNECTION_SUCCESS)
+                    continuation.resume(Unit) {}
+                }
             }
         }
     }
@@ -480,7 +491,8 @@ class RoomSocketService @Inject constructor() : RoomService {
 
     override fun disconnect() {
         logger.d { "Disconnect socket service" }
-        socket.disconnect()
+        _socket?.disconnect()
+        _socket = null
         eventFlow.resetReplayCache()
         _device = null
         _sendTransport?.dispose()
@@ -490,9 +502,8 @@ class RoomSocketService @Inject constructor() : RoomService {
     }
 
     companion object {
-        private const val URL = BuildConfig.SERVER_URL
 
-        private val TimeOutMilli = if (BuildConfig.DEBUG) 20_000L else 5_000L
+        private val TimeOutMilli = if (BuildConfig.DEBUG) 20_000L else 10_000L
 
         private suspend inline fun <T> suspendCoroutineWithTimeout(
             crossinline block: (CancellableContinuation<T>) -> Unit
