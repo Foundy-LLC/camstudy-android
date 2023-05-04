@@ -1,5 +1,6 @@
 package io.foundy.core.designsystem.component
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
@@ -27,6 +28,7 @@ internal fun RawButton(
         disabledContentColor = CamstudyTheme.colorScheme.systemUi05
     ),
     enabled: Boolean = true,
+    border: BorderStroke? = null,
     onClick: () -> Unit
 ) {
     Button(
@@ -35,6 +37,7 @@ internal fun RawButton(
         shape = shape,
         enabled = enabled,
         colors = colors,
+        border = border,
         contentPadding = PaddingValues(
             horizontal = 16.dp,
             vertical = 8.dp
@@ -47,6 +50,34 @@ internal fun RawButton(
             )
         )
     }
+}
+
+@Composable
+fun CamstudyOutlinedButton(
+    modifier: Modifier = Modifier,
+    label: String,
+    shape: Shape = RoundedCornerShape(8.dp),
+    enabled: Boolean = true,
+    onClick: () -> Unit
+) {
+    val colorScheme = CamstudyTheme.colorScheme
+    RawButton(
+        modifier = modifier,
+        onClick = onClick,
+        label = label,
+        shape = shape,
+        enabled = enabled,
+        border = BorderStroke(
+            width = 1.dp,
+            color = if (enabled) colorScheme.primary else colorScheme.systemUi03
+        ),
+        colors = ButtonDefaults.buttonColors(
+            containerColor = colorScheme.systemBackground,
+            contentColor = colorScheme.primary,
+            disabledContainerColor = colorScheme.systemBackground,
+            disabledContentColor = colorScheme.systemUi04
+        ),
+    )
 }
 
 @Composable
@@ -95,6 +126,18 @@ fun CamstudyTextButton(
             disabledContentColor = colorScheme.systemUi04
         ),
     )
+}
+
+@Preview
+@Composable
+private fun EnabledOutlinedButtonPreview() {
+    CamstudyOutlinedButton(label = "Enabled", enabled = true, onClick = {})
+}
+
+@Preview
+@Composable
+private fun DisabledOutlinedButtonPreview() {
+    CamstudyOutlinedButton(label = "Enabled", enabled = false, onClick = {})
 }
 
 @Preview
