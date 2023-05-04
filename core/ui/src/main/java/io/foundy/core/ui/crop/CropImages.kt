@@ -19,12 +19,11 @@ private val CarrotImage = CropImageContainer(
         R.drawable.plant_carrot_2,
         R.drawable.plant_carrot_3,
     ),
-    // TODO: 등급별 작물 이미지 나오면 수정하기
-    notFreshDrawable = R.drawable.carrot_fresh,
+    notFreshDrawable = R.drawable.carrot_not_fresh,
     freshDrawable = R.drawable.carrot_fresh,
-    silverDrawable = R.drawable.carrot_fresh,
-    goldDrawable = R.drawable.carrot_fresh,
-    diamondDrawable = R.drawable.carrot_fresh
+    silverDrawable = R.drawable.carrot_silver,
+    goldDrawable = R.drawable.carrot_gold,
+    diamondDrawable = R.drawable.carrot_diamond
 )
 
 private val TomatoImage = CropImageContainer(
@@ -36,12 +35,11 @@ private val TomatoImage = CropImageContainer(
         R.drawable.plant_tomato_4,
         R.drawable.plant_tomato_5
     ),
-    // TODO: 등급별 작물 이미지 나오면 수정하기
-    notFreshDrawable = R.drawable.tomato_fresh,
+    notFreshDrawable = R.drawable.tomato_not_fresh,
     freshDrawable = R.drawable.tomato_fresh,
-    silverDrawable = R.drawable.tomato_fresh,
-    goldDrawable = R.drawable.tomato_fresh,
-    diamondDrawable = R.drawable.tomato_fresh
+    silverDrawable = R.drawable.tomato_silver,
+    goldDrawable = R.drawable.tomato_gold,
+    diamondDrawable = R.drawable.tomato_diamond
 )
 
 private val StrawberryImage = CropImageContainer(
@@ -53,12 +51,11 @@ private val StrawberryImage = CropImageContainer(
         R.drawable.plant_strawberry_4,
         R.drawable.plant_strawberry_5
     ),
-    // TODO: 등급별 작물 이미지 나오면 수정하기
-    notFreshDrawable = R.drawable.strawberry_fresh,
+    notFreshDrawable = R.drawable.strawberry_not_fresh,
     freshDrawable = R.drawable.strawberry_fresh,
-    silverDrawable = R.drawable.strawberry_fresh,
-    goldDrawable = R.drawable.strawberry_fresh,
-    diamondDrawable = R.drawable.strawberry_fresh
+    silverDrawable = R.drawable.strawberry_silver,
+    goldDrawable = R.drawable.strawberry_gold,
+    diamondDrawable = R.drawable.strawberry_diamond
 )
 
 private val PumpkinImage = CropImageContainer(
@@ -70,12 +67,11 @@ private val PumpkinImage = CropImageContainer(
         R.drawable.plant_pumpkin_4,
         R.drawable.plant_pumpkin_5
     ),
-    // TODO: 등급별 작물 이미지 나오면 수정하기
-    notFreshDrawable = R.drawable.pumpkin_fresh,
+    notFreshDrawable = R.drawable.pumpkin_not_fresh,
     freshDrawable = R.drawable.pumpkin_fresh,
-    silverDrawable = R.drawable.pumpkin_fresh,
-    goldDrawable = R.drawable.pumpkin_fresh,
-    diamondDrawable = R.drawable.pumpkin_fresh
+    silverDrawable = R.drawable.pumpkin_silver,
+    goldDrawable = R.drawable.pumpkin_gold,
+    diamondDrawable = R.drawable.pumpkin_diamond
 )
 
 private val CabbageImage = CropImageContainer(
@@ -87,10 +83,9 @@ private val CabbageImage = CropImageContainer(
         R.drawable.plant_cabbage_4,
         R.drawable.plant_cabbage_5
     ),
-    // TODO: 등급별 작물 이미지 나오면 수정하기
-    notFreshDrawable = R.drawable.cabbage_fresh,
+    notFreshDrawable = R.drawable.cabbage_not_fresh,
     freshDrawable = R.drawable.cabbage_fresh,
-    silverDrawable = R.drawable.cabbage_fresh,
-    goldDrawable = R.drawable.cabbage_fresh,
-    diamondDrawable = R.drawable.cabbage_fresh
+    silverDrawable = R.drawable.cabbage_silver,
+    goldDrawable = R.drawable.cabbage_gold,
+    diamondDrawable = R.drawable.cabbage_diamond
 )
