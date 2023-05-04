@@ -44,7 +44,7 @@ import io.foundy.core.designsystem.icon.CamstudyIcons
 import io.foundy.core.designsystem.theme.CamstudyTheme
 import io.foundy.core.model.CropType
 import io.foundy.core.ui.crop.getName
-import io.foundy.core.ui.crop.maxGrowingLevelImageIcon
+import io.foundy.core.ui.crop.freshIcon
 import io.foundy.crop.ui.R
 import io.foundy.crop.ui.component.DivideTitle
 import io.foundy.crop.ui.extension.getDescription
@@ -172,7 +172,7 @@ private fun SelectedCropDivide(selectedCropType: CropType?) {
                     .background(color = CamstudyTheme.colorScheme.systemUi01)
                     .padding(10.dp)
             ) {
-                val icon = selectedCropType?.maxGrowingLevelImageIcon ?: CamstudyIcons.EmptyCrop
+                val icon = selectedCropType?.freshIcon ?: CamstudyIcons.EmptyCrop
                 CamstudyIcon(
                     modifier = Modifier.fillMaxSize(),
                     icon = icon,
@@ -278,7 +278,7 @@ private fun SelectableCropTile(
                 .padding(10.dp)
         ) {
             CamstudyIcon(
-                icon = cropType.maxGrowingLevelImageIcon,
+                icon = cropType.freshIcon,
                 contentDescription = null,
                 tint = Color.Unspecified
             )

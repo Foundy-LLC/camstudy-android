@@ -19,9 +19,9 @@ val HarvestedCrop.imageIcon
         return this.type.cropImageContainer.getHarvestedImageBy(this.grade)
     }
 
-val CropType.maxGrowingLevelImageIcon
+val CropType.freshIcon
     get(): CamstudyIcon {
-        return this.cropImageContainer.maxGrowingLevelIcon
+        return this.cropImageContainer.freshIcon
     }
 
 val GrowingCrop.imageIcon

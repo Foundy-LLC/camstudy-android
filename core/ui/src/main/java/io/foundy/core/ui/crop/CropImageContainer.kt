@@ -16,9 +16,9 @@ internal class CropImageContainer(
     @DrawableRes diamondDrawable: Int
 ) {
 
-    private val icons = growingDrawables.map { it.asCamstudyIcon() }
+    private val growingIcons = growingDrawables.map { it.asCamstudyIcon() }
     private val notFreshIcon = notFreshDrawable.asCamstudyIcon()
-    private val freshIcon = freshDrawable.asCamstudyIcon()
+    val freshIcon = freshDrawable.asCamstudyIcon()
     private val silverIcon = silverDrawable.asCamstudyIcon()
     private val goldIcon = goldDrawable.asCamstudyIcon()
     private val diamondIcon = diamondDrawable.asCamstudyIcon()
@@ -27,15 +27,12 @@ internal class CropImageContainer(
         require(growingDrawables.size == type.maxLevel)
     }
 
-    val maxGrowingLevelIcon: CamstudyIcon
-        get() = icons.last()
-
     fun getGrowingImageBy(level: Int): CamstudyIcon {
         val index = level - 1
-        require(index < icons.size) {
+        require(index < growingIcons.size) {
             "인덱스를 초과하는 레벨이 전달되었습니다. 이미지 리소스의 갯수를 확인하거나 레벨 값이 맞는 지 확인하세요."
         }
-        return icons[index]
+        return growingIcons[index]
     }
 
     fun getHarvestedImageBy(grade: CropGrade): CamstudyIcon {
