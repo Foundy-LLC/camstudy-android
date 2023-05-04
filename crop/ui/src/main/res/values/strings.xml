@@ -27,4 +27,8 @@
     <string name="my_crops">내 작물</string>
     <string name="no_harvested_crops">수확한 작물이 없습니다</string>
     <string name="failed_to_load_harvested_crops">수확한 작물들을 불러오지 못했어요</string>
+    <string name="replant">다시 심기</string>
+    <string name="harvest">수확하기</string>
+    <string name="dead">죽음</string>
+    <string name="empty_content">-</string>
 </resources>

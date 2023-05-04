@@ -25,6 +25,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import io.foundy.core.designsystem.component.CamstudyContainedButton
 import io.foundy.core.designsystem.component.CamstudyDivider
+import io.foundy.core.designsystem.component.CamstudyOutlinedButton
 import io.foundy.core.designsystem.component.CamstudyText
 import io.foundy.core.designsystem.icon.CamstudyIcon
 import io.foundy.core.designsystem.icon.CamstudyIcons
@@ -45,19 +46,23 @@ import java.util.Calendar
 @Composable
 fun GrowingCropDivide(
     growingCropUiState: GrowingCropUiState,
-    onPlantClick: () -> Unit
+    onPlantClick: () -> Unit,
+    onReplantClick: () -> Unit,
+    onHarvestClick: () -> Unit
 ) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .background(color = CamstudyTheme.colorScheme.systemBackground)
-            .padding(vertical = 20.dp, horizontal = 16.dp)
+            .padding(16.dp)
     ) {
         DivideTitle(text = stringResource(R.string.my_pot))
         Spacer(modifier = Modifier.height(16.dp))
         DivideContent(
             growingCropUiState = growingCropUiState,
-            onPlantClick = onPlantClick
+            onPlantClick = onPlantClick,
+            onReplantClick = onReplantClick,
+            onHarvestClick = onHarvestClick
         )
     }
 }
@@ -65,31 +70,44 @@ fun GrowingCropDivide(
 @Composable
 private fun DivideContent(
     growingCropUiState: GrowingCropUiState,
-    onPlantClick: () -> Unit
+    onPlantClick: () -> Unit,
+    onReplantClick: () -> Unit,
+    onHarvestClick: () -> Unit
 ) {
     val growingCrop = (growingCropUiState as? GrowingCropUiState.Success)?.growingCrop
 
-    Row(verticalAlignment = Alignment.CenterVertically) {
-        GrowingCropIcon(growingCrop = growingCrop)
-        Spacer(modifier = Modifier.width(16.dp))
-        when (growingCropUiState) {
-            GrowingCropUiState.Loading -> Box(Modifier.fillMaxWidth()) {
-                CircularProgressIndicator(Modifier.align(Alignment.Center))
-            }
-            is GrowingCropUiState.Success -> {
-                if (growingCropUiState.growingCrop != null) {
-                    GrowingCropInfo(growingCrop = growingCropUiState.growingCrop)
-                } else {
-                    EmptyGrowingCropInfo(onPlantClick = onPlantClick)
+    Column {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            GrowingCropIcon(growingCrop = growingCrop)
+            Spacer(modifier = Modifier.width(16.dp))
+            when (growingCropUiState) {
+                GrowingCropUiState.Loading -> Box(Modifier.fillMaxWidth()) {
+                    CircularProgressIndicator(Modifier.align(Alignment.Center))
                 }
-            }
-            is GrowingCropUiState.Failure -> CamstudyText(
-                text = growingCropUiState.message ?: stringResource(R.string.failed_to_load_pot),
-                style = CamstudyTheme.typography.titleLarge.copy(
-                    color = CamstudyTheme.colorScheme.systemUi04,
-                    fontWeight = FontWeight.SemiBold
+                is GrowingCropUiState.Success -> {
+                    if (growingCropUiState.growingCrop != null) {
+                        GrowingCropInfo(growingCrop = growingCropUiState.growingCrop)
+                    } else {
+                        EmptyGrowingCropInfo(onPlantClick = onPlantClick)
+                    }
+                }
+                is GrowingCropUiState.Failure -> CamstudyText(
+                    text = growingCropUiState.message
+                        ?: stringResource(R.string.failed_to_load_pot),
+                    style = CamstudyTheme.typography.titleLarge.copy(
+                        color = CamstudyTheme.colorScheme.systemUi04,
+                        fontWeight = FontWeight.SemiBold
+                    )
                 )
-            )
+            }
+        }
+        if (growingCrop != null) {
+            Spacer(modifier = Modifier.height(20.dp))
+            if (growingCrop.isDead) {
+                ReplantButton(onClick = onReplantClick)
+            } else {
+                HarvestButton(enabled = growingCrop.canHarvest, onClick = onHarvestClick)
+            }
         }
     }
 }
@@ -171,7 +189,11 @@ private fun GrowingCropInfo(growingCrop: GrowingCrop) {
                     .background(color = CamstudyTheme.colorScheme.systemUi02)
                     .height(26.dp)
                     .padding(horizontal = 9.5.dp, vertical = 2.dp),
-                text = stringResource(R.string.crop_level, growingCrop.level),
+                text = if (growingCrop.isDead) {
+                    stringResource(R.string.dead)
+                } else {
+                    stringResource(R.string.crop_level, growingCrop.level)
+                },
                 style = cropLevelTextStyle.copy(
                     color = CamstudyTheme.colorScheme.systemUi07,
                     fontSize = cropLevelTextStyle.fontSize.nonScaledSp
@@ -215,18 +237,49 @@ private fun GrowingCropInfo(growingCrop: GrowingCrop) {
                 )
                 CamstudyText(
                     modifier = Modifier.height(18.dp),
-                    text = growingCrop.getRemainingTimeText(),
+                    text = if (growingCrop.isDead) {
+                        stringResource(R.string.empty_content)
+                    } else {
+                        growingCrop.getRemainingTimeText()
+                    },
                     style = textStyle
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 CamstudyText(
                     modifier = Modifier.height(18.dp),
-                    text = growingCrop.getExpectedGradeText(),
+                    text = if (growingCrop.isDead) {
+                        stringResource(R.string.empty_content)
+                    } else {
+                        growingCrop.getExpectedGradeText()
+                    },
                     style = textStyle
                 )
             }
         }
     }
+}
+
+@Composable
+private fun ReplantButton(onClick: () -> Unit) {
+    CamstudyOutlinedButton(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(48.dp),
+        label = stringResource(R.string.replant),
+        onClick = onClick
+    )
+}
+
+@Composable
+private fun HarvestButton(enabled: Boolean, onClick: () -> Unit) {
+    CamstudyContainedButton(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(48.dp),
+        label = stringResource(R.string.harvest),
+        onClick = onClick,
+        enabled = enabled
+    )
 }
 
 @Preview
@@ -236,7 +289,9 @@ fun LoadingGrowingCropDividePreview() {
     CamstudyTheme {
         GrowingCropDivide(
             growingCropUiState = GrowingCropUiState.Loading,
-            onPlantClick = {}
+            onPlantClick = {},
+            onReplantClick = {},
+            onHarvestClick = {}
         )
     }
 }
@@ -260,7 +315,59 @@ fun GrowingCropDividePreview() {
                     }.time
                 )
             ),
-            onPlantClick = {}
+            onPlantClick = {},
+            onReplantClick = {},
+            onHarvestClick = {}
+        )
+    }
+}
+
+@Preview
+@Composable
+fun GrowingCropDivideCanHarvestPreview() {
+    CamstudyTheme {
+        GrowingCropDivide(
+            growingCropUiState = GrowingCropUiState.Success(
+                growingCrop = GrowingCrop(
+                    id = "id",
+                    ownerId = "id",
+                    type = CropType.CARROT,
+                    level = CropType.CARROT.maxLevel,
+                    expectedGrade = CropGrade.SILVER,
+                    isDead = false,
+                    plantedAt = Calendar.getInstance().apply {
+                        set(2023, 3, 14, 21, 59)
+                    }.time
+                )
+            ),
+            onPlantClick = {},
+            onReplantClick = {},
+            onHarvestClick = {}
+        )
+    }
+}
+
+@Preview
+@Composable
+fun GrowingCropDivideDeadPreview() {
+    CamstudyTheme {
+        GrowingCropDivide(
+            growingCropUiState = GrowingCropUiState.Success(
+                growingCrop = GrowingCrop(
+                    id = "id",
+                    ownerId = "id",
+                    type = CropType.CARROT,
+                    level = 3,
+                    expectedGrade = CropGrade.SILVER,
+                    isDead = true,
+                    plantedAt = Calendar.getInstance().apply {
+                        set(2023, 3, 14, 21, 59)
+                    }.time
+                )
+            ),
+            onPlantClick = {},
+            onReplantClick = {},
+            onHarvestClick = {}
         )
     }
 }
@@ -274,7 +381,9 @@ fun EmptyGrowingCropDividePreview() {
             growingCropUiState = GrowingCropUiState.Success(
                 growingCrop = null
             ),
-            onPlantClick = {}
+            onPlantClick = {},
+            onReplantClick = {},
+            onHarvestClick = {}
         )
     }
 }
@@ -285,7 +394,9 @@ fun FailureGrowingCropDividePreview() {
     CamstudyTheme {
         GrowingCropDivide(
             growingCropUiState = GrowingCropUiState.Failure(message = null),
-            onPlantClick = {}
+            onPlantClick = {},
+            onReplantClick = {},
+            onHarvestClick = {}
         )
     }
 }

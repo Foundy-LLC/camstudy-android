@@ -60,7 +60,9 @@ fun CropRoute(
     CropScreen(
         growingCropUiState = uiState.growingCropUiState,
         harvestedCropsUiState = uiState.harvestedCropsUiState,
-        onPlantClick = { navigator.navigate(PlantCropRouteDestination) }
+        onPlantClick = { navigator.navigate(PlantCropRouteDestination) },
+        onReplantClick = { /* TODO */ },
+        onHarvestClick = { /* TODO */ }
     )
 }
 
@@ -68,7 +70,9 @@ fun CropRoute(
 fun CropScreen(
     growingCropUiState: GrowingCropUiState,
     harvestedCropsUiState: HarvestedCropsUiState,
-    onPlantClick: () -> Unit
+    onPlantClick: () -> Unit,
+    onReplantClick: () -> Unit,
+    onHarvestClick: () -> Unit
 ) {
     LazyColumn(
         modifier = Modifier
@@ -78,7 +82,9 @@ fun CropScreen(
         item {
             GrowingCropDivide(
                 growingCropUiState = growingCropUiState,
-                onPlantClick = onPlantClick
+                onPlantClick = onPlantClick,
+                onReplantClick = onReplantClick,
+                onHarvestClick = onHarvestClick
             )
         }
         item { Spacer(modifier = Modifier.height(8.dp)) }
@@ -116,7 +122,9 @@ private fun CropScreenPreview() {
                     )
                 )
             ),
-            onPlantClick = {}
+            onPlantClick = {},
+            onReplantClick = {},
+            onHarvestClick = {}
         )
     }
 }
