@@ -43,8 +43,8 @@ import io.foundy.core.designsystem.icon.CamstudyIcon
 import io.foundy.core.designsystem.icon.CamstudyIcons
 import io.foundy.core.designsystem.theme.CamstudyTheme
 import io.foundy.core.model.CropType
-import io.foundy.core.ui.crop.getName
 import io.foundy.core.ui.crop.freshIcon
+import io.foundy.core.ui.crop.getName
 import io.foundy.crop.ui.R
 import io.foundy.crop.ui.component.DivideTitle
 import io.foundy.crop.ui.extension.getDescription
