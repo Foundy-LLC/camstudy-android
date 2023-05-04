@@ -491,7 +491,7 @@ class RoomSocketService @Inject constructor(
 
     override fun disconnect() {
         logger.d { "Disconnect socket service" }
-        socket.disconnect()
+        _socket?.disconnect()
         _socket = null
         eventFlow.resetReplayCache()
         _device = null
