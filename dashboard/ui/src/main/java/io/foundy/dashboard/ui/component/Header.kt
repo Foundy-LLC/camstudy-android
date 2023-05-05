@@ -96,7 +96,7 @@ private fun UserRankingTile(userRankingUiState: UserRankingUiState, onSeeRanking
             }
         }
         is UserRankingUiState.Success -> {
-            val weeklyStudySeconds = userRankingUiState.userRanking.weeklyStudyTimeSec
+            val weeklyStudySeconds = userRankingUiState.userRanking.studyTimeSec
             val weeklyRanking = userRankingUiState.userRanking.ranking
 
             Column {
@@ -317,7 +317,7 @@ private fun HeaderPreview() {
                     introduce = "hi",
                     score = 230,
                     ranking = 2,
-                    weeklyStudyTimeSec = 24210
+                    studyTimeSec = 24210
                 )
             ),
             growingCropUiState = GrowingCropUiState.Success(
@@ -356,7 +356,7 @@ fun LoadingHeaderPreview() {
                 introduce = "hi",
                 score = 230,
                 ranking = 2,
-                weeklyStudyTimeSec = 24210
+                studyTimeSec = 24210
             )
         )
     }

@@ -3,4 +3,6 @@
     <string name="total_ranking_tab">전체 랭킹</string>
     <string name="weekly_ranking_tab">주간 랭킹</string>
     <string name="organization_ranking_tab">소속 랭킹</string>
+    <string name="ranking_detail">상세 랭킹 정보</string>
+    <string name="score_format">%s점</string>
 </resources>

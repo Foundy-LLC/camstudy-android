@@ -7,5 +7,5 @@ data class UserRankingOverview(
     val introduce: String,
     val score: Int,
     val ranking: Int,
-    val weeklyStudyTimeSec: Int
+    val studyTimeSec: Int
 )
