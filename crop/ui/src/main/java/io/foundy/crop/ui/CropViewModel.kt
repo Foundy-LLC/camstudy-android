@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.foundy.auth.data.repository.AuthRepository
+import io.foundy.core.model.GrowingCrop
 import io.foundy.crop.data.repository.CropRepository
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.firstOrNull
@@ -11,6 +12,7 @@ import kotlinx.coroutines.launch
 import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.syntax.simple.intent
+import org.orbitmvi.orbit.syntax.simple.postSideEffect
 import org.orbitmvi.orbit.syntax.simple.reduce
 import org.orbitmvi.orbit.viewmodel.container
 import javax.inject.Inject
@@ -41,7 +43,8 @@ class CropViewModel @Inject constructor(
                     reduce {
                         state.copy(
                             growingCropUiState = GrowingCropUiState.Success(
-                                growingCrop = growingCrop
+                                growingCrop = growingCrop,
+                                onHarvestClick = ::harvestGrowingCrop
                             )
                         )
                     }
@@ -76,6 +79,39 @@ class CropViewModel @Inject constructor(
                     state.copy(
                         harvestedCropsUiState = HarvestedCropsUiState.Failure(message = it.message)
                     )
+                }
+            }
+    }
+
+    private fun harvestGrowingCrop(growingCrop: GrowingCrop) = intent {
+        val growingCropUiState = state.growingCropUiState
+        check(growingCropUiState is GrowingCropUiState.Success)
+        reduce { state.copy(growingCropUiState = growingCropUiState.copy(isInHarvesting = true)) }
+        cropRepository.harvestCrop(cropId = growingCrop.id)
+            .onSuccess {
+                fetchHarvestedCrops()
+                reduce {
+                    state.copy(
+                        growingCropUiState = growingCropUiState.copy(
+                            growingCrop = null,
+                            isInHarvesting = false
+                        )
+                    )
+                }
+                postSideEffect(
+                    CropSideEffect.Message(
+                        defaultRes = R.string.success_to_harvest_crop
+                    )
+                )
+            }.onFailure {
+                postSideEffect(
+                    CropSideEffect.Message(
+                        content = it.message,
+                        defaultRes = R.string.failed_to_harvest_crop
+                    )
+                )
+                reduce {
+                    state.copy(growingCropUiState = growingCropUiState.copy(isInHarvesting = false))
                 }
             }
     }

@@ -51,9 +51,9 @@ fun CropRoute(
 
     viewModel.collectSideEffect {
         when (it) {
-            else -> {
-                // TODO
-            }
+            is CropSideEffect.Message -> showSnackbar(
+                it.content ?: context.getString(it.defaultRes)
+            )
         }
     }
 
@@ -62,7 +62,6 @@ fun CropRoute(
         harvestedCropsUiState = uiState.harvestedCropsUiState,
         onPlantClick = { navigator.navigate(PlantCropRouteDestination) },
         onReplantClick = { /* TODO */ },
-        onHarvestClick = { /* TODO */ }
     )
 }
 
@@ -72,7 +71,6 @@ fun CropScreen(
     harvestedCropsUiState: HarvestedCropsUiState,
     onPlantClick: () -> Unit,
     onReplantClick: () -> Unit,
-    onHarvestClick: () -> Unit
 ) {
     LazyColumn(
         modifier = Modifier
@@ -84,7 +82,6 @@ fun CropScreen(
                 growingCropUiState = growingCropUiState,
                 onPlantClick = onPlantClick,
                 onReplantClick = onReplantClick,
-                onHarvestClick = onHarvestClick
             )
         }
         item { Spacer(modifier = Modifier.height(8.dp)) }
@@ -109,6 +106,7 @@ private fun CropScreenPreview() {
                         set(2023, 3, 14, 21, 59)
                     }.time
                 ),
+                onHarvestClick = {}
             ),
             harvestedCropsUiState = HarvestedCropsUiState.Success(
                 harvestedCrops = listOf(
@@ -124,7 +122,6 @@ private fun CropScreenPreview() {
             ),
             onPlantClick = {},
             onReplantClick = {},
-            onHarvestClick = {}
         )
     }
 }

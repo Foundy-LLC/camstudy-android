@@ -57,4 +57,15 @@ class NetworkCropRepository @Inject constructor(
             return@runCatching response.getDataOrThrowMessage()
         }
     }
+
+    override suspend fun harvestCrop(cropId: String): Result<Unit> {
+        return runCatching {
+            val currentUserId = authRepository.currentUserIdStream.firstOrNull()
+            check(currentUserId != null) {
+                "현재 회원의 아이디가 없습니다. 로그인 하지 않고 작물을 수확하려 했습니다."
+            }
+            val response = cropApi.harvestCrop(userId = currentUserId, cropId = cropId)
+            response.getDataOrThrowMessage()
+        }
+    }
 }

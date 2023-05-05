@@ -31,4 +31,6 @@
     <string name="harvest">수확하기</string>
     <string name="dead">죽음</string>
     <string name="empty_content">-</string>
+    <string name="failed_to_harvest_crop">작물 수확을 실패했어요.</string>
+    <string name="success_to_harvest_crop">작물 수확을 성공했어요.</string>
 </resources>

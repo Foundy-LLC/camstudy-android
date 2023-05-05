@@ -10,4 +10,5 @@ interface CropRepository {
     suspend fun getGrowingCrop(userId: String): Result<GrowingCrop?>
     suspend fun getHarvestedCrops(userId: String): Result<List<HarvestedCrop>>
     suspend fun plantCrop(cropType: CropType): Result<Unit>
+    suspend fun harvestCrop(cropId: String): Result<Unit>
 }

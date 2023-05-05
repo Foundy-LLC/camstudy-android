@@ -48,7 +48,6 @@ fun GrowingCropDivide(
     growingCropUiState: GrowingCropUiState,
     onPlantClick: () -> Unit,
     onReplantClick: () -> Unit,
-    onHarvestClick: () -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -62,7 +61,6 @@ fun GrowingCropDivide(
             growingCropUiState = growingCropUiState,
             onPlantClick = onPlantClick,
             onReplantClick = onReplantClick,
-            onHarvestClick = onHarvestClick
         )
     }
 }
@@ -72,9 +70,9 @@ private fun DivideContent(
     growingCropUiState: GrowingCropUiState,
     onPlantClick: () -> Unit,
     onReplantClick: () -> Unit,
-    onHarvestClick: () -> Unit
 ) {
-    val growingCrop = (growingCropUiState as? GrowingCropUiState.Success)?.growingCrop
+    val growingCropSuccessUiState = growingCropUiState as? GrowingCropUiState.Success
+    val growingCrop = growingCropSuccessUiState?.growingCrop
 
     Column {
         Row(verticalAlignment = Alignment.CenterVertically) {
@@ -106,7 +104,10 @@ private fun DivideContent(
             if (growingCrop.isDead) {
                 ReplantButton(onClick = onReplantClick)
             } else {
-                HarvestButton(enabled = growingCrop.canHarvest, onClick = onHarvestClick)
+                HarvestButton(
+                    enabled = growingCrop.canHarvest && !growingCropSuccessUiState.isInHarvesting,
+                    onClick = { growingCropSuccessUiState.onHarvestClick(growingCrop) }
+                )
             }
         }
     }
@@ -291,7 +292,6 @@ fun LoadingGrowingCropDividePreview() {
             growingCropUiState = GrowingCropUiState.Loading,
             onPlantClick = {},
             onReplantClick = {},
-            onHarvestClick = {}
         )
     }
 }
@@ -313,11 +313,11 @@ fun GrowingCropDividePreview() {
                     plantedAt = Calendar.getInstance().apply {
                         set(2023, 3, 14, 21, 59)
                     }.time
-                )
+                ),
+                onHarvestClick = {}
             ),
             onPlantClick = {},
             onReplantClick = {},
-            onHarvestClick = {}
         )
     }
 }
@@ -338,11 +338,11 @@ fun GrowingCropDivideCanHarvestPreview() {
                     plantedAt = Calendar.getInstance().apply {
                         set(2023, 3, 14, 21, 59)
                     }.time
-                )
+                ),
+                onHarvestClick = {}
             ),
             onPlantClick = {},
             onReplantClick = {},
-            onHarvestClick = {}
         )
     }
 }
@@ -363,11 +363,11 @@ fun GrowingCropDivideDeadPreview() {
                     plantedAt = Calendar.getInstance().apply {
                         set(2023, 3, 14, 21, 59)
                     }.time
-                )
+                ),
+                onHarvestClick = {}
             ),
             onPlantClick = {},
             onReplantClick = {},
-            onHarvestClick = {}
         )
     }
 }
@@ -379,11 +379,11 @@ fun EmptyGrowingCropDividePreview() {
     CamstudyTheme {
         GrowingCropDivide(
             growingCropUiState = GrowingCropUiState.Success(
-                growingCrop = null
+                growingCrop = null,
+                onHarvestClick = {}
             ),
             onPlantClick = {},
             onReplantClick = {},
-            onHarvestClick = {}
         )
     }
 }
@@ -396,7 +396,6 @@ fun FailureGrowingCropDividePreview() {
             growingCropUiState = GrowingCropUiState.Failure(message = null),
             onPlantClick = {},
             onReplantClick = {},
-            onHarvestClick = {}
         )
     }
 }
