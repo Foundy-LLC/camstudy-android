@@ -8,4 +8,6 @@ sealed class CropSideEffect {
         val content: String? = null,
         @StringRes val defaultRes: Int
     ) : CropSideEffect()
+
+    object NavigateToPlantScreen : CropSideEffect()
 }

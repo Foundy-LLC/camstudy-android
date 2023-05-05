@@ -38,6 +38,9 @@ fun CropRoute(
 ) {
     val uiState = viewModel.collectAsState().value
     val context = LocalContext.current
+    val navigateToPlantScreen = {
+        navigator.navigate(PlantCropRouteDestination)
+    }
 
     plantResultRecipient.onNavResult {
         when (it) {
@@ -54,14 +57,14 @@ fun CropRoute(
             is CropSideEffect.Message -> showSnackbar(
                 it.content ?: context.getString(it.defaultRes)
             )
+            CropSideEffect.NavigateToPlantScreen -> navigateToPlantScreen()
         }
     }
 
     CropScreen(
         growingCropUiState = uiState.growingCropUiState,
         harvestedCropsUiState = uiState.harvestedCropsUiState,
-        onPlantClick = { navigator.navigate(PlantCropRouteDestination) },
-        onReplantClick = { /* TODO */ },
+        onPlantClick = navigateToPlantScreen,
     )
 }
 
@@ -70,7 +73,6 @@ fun CropScreen(
     growingCropUiState: GrowingCropUiState,
     harvestedCropsUiState: HarvestedCropsUiState,
     onPlantClick: () -> Unit,
-    onReplantClick: () -> Unit,
 ) {
     LazyColumn(
         modifier = Modifier
@@ -81,7 +83,6 @@ fun CropScreen(
             GrowingCropDivide(
                 growingCropUiState = growingCropUiState,
                 onPlantClick = onPlantClick,
-                onReplantClick = onReplantClick,
             )
         }
         item { Spacer(modifier = Modifier.height(8.dp)) }
@@ -106,7 +107,8 @@ private fun CropScreenPreview() {
                         set(2023, 3, 14, 21, 59)
                     }.time
                 ),
-                onHarvestClick = {}
+                onHarvestClick = {},
+                onReplantClick = {}
             ),
             harvestedCropsUiState = HarvestedCropsUiState.Success(
                 harvestedCrops = listOf(
@@ -121,7 +123,6 @@ private fun CropScreenPreview() {
                 )
             ),
             onPlantClick = {},
-            onReplantClick = {},
         )
     }
 }

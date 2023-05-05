@@ -33,4 +33,7 @@
     <string name="empty_content">-</string>
     <string name="failed_to_harvest_crop">작물 수확을 실패했어요.</string>
     <string name="success_to_harvest_crop">작물 수확을 성공했어요.</string>
+    <string name="crop_deleted">작물을 제거했어요</string>
+    <string name="failed_to_delete_crop">작물 제거를 실패했어요</string>
+    <string name="replant_dialog_content">작물을 제거하고 심는 페이지로 이동합니다.</string>
 </resources>

@@ -15,6 +15,10 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -24,6 +28,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import io.foundy.core.designsystem.component.CamstudyContainedButton
+import io.foundy.core.designsystem.component.CamstudyDialog
 import io.foundy.core.designsystem.component.CamstudyDivider
 import io.foundy.core.designsystem.component.CamstudyOutlinedButton
 import io.foundy.core.designsystem.component.CamstudyText
@@ -47,7 +52,6 @@ import java.util.Calendar
 fun GrowingCropDivide(
     growingCropUiState: GrowingCropUiState,
     onPlantClick: () -> Unit,
-    onReplantClick: () -> Unit,
 ) {
     Column(
         modifier = Modifier
@@ -60,7 +64,6 @@ fun GrowingCropDivide(
         DivideContent(
             growingCropUiState = growingCropUiState,
             onPlantClick = onPlantClick,
-            onReplantClick = onReplantClick,
         )
     }
 }
@@ -69,7 +72,6 @@ fun GrowingCropDivide(
 private fun DivideContent(
     growingCropUiState: GrowingCropUiState,
     onPlantClick: () -> Unit,
-    onReplantClick: () -> Unit,
 ) {
     val growingCropSuccessUiState = growingCropUiState as? GrowingCropUiState.Success
     val growingCrop = growingCropSuccessUiState?.growingCrop
@@ -102,7 +104,23 @@ private fun DivideContent(
         if (growingCrop != null) {
             Spacer(modifier = Modifier.height(20.dp))
             if (growingCrop.isDead) {
-                ReplantButton(onClick = onReplantClick)
+                var showReplantCropDialog by remember { mutableStateOf(false) }
+
+                if (showReplantCropDialog) {
+                    CamstudyDialog(
+                        content = stringResource(R.string.replant_dialog_content),
+                        onCancel = { showReplantCropDialog = false },
+                        confirmText = stringResource(id = R.string.replant),
+                        onConfirm = {
+                            showReplantCropDialog = false
+                            growingCropSuccessUiState.onReplantClick(growingCrop)
+                        }
+                    )
+                }
+
+                ReplantButton(
+                    onClick = { showReplantCropDialog = true }
+                )
             } else {
                 HarvestButton(
                     enabled = growingCrop.canHarvest && !growingCropSuccessUiState.isInHarvesting,
@@ -291,7 +309,6 @@ fun LoadingGrowingCropDividePreview() {
         GrowingCropDivide(
             growingCropUiState = GrowingCropUiState.Loading,
             onPlantClick = {},
-            onReplantClick = {},
         )
     }
 }
@@ -314,10 +331,10 @@ fun GrowingCropDividePreview() {
                         set(2023, 3, 14, 21, 59)
                     }.time
                 ),
-                onHarvestClick = {}
+                onHarvestClick = {},
+                onReplantClick = {},
             ),
             onPlantClick = {},
-            onReplantClick = {},
         )
     }
 }
@@ -339,10 +356,10 @@ fun GrowingCropDivideCanHarvestPreview() {
                         set(2023, 3, 14, 21, 59)
                     }.time
                 ),
-                onHarvestClick = {}
+                onHarvestClick = {},
+                onReplantClick = {},
             ),
             onPlantClick = {},
-            onReplantClick = {},
         )
     }
 }
@@ -364,10 +381,10 @@ fun GrowingCropDivideDeadPreview() {
                         set(2023, 3, 14, 21, 59)
                     }.time
                 ),
-                onHarvestClick = {}
+                onHarvestClick = {},
+                onReplantClick = {},
             ),
             onPlantClick = {},
-            onReplantClick = {},
         )
     }
 }
@@ -380,10 +397,10 @@ fun EmptyGrowingCropDividePreview() {
         GrowingCropDivide(
             growingCropUiState = GrowingCropUiState.Success(
                 growingCrop = null,
-                onHarvestClick = {}
+                onHarvestClick = {},
+                onReplantClick = {},
             ),
             onPlantClick = {},
-            onReplantClick = {},
         )
     }
 }
@@ -395,7 +412,6 @@ fun FailureGrowingCropDividePreview() {
         GrowingCropDivide(
             growingCropUiState = GrowingCropUiState.Failure(message = null),
             onPlantClick = {},
-            onReplantClick = {},
         )
     }
 }

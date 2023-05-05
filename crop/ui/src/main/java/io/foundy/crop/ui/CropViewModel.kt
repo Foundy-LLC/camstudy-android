@@ -44,7 +44,8 @@ class CropViewModel @Inject constructor(
                         state.copy(
                             growingCropUiState = GrowingCropUiState.Success(
                                 growingCrop = growingCrop,
-                                onHarvestClick = ::harvestGrowingCrop
+                                onHarvestClick = ::harvestGrowingCrop,
+                                onReplantClick = ::deleteGrowingCrop
                             )
                         )
                     }
@@ -112,6 +113,39 @@ class CropViewModel @Inject constructor(
                 )
                 reduce {
                     state.copy(growingCropUiState = growingCropUiState.copy(isInHarvesting = false))
+                }
+            }
+    }
+
+    private fun deleteGrowingCrop(growingCrop: GrowingCrop) = intent {
+        val growingCropUiState = state.growingCropUiState
+        check(growingCropUiState is GrowingCropUiState.Success)
+        reduce { state.copy(growingCropUiState = growingCropUiState.copy(isInDeleting = true)) }
+        cropRepository.deleteGrowingCrop(cropId = growingCrop.id)
+            .onSuccess {
+                reduce {
+                    state.copy(
+                        growingCropUiState = growingCropUiState.copy(
+                            growingCrop = null,
+                            isInDeleting = false
+                        )
+                    )
+                }
+                postSideEffect(
+                    CropSideEffect.Message(
+                        defaultRes = R.string.crop_deleted
+                    )
+                )
+                postSideEffect(CropSideEffect.NavigateToPlantScreen)
+            }.onFailure {
+                postSideEffect(
+                    CropSideEffect.Message(
+                        content = it.message,
+                        defaultRes = R.string.failed_to_delete_crop
+                    )
+                )
+                reduce {
+                    state.copy(growingCropUiState = growingCropUiState.copy(isInDeleting = false))
                 }
             }
     }

@@ -16,7 +16,9 @@ sealed class GrowingCropUiState {
     data class Success(
         val growingCrop: GrowingCrop?,
         val onHarvestClick: (GrowingCrop) -> Unit,
-        val isInHarvesting: Boolean = false
+        val onReplantClick: (GrowingCrop) -> Unit,
+        val isInHarvesting: Boolean = false,
+        val isInDeleting: Boolean = false
     ) : GrowingCropUiState()
 
     data class Failure(val message: String?) : GrowingCropUiState()

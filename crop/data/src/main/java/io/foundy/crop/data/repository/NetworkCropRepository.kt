@@ -68,4 +68,15 @@ class NetworkCropRepository @Inject constructor(
             response.getDataOrThrowMessage()
         }
     }
+
+    override suspend fun deleteGrowingCrop(cropId: String): Result<Unit> {
+        return runCatching {
+            val currentUserId = authRepository.currentUserIdStream.firstOrNull()
+            check(currentUserId != null) {
+                "현재 회원의 아이디가 없습니다. 로그인 하지 않고 작물을 제거하려 했습니다."
+            }
+            val response = cropApi.deleteCrop(userId = currentUserId, cropId = cropId)
+            response.getDataOrThrowMessage()
+        }
+    }
 }
