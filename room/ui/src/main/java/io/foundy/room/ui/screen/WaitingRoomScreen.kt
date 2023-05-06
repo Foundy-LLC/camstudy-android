@@ -172,8 +172,9 @@ fun WaitingRoomScreen(
             }
         }
         BottomContainedButton(
-            enabled = uiState.enableJoinButton(),
-            label = uiState.cannotJoinMessage() ?: stringResource(id = uiState.joinButtonTextRes),
+            enabled = uiState.isEnabledJoinButton(),
+            label = uiState.getCannotJoinMessage()
+                ?: stringResource(id = uiState.joinButtonTextRes),
             onClick = onJoinClick
         )
     }

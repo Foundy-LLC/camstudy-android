@@ -45,8 +45,8 @@ sealed class RoomUiState {
         }
 
         @Composable
-        fun enableJoinButton(): Boolean {
-            val hasErrorMessage = cannotJoinMessage() != null
+        fun isEnabledJoinButton(): Boolean {
+            val hasErrorMessage = getCannotJoinMessage() != null
             if (this is Connected) {
                 return !hasErrorMessage && !joining
             }
@@ -63,7 +63,7 @@ sealed class RoomUiState {
             }
 
         @Composable
-        fun cannotJoinMessage(): String? {
+        fun getCannotJoinMessage(): String? {
             return when (this) {
                 Loading -> return stringResource(R.string.loading)
                 NotExists -> return stringResource(R.string.not_exists_study_room)
