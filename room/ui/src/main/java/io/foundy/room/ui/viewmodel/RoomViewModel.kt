@@ -65,9 +65,18 @@ class RoomViewModel @Inject constructor(
             roomService.connect(roomId)
             joinToWaitingRoom(roomId)
         } catch (e: TimeoutCancellationException) {
-            reduce { RoomUiState.WaitingRoom.FailedToConnect(R.string.timeout_on_connect_server) }
+            reduce {
+                RoomUiState.WaitingRoom.FailedToConnect(
+                    defaultMessageRes = R.string.timeout_on_connect_server
+                )
+            }
         } catch (e: Exception) {
-            reduce { RoomUiState.WaitingRoom.FailedToConnect(R.string.failed_to_connect_server) }
+            reduce {
+                RoomUiState.WaitingRoom.FailedToConnect(
+                    message = e.message,
+                    defaultMessageRes = R.string.failed_to_connect_server
+                )
+            }
         }
     }
 
@@ -95,7 +104,11 @@ class RoomViewModel @Inject constructor(
                 )
             }
         } catch (e: TimeoutCancellationException) {
-            reduce { RoomUiState.WaitingRoom.FailedToConnect(R.string.failed_to_join_waiting_room) }
+            reduce {
+                RoomUiState.WaitingRoom.FailedToConnect(
+                    defaultMessageRes = R.string.failed_to_join_waiting_room
+                )
+            }
         }
     }
 
@@ -141,7 +154,11 @@ class RoomViewModel @Inject constructor(
                 reduce { uiState.copy(joining = false) }
             }
         } catch (e: TimeoutCancellationException) {
-            reduce { RoomUiState.WaitingRoom.FailedToConnect(R.string.timeout_to_join_study_room) }
+            reduce {
+                RoomUiState.WaitingRoom.FailedToConnect(
+                    defaultMessageRes = R.string.timeout_to_join_study_room
+                )
+            }
         }
     }
 

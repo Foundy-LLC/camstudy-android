@@ -1,6 +1,8 @@
 package io.foundy.room.ui.viewmodel
 
 import androidx.annotation.StringRes
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.res.stringResource
 import io.foundy.room.data.model.WaitingRoomData
 import io.foundy.room.domain.ChatMessage
 import io.foundy.room.domain.PeerOverview
@@ -18,7 +20,10 @@ sealed class RoomUiState {
 
         object Loading : WaitingRoom()
 
-        data class FailedToConnect(@StringRes val messageRes: Int) : WaitingRoom()
+        data class FailedToConnect(
+            val message: String? = null,
+            @StringRes val defaultMessageRes: Int
+        ) : WaitingRoom()
 
         object NotExists : WaitingRoom()
 
@@ -39,14 +44,14 @@ sealed class RoomUiState {
             val isCurrentUserBlocked: Boolean get() = data.blacklist.any { it.id == currentUserId }
         }
 
-        val enableJoinButton: Boolean
-            get() {
-                val hasErrorMessage = cannotJoinMessage != null
-                if (this is Connected) {
-                    return !hasErrorMessage && !joining
-                }
-                return !hasErrorMessage
+        @Composable
+        fun enableJoinButton(): Boolean {
+            val hasErrorMessage = cannotJoinMessage() != null
+            if (this is Connected) {
+                return !hasErrorMessage && !joining
             }
+            return !hasErrorMessage
+        }
 
         @get:StringRes
         val joinButtonTextRes: Int
@@ -57,33 +62,32 @@ sealed class RoomUiState {
                 return R.string.join
             }
 
-        @get:StringRes
-        val cannotJoinMessage: Int?
-            get() {
-                when (this) {
-                    Loading -> return R.string.loading
-                    NotExists -> return R.string.not_exists_study_room
-                    is FailedToConnect -> return messageRes
-                    is Connected -> {
-                        if (data.joinerList.any { it.id == currentUserId }) {
-                            return R.string.already_joined
-                        }
-                        if (data.hasPassword && passwordInput.isEmpty()) {
-                            return R.string.input_password
-                        }
-                        if (isCurrentUserMaster) {
-                            return null
-                        }
-                        if (isFull) {
-                            return R.string.room_is_full
-                        }
-                        if (isCurrentUserBlocked) {
-                            return R.string.cannot_join_because_blocked
-                        }
+        @Composable
+        fun cannotJoinMessage(): String? {
+            return when (this) {
+                Loading -> return stringResource(R.string.loading)
+                NotExists -> return stringResource(R.string.not_exists_study_room)
+                is FailedToConnect -> return message ?: stringResource(defaultMessageRes)
+                is Connected -> {
+                    if (data.joinerList.any { it.id == currentUserId }) {
+                        return stringResource(R.string.already_joined)
+                    }
+                    if (data.hasPassword && passwordInput.isEmpty()) {
+                        return stringResource(R.string.input_password)
+                    }
+                    if (isCurrentUserMaster) {
                         return null
                     }
+                    if (isFull) {
+                        return stringResource(R.string.room_is_full)
+                    }
+                    if (isCurrentUserBlocked) {
+                        return stringResource(R.string.cannot_join_because_blocked)
+                    }
+                    return null
                 }
             }
+        }
     }
 
     data class StudyRoom(
