@@ -5,4 +5,6 @@
     <string name="organization_ranking_tab">소속 랭킹</string>
     <string name="ranking_detail">상세 랭킹 정보</string>
     <string name="score_format">%s점</string>
+    <string name="failed_to_load_my_ranking">나의 랭킹을 불러오지 못했어요</string>
+    <string name="me">\(나\)</string>
 </resources>

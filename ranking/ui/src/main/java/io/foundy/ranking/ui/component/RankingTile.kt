@@ -47,12 +47,13 @@ private fun getRankingNumberBoxColorBy(ranking: Int): Color {
 }
 
 @Composable
-fun RankingTile(user: UserRankingOverview) {
+fun RankingTile(user: UserRankingOverview, isMe: Boolean = false) {
     var expanded by rememberSaveable(user.id) { mutableStateOf(false) }
 
     // TODO: 클릭하면 회원 상세 페이지로 전환하기
     RankingTileContent(
         user = user,
+        isMe = isMe,
         expanded = expanded,
         onExpandClick = { expanded = !expanded }
     )
@@ -61,13 +62,22 @@ fun RankingTile(user: UserRankingOverview) {
 @Composable
 private fun RankingTileContent(
     user: UserRankingOverview,
+    isMe: Boolean,
     expanded: Boolean,
     onExpandClick: () -> Unit
 ) {
     Column(
         modifier = Modifier.background(color = CamstudyTheme.colorScheme.systemBackground)
     ) {
-        Box {
+        Box(
+            modifier = Modifier.background(
+                if (isMe) {
+                    CamstudyTheme.colorScheme.primary.copy(alpha = 0.1f)
+                } else {
+                    CamstudyTheme.colorScheme.systemBackground
+                }
+            )
+        ) {
             Row(
                 modifier = Modifier.padding(start = 16.dp, top = 8.dp, bottom = 7.dp, end = 4.dp),
                 verticalAlignment = Alignment.CenterVertically
@@ -84,7 +94,14 @@ private fun RankingTileContent(
                 Spacer(modifier = Modifier.width(12.dp))
                 ExpandButton(expanded = expanded, onClick = onExpandClick)
             }
-            CamstudyDivider(modifier = Modifier.align(Alignment.BottomCenter))
+            CamstudyDivider(
+                modifier = Modifier.align(Alignment.BottomCenter),
+                color = if (isMe) {
+                    CamstudyTheme.colorScheme.primary
+                } else {
+                    CamstudyTheme.colorScheme.systemUi03
+                }
+            )
         }
         AnimatedVisibility(
             visible = expanded
@@ -231,6 +248,7 @@ private fun RankingTilePreview() {
                 score = 12412,
                 studyTimeSec = 12032
             ),
+            isMe = false,
             expanded = false,
             onExpandClick = {}
         )
@@ -252,8 +270,30 @@ private fun ExpandedRankingTilePreview() {
                 score = 12412,
                 studyTimeSec = 12032
             ),
+            isMe = false,
             expanded = expanded,
             onExpandClick = { expanded = !expanded }
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun MyRankingTilePreview() {
+    CamstudyTheme {
+        RankingTileContent(
+            user = UserRankingOverview(
+                id = "id",
+                name = "홍길동",
+                ranking = 1,
+                profileImage = null,
+                introduce = "안녕하세요",
+                score = 12412,
+                studyTimeSec = 12032
+            ),
+            isMe = true,
+            expanded = false,
+            onExpandClick = {}
         )
     }
 }

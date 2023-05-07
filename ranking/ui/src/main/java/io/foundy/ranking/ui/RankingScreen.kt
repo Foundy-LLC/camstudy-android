@@ -2,12 +2,16 @@ package io.foundy.ranking.ui
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -72,21 +76,60 @@ private fun RankingContent(
     tab: RankingTabDestination,
     uiState: RankingUiState
 ) {
-    val users = when (tab) {
-        RankingTabDestination.Total -> uiState.totalUserRankingFlow.collectAsLazyPagingItems()
-        RankingTabDestination.Weekly -> uiState.weeklyUserRankingFlow.collectAsLazyPagingItems()
-        // TODO: 소속 랭킹 데이터로 바꾸기
-        RankingTabDestination.Organization -> {
-            uiState.weeklyUserRankingFlow.collectAsLazyPagingItems()
+    val (users, currentUser, isLoading) = when (tab) {
+        RankingTabDestination.Total -> Triple(
+            uiState.totalRanking.rankingFlow.collectAsLazyPagingItems(),
+            uiState.totalRanking.currentUserRanking,
+            uiState.totalRanking.isCurrentUserRankingLoading
+        )
+        RankingTabDestination.Weekly -> Triple(
+            uiState.weeklyRanking.rankingFlow.collectAsLazyPagingItems(),
+            uiState.weeklyRanking.currentUserRanking,
+            uiState.weeklyRanking.isCurrentUserRankingLoading
+        )
+        RankingTabDestination.Organization -> Triple(
+            // TODO: 소속 랭킹 데이터로 바꾸기
+            uiState.totalRanking.rankingFlow.collectAsLazyPagingItems(),
+            uiState.totalRanking.currentUserRanking,
+            uiState.totalRanking.isCurrentUserRankingLoading
+        )
+    }
+
+    LaunchedEffect(Unit) {
+        when (tab) {
+            RankingTabDestination.Total -> {
+                if (uiState.totalRanking.shouldFetchCurrentUserRanking) {
+                    uiState.totalRanking.fetchCurrentUserRanking()
+                }
+            }
+            RankingTabDestination.Weekly -> {
+                if (uiState.weeklyRanking.shouldFetchCurrentUserRanking) {
+                    uiState.weeklyRanking.fetchCurrentUserRanking()
+                }
+            }
+            RankingTabDestination.Organization -> {
+                // TODO: 구현
+            }
         }
     }
 
-    LazyColumn {
-        items(users, key = { it.id }) { user ->
-            if (user == null) {
-                return@items
+    LazyColumn(
+        modifier = Modifier.fillMaxSize()
+    ) {
+        if (isLoading) {
+            item { CircularProgressIndicator() }
+        } else {
+            item {
+                if (currentUser != null) {
+                    RankingTile(user = currentUser, isMe = true)
+                }
             }
-            RankingTile(user = user)
+            items(users, key = { it.id }) { user ->
+                if (user == null) {
+                    return@items
+                }
+                RankingTile(user = user)
+            }
         }
         // TODO: 로딩, 에러 보이기
     }
@@ -101,7 +144,10 @@ fun RankingScreenPreview() {
     CamstudyTheme {
         RankingScreen(
             pagerState = pagerState,
-            uiState = RankingUiState()
+            uiState = RankingUiState(
+                totalRanking = RankingTabUiState(fetchCurrentUserRanking = {}),
+                weeklyRanking = RankingTabUiState(fetchCurrentUserRanking = {})
+            )
         )
     }
 }

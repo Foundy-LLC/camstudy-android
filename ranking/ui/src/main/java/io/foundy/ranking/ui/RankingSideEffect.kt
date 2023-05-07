@@ -1,3 +1,8 @@
 package io.foundy.ranking.ui
 
-sealed class RankingSideEffect
+import io.foundy.core.ui.UserMessage
+
+sealed class RankingSideEffect {
+
+    data class ErrorMessage(val message: UserMessage) : RankingSideEffect()
+}

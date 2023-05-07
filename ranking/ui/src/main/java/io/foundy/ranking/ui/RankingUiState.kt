@@ -6,8 +6,17 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.emptyFlow
 
 data class RankingUiState(
-    // TODO: 내 랭킹 추가
-    val totalUserRankingFlow: Flow<PagingData<UserRankingOverview>> = emptyFlow(),
-    val weeklyUserRankingFlow: Flow<PagingData<UserRankingOverview>> = emptyFlow(),
-    // TODO: 소속별 랭킹 추가
+    val totalRanking: RankingTabUiState,
+    val weeklyRanking: RankingTabUiState,
 )
+
+data class RankingTabUiState(
+    val currentUserRanking: UserRankingOverview? = null,
+    val rankingFlow: Flow<PagingData<UserRankingOverview>> = emptyFlow(),
+    val isCurrentUserRankingLoading: Boolean = false,
+    val fetchCurrentUserRanking: () -> Unit
+) {
+    val shouldFetchCurrentUserRanking: Boolean
+        get() = currentUserRanking == null &&
+            !isCurrentUserRankingLoading
+}
