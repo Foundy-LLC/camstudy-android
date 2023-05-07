@@ -16,6 +16,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -47,8 +48,9 @@ private fun getRankingNumberBoxColorBy(ranking: Int): Color {
 
 @Composable
 fun RankingTile(user: UserRankingOverview) {
-    var expanded by remember { mutableStateOf(false) }
+    var expanded by rememberSaveable(user.id) { mutableStateOf(false) }
 
+    // TODO: 클릭하면 회원 상세 페이지로 전환하기
     RankingTileContent(
         user = user,
         expanded = expanded,
