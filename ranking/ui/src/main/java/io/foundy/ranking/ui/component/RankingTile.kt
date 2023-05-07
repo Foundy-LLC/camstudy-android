@@ -28,6 +28,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import io.foundy.core.common.util.formatDuration
+import io.foundy.core.designsystem.component.CamstudyDivider
 import io.foundy.core.designsystem.component.CamstudyText
 import io.foundy.core.designsystem.icon.CamstudyIcon
 import io.foundy.core.designsystem.icon.CamstudyIcons
@@ -64,29 +65,35 @@ private fun RankingTileContent(
     Column(
         modifier = Modifier.background(color = CamstudyTheme.colorScheme.systemBackground)
     ) {
-        Row(
-            modifier = Modifier.padding(start = 16.dp, top = 8.dp, bottom = 7.dp, end = 4.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            RankingNumber(ranking = user.ranking)
-            Spacer(modifier = Modifier.width(12.dp))
-            ProfileImage(imageUrl = user.profileImage)
-            Spacer(modifier = Modifier.width(12.dp))
-            UserNameAndIntroduce(
-                modifier = Modifier.weight(1f),
-                name = user.name,
-                introduce = user.introduce
-            )
-            Spacer(modifier = Modifier.width(12.dp))
-            ExpandButton(expanded = expanded, onClick = onExpandClick)
+        Box {
+            Row(
+                modifier = Modifier.padding(start = 16.dp, top = 8.dp, bottom = 7.dp, end = 4.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                RankingNumber(ranking = user.ranking)
+                Spacer(modifier = Modifier.width(12.dp))
+                ProfileImage(imageUrl = user.profileImage)
+                Spacer(modifier = Modifier.width(12.dp))
+                UserNameAndIntroduce(
+                    modifier = Modifier.weight(1f),
+                    name = user.name,
+                    introduce = user.introduce
+                )
+                Spacer(modifier = Modifier.width(12.dp))
+                ExpandButton(expanded = expanded, onClick = onExpandClick)
+            }
+            CamstudyDivider(modifier = Modifier.align(Alignment.BottomCenter))
         }
         AnimatedVisibility(
             visible = expanded
         ) {
-            RankingDetail(
-                score = user.score,
-                studyTimeSec = user.studyTimeSec
-            )
+            Box {
+                RankingDetail(
+                    score = user.score,
+                    studyTimeSec = user.studyTimeSec
+                )
+                CamstudyDivider(modifier = Modifier.align(Alignment.BottomCenter))
+            }
         }
     }
 }
