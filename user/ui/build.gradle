@@ -9,7 +9,7 @@ plugins {
 android {
     def globalConfiguration = rootProject.extensions.getByName("ext")
 
-    namespace 'io.foundy.ranking.ui'
+    namespace 'io.foundy.user.ui'
     compileSdk globalConfiguration["android_compile_sdk_version"]
 
     defaultConfig {
@@ -39,42 +39,13 @@ android {
     kotlinOptions {
         jvmTarget = '1.8'
     }
-    ksp {
-        arg("compose-destinations.moduleName", "ranking")
-        arg("compose-destinations.mode", "destinations")
-    }
 }
 
 dependencies {
-    implementation project(path: ':core:navigation')
     implementation project(path: ':core:designsystem')
     implementation project(path: ':core:model')
     implementation project(path: ':core:ui')
-    implementation project(path: ':core:common')
-    implementation project(path: ':ranking:data')
-    implementation project(path: ':organization:ui')
-    implementation project(path: ':auth:data')
-    implementation project(path: ':user:ui')
-
-    // coil
-    implementation("io.coil-kt:coil-compose:$coil_version")
-
-    // compose destination
-    implementation "io.github.raamcosta.compose-destinations:core:$compose_destination_version"
-    ksp "io.github.raamcosta.compose-destinations:ksp:$compose_destination_version"
-
-    // navigation
-    implementation "androidx.hilt:hilt-navigation-compose:$hilt_navigation_compose"
-    implementation "com.google.accompanist:accompanist-navigation-animation:$accompanist_navigation_animation"
-
-    // orbit
-    implementation("org.orbit-mvi:orbit-viewmodel:$orbit_version")
-    implementation("org.orbit-mvi:orbit-compose:$orbit_version")
-    testImplementation("org.orbit-mvi:orbit-test:$orbit_version")
-
-    // paging
-    implementation "androidx.paging:paging-common-ktx:$paging"
-    implementation "androidx.paging:paging-compose:$paging_compose"
+    implementation project(path: ':user:domain')
 
     // hilt
     implementation "com.google.dagger:hilt-android:$hilt_version"
@@ -85,6 +56,17 @@ dependencies {
     androidTestImplementation "com.google.dagger:hilt-android-testing:$hilt_version"
     kaptAndroidTest "com.google.dagger:hilt-android-compiler:$hilt_version"
     androidTestAnnotationProcessor "com.google.dagger:hilt-android-compiler:$hilt_version"
+    implementation "androidx.hilt:hilt-navigation-compose:$hilt_navigation_compose"
+
+    // orbit
+    implementation("org.orbit-mvi:orbit-viewmodel:$orbit_version")
+    implementation("org.orbit-mvi:orbit-compose:$orbit_version")
+    testImplementation("org.orbit-mvi:orbit-test:$orbit_version")
+
+    // navigation
+    implementation "androidx.navigation:navigation-compose:$nav_version"
+    implementation "androidx.hilt:hilt-navigation-compose:$hilt_navigation_compose"
+    implementation "com.google.accompanist:accompanist-navigation-animation:$accompanist_navigation_animation"
 
     implementation 'androidx.core:core-ktx:1.9.0'
     implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.5.1'

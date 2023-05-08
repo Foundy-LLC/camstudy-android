@@ -28,10 +28,10 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.items
 import com.ramcosta.composedestinations.annotation.Destination
+import io.found.user.ui.UserProfileDialog
 import io.foundy.core.designsystem.component.CamstudyTab
 import io.foundy.core.designsystem.component.CamstudyTabRow
 import io.foundy.core.designsystem.theme.CamstudyTheme
-import io.foundy.core.ui.UserProfileDialog
 import io.foundy.ranking.ui.component.RankingTile
 import kotlinx.coroutines.launch
 import org.orbitmvi.orbit.compose.collectAsState
@@ -45,7 +45,7 @@ fun RankingRoute(
 ) {
     val pagerState = rememberPagerState(0)
     val uiState = viewModel.collectAsState().value
-    var shouldShowUserProfileDialog by remember { mutableStateOf(false) }
+    var clickedUserId: String? by remember { mutableStateOf(null) }
     val snackbarHostState = remember { SnackbarHostState() }
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
@@ -57,18 +57,15 @@ fun RankingRoute(
                     it.message.content ?: context.getString(it.message.defaultRes)
                 )
             }
-            is RankingSideEffect.HideUserProfileDialog -> {
-                shouldShowUserProfileDialog = false
-            }
         }
     }
 
     RankingScreen(
         pagerState = pagerState,
         snackbarHostState = snackbarHostState,
-        shouldShowUserProfileDialog = shouldShowUserProfileDialog,
-        showUserProfileDialog = { shouldShowUserProfileDialog = true },
-        hideUserProfileDialog = { shouldShowUserProfileDialog = false },
+        clickedUserId = clickedUserId,
+        showUserProfileDialog = { clickedUserId = it },
+        hideUserProfileDialog = { clickedUserId = null },
         uiState = uiState
     )
 }
@@ -78,16 +75,16 @@ fun RankingRoute(
 fun RankingScreen(
     pagerState: PagerState,
     snackbarHostState: SnackbarHostState,
-    shouldShowUserProfileDialog: Boolean,
-    showUserProfileDialog: () -> Unit,
+    clickedUserId: String?,
+    showUserProfileDialog: (id: String) -> Unit,
     hideUserProfileDialog: () -> Unit,
     uiState: RankingUiState
 ) {
     val coroutineScope = rememberCoroutineScope()
 
-    if (shouldShowUserProfileDialog) {
+    if (clickedUserId != null) {
         UserProfileDialog(
-            user = uiState.userToShowDialog,
+            userId = clickedUserId,
             onCancel = hideUserProfileDialog
         )
     }
@@ -119,10 +116,7 @@ fun RankingScreen(
                 RankingContent(
                     tab = RankingTabDestination.values[page],
                     uiState = uiState,
-                    onClickUser = { id ->
-                        showUserProfileDialog()
-                        uiState.onClickUser(id)
-                    }
+                    onClickUser = showUserProfileDialog
                 )
             }
         }
@@ -206,9 +200,8 @@ fun RankingScreenPreview() {
             uiState = RankingUiState(
                 totalRanking = RankingTabUiState(fetchCurrentUserRanking = {}),
                 weeklyRanking = RankingTabUiState(fetchCurrentUserRanking = {}),
-                onClickUser = {}
             ),
-            shouldShowUserProfileDialog = false,
+            clickedUserId = null,
             showUserProfileDialog = {},
             hideUserProfileDialog = {},
             snackbarHostState = SnackbarHostState()

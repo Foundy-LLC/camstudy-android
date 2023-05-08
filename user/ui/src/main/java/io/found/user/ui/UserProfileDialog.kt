@@ -1,26 +1,38 @@
-package io.foundy.core.ui
+package io.found.user.ui
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import androidx.hilt.navigation.compose.hiltViewModel
 import io.foundy.core.designsystem.component.CamstudyText
 import io.foundy.core.designsystem.component.DialogMaxWidth
 import io.foundy.core.designsystem.component.DialogMinWidth
 import io.foundy.core.designsystem.theme.CamstudyTheme
-import io.foundy.core.model.User
+import io.foundy.core.ui.UserProfileImage
+import org.orbitmvi.orbit.compose.collectAsState
 
 @Composable
 fun UserProfileDialog(
-    user: User?,
+    viewModel: UserProfileDialogViewModel = hiltViewModel(),
+    userId: String,
     onCancel: () -> Unit
 ) {
+    val uiState = viewModel.collectAsState().value
+
+    LaunchedEffect(userId) {
+        viewModel.fetchUser(id = userId)
+    }
+
     Dialog(onDismissRequest = onCancel) {
         Column(
             modifier = Modifier
@@ -28,13 +40,26 @@ fun UserProfileDialog(
                 .clip(RoundedCornerShape(16.dp))
                 .background(color = CamstudyTheme.colorScheme.cardUi),
         ) {
+            UserProfileDialogContent(uiState = uiState)
+        }
+    }
+}
+
+@Composable
+private fun UserProfileDialogContent(uiState: UserProfileDialogUiState) {
+    when (uiState) {
+        is UserProfileDialogUiState.Failure -> CamstudyText(
+            text = uiState.message.content ?: stringResource(id = uiState.message.defaultRes)
+        )
+        UserProfileDialogUiState.Loading -> CircularProgressIndicator()
+        is UserProfileDialogUiState.Success -> {
             UserProfileImage(
-                imageUrl = user?.profileImage,
+                imageUrl = uiState.user.profileImage,
                 imageOrContainerSize = 100.dp,
                 fallbackIconSize = 64.dp,
                 cornerShape = RoundedCornerShape(16.dp)
             )
-            CamstudyText(text = user.toString())
+            CamstudyText(text = uiState.user.toString())
         }
     }
 }
@@ -43,18 +68,5 @@ fun UserProfileDialog(
 @Composable
 private fun UserProfileDialogPreview() {
     CamstudyTheme {
-//        UserProfileDialog(
-//            user = User(
-//                id = "id",
-//                name = "김민성",
-//                introduce = "자기소개",
-//                profileImage = null,
-//                rankingScore = 31232,
-//                studyTimeSec = 3253,
-//                organizations = listOf("구글"),
-//                tags = listOf("안드로이드")
-//            ),
-//            onCancel = {}
-//        )
     }
 }
