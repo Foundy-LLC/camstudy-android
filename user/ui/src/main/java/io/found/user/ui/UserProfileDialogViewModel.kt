@@ -21,6 +21,10 @@ class UserProfileDialogViewModel @Inject constructor(
         container(UserProfileDialogUiState.Loading)
 
     fun fetchUser(id: String) = intent {
+        val fetchedUser = (state as? UserProfileDialogUiState.Success)?.user
+        if (fetchedUser?.id == id) {
+            return@intent
+        }
         reduce { UserProfileDialogUiState.Loading }
         getUserUseCase(id)
             .onSuccess { user ->
