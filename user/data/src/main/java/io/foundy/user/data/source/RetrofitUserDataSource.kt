@@ -12,8 +12,11 @@ class RetrofitUserDataSource @Inject constructor(
     private val api: UserApi
 ) : UserRemoteDataSource {
 
-    override suspend fun getUser(userId: String): Response<ResponseBody<UserDto>> {
-        return api.getUser(userId)
+    override suspend fun getUser(
+        userId: String,
+        requesterId: String
+    ): Response<ResponseBody<UserDto>> {
+        return api.getUser(userId = userId, requesterId = requesterId)
     }
 
     override suspend fun postUserInitialInfo(

@@ -27,8 +27,8 @@ import androidx.compose.ui.window.Dialog
 import io.foundy.core.designsystem.R
 import io.foundy.core.designsystem.theme.CamstudyTheme
 
-internal val DialogMinWidth = 280.dp
-internal val DialogMaxWidth = 560.dp
+val DialogMinWidth = 280.dp
+val DialogMaxWidth = 560.dp
 
 @Composable
 fun CamstudyDialog(

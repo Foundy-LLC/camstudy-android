@@ -1,6 +1,7 @@
 package io.foundy.ranking.ui
 
 import androidx.paging.PagingData
+import io.foundy.core.model.User
 import io.foundy.core.model.UserRankingOverview
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.emptyFlow
@@ -8,6 +9,8 @@ import kotlinx.coroutines.flow.emptyFlow
 data class RankingUiState(
     val totalRanking: RankingTabUiState,
     val weeklyRanking: RankingTabUiState,
+    val userToShowDialog: User? = null,
+    val onClickUser: (String) -> Unit
 )
 
 data class RankingTabUiState(

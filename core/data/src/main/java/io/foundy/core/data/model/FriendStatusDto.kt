@@ -1,4 +1,4 @@
-package io.foundy.search.data.model
+package io.foundy.core.data.model
 
 import com.google.gson.annotations.SerializedName
 import io.foundy.core.model.FriendStatus

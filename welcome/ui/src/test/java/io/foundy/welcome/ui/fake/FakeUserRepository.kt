@@ -13,7 +13,7 @@ class FakeUserRepository : UserRepository {
                 name = "name",
                 introduce = "hello",
                 rankingScore = 100,
-                totalStudyMinute = 60,
+                studyTimeSec = 60,
                 organizations = emptyList(),
                 tags = listOf("android")
             )

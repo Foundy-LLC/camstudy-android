@@ -5,4 +5,6 @@ import io.foundy.core.ui.UserMessage
 sealed class RankingSideEffect {
 
     data class ErrorMessage(val message: UserMessage) : RankingSideEffect()
+
+    object HideUserProfileDialog : RankingSideEffect()
 }

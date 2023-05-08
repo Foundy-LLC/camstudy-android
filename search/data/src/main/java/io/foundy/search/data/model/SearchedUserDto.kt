@@ -1,6 +1,8 @@
 package io.foundy.search.data.model
 
 import com.google.gson.annotations.SerializedName
+import io.foundy.core.data.model.FriendStatusDto
+import io.foundy.core.data.model.toEntity
 import io.foundy.core.model.SearchedUser
 
 data class SearchedUserDto(

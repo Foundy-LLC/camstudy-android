@@ -7,7 +7,10 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import io.foundy.auth.data.repository.AuthRepository
 import io.foundy.core.ui.UserMessage
 import io.foundy.ranking.data.repository.RankingRepository
+import io.foundy.user.domain.usecase.GetUserUseCase
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.launch
 import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.syntax.simple.intent
@@ -19,7 +22,8 @@ import javax.inject.Inject
 @HiltViewModel
 class RankingViewModel @Inject constructor(
     private val authRepository: AuthRepository,
-    private val rankingRepository: RankingRepository
+    private val rankingRepository: RankingRepository,
+    private val getUserUseCase: GetUserUseCase
 ) : ViewModel(), ContainerHost<RankingUiState, RankingSideEffect> {
 
     override val container: Container<RankingUiState, RankingSideEffect> = container(
@@ -42,8 +46,11 @@ class RankingViewModel @Inject constructor(
                     fetchCurrentUserRankingIfNull(RankingTabDestination.Weekly)
                 }
             ),
+            onClickUser = ::fetchUser
         )
     )
+
+    private var userFetchJob: Job? = null
 
     private suspend fun requireCurrentUserId(): String {
         return requireNotNull(authRepository.currentUserIdStream.firstOrNull())
@@ -107,5 +114,31 @@ class RankingViewModel @Inject constructor(
             }
         }
         updateLoadingState(isLoading = false, tabDestination = tabDestination)
+    }
+
+    private fun fetchUser(id: String) = intent {
+        if (state.userToShowDialog?.id == id) {
+            return@intent
+        }
+        reduce { state.copy(userToShowDialog = null) }
+        userFetchJob?.cancel()
+        userFetchJob = viewModelScope.launch {
+            getUserUseCase(id)
+                .onSuccess { user ->
+                    reduce {
+                        state.copy(userToShowDialog = user)
+                    }
+                }.onFailure {
+                    postSideEffect(RankingSideEffect.HideUserProfileDialog)
+                    postSideEffect(
+                        RankingSideEffect.ErrorMessage(
+                            UserMessage(
+                                content = it.message,
+                                defaultRes = R.string.failed_to_load_user
+                            )
+                        )
+                    )
+                }
+        }
     }
 }

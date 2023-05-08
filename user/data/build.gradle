@@ -39,6 +39,8 @@ dependencies {
     implementation project(path: ':core:model')
     implementation project(path: ':auth:data')
     implementation project(path: ':user:domain')
+    implementation project(path: ':ranking:data')
+    implementation project(path: ':crop:data')
 
     // hilt
     implementation "com.google.dagger:hilt-android:$hilt_version"

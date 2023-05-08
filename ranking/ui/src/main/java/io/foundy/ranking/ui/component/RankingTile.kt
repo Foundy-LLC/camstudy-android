@@ -2,6 +2,7 @@ package io.foundy.ranking.ui.component
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -27,7 +28,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import coil.compose.AsyncImage
 import io.foundy.core.common.util.formatDuration
 import io.foundy.core.designsystem.component.CamstudyDivider
 import io.foundy.core.designsystem.component.CamstudyText
@@ -35,6 +35,7 @@ import io.foundy.core.designsystem.icon.CamstudyIcon
 import io.foundy.core.designsystem.icon.CamstudyIcons
 import io.foundy.core.designsystem.theme.CamstudyTheme
 import io.foundy.core.model.UserRankingOverview
+import io.foundy.core.ui.UserProfileImage
 import io.foundy.ranking.ui.R
 
 private fun getRankingNumberBoxColorBy(ranking: Int): Color {
@@ -47,14 +48,14 @@ private fun getRankingNumberBoxColorBy(ranking: Int): Color {
 }
 
 @Composable
-fun RankingTile(user: UserRankingOverview, isMe: Boolean = false) {
+fun RankingTile(user: UserRankingOverview, isMe: Boolean = false, onClick: (id: String) -> Unit) {
     var expanded by rememberSaveable(user.id) { mutableStateOf(false) }
 
-    // TODO: 클릭하면 회원 상세 페이지로 전환하기
     RankingTileContent(
         user = user,
         isMe = isMe,
         expanded = expanded,
+        onClick = onClick,
         onExpandClick = { expanded = !expanded }
     )
 }
@@ -64,10 +65,13 @@ private fun RankingTileContent(
     user: UserRankingOverview,
     isMe: Boolean,
     expanded: Boolean,
+    onClick: (id: String) -> Unit,
     onExpandClick: () -> Unit
 ) {
     Column(
-        modifier = Modifier.background(color = CamstudyTheme.colorScheme.systemBackground)
+        modifier = Modifier
+            .background(color = CamstudyTheme.colorScheme.systemBackground)
+            .clickable { onClick(user.id) }
     ) {
         Box(
             modifier = Modifier.background(
@@ -84,7 +88,7 @@ private fun RankingTileContent(
             ) {
                 RankingNumber(ranking = user.ranking)
                 Spacer(modifier = Modifier.width(12.dp))
-                ProfileImage(imageUrl = user.profileImage)
+                UserProfileImage(imageUrl = user.profileImage)
                 Spacer(modifier = Modifier.width(12.dp))
                 UserNameAndIntroduce(
                     modifier = Modifier.weight(1f),
@@ -133,34 +137,6 @@ private fun RankingNumber(ranking: Int) {
                 fontWeight = FontWeight.Medium
             )
         )
-    }
-}
-
-@Composable
-private fun ProfileImage(imageUrl: String?) {
-    val thumbnailModifier = Modifier
-        .size(40.dp)
-        .clip(RoundedCornerShape(8.dp))
-
-    if (imageUrl != null) {
-        AsyncImage(
-            modifier = thumbnailModifier,
-            model = imageUrl,
-            contentDescription = null
-        )
-    } else {
-        Box(
-            modifier = thumbnailModifier.background(color = CamstudyTheme.colorScheme.systemUi01)
-        ) {
-            CamstudyIcon(
-                modifier = Modifier
-                    .size(24.dp)
-                    .align(Alignment.Center),
-                icon = CamstudyIcons.Person,
-                tint = CamstudyTheme.colorScheme.systemUi03,
-                contentDescription = null
-            )
-        }
     }
 }
 
@@ -250,7 +226,8 @@ private fun RankingTilePreview() {
             ),
             isMe = false,
             expanded = false,
-            onExpandClick = {}
+            onExpandClick = {},
+            onClick = {}
         )
     }
 }
@@ -272,7 +249,8 @@ private fun ExpandedRankingTilePreview() {
             ),
             isMe = false,
             expanded = expanded,
-            onExpandClick = { expanded = !expanded }
+            onExpandClick = { expanded = !expanded },
+            onClick = {}
         )
     }
 }
@@ -293,7 +271,8 @@ private fun MyRankingTilePreview() {
             ),
             isMe = true,
             expanded = false,
-            onExpandClick = {}
+            onExpandClick = {},
+            onClick = {}
         )
     }
 }
