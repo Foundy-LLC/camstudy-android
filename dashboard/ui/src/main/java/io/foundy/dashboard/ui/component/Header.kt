@@ -239,7 +239,7 @@ private fun GrowingCropTileContent(crop: GrowingCrop?, onClick: () -> Unit) {
         }
     }
     val navigationText = if (crop == null) {
-        stringResource(R.string.plant_crop)
+        stringResource(R.string.goto_plant_crop)
     } else {
         stringResource(R.string.manage_crop)
     }
