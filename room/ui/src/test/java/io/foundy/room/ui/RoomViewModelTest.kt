@@ -37,7 +37,7 @@ class RoomViewModelTest {
         }
 
         val states = viewModel.stateObserver.values
-        assertTrue(states[1] is RoomUiState.WaitingRoom.Connected)
+        assertTrue(states.last() is RoomUiState.WaitingRoom.Connected)
     }
 
     @Test
@@ -51,7 +51,7 @@ class RoomViewModelTest {
         }
 
         val states = viewModel.stateObserver.values
-        assertTrue(states[1] is RoomUiState.WaitingRoom.FailedToConnect)
+        assertTrue(states.last() is RoomUiState.WaitingRoom.FailedToConnect)
     }
 
     private fun initViewModel() {
