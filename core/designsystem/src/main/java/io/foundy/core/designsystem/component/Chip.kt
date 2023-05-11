@@ -4,6 +4,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
+import androidx.compose.material3.ProvideTextStyle
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -27,7 +28,11 @@ fun CamstudyFilterChip(
     FilterChip(
         selected = selected,
         onClick = onClick,
-        label = label,
+        label = {
+            ProvideTextStyle(value = CamstudyTheme.typography.titleSmall) {
+                label()
+            }
+        },
         modifier = modifier,
         enabled = enabled,
         shape = RoundedCornerShape(24.dp),
