@@ -7,6 +7,7 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowForwardIos
 import androidx.compose.material.icons.filled.Chat
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Done
 import androidx.compose.material.icons.filled.FlipCameraAndroid
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
@@ -49,6 +50,7 @@ object CamstudyIcons {
     val Crop = R.drawable.ic_crop.asCamstudyIcon()
     val Ranking = R.drawable.ic_ranking.asCamstudyIcon()
     val MoreHoriz = Icons.Default.MoreHoriz.asCamstudyIcon()
+    val Done = Icons.Default.Done.asCamstudyIcon()
     val AccessTimeFilled = Icons.Default.AccessTimeFilled.asCamstudyIcon()
     val Leaf = R.drawable.ic_leaf.asCamstudyIcon()
     val FlipCamera = Icons.Default.FlipCameraAndroid.asCamstudyIcon()
