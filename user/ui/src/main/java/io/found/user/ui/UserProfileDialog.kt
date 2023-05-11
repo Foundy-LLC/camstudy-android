@@ -277,7 +277,7 @@ private fun Tags(tags: List<String>) {
     FlowRow(
         horizontalArrangement = Arrangement.Center
     ) {
-        tags.forEach { tag ->
+        for (tag in tags) {
             TagItem(tag = tag)
         }
     }
@@ -362,7 +362,7 @@ private fun HarvestedCropRow(
 ) {
     Layout(
         content = {
-            crops.forEach { crop ->
+            for (crop in crops) {
                 CamstudyIcon(
                     modifier = Modifier.padding(end = 8.dp),
                     icon = crop.imageIcon,
@@ -388,8 +388,8 @@ private fun HarvestedCropRow(
             width = items.lastOrNull()?.let { it.xPosition + it.placeable.width } ?: 0,
             height = items.maxOfOrNull { it.placeable.height } ?: 0
         ) {
-            items.forEach {
-                it.placeable.place(it.xPosition, 0)
+            for (item in items) {
+                item.placeable.place(item.xPosition, 0)
             }
             onPlacementComplete(items.count())
         }
