@@ -20,5 +20,6 @@ interface RankingApi {
     suspend fun getUserRanking(
         @Path("userId") userId: String,
         @Query("weekly") isWeekly: Boolean = false,
+        @Query("organizationId") organizationId: String? = null
     ): CamstudyResponse<UserRankingResponse>
 }

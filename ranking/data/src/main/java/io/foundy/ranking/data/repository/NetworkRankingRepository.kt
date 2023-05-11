@@ -33,10 +33,15 @@ class NetworkRankingRepository @Inject constructor(
 
     override suspend fun getUserRanking(
         userId: String,
-        isWeekly: Boolean
+        isWeekly: Boolean,
+        organizationId: String?
     ): Result<UserRankingOverview> {
         return runCatching {
-            val response = rankingApi.getUserRanking(userId = userId, isWeekly = isWeekly)
+            val response = rankingApi.getUserRanking(
+                userId = userId,
+                isWeekly = isWeekly,
+                organizationId = organizationId
+            )
             response.getDataOrThrowMessage().user.toEntity()
         }
     }

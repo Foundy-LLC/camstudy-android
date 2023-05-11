@@ -75,11 +75,13 @@ class RankingViewModel @Inject constructor(
             when (tabDestination) {
                 RankingTabDestination.Total -> rankingRepository.getUserRanking(
                     userId = requireCurrentUserId(),
-                    isWeekly = false
+                    isWeekly = false,
+                    organizationId = null
                 )
                 RankingTabDestination.Weekly -> rankingRepository.getUserRanking(
                     userId = requireCurrentUserId(),
-                    isWeekly = true
+                    isWeekly = true,
+                    organizationId = null
                 )
                 RankingTabDestination.Organization -> TODO()
             }.onSuccess { currentUserRanking ->

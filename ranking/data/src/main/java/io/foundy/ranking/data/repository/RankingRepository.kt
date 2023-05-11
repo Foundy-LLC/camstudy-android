@@ -13,6 +13,7 @@ interface RankingRepository {
 
     suspend fun getUserRanking(
         userId: String,
-        isWeekly: Boolean
+        isWeekly: Boolean,
+        organizationId: String?
     ): Result<UserRankingOverview>
 }

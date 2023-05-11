@@ -56,20 +56,23 @@ class DashboardViewModel @Inject constructor(
     }
 
     private fun fetchUserRanking() = intent {
-        rankingRepository.getUserRanking(userId = currentUserId, isWeekly = true)
-            .onSuccess { userRanking ->
-                reduce {
-                    state.copy(
-                        userRankingUiState = UserRankingUiState.Success(userRanking = userRanking)
-                    )
-                }
-            }.onFailure {
-                reduce {
-                    state.copy(
-                        userRankingUiState = UserRankingUiState.Failure(message = it.message)
-                    )
-                }
+        rankingRepository.getUserRanking(
+            userId = currentUserId,
+            isWeekly = true,
+            organizationId = null
+        ).onSuccess { userRanking ->
+            reduce {
+                state.copy(
+                    userRankingUiState = UserRankingUiState.Success(userRanking = userRanking)
+                )
             }
+        }.onFailure {
+            reduce {
+                state.copy(
+                    userRankingUiState = UserRankingUiState.Failure(message = it.message)
+                )
+            }
+        }
     }
 
     private fun fetchGrowingCrop() = intent {
