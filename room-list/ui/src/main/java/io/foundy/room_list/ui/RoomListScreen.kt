@@ -46,7 +46,6 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.items
 import coil.compose.AsyncImage
 import com.holix.android.bottomsheetdialog.compose.BottomSheetDialog
-import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import io.foundy.core.common.util.toBitmap
 import io.foundy.core.designsystem.component.CamstudyDivider
 import io.foundy.core.designsystem.component.CamstudyText
@@ -55,7 +54,6 @@ import io.foundy.core.designsystem.theme.CamstudyTheme
 import io.foundy.core.model.RoomOverview
 import io.foundy.core.model.constant.RoomConstants
 import io.foundy.core.ui.RoomTileWithJoinButton
-import io.foundy.organization.ui.destinations.OrganizationRouteDestination
 import io.foundy.room.ui.RoomActivity
 import org.orbitmvi.orbit.compose.collectAsState
 import org.orbitmvi.orbit.compose.collectSideEffect
@@ -63,7 +61,6 @@ import java.util.Date
 
 @Composable
 fun RoomListRoute(
-    navigator: DestinationsNavigator,
     viewModel: RoomListViewModel = hiltViewModel()
 ) {
     val uiState = viewModel.collectAsState().value
@@ -92,10 +89,6 @@ fun RoomListRoute(
             val intent = RoomActivity.getIntent(context, roomOverview = room)
             context.startActivity(intent)
         },
-        onOrganizationClick = {
-            // TODO: 아래 코드 삭제시 organization module 의존성 제거하기
-            navigator.navigate(OrganizationRouteDestination)
-        }
     )
 }
 
@@ -106,7 +99,6 @@ fun RoomListScreen(
     rooms: LazyPagingItems<RoomOverview>,
     snackbarHostState: SnackbarHostState,
     onRoomJoinClick: (room: RoomOverview) -> Unit,
-    onOrganizationClick: () -> Unit
 ) {
     val roomCreateInput = uiState.roomCreateInput
     var showRoomCreateBottomSheet by remember { mutableStateOf(false) }
@@ -126,12 +118,6 @@ fun RoomListScreen(
             item {
                 TextButton(onClick = { showRoomCreateBottomSheet = true }) {
                     Text(text = "방 만들기")
-                }
-            }
-            // TODO: 개발용 버튼임 제거해야함
-            item {
-                TextButton(onClick = onOrganizationClick) {
-                    Text(text = "회사, 학교 조회")
                 }
             }
             headerItem(query = uiState.searchQuery, onQueryChange = uiState.onSearchQueryChange)
