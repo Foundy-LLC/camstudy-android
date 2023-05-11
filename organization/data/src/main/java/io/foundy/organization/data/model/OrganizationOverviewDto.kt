@@ -1,10 +1,11 @@
 package io.foundy.organization.data.model
 
+import com.google.gson.annotations.SerializedName
 import io.foundy.core.model.OrganizationOverview
 
 data class OrganizationOverviewDto(
-    val id: String,
-    val name: String
+    @SerializedName("organizationId") val id: String,
+    @SerializedName("organizationName") val name: String
 )
 
 fun OrganizationOverviewDto.toEntity() = OrganizationOverview(

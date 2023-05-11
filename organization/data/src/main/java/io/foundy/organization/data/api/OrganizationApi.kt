@@ -1,8 +1,8 @@
 package io.foundy.organization.data.api
 
 import io.foundy.core.data.util.CamstudyResponse
-import io.foundy.core.model.OrganizationOverview
 import io.foundy.organization.data.model.OrganizationDto
+import io.foundy.organization.data.model.OrganizationOverviewDto
 import retrofit2.http.GET
 import retrofit2.http.Path
 import retrofit2.http.Query
@@ -18,5 +18,5 @@ interface OrganizationApi {
     @GET("users/{userId}/organizations")
     suspend fun getUserOrganizations(
         @Path("userId") userId: String
-    ): CamstudyResponse<List<OrganizationOverview>>
+    ): CamstudyResponse<List<OrganizationOverviewDto>>
 }

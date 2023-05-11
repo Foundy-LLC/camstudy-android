@@ -7,6 +7,7 @@ import io.foundy.core.data.extension.getDataOrThrowMessage
 import io.foundy.core.model.Organization
 import io.foundy.core.model.OrganizationOverview
 import io.foundy.organization.data.api.OrganizationApi
+import io.foundy.organization.data.model.toEntity
 import io.foundy.organization.data.source.OrganizationPagingSource
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
@@ -27,7 +28,7 @@ class NetworkOrganizationRepository @Inject constructor(
     override suspend fun getUserOrganizations(userId: String): Result<List<OrganizationOverview>> {
         return runCatching {
             val response = api.getUserOrganizations(userId = userId)
-            response.getDataOrThrowMessage()
+            response.getDataOrThrowMessage().map { it.toEntity() }
         }
     }
 }
