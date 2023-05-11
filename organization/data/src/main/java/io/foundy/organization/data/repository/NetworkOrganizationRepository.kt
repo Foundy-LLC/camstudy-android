@@ -3,7 +3,9 @@ package io.foundy.organization.data.repository
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
+import io.foundy.core.data.extension.getDataOrThrowMessage
 import io.foundy.core.model.Organization
+import io.foundy.core.model.OrganizationOverview
 import io.foundy.organization.data.api.OrganizationApi
 import io.foundy.organization.data.source.OrganizationPagingSource
 import kotlinx.coroutines.flow.Flow
@@ -20,5 +22,12 @@ class NetworkOrganizationRepository @Inject constructor(
                 OrganizationPagingSource(api = api, nameQuery = name)
             }
         ).flow
+    }
+
+    override suspend fun getUserOrganizations(userId: String): Result<List<OrganizationOverview>> {
+        return runCatching {
+            val response = api.getUserOrganizations(userId = userId)
+            response.getDataOrThrowMessage()
+        }
     }
 }
