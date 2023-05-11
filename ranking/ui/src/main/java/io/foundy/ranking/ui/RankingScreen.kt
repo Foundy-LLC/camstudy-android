@@ -1,10 +1,17 @@
 package io.foundy.ranking.ui
 
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
@@ -24,14 +31,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.items
 import com.ramcosta.composedestinations.annotation.Destination
 import io.found.user.ui.UserProfileDialog
+import io.foundy.core.designsystem.component.CamstudyFilterChip
 import io.foundy.core.designsystem.component.CamstudyTab
 import io.foundy.core.designsystem.component.CamstudyTabRow
+import io.foundy.core.designsystem.component.CamstudyText
 import io.foundy.core.designsystem.theme.CamstudyTheme
+import io.foundy.core.model.OrganizationOverview
 import io.foundy.ranking.ui.component.RankingTile
 import kotlinx.coroutines.launch
 import org.orbitmvi.orbit.compose.collectAsState
@@ -109,6 +120,13 @@ fun RankingScreen(
                     )
                 }
             }
+            if (uiState.organizations.isNotEmpty()) {
+                OrganizationChipRow(
+                    organizations = uiState.organizations,
+                    selectedOrganization = uiState.selectedOrganization,
+                    onOrganizationClick = uiState.onSelectOrganization
+                )
+            }
             HorizontalPager(
                 pageCount = RankingTabDestination.values.size,
                 state = pagerState
@@ -158,7 +176,9 @@ private fun RankingContent(
     }
 
     LazyColumn(
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier
+            .fillMaxSize()
+            .background(color = CamstudyTheme.colorScheme.systemBackground)
     ) {
         if (isLoading) {
             item { CircularProgressIndicator() }
@@ -179,6 +199,43 @@ private fun RankingContent(
     }
 }
 
+@Composable
+private fun OrganizationChipRow(
+    selectedOrganization: OrganizationOverview?,
+    organizations: List<OrganizationOverview>,
+    onOrganizationClick: (OrganizationOverview?) -> Unit
+) {
+    LazyRow(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(color = CamstudyTheme.colorScheme.systemBackground),
+        contentPadding = PaddingValues(vertical = 2.dp, horizontal = 16.dp)
+    ) {
+        item {
+            CamstudyFilterChip(
+                selected = selectedOrganization == null,
+                onClick = { onOrganizationClick(null) },
+                label = {
+                    CamstudyText(text = stringResource(R.string.entire))
+                }
+            )
+            Spacer(modifier = Modifier.width(8.dp))
+        }
+        itemsIndexed(organizations, key = { _, item -> item.id }) { index, organization ->
+            CamstudyFilterChip(
+                selected = selectedOrganization == organization,
+                onClick = { onOrganizationClick(organization) },
+                label = {
+                    CamstudyText(text = organization.name)
+                }
+            )
+            if (index != organizations.size - 1) {
+                Spacer(modifier = Modifier.width(8.dp))
+            }
+        }
+    }
+}
+
 @OptIn(ExperimentalFoundationApi::class)
 @Preview
 @Composable
@@ -191,6 +248,7 @@ fun RankingScreenPreview() {
             uiState = RankingUiState(
                 totalRanking = RankingTabUiState(fetchCurrentUserRanking = {}),
                 weeklyRanking = RankingTabUiState(fetchCurrentUserRanking = {}),
+                onSelectOrganization = {}
             ),
             clickedUserId = null,
             showUserProfileDialog = {},

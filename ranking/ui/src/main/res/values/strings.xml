@@ -8,4 +8,6 @@
     <string name="failed_to_load_my_ranking">나의 랭킹을 불러오지 못했어요</string>
     <string name="me">\(나\)</string>
     <string name="user_dialog_failed_to_load_user">회원 정보를 불러오지 못했어요</string>
+    <string name="failed_to_load_organizations_of_user">회원의 소속 목록을 가져오지 못했습니다.</string>
+    <string name="entire">모두</string>
 </resources>
