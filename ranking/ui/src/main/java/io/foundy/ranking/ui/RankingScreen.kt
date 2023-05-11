@@ -140,12 +140,6 @@ private fun RankingContent(
             uiState.weeklyRanking.currentUserRanking,
             uiState.weeklyRanking.isCurrentUserRankingLoading
         )
-        RankingTabDestination.Organization -> Triple(
-            // TODO: 소속 랭킹 데이터로 바꾸기
-            uiState.totalRanking.rankingFlow.collectAsLazyPagingItems(),
-            uiState.totalRanking.currentUserRanking,
-            uiState.totalRanking.isCurrentUserRankingLoading
-        )
     }
 
     LaunchedEffect(Unit) {
@@ -159,9 +153,6 @@ private fun RankingContent(
                 if (uiState.weeklyRanking.shouldFetchCurrentUserRanking) {
                     uiState.weeklyRanking.fetchCurrentUserRanking()
                 }
-            }
-            RankingTabDestination.Organization -> {
-                // TODO: 구현
             }
         }
     }

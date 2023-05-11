@@ -8,9 +8,6 @@ enum class RankingTabDestination(@StringRes val labelRes: Int) {
     ),
     Weekly(
         labelRes = R.string.weekly_ranking_tab
-    ),
-    Organization(
-        labelRes = R.string.organization_ranking_tab
     );
 
     companion object {

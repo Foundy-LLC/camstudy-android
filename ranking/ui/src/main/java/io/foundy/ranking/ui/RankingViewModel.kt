@@ -63,7 +63,6 @@ class RankingViewModel @Inject constructor(
                             isCurrentUserRankingLoading = isLoading
                         )
                     )
-                    RankingTabDestination.Organization -> TODO()
                 }
             }
         }
@@ -83,7 +82,6 @@ class RankingViewModel @Inject constructor(
                     isWeekly = true,
                     organizationId = null
                 )
-                RankingTabDestination.Organization -> TODO()
             }.onSuccess { currentUserRanking ->
                 reduce {
                     when (tabDestination) {
@@ -97,7 +95,6 @@ class RankingViewModel @Inject constructor(
                                 currentUserRanking = currentUserRanking
                             )
                         )
-                        RankingTabDestination.Organization -> TODO()
                     }
                 }
             }.onFailure {
