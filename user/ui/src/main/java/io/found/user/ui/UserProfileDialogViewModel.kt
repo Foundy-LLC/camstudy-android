@@ -34,7 +34,7 @@ class UserProfileDialogViewModel @Inject constructor(
                     UserProfileDialogUiState.Failure(
                         message = UserMessage(
                             content = it.message,
-                            defaultRes = R.string.failed_to_load_user
+                            defaultRes = R.string.user_dialog_failed_to_load_user
                         )
                     )
                 }

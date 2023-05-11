@@ -68,8 +68,8 @@ class NetworkUserRepository @Inject constructor(
                         weeklyRanking = weeklyRanking.user.ranking,
                         totalRanking = totalRanking.user.ranking,
                         weeklyStudyTimeSec = weeklyRanking.user.studyTimeSec,
-                        // TODO: 벡엔드에서 주간 공부시간 순위 추가되면 실제 값 넣기
-                        weeklyStudyTimeOverall = 50,
+                        weeklyRankingOverall = 100 * weeklyRanking.user.ranking /
+                            weeklyRanking.totalUserCount,
                         harvestedCrops = harvestedCrops.map { it.toEntity() },
                         growingCrop = growingCrop?.toEntity()
                     )
