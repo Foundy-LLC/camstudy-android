@@ -3,6 +3,7 @@ package io.foundy.core.designsystem.icon
 import androidx.annotation.DrawableRes
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccessTimeFilled
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowForwardIos
 import androidx.compose.material.icons.filled.Chat
@@ -56,6 +57,7 @@ object CamstudyIcons {
     val FlipCamera = Icons.Default.FlipCameraAndroid.asCamstudyIcon()
     val Chat = Icons.Default.Chat.asCamstudyIcon()
     val Send = Icons.Default.Send.asCamstudyIcon()
+    val Add = Icons.Default.Add.asCamstudyIcon()
     val Delete = Icons.Default.Delete.asCamstudyIcon()
     val Person = Icons.Default.Person.asCamstudyIcon()
     val PersonAdd = Icons.Default.PersonAdd.asCamstudyIcon()

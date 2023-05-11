@@ -7,12 +7,14 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
@@ -48,12 +50,17 @@ import coil.compose.AsyncImage
 import com.holix.android.bottomsheetdialog.compose.BottomSheetDialog
 import io.foundy.core.common.util.toBitmap
 import io.foundy.core.designsystem.component.CamstudyDivider
+import io.foundy.core.designsystem.component.CamstudyExtendedFloatingActionButton
 import io.foundy.core.designsystem.component.CamstudyText
 import io.foundy.core.designsystem.component.CamstudyTextField
+import io.foundy.core.designsystem.component.FloatingActionButtonBottomPadding
+import io.foundy.core.designsystem.icon.CamstudyIcon
+import io.foundy.core.designsystem.icon.CamstudyIcons
 import io.foundy.core.designsystem.theme.CamstudyTheme
 import io.foundy.core.model.RoomOverview
 import io.foundy.core.model.constant.RoomConstants
 import io.foundy.core.ui.RoomTileWithJoinButton
+import io.foundy.core.ui.isScrollingUp
 import io.foundy.room.ui.RoomActivity
 import org.orbitmvi.orbit.compose.collectAsState
 import org.orbitmvi.orbit.compose.collectSideEffect
@@ -101,6 +108,7 @@ fun RoomListScreen(
     onRoomJoinClick: (room: RoomOverview) -> Unit,
 ) {
     val roomCreateInput = uiState.roomCreateInput
+    val listState = rememberLazyListState()
     var showRoomCreateBottomSheet by remember { mutableStateOf(false) }
 
     if (showRoomCreateBottomSheet) {
@@ -112,21 +120,28 @@ fun RoomListScreen(
 
     Scaffold(
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
-        containerColor = CamstudyTheme.colorScheme.systemBackground
-    ) { padding ->
-        LazyColumn(Modifier.padding(padding)) {
-            item {
-                TextButton(onClick = { showRoomCreateBottomSheet = true }) {
-                    Text(text = "방 만들기")
+        containerColor = CamstudyTheme.colorScheme.systemBackground,
+        floatingActionButton = {
+            CamstudyExtendedFloatingActionButton(
+                onClick = { showRoomCreateBottomSheet = true },
+                expanded = listState.isScrollingUp(),
+                text = { Text(text = stringResource(R.string.create_study_room)) },
+                icon = {
+                    CamstudyIcon(icon = CamstudyIcons.Add, contentDescription = null)
                 }
-            }
+            )
+        }
+    ) { padding ->
+        LazyColumn(
+            modifier = Modifier.padding(padding),
+            state = listState
+        ) {
             headerItem(query = uiState.searchQuery, onQueryChange = uiState.onSearchQueryChange)
             items(
                 items = rooms,
                 key = { it.id }
             ) { roomOverview ->
                 if (roomOverview == null) {
-                    Text("End")
                     return@items
                 }
                 Box {
@@ -138,6 +153,7 @@ fun RoomListScreen(
                     CamstudyDivider()
                 }
             }
+            item { CamstudyDivider() }
             when (rooms.loadState.refresh) { // FIRST LOAD
                 is LoadState.Error -> errorItem(rooms.loadState)
                 is LoadState.Loading -> loadingItem()
@@ -148,6 +164,7 @@ fun RoomListScreen(
                 is LoadState.Loading -> loadingItem()
                 else -> {}
             }
+            item { Spacer(modifier = Modifier.height(FloatingActionButtonBottomPadding)) }
         }
     }
 }
