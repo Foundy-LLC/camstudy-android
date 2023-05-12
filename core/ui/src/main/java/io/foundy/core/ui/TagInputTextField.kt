@@ -55,7 +55,7 @@ fun TagInputTextField(
                     if (it.key == Key.Backspace && value.isEmpty() && lastAddedTag != null) {
                         onRemove(lastAddedTag)
                     }
-                    true
+                    false
                 },
             value = value,
             onValueChange = { input ->
