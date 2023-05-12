@@ -5,14 +5,18 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.LocalTextStyle
+import androidx.compose.material3.ProvideTextStyle
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldColors
 import androidx.compose.material3.TextFieldDefaults
@@ -106,10 +110,7 @@ fun CamstudyTextField(
     readOnly: Boolean = false,
     label: String? = null,
     placeholder: String? = null,
-    leadingIcon: @Composable (() -> Unit)? = null,
-    trailingIcon: @Composable (() -> Unit)? = null,
     prefix: @Composable (() -> Unit)? = null,
-    suffix: @Composable (() -> Unit)? = null,
     supportingText: String? = null,
     isError: Boolean = false,
     visualTransformation: VisualTransformation = VisualTransformation.None,
@@ -183,10 +184,24 @@ fun CamstudyTextField(
             cursorBrush = SolidColor(colorScheme.primary),
             decorationBox = { innerTextField ->
                 Box(Modifier.padding(horizontal = 16.dp, vertical = 15.dp)) {
-                    if (value.isEmpty() && placeholder != null) {
-                        CamstudyText(text = placeholder, style = textStyle)
+                    Row {
+                        if (prefix != null) {
+                            ProvideTextStyle(value = CamstudyTheme.typography.labelMedium) {
+                                Box(Modifier.alignByBaseline()) { prefix() }
+                            }
+                            Spacer(modifier = Modifier.width(4.dp))
+                        }
+                        if (value.isEmpty() && placeholder != null) {
+                            CamstudyText(
+                                modifier = Modifier.alignByBaseline(),
+                                text = placeholder,
+                                style = textStyle
+                            )
+                        }
+                        Box(Modifier.alignByBaseline()) {
+                            innerTextField()
+                        }
                     }
-                    innerTextField()
                 }
             }
         )
@@ -221,6 +236,21 @@ fun PureCamstudyTextFieldPreview() {
         CamstudyTextField(
             value = "text",
             placeholder = "플레이스 홀더",
+            onValueChange = {}
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun PrefixCamstudyTextFieldPreview() {
+    CamstudyTheme {
+        CamstudyTextField(
+            value = "",
+            placeholder = "플레이스 홀더",
+            prefix = {
+                CamstudyText(text = "#개발 #Prefix")
+            },
             onValueChange = {}
         )
     }
