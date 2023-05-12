@@ -17,4 +17,5 @@
     <string name="silver">실버</string>
     <string name="gold">골드</string>
     <string name="diamond">다이아몬드</string>
+    <string name="already_inputed_tag">이미 입력한 태그입니다</string>
 </resources>

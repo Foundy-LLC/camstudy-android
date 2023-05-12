@@ -38,7 +38,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import io.foundy.core.designsystem.theme.CamstudyTheme
 
-private val CamstudyTextFieldTextStyle: TextStyle
+val CamstudyTextFieldTextStyle: TextStyle
     @Composable
     get() = CamstudyTheme.typography.titleSmall
 
@@ -114,7 +114,9 @@ fun CamstudyTextField(
     label: String? = null,
     placeholder: String? = null,
     prefix: @Composable (() -> Unit)? = null,
+    supportingContent: @Composable (() -> Unit)? = null,
     supportingText: String? = null,
+    borderShape: Shape =  RoundedCornerShape(8.dp),
     isError: Boolean = false,
     visualTransformation: VisualTransformation = VisualTransformation.None,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
@@ -130,7 +132,6 @@ fun CamstudyTextField(
     val typography = CamstudyTheme.typography
 
     val surfaceColor = colorScheme.systemUi01
-    val borderShape = RoundedCornerShape(8.dp)
     val borderColor = when {
         isError -> colorScheme.danger
         isFocused -> colorScheme.primary
@@ -204,6 +205,7 @@ fun CamstudyTextField(
                 }
             }
         )
+        supportingContent?.invoke()
         supportingText?.let {
             CamstudyText(
                 modifier = Modifier.padding(vertical = 4.dp),
