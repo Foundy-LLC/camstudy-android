@@ -30,6 +30,7 @@ import org.webrtc.AudioTrack
 import org.webrtc.VideoTrack
 import javax.inject.Inject
 
+// TODO: WaitingRoom이랑 StudyRoom 분리하기
 @HiltViewModel
 class RoomViewModel @Inject constructor(
     private val roomService: RoomService,
