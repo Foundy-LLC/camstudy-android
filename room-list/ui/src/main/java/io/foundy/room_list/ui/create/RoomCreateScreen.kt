@@ -1,5 +1,6 @@
 package io.foundy.room_list.ui.create
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -17,8 +18,11 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
@@ -34,6 +38,7 @@ import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import io.foundy.core.designsystem.component.BottomContainedButton
 import io.foundy.core.designsystem.component.BottomContainedButtonBoxHeight
+import io.foundy.core.designsystem.component.CamstudyDialog
 import io.foundy.core.designsystem.component.CamstudyDivider
 import io.foundy.core.designsystem.component.CamstudyText
 import io.foundy.core.designsystem.component.CamstudyTextField
@@ -58,6 +63,7 @@ fun RoomCreateScreen(
     val snackbarHostState = remember { SnackbarHostState() }
     val coroutineScope = rememberCoroutineScope()
     val context = LocalContext.current
+    var showRecheckDialog by remember { mutableStateOf(false) }
 
     viewModel.collectSideEffect {
         when (it) {
@@ -74,10 +80,26 @@ fun RoomCreateScreen(
         }
     }
 
+    if (showRecheckDialog) {
+        CamstudyDialog(
+            content = stringResource(R.string.room_create_recheck_dialog_content),
+            onCancel = { showRecheckDialog = false },
+            onConfirm = { navigator.navigateUp() },
+            confirmText = stringResource(R.string.room_create_recheck_dialog_confirm)
+        )
+    }
+
+    BackHandler {
+        if (uiState.isInCreating) {
+            return@BackHandler
+        }
+        showRecheckDialog = !showRecheckDialog
+    }
+
     RoomCreateContent(
         uiState = uiState,
         snackbarHostState = snackbarHostState,
-        onBackClick = { navigator.navigateUp() }
+        onBackClick = { showRecheckDialog = true }
     )
 }
 

@@ -26,4 +26,6 @@
     <string name="room_private_tile_title">스터디 룸 비공개</string>
     <string name="room_private_tile_subtitle">비밀번호를 입력해야만 입장이 가능합니다</string>
     <string name="room_password_placeholder">스터디 룸 비밀번호를 입력해주세요</string>
+    <string name="room_create_recheck_dialog_content">방 생성을 취소하고 홈으로 돌아갑니다</string>
+    <string name="room_create_recheck_dialog_confirm">홈으로</string>
 </resources>
