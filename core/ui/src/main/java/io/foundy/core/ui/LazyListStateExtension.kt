@@ -31,7 +31,6 @@ fun LazyListState.isScrollingUp(): Boolean {
             val currentScrollOffset = firstVisibleItemScrollOffset
             val scrollDelta = currentScrollOffset - previousScrollOffset
             val velocity = scrollDelta / timeDelta
-            println(velocity)
 
             if (previousIndex != firstVisibleItemIndex) {
                 isScrollingUp = previousIndex > firstVisibleItemIndex
