@@ -101,7 +101,7 @@ fun RoomListScreen(
             CamstudyExtendedFloatingActionButton(
                 onClick = onRoomCreateClick,
                 expanded = listState.isScrollingUp(),
-                text = { Text(text = stringResource(R.string.create_study_room)) },
+                text = { Text(text = stringResource(R.string.room_create_app_bar_title)) },
                 icon = {
                     CamstudyIcon(icon = CamstudyIcons.Add, contentDescription = null)
                 }

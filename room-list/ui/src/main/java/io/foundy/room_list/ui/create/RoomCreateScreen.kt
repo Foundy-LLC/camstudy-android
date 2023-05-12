@@ -12,17 +12,16 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
-import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
@@ -38,6 +37,7 @@ import io.foundy.core.designsystem.component.BottomContainedButtonBoxHeight
 import io.foundy.core.designsystem.component.CamstudyDivider
 import io.foundy.core.designsystem.component.CamstudyText
 import io.foundy.core.designsystem.component.CamstudyTextField
+import io.foundy.core.designsystem.component.CamstudyTopAppBar
 import io.foundy.core.designsystem.component.SelectableTile
 import io.foundy.core.designsystem.theme.CamstudyTheme
 import io.foundy.core.model.constant.RoomConstants
@@ -74,102 +74,121 @@ fun RoomCreateScreen(
         }
     }
 
-    RoomCreateContent(uiState = uiState)
+    RoomCreateContent(
+        uiState = uiState,
+        snackbarHostState = snackbarHostState,
+        onBackClick = { navigator.navigateUp() }
+    )
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun RoomCreateContent(uiState: RoomCreateUiState) {
+private fun RoomCreateContent(
+    uiState: RoomCreateUiState,
+    snackbarHostState: SnackbarHostState,
+    onBackClick: () -> Unit
+) {
     val focusManager = LocalFocusManager.current
-    val tagInputFieldFocusRequester = remember { FocusRequester() }
 
-    Box {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(color = CamstudyTheme.colorScheme.systemBackground)
-                .verticalScroll(rememberScrollState())
-                .padding(horizontal = 16.dp)
-        ) {
-            Title()
-            CamstudyTextField(
-                value = uiState.title,
-                onValueChange = uiState.onTitleChange,
-                label = stringResource(R.string.room_title),
-                singleLine = true,
-                isError = uiState.isExceedTitleLength,
-                placeholder = stringResource(R.string.room_create_title_placeholder),
-                supportingText = uiState.titleSupportingTextRes,
-                keyboardOptions = KeyboardOptions(
-                    imeAction = ImeAction.Next
-                )
-            )
-            Spacer(modifier = Modifier.height(20.dp))
-            TagInputTextField(
-                modifier = Modifier.focusRequester(tagInputFieldFocusRequester),
-                value = uiState.tag,
-                onValueChange = uiState.onTagChange,
-                addedTags = uiState.addedTags,
-                recommendedTags = uiState.recommendedTags,
-                onAdd = { tag ->
-                    if (uiState.addedTags.size == RoomConstants.MaxTagCount - 1) {
-                        focusManager.clearFocus()
-                    }
-                    uiState.onAddTag(tag)
+    Scaffold(
+        topBar = {
+            CamstudyTopAppBar(
+                title = {
+                    CamstudyText(text = stringResource(id = R.string.room_create_app_bar_title))
                 },
-                onRemove = uiState.onRemoveTag,
-                label = stringResource(R.string.room_tag),
-                placeholder = stringResource(R.string.room_tag_placeholder),
-                supportingText = if (uiState.isTagFull) {
-                    stringResource(R.string.room_tag_is_done)
-                } else {
-                    stringResource(R.string.room_tag_supporting_text)
-                }
+                onBackClick = onBackClick
             )
-            Spacer(modifier = Modifier.height(20.dp))
-            CamstudyDivider()
-            Spacer(modifier = Modifier.height(20.dp))
-            SelectableTile(
-                title = stringResource(R.string.room_private_tile_title),
-                subtitle = stringResource(R.string.room_private_tile_subtitle),
-                checked = uiState.password != null,
-                onCheckedChange = { isPrivate ->
-                    uiState.onPasswordChange(if (isPrivate) "" else null)
-                }
-            )
-            if (uiState.password != null) {
-                Spacer(modifier = Modifier.height(8.dp))
+        },
+        snackbarHost = { SnackbarHost(hostState = snackbarHostState) }
+    ) { innerPadding ->
+        Box(Modifier.padding(innerPadding)) {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(color = CamstudyTheme.colorScheme.systemBackground)
+                    .verticalScroll(rememberScrollState())
+                    .padding(horizontal = 16.dp)
+            ) {
+                Title()
                 CamstudyTextField(
-                    value = uiState.password,
-                    isError = uiState.isExceedPasswordLength,
-                    onValueChange = uiState.onPasswordChange,
-                    placeholder = stringResource(R.string.room_password_placeholder),
-                    supportingText = uiState.passwordSupportingTextRes,
+                    value = uiState.title,
+                    onValueChange = uiState.onTitleChange,
+                    label = stringResource(R.string.room_title),
                     singleLine = true,
-                    visualTransformation = PasswordVisualTransformation(),
+                    isError = uiState.isExceedTitleLength,
+                    placeholder = stringResource(R.string.room_create_title_placeholder),
+                    supportingText = uiState.titleSupportingTextRes,
                     keyboardOptions = KeyboardOptions(
-                        imeAction = ImeAction.Go,
-                        keyboardType = KeyboardType.Password
-                    ),
-                    keyboardActions = KeyboardActions(
-                        onGo = {
-                            if (uiState.canCreate) {
-                                uiState.onCreateClick()
-                            }
-                        }
+                        imeAction = ImeAction.Next
                     )
                 )
+                Spacer(modifier = Modifier.height(20.dp))
+                TagInputTextField(
+                    value = uiState.tag,
+                    onValueChange = uiState.onTagChange,
+                    addedTags = uiState.addedTags,
+                    recommendedTags = uiState.recommendedTags,
+                    onAdd = { tag ->
+                        if (uiState.addedTags.size == RoomConstants.MaxTagCount - 1) {
+                            focusManager.clearFocus()
+                        }
+                        uiState.onAddTag(tag)
+                    },
+                    onRemove = uiState.onRemoveTag,
+                    label = stringResource(R.string.room_tag),
+                    placeholder = stringResource(R.string.room_tag_placeholder),
+                    supportingText = if (uiState.isTagFull) {
+                        stringResource(R.string.room_tag_is_done)
+                    } else {
+                        stringResource(R.string.room_tag_supporting_text)
+                    }
+                )
+                Spacer(modifier = Modifier.height(20.dp))
+                CamstudyDivider()
+                Spacer(modifier = Modifier.height(20.dp))
+                SelectableTile(
+                    title = stringResource(R.string.room_private_tile_title),
+                    subtitle = stringResource(R.string.room_private_tile_subtitle),
+                    checked = uiState.password != null,
+                    onCheckedChange = { isPrivate ->
+                        uiState.onPasswordChange(if (isPrivate) "" else null)
+                    }
+                )
+                if (uiState.password != null) {
+                    Spacer(modifier = Modifier.height(8.dp))
+                    CamstudyTextField(
+                        value = uiState.password,
+                        isError = uiState.isExceedPasswordLength,
+                        onValueChange = uiState.onPasswordChange,
+                        placeholder = stringResource(R.string.room_password_placeholder),
+                        supportingText = uiState.passwordSupportingTextRes,
+                        singleLine = true,
+                        visualTransformation = PasswordVisualTransformation(),
+                        keyboardOptions = KeyboardOptions(
+                            imeAction = ImeAction.Go,
+                            keyboardType = KeyboardType.Password
+                        ),
+                        keyboardActions = KeyboardActions(
+                            onGo = {
+                                if (uiState.canCreate) {
+                                    uiState.onCreateClick()
+                                }
+                            }
+                        )
+                    )
+                }
+                Spacer(modifier = Modifier.height(BottomContainedButtonBoxHeight + 40.dp))
             }
-            Spacer(modifier = Modifier.height(BottomContainedButtonBoxHeight + 40.dp))
+            BottomContainedButton(
+                enabled = uiState.canCreate,
+                label = if (uiState.isInCreating) {
+                    stringResource(R.string.creating)
+                } else {
+                    stringResource(R.string.create_and_join)
+                },
+                onClick = uiState.onCreateClick
+            )
         }
-        BottomContainedButton(
-            enabled = uiState.canCreate,
-            label = if (uiState.isInCreating) {
-                stringResource(R.string.creating)
-            } else {
-                stringResource(R.string.create_and_join)
-            },
-            onClick = uiState.onCreateClick
-        )
     }
 }
 
@@ -211,7 +230,9 @@ private fun RoomCreateContentPreview() {
                 onRemoveTag = {},
                 onTitleChange = {},
                 onCreateClick = {}
-            )
+            ),
+            onBackClick = {},
+            snackbarHostState = SnackbarHostState()
         )
     }
 }
