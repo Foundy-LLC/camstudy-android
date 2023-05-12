@@ -40,7 +40,7 @@ class PagingRoomListRepository @Inject constructor(
     ): Result<RoomOverview> {
         return runCatching {
             val response = roomListApi.createRoom(body = createRequestBody)
-            val roomOverviewDto = response.getDataOrThrowMessage()
+            var roomOverview = response.getDataOrThrowMessage().toEntity()
 
             if (thumbnail != null) {
                 val multipart = MultipartBody.Part.createFormData(
@@ -48,13 +48,17 @@ class PagingRoomListRepository @Inject constructor(
                     thumbnail.name,
                     thumbnail.asRequestBody("multipart/form-data".toMediaTypeOrNull())
                 )
-                roomListApi.postRoomThumbnail(multipart).getDataOrThrowMessage()
+                val thumbnailResponse = roomListApi.postRoomThumbnail(
+                    roomId = roomOverview.id,
+                    partMap = multipart
+                ).getDataOrThrowMessage()
+                roomOverview = roomOverview.copy(thumbnail = thumbnailResponse)
             }
-            return@runCatching roomOverviewDto.toEntity()
+            return@runCatching roomOverview
         }
     }
 
     companion object {
-        const val ROOM_THUMBNAIL_KEY = "profileImage"
+        const val ROOM_THUMBNAIL_KEY = "roomThumbnail"
     }
 }

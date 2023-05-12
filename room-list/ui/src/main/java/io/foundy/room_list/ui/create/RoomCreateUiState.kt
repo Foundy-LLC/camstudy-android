@@ -17,7 +17,7 @@ data class RoomCreateUiState(
     val onTitleChange: (String) -> Unit,
     val onPasswordChange: (String?) -> Unit,
     val onTagChange: (String) -> Unit,
-    val onThumbnailChange: (Bitmap) -> Unit,
+    val onThumbnailChange: (Bitmap?) -> Unit,
     val onAddTag: (String) -> Unit,
     val onRemoveTag: (String) -> Unit,
     val onCreateClick: () -> Unit,

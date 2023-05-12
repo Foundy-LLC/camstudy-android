@@ -1,6 +1,10 @@
 package io.foundy.room_list.ui.create
 
+import android.graphics.Bitmap
+import android.net.Uri
 import androidx.activity.compose.BackHandler
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -24,6 +28,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
@@ -37,16 +42,20 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import io.foundy.core.common.util.toBitmap
 import io.foundy.core.designsystem.component.BottomContainedButton
 import io.foundy.core.designsystem.component.BottomContainedButtonBoxHeight
 import io.foundy.core.designsystem.component.CamstudyDialog
 import io.foundy.core.designsystem.component.CamstudyDivider
+import io.foundy.core.designsystem.component.CamstudyOutlinedButton
 import io.foundy.core.designsystem.component.CamstudyText
+import io.foundy.core.designsystem.component.CamstudyTextButton
 import io.foundy.core.designsystem.component.CamstudyTextField
 import io.foundy.core.designsystem.component.CamstudyTopAppBar
 import io.foundy.core.designsystem.component.SelectableTile
 import io.foundy.core.designsystem.theme.CamstudyTheme
 import io.foundy.core.model.constant.RoomConstants
+import io.foundy.core.ui.RoomThumbnailImage
 import io.foundy.core.ui.TagInputTextField
 import io.foundy.room.ui.RoomActivity
 import io.foundy.room_list.ui.R
@@ -133,6 +142,10 @@ private fun RoomCreateContent(
                     .padding(horizontal = 16.dp)
             ) {
                 Title()
+                Thumbnail(
+                    thumbnail = uiState.thumbnail,
+                    onThumbnailChange = uiState.onThumbnailChange
+                )
                 CamstudyTextField(
                     value = uiState.title,
                     onValueChange = uiState.onTitleChange,
@@ -177,7 +190,7 @@ private fun RoomCreateContent(
                         uiState.onPasswordChange(if (isPrivate) "" else null)
                     }
                 )
-                AnimatedVisibility (uiState.password != null) {
+                AnimatedVisibility(uiState.password != null) {
                     Column {
                         Spacer(modifier = Modifier.height(8.dp))
                         CamstudyTextField(
@@ -202,7 +215,7 @@ private fun RoomCreateContent(
                         )
                     }
                 }
-                Spacer(modifier = Modifier.height(BottomContainedButtonBoxHeight + 40.dp))
+                Spacer(modifier = Modifier.height(BottomContainedButtonBoxHeight * 2))
             }
             BottomContainedButton(
                 enabled = uiState.canCreate,
@@ -238,6 +251,45 @@ private fun Title() {
                 fontWeight = FontWeight.Normal
             )
         )
+    }
+}
+
+@Composable
+private fun Thumbnail(thumbnail: Bitmap?, onThumbnailChange: (Bitmap?) -> Unit) {
+    val context = LocalContext.current
+    val launcher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.GetContent()
+    ) { uri: Uri? ->
+        if (uri == null) {
+            return@rememberLauncherForActivityResult
+        }
+        val bitmap = uri.toBitmap(context)
+        onThumbnailChange(bitmap)
+    }
+
+    Column(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Spacer(modifier = Modifier.height(40.dp))
+        RoomThumbnailImage(
+            model = thumbnail,
+            size = 120.dp,
+            contentDescription = null
+        )
+        Spacer(modifier = Modifier.height(24.dp))
+        CamstudyOutlinedButton(
+            label = stringResource(R.string.room_create_add_thumbnail),
+            onClick = { launcher.launch("image/*") }
+        )
+        AnimatedVisibility(thumbnail != null) {
+            Spacer(modifier = Modifier.height(6.dp))
+            CamstudyTextButton(
+                label = stringResource(R.string.replace_to_default_image),
+                onClick = { onThumbnailChange(null) }
+            )
+        }
+        Spacer(modifier = Modifier.height(24.dp))
     }
 }
 

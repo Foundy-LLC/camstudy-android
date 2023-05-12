@@ -65,7 +65,7 @@ fun RoomTile(modifier: Modifier = Modifier, room: RoomOverview) {
     Surface(modifier = modifier, color = CamstudyTheme.colorScheme.systemBackground) {
         Row {
             RoomThumbnailImage(
-                imageUrl = room.thumbnail,
+                model = room.thumbnail,
                 contentDescription = stringResource(R.string.room_thumbnail, room.title)
             )
             Box(modifier = Modifier.width(12.dp))
@@ -85,7 +85,7 @@ fun RoomTile(modifier: Modifier = Modifier, room: RoomOverview) {
 
 @Composable
 fun RoomThumbnailImage(
-    imageUrl: String?,
+    model: Any?,
     contentDescription: String?,
     size: Dp = 64.dp,
     shape: Shape = RoundedCornerShape(12.dp)
@@ -94,10 +94,10 @@ fun RoomThumbnailImage(
         .size(size)
         .clip(shape)
 
-    if (imageUrl != null) {
+    if (model != null) {
         AsyncImage(
             modifier = thumbnailModifier,
-            model = imageUrl,
+            model = model,
             contentScale = ContentScale.Crop,
             contentDescription = contentDescription
         )

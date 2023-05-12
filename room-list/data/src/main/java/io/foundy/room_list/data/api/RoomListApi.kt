@@ -33,6 +33,7 @@ interface RoomListApi {
     @Multipart
     @POST("rooms/{roomId}/thumbnail")
     suspend fun postRoomThumbnail(
+        @Path("roomId") roomId: String,
         @Part partMap: MultipartBody.Part
-    ): CamstudyResponse<Unit>
+    ): CamstudyResponse<String>
 }

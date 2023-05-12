@@ -1,9 +1,11 @@
 package io.foundy.room_list.ui.create
 
+import android.graphics.Bitmap
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.foundy.auth.data.repository.AuthRepository
+import io.foundy.core.common.util.ConvertBitmapToFileUseCase
 import io.foundy.core.model.constant.RoomConstants
 import io.foundy.core.model.constant.UserConstants
 import io.foundy.core.ui.UserMessage
@@ -31,7 +33,8 @@ import javax.inject.Inject
 class RoomCreateViewModel @Inject constructor(
     private val welcomeRepository: WelcomeRepository,
     private val roomListRepository: RoomListRepository,
-    private val authRepository: AuthRepository
+    private val authRepository: AuthRepository,
+    private val convertBitmapToFileUseCase: ConvertBitmapToFileUseCase
 ) : ViewModel(), ContainerHost<RoomCreateUiState, RoomCreateSideEffect> {
 
     override val container: Container<RoomCreateUiState, RoomCreateSideEffect> = container(
@@ -40,13 +43,17 @@ class RoomCreateViewModel @Inject constructor(
             onRemoveTag = ::removeTag,
             onAddTag = ::addTag,
             onTagChange = ::updateTagInput,
-            onThumbnailChange = { /* TODO: 디자인 나오면 구현하기 */ },
+            onThumbnailChange = ::updateThumbnail,
             onPasswordChange = ::updatePassword,
             onCreateClick = ::saveRoom
         )
     )
 
     private var recommendedTagsFetchJob: Job? = null
+
+    private fun updateThumbnail(thumbnail: Bitmap?) = intent {
+        reduce { state.copy(thumbnail = thumbnail) }
+    }
 
     private fun updateTitle(title: String) = intent {
         reduce { state.copy(title = title.filterNot { it == '\n' }) }
@@ -118,7 +125,7 @@ class RoomCreateViewModel @Inject constructor(
                 longBreakInterval = RoomConstants.LongBreakIntervalDefault,
                 expiredAt = get30DaysAfterDate().toISOString()
             ),
-            thumbnail = null // TODO: 구현하기
+            thumbnail = state.thumbnail?.let { convertBitmapToFileUseCase(it, "thumbnail.png") }
         ).onSuccess { room ->
             postSideEffect(RoomCreateSideEffect.SuccessToCreate(room))
         }.onFailure {

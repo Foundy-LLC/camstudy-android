@@ -28,4 +28,6 @@
     <string name="room_password_placeholder">스터디 룸 비밀번호를 입력해주세요</string>
     <string name="room_create_recheck_dialog_content">방 생성을 취소하고 홈으로 돌아갑니다</string>
     <string name="room_create_recheck_dialog_confirm">홈으로</string>
+    <string name="room_create_add_thumbnail">사진 업로드하기</string>
+    <string name="replace_to_default_image">기본 이미지로 변경</string>
 </resources>

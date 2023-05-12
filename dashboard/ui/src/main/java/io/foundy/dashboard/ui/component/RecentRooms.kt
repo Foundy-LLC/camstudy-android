@@ -84,7 +84,7 @@ private fun RecentRoomTile(room: RoomOverview, onClick: (RoomOverview) -> Unit) 
             modifier = Modifier.padding(16.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            RoomThumbnailImage(imageUrl = room.thumbnail, contentDescription = null, size = 36.dp)
+            RoomThumbnailImage(model = room.thumbnail, contentDescription = null, size = 36.dp)
             Spacer(modifier = Modifier.width(12.dp))
             Column(
                 modifier = Modifier.weight(1f)
