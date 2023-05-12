@@ -116,7 +116,7 @@ fun CamstudyTextField(
     prefix: @Composable (() -> Unit)? = null,
     supportingContent: @Composable (() -> Unit)? = null,
     supportingText: String? = null,
-    borderShape: Shape =  RoundedCornerShape(8.dp),
+    borderShape: Shape = RoundedCornerShape(8.dp),
     isError: Boolean = false,
     visualTransformation: VisualTransformation = VisualTransformation.None,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
@@ -196,7 +196,7 @@ fun CamstudyTextField(
                     }
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         if (prefix != null) {
-                            ProvideTextStyle(value = textStyle) {
+                            ProvideTextStyle(value = CamstudyTextFieldTextStyle) {
                                 prefix()
                             }
                         }

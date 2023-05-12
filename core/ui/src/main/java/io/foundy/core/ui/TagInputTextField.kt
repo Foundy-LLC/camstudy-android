@@ -40,6 +40,7 @@ fun TagInputTextField(
     recommendedTags: List<String>,
     onAdd: (String) -> Unit,
     onRemove: (String) -> Unit,
+    modifier: Modifier = Modifier,
     label: String? = null,
     placeholder: String? = null,
     supportingText: String? = null
@@ -48,7 +49,7 @@ fun TagInputTextField(
 
     Column {
         CamstudyTextField(
-            modifier = Modifier
+            modifier = modifier
                 .onKeyEvent {
                     val lastAddedTag = addedTags.lastOrNull()
                     if (it.key == Key.Backspace && value.isEmpty() && lastAddedTag != null) {

@@ -78,7 +78,7 @@ fun HomeTabScreen(
                     plantResultRecipient = plantResultRecipient,
                     showSnackbar = showSnackbar
                 )
-                MainTabDestination.StudyRooms -> RoomListRoute()
+                MainTabDestination.StudyRooms -> RoomListRoute(navigator = navigator)
             }
         }
     }

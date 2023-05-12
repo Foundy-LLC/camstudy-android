@@ -1,16 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="unknown_error_caused">알 수 없는 에러가 발생했습니다.</string>
-    <string name="title_length_error_message">제목은 1~%d자로 설정해야합니다.</string>
-    <string name="password_error_message">비밀번호 길이는 1~%d자로 설정해야합니다.</string>
-    <string name="timer_error_message">타이머 길이는 %d~%d분으로 설정해야합니다.</string>
-    <string name="short_break_error_message">짧은 휴식 길이는 %d~%d분으로 설정해야합니다.</string>
-    <string name="long_break_error_message">긴 휴식 길이는 %d~%d분으로 설정해야합니다.</string>
-    <string name="long_break_interval_error_message">긴 휴식 주기는 %d~%d회로 설정해야합니다.</string>
     <string name="failed_to_create_room">방 생성을 실패했습니다.</string>
-    <string name="success_to_create_room">방 생성을 성공했습니다.</string>
     <string name="join">입장</string>
     <string name="study_room_list_title">스터디 룸 목록</string>
     <string name="room_search_placeholder">제목, 키워드를 검색해주세요</string>
     <string name="create_study_room">스터디 룸 만들기</string>
+
+    <!-- Room Create -->
+    <string name="room_create_title">스터디 룸 정보를 입력해주세요</string>
+    <string name="room_create_subtitle">제목, 태그를 입력해주세요</string>
+    <string name="room_create_title_placeholder">스터디 룸 제목을 입력해주세요</string>
+    <string name="failed_to_load_recommended_tags">추천 태그를 불러오지 못했어요</string>
+    <string name="room_title_supporting_text">필수 입력 항목입니다</string>
+    <string name="room_title_max_length_error">스터디 룸 이름은 최대 %d자 입니다</string>
+    <string name="room_password_max_length_error">비밀번호는 최대 %d자 입니다</string>
+    <string name="room_password_supporting_text">비공개 방으로 설정할 경우 필수 입력 항목입니다</string>
+    <string name="create_and_join">생성 및 입장</string>
+    <string name="creating">생성중…</string>
+    <string name="room_title">스터디 룸 제목</string>
+    <string name="room_tag">스터디 룸 태그</string>
+    <string name="room_tag_placeholder">#수능 #개발 #공시 등 태그를 입력해주세요</string>
+    <string name="room_tag_is_done">태그를 모두 입력했어요</string>
+    <string name="room_tag_supporting_text">필수 입력 항목이며 최대 3개의 태그를 설정할 수 있습니다</string>
+    <string name="room_private_tile_title">스터디 룸 비공개</string>
+    <string name="room_private_tile_subtitle">비밀번호를 입력해야만 입장이 가능합니다</string>
+    <string name="room_password_placeholder">스터디 룸 비밀번호를 입력해주세요</string>
 </resources>

@@ -54,6 +54,8 @@ dependencies {
     implementation project(path: ':auth:data')
     implementation project(path: ':room-list:data')
     implementation project(path: ':room:ui')
+    implementation project(path: ':organization:ui')
+    implementation project(path: ':welcome:data')
 
     // coil
     implementation("io.coil-kt:coil-compose:$coil_version")
@@ -66,7 +68,6 @@ dependencies {
 
     // compose destination
     implementation "io.github.raamcosta.compose-destinations:core:$compose_destination_version"
-    implementation project(path: ':organization:ui')
     ksp "io.github.raamcosta.compose-destinations:ksp:$compose_destination_version"
 
     // navigation
