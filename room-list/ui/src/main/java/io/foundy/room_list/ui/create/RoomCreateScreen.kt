@@ -1,6 +1,7 @@
 package io.foundy.room_list.ui.create
 
 import androidx.activity.compose.BackHandler
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -176,28 +177,30 @@ private fun RoomCreateContent(
                         uiState.onPasswordChange(if (isPrivate) "" else null)
                     }
                 )
-                if (uiState.password != null) {
-                    Spacer(modifier = Modifier.height(8.dp))
-                    CamstudyTextField(
-                        value = uiState.password,
-                        isError = uiState.isExceedPasswordLength,
-                        onValueChange = uiState.onPasswordChange,
-                        placeholder = stringResource(R.string.room_password_placeholder),
-                        supportingText = uiState.passwordSupportingTextRes,
-                        singleLine = true,
-                        visualTransformation = PasswordVisualTransformation(),
-                        keyboardOptions = KeyboardOptions(
-                            imeAction = ImeAction.Go,
-                            keyboardType = KeyboardType.Password
-                        ),
-                        keyboardActions = KeyboardActions(
-                            onGo = {
-                                if (uiState.canCreate) {
-                                    uiState.onCreateClick()
+                AnimatedVisibility (uiState.password != null) {
+                    Column {
+                        Spacer(modifier = Modifier.height(8.dp))
+                        CamstudyTextField(
+                            value = uiState.password ?: "",
+                            isError = uiState.isExceedPasswordLength,
+                            onValueChange = uiState.onPasswordChange,
+                            placeholder = stringResource(R.string.room_password_placeholder),
+                            supportingText = uiState.passwordSupportingTextRes,
+                            singleLine = true,
+                            visualTransformation = PasswordVisualTransformation(),
+                            keyboardOptions = KeyboardOptions(
+                                imeAction = ImeAction.Go,
+                                keyboardType = KeyboardType.Password
+                            ),
+                            keyboardActions = KeyboardActions(
+                                onGo = {
+                                    if (uiState.canCreate) {
+                                        uiState.onCreateClick()
+                                    }
                                 }
-                            }
+                            )
                         )
-                    )
+                    }
                 }
                 Spacer(modifier = Modifier.height(BottomContainedButtonBoxHeight + 40.dp))
             }
