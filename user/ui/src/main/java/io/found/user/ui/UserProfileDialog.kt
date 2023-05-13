@@ -134,7 +134,7 @@ private fun ColumnScope.SuccessContent(uiState: UserProfileDialogUiState.Success
 
     if (showFriendCancelRecheckDialog) {
         CamstudyDialog(
-            content = "정말로 친구를 해제할까요?",
+            content = stringResource(R.string.sure_you_want_to_cancel_friend),
             onConfirm = {
                 uiState.onCancelFriend()
                 showFriendCancelRecheckDialog = false
