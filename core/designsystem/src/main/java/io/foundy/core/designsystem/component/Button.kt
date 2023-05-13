@@ -1,5 +1,6 @@
 package io.foundy.core.designsystem.component
 
+import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -26,6 +27,7 @@ import io.foundy.core.designsystem.theme.CamstudyTheme
 internal fun RawButton(
     modifier: Modifier = Modifier,
     label: String,
+    enableLabelSizeAnimation: Boolean = false,
     leadingIcon: CamstudyIcon? = null,
     shape: Shape = RoundedCornerShape(8.dp),
     colors: ButtonColors = ButtonDefaults.buttonColors(
@@ -60,6 +62,11 @@ internal fun RawButton(
                 Spacer(modifier = Modifier.width(10.dp))
             }
             Text(
+                modifier = if (enableLabelSizeAnimation) {
+                    Modifier.animateContentSize()
+                } else {
+                    Modifier
+                },
                 text = label,
                 style = CamstudyTheme.typography.titleMedium.copy(
                     fontWeight = FontWeight.Medium
@@ -74,6 +81,7 @@ fun CamstudyOutlinedButton(
     modifier: Modifier = Modifier,
     label: String,
     leadingIcon: CamstudyIcon? = null,
+    enableLabelSizeAnimation: Boolean = false,
     shape: Shape = RoundedCornerShape(8.dp),
     enabled: Boolean = true,
     onClick: () -> Unit
@@ -85,6 +93,7 @@ fun CamstudyOutlinedButton(
         label = label,
         shape = shape,
         enabled = enabled,
+        enableLabelSizeAnimation = enableLabelSizeAnimation,
         leadingIcon = leadingIcon,
         border = BorderStroke(
             width = 1.dp,
@@ -104,6 +113,7 @@ fun CamstudyContainedButton(
     modifier: Modifier = Modifier,
     label: String,
     leadingIcon: CamstudyIcon? = null,
+    enableLabelSizeAnimation: Boolean = false,
     shape: Shape = RoundedCornerShape(8.dp),
     enabled: Boolean = true,
     onClick: () -> Unit
@@ -114,6 +124,7 @@ fun CamstudyContainedButton(
         onClick = onClick,
         label = label,
         shape = shape,
+        enableLabelSizeAnimation = enableLabelSizeAnimation,
         leadingIcon = leadingIcon,
         enabled = enabled,
         colors = ButtonDefaults.buttonColors(
