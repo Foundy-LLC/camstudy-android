@@ -288,7 +288,7 @@ private fun PeerGridView(
                     PeerContent(
                         modifier = sizeModifier,
                         peerState = peerState,
-                        showMoreButton = isCurrentUserMaster,
+                        showMoreButton = isCurrentUserMaster && !peerState.isMe,
                         onMoreButtonClick = onMoreButtonClick
                     )
                 }
@@ -422,7 +422,8 @@ private fun PeerGridViewPreview() {
                         enabledMicrophone = false,
                         enabledHeadset = false,
                         audioTrack = null,
-                        videoTrack = null
+                        videoTrack = null,
+                        isMe = false
                     )
                 ),
                 isCurrentUserMaster = true,
@@ -446,7 +447,8 @@ private fun StudyRoomScreenPreview() {
                             enabledMicrophone = false,
                             enabledHeadset = false,
                             audioTrack = null,
-                            videoTrack = null
+                            videoTrack = null,
+                            isMe = false
                         )
                     ),
                     isCurrentUserMaster = false,
@@ -490,7 +492,8 @@ private fun ExpandedChatStudyRoomScreenPreview() {
                             enabledMicrophone = false,
                             enabledHeadset = false,
                             audioTrack = null,
-                            videoTrack = null
+                            videoTrack = null,
+                            isMe = false
                         )
                     ),
                     isCurrentUserMaster = false,

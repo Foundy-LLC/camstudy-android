@@ -9,7 +9,6 @@ import io.foundy.room.data.model.StudyRoomEvent
 import io.foundy.room.data.model.WaitingRoomEvent
 import io.foundy.room.data.service.RoomService
 import io.foundy.room.domain.PeerOverview
-import io.foundy.room.domain.PeerState
 import io.foundy.room.domain.PomodoroTimerProperty
 import io.foundy.room.domain.WebRtcServerTimeZone
 import io.foundy.room.ui.R
@@ -146,7 +145,9 @@ class RoomViewModel @Inject constructor(
             ).onSuccess {
                 reduce {
                     RoomUiState.StudyRoom(
-                        peerStates = it.peerStates.map(PeerState::toInitialUiState),
+                        peerStates = it.peerStates.map { peerState ->
+                            peerState.toInitialUiState(isMe = currentUserId == peerState.uid)
+                        },
                         isCurrentUserMaster = uiState.isCurrentUserMaster,
                         blacklist = uiState.data.blacklist,
                         onKickUserClick = ::kickUser,
@@ -305,8 +306,9 @@ class RoomViewModel @Inject constructor(
                 } else {
                     reduce {
                         uiState.copy(
-                            peerStates = uiState.peerStates +
-                                studyRoomEvent.state.toInitialUiState()
+                            peerStates = uiState.peerStates + studyRoomEvent.state.toInitialUiState(
+                                isMe = currentUserId == studyRoomEvent.state.uid
+                            )
                         )
                     }
                 }
