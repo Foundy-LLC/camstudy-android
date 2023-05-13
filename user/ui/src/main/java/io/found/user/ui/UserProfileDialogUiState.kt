@@ -7,7 +7,13 @@ sealed class UserProfileDialogUiState {
 
     object Loading : UserProfileDialogUiState()
 
-    data class Success(val user: User) : UserProfileDialogUiState()
+    data class Success(
+        val user: User,
+        val isFriendActionLoading: Boolean = false,
+        val onRequestFriend: () -> Unit,
+        val onCancelFriendRequest: () -> Unit,
+        val onCancelFriend: () -> Unit
+    ) : UserProfileDialogUiState()
 
     data class Failure(val message: UserMessage) : UserProfileDialogUiState()
 }

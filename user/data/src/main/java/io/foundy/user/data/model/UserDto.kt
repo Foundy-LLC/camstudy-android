@@ -2,6 +2,7 @@ package io.foundy.user.data.model
 
 import com.google.gson.annotations.SerializedName
 import io.foundy.core.data.model.FriendStatusDto
+import io.foundy.core.data.model.toEntity
 import io.foundy.core.model.GrowingCrop
 import io.foundy.core.model.HarvestedCrop
 import io.foundy.core.model.User
@@ -18,6 +19,7 @@ data class UserDto(
 )
 
 fun UserDto.toEntity(
+    isMe: Boolean,
     weeklyRanking: Int,
     totalRanking: Int,
     weeklyStudyTimeSec: Int,
@@ -26,6 +28,7 @@ fun UserDto.toEntity(
     harvestedCrops: List<HarvestedCrop>,
 ): User = User(
     id = id,
+    isMe = isMe,
     name = name,
     introduce = introduce,
     profileImage = profileImage,
@@ -37,5 +40,6 @@ fun UserDto.toEntity(
     growingCrop = growingCrop,
     harvestedCrops = harvestedCrops,
     organizations = organizations,
-    tags = tags
+    tags = tags,
+    friendStatus = friendStatus.toEntity()
 )

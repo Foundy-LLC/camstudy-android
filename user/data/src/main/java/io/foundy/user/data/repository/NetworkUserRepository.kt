@@ -65,6 +65,7 @@ class NetworkUserRepository @Inject constructor(
 
                 return@coroutineScope userDeferred.await()
                     .toEntity(
+                        isMe = currentUserId == id,
                         weeklyRanking = weeklyRanking.user.ranking,
                         totalRanking = totalRanking.user.ranking,
                         weeklyStudyTimeSec = weeklyRanking.user.studyTimeSec,

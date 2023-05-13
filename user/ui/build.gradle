@@ -47,6 +47,7 @@ dependencies {
     implementation project(path: ':core:ui')
     implementation project(path: ':core:common')
     implementation project(path: ':user:domain')
+    implementation project(path: ':friend:data')
 
     // hilt
     implementation "com.google.dagger:hilt-android:$hilt_version"
