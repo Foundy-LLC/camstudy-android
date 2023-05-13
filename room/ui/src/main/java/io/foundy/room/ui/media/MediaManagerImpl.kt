@@ -13,6 +13,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.core.content.getSystemService
+import dagger.hilt.android.qualifiers.ApplicationContext
 import io.foundy.room.ui.R
 import io.foundy.room.ui.audio.AudioHandler
 import io.foundy.room.ui.audio.AudioSwitchHandler
@@ -35,19 +36,20 @@ import org.webrtc.SurfaceTextureHelper
 import org.webrtc.VideoCapturer
 import org.webrtc.VideoTrack
 import java.util.UUID
+import javax.inject.Inject
 
 val LocalMediaManager: ProvidableCompositionLocal<MediaManager> =
     staticCompositionLocalOf { error("WebRtcSessionManager was not initialized!") }
 
-class MediaManagerImpl(
-    private val context: Context,
-    private val peerConnectionFactory: PeerConnectionFactoryWrapper,
-    private val onToggleVideo: (track: VideoTrack?) -> Unit,
-    private val onToggleAudio: (track: AudioTrack?) -> Unit,
-    private val onToggleHeadset: (Boolean) -> Unit,
+class MediaManagerImpl @Inject constructor(
+    @ApplicationContext private val context: Context
 ) : MediaManager {
     private val logger by taggedLogger("Call:LocalRoomSessionManager")
     private val managerScope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
+
+    private val peerConnectionFactory: PeerConnectionFactoryWrapper = PeerConnectionFactoryWrapper(
+        context = context
+    )
 
     override val eglBaseContext: EglBase.Context get() = peerConnectionFactory.eglBaseContext
 
@@ -59,6 +61,8 @@ class MediaManagerImpl(
 
     override var enabledLocalHeadset by mutableStateOf(false)
         private set
+
+    override val mediaEvent: MutableSharedFlow<MediaManagerEvent> = MutableSharedFlow(replay = 0)
 
     override val currentUserState: PeerUiState
         get() = PeerUiState(
@@ -237,7 +241,7 @@ class MediaManagerImpl(
         }
         audioManager?.isMicrophoneMute = !enabled
         enabledLocalAudio = enabled
-        onToggleAudio(if (enabled) _localAudioTrack else null)
+        mediaEvent.tryEmit(MediaManagerEvent.ToggleAudio(if (enabled) _localAudioTrack else null))
     }
 
     override fun toggleVideo(enabled: Boolean) {
@@ -245,7 +249,7 @@ class MediaManagerImpl(
             enabledLocalVideo = true
             videoCapturer.startCapture(resolution.width, resolution.height, 30)
             setupVideoTrack()
-            onToggleVideo(localVideoTrack!!)
+            mediaEvent.tryEmit(MediaManagerEvent.ToggleVideo(localVideoTrack))
             managerScope.launch {
                 _localVideoSinkFlow.emit(localVideoTrack)
             }
@@ -253,7 +257,7 @@ class MediaManagerImpl(
             enabledLocalVideo = false
             videoCapturer.stopCapture()
             clearVideoTrack()
-            onToggleVideo(null)
+            mediaEvent.tryEmit(MediaManagerEvent.ToggleVideo(null))
             managerScope.launch {
                 _localVideoSinkFlow.emit(null)
             }
@@ -269,7 +273,7 @@ class MediaManagerImpl(
             toggleMicrophone(enabled = false)
         }
         enabledLocalHeadset = enabled
-        onToggleHeadset(enabled)
+        mediaEvent.tryEmit(MediaManagerEvent.ToggleHeadset(enabled))
     }
 
     override fun disconnect() {

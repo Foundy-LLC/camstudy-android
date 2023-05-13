@@ -6,8 +6,12 @@ import kotlinx.coroutines.flow.emptyFlow
 import org.webrtc.AudioTrack
 import org.webrtc.EglBase
 import org.webrtc.VideoTrack
+import javax.inject.Inject
 
-class FakeMediaManager : MediaManager {
+class FakeMediaManager @Inject constructor() : MediaManager {
+
+    override val mediaEvent: Flow<MediaManagerEvent>
+        get() = TODO("Not yet implemented")
 
     override val eglBaseContext: EglBase.Context = EglBase.Context { 10 }
     override val enabledLocalVideo: Boolean = true

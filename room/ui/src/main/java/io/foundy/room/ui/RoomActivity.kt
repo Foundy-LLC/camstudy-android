@@ -32,8 +32,6 @@ import io.foundy.core.common.util.serializable
 import io.foundy.core.designsystem.theme.CamstudyTheme
 import io.foundy.core.model.RoomOverview
 import io.foundy.room.ui.media.MediaManager
-import io.foundy.room.ui.media.MediaManagerImpl
-import io.foundy.room.ui.peer.PeerConnectionFactoryWrapper
 import io.foundy.room.ui.receiver.AudioToggleReceiver
 import io.foundy.room.ui.receiver.VideoToggleReceiver
 import io.foundy.room.ui.screen.PermissionRequestScreen
@@ -44,9 +42,7 @@ import io.foundy.room.ui.viewmodel.RoomViewModel
 class RoomActivity : ComponentActivity() {
 
     private val viewModel: RoomViewModel by viewModels()
-
-    private var _mediaManager: MediaManager? = null
-    private val mediaManager: MediaManager get() = requireNotNull(_mediaManager)
+    private val mediaManager: MediaManager get() = viewModel.mediaManager
 
     private val isPipSupported by lazy {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
@@ -83,13 +79,6 @@ class RoomActivity : ComponentActivity() {
         )
 
         val roomOverview = requireNotNull(intent.serializable<RoomOverview>("roomOverview"))
-        _mediaManager = MediaManagerImpl(
-            context = this,
-            peerConnectionFactory = PeerConnectionFactoryWrapper(context = this),
-            onToggleVideo = viewModel::onToggleVideo,
-            onToggleAudio = viewModel::onToggleAudio,
-            onToggleHeadset = viewModel::onToggleHeadset,
-        )
 
         setContent {
             CamstudyTheme {

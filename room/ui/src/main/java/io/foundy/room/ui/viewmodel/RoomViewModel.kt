@@ -13,6 +13,8 @@ import io.foundy.room.domain.PeerState
 import io.foundy.room.domain.PomodoroTimerProperty
 import io.foundy.room.domain.WebRtcServerTimeZone
 import io.foundy.room.ui.R
+import io.foundy.room.ui.media.MediaManager
+import io.foundy.room.ui.media.MediaManagerEvent
 import io.foundy.room.ui.peer.merge
 import io.foundy.room.ui.peer.toInitialUiState
 import kotlinx.coroutines.TimeoutCancellationException
@@ -35,6 +37,7 @@ import javax.inject.Inject
 class RoomViewModel @Inject constructor(
     private val roomService: RoomService,
     private val authRepository: AuthRepository,
+    val mediaManager: MediaManager
 ) : ViewModel(), ContainerHost<RoomUiState, RoomSideEffect> {
 
     override val container: Container<RoomUiState, RoomSideEffect> =
@@ -59,9 +62,22 @@ class RoomViewModel @Inject constructor(
                 }
             }
         }
+        viewModelScope.launch {
+            mediaManager.mediaEvent.collect { event ->
+                when (event) {
+                    is MediaManagerEvent.ToggleAudio -> onToggleAudio(event.track)
+                    is MediaManagerEvent.ToggleVideo -> onToggleVideo(event.track)
+                    is MediaManagerEvent.ToggleHeadset -> onToggleHeadset(event.enabled)
+                }
+            }
+        }
     }
 
     fun connect(roomId: String) = intent {
+        // TODO: 대기실이랑 공부방 Activity 분리되면 check 함수로 수정하기
+        if (state !is RoomUiState.WaitingRoom.Loading) {
+            return@intent
+        }
         try {
             roomService.connect(roomId)
             joinToWaitingRoom(roomId)
@@ -163,7 +179,7 @@ class RoomViewModel @Inject constructor(
         }
     }
 
-    fun onToggleAudio(audioTrack: AudioTrack?) = intent {
+    private fun onToggleAudio(audioTrack: AudioTrack?) = intent {
         if (state !is RoomUiState.StudyRoom) {
             return@intent
         }
@@ -174,7 +190,7 @@ class RoomViewModel @Inject constructor(
         }
     }
 
-    fun onToggleVideo(videoTrack: VideoTrack?) = intent {
+    private fun onToggleVideo(videoTrack: VideoTrack?) = intent {
         if (state !is RoomUiState.StudyRoom) {
             return@intent
         }
@@ -185,7 +201,7 @@ class RoomViewModel @Inject constructor(
         }
     }
 
-    fun onToggleHeadset(enabled: Boolean) = intent {
+    private fun onToggleHeadset(enabled: Boolean) = intent {
         if (enabled) {
             roomService.unmuteHeadset()
         } else {

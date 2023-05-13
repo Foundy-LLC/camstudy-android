@@ -8,6 +8,8 @@ import org.webrtc.VideoTrack
 
 interface MediaManager {
 
+    val mediaEvent: Flow<MediaManagerEvent>
+
     val eglBaseContext: EglBase.Context
 
     val enabledLocalVideo: Boolean

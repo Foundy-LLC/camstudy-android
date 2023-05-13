@@ -3,6 +3,7 @@ package io.foundy.room.ui
 import io.foundy.core.test.MainDispatcherRule
 import io.foundy.room.ui.fake.FakeAuthRepository
 import io.foundy.room.ui.fake.FakeRoomService
+import io.foundy.room.ui.media.FakeMediaManager
 import io.foundy.room.ui.viewmodel.RoomSideEffect
 import io.foundy.room.ui.viewmodel.RoomUiState
 import io.foundy.room.ui.viewmodel.RoomViewModel
@@ -57,7 +58,8 @@ class RoomViewModelTest {
     private fun initViewModel() {
         viewModel = RoomViewModel(
             authRepository = authRepository,
-            roomService = roomService
+            roomService = roomService,
+            mediaManager = FakeMediaManager()
         ).liveTest { dispatcher = mainDispatcherRule.testDispatcher }
     }
 }
