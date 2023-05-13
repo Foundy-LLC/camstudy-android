@@ -1,25 +1,34 @@
 package io.foundy.core.designsystem.component
 
+import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import io.foundy.core.designsystem.icon.CamstudyIcon
 import io.foundy.core.designsystem.theme.CamstudyTheme
 
 @Composable
 internal fun RawButton(
     modifier: Modifier = Modifier,
     label: String,
+    enableLabelSizeAnimation: Boolean = false,
+    leadingIcon: CamstudyIcon? = null,
     shape: Shape = RoundedCornerShape(8.dp),
     colors: ButtonColors = ButtonDefaults.buttonColors(
         containerColor = CamstudyTheme.colorScheme.primary,
@@ -43,12 +52,27 @@ internal fun RawButton(
             vertical = 8.dp
         )
     ) {
-        Text(
-            text = label,
-            style = CamstudyTheme.typography.titleMedium.copy(
-                fontWeight = FontWeight.Medium
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            if (leadingIcon != null) {
+                CamstudyIcon(
+                    modifier = Modifier.size(20.dp),
+                    icon = leadingIcon,
+                    contentDescription = null,
+                )
+                Spacer(modifier = Modifier.width(10.dp))
+            }
+            Text(
+                modifier = if (enableLabelSizeAnimation) {
+                    Modifier.animateContentSize()
+                } else {
+                    Modifier
+                },
+                text = label,
+                style = CamstudyTheme.typography.titleMedium.copy(
+                    fontWeight = FontWeight.Medium
+                )
             )
-        )
+        }
     }
 }
 
@@ -56,6 +80,8 @@ internal fun RawButton(
 fun CamstudyOutlinedButton(
     modifier: Modifier = Modifier,
     label: String,
+    leadingIcon: CamstudyIcon? = null,
+    enableLabelSizeAnimation: Boolean = false,
     shape: Shape = RoundedCornerShape(8.dp),
     enabled: Boolean = true,
     onClick: () -> Unit
@@ -67,6 +93,8 @@ fun CamstudyOutlinedButton(
         label = label,
         shape = shape,
         enabled = enabled,
+        enableLabelSizeAnimation = enableLabelSizeAnimation,
+        leadingIcon = leadingIcon,
         border = BorderStroke(
             width = 1.dp,
             color = if (enabled) colorScheme.primary else colorScheme.systemUi03
@@ -84,6 +112,8 @@ fun CamstudyOutlinedButton(
 fun CamstudyContainedButton(
     modifier: Modifier = Modifier,
     label: String,
+    leadingIcon: CamstudyIcon? = null,
+    enableLabelSizeAnimation: Boolean = false,
     shape: Shape = RoundedCornerShape(8.dp),
     enabled: Boolean = true,
     onClick: () -> Unit
@@ -94,6 +124,8 @@ fun CamstudyContainedButton(
         onClick = onClick,
         label = label,
         shape = shape,
+        enableLabelSizeAnimation = enableLabelSizeAnimation,
+        leadingIcon = leadingIcon,
         enabled = enabled,
         colors = ButtonDefaults.buttonColors(
             containerColor = colorScheme.primary,
@@ -108,6 +140,7 @@ fun CamstudyContainedButton(
 fun CamstudyTextButton(
     modifier: Modifier = Modifier,
     label: String,
+    leadingIcon: CamstudyIcon? = null,
     shape: Shape = RoundedCornerShape(8.dp),
     enabled: Boolean = true,
     onClick: () -> Unit
@@ -118,6 +151,7 @@ fun CamstudyTextButton(
         onClick = onClick,
         label = label,
         shape = shape,
+        leadingIcon = leadingIcon,
         enabled = enabled,
         colors = ButtonDefaults.buttonColors(
             containerColor = Color.Transparent,

@@ -6,6 +6,7 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
@@ -40,7 +41,10 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import io.found.user.ui.UserProfileDialogProperty.ProfileShape
 import io.found.user.ui.UserProfileDialogProperty.ProfileSize
 import io.foundy.core.common.util.formatDuration
+import io.foundy.core.designsystem.component.CamstudyContainedButton
+import io.foundy.core.designsystem.component.CamstudyDialog
 import io.foundy.core.designsystem.component.CamstudyDivider
+import io.foundy.core.designsystem.component.CamstudyOutlinedButton
 import io.foundy.core.designsystem.component.CamstudyText
 import io.foundy.core.designsystem.component.DialogMaxWidth
 import io.foundy.core.designsystem.component.DialogMinWidth
@@ -49,6 +53,7 @@ import io.foundy.core.designsystem.icon.CamstudyIcons
 import io.foundy.core.designsystem.theme.CamstudyTheme
 import io.foundy.core.model.CropGrade
 import io.foundy.core.model.CropType
+import io.foundy.core.model.FriendStatus
 import io.foundy.core.model.GrowingCrop
 import io.foundy.core.model.HarvestedCrop
 import io.foundy.core.model.User
@@ -113,125 +118,182 @@ private fun UserProfileDialogContent(
                             ?: stringResource(id = uiState.message.defaultRes)
                     )
                     UserProfileDialogUiState.Loading -> UserProfileDialogShimmer()
-                    is UserProfileDialogUiState.Success -> {
-                        val user = uiState.user
-                        val growingCrop = user.growingCrop
-
-                        UserProfileImage(
-                            imageUrl = user.profileImage,
-                            imageOrContainerSize = ProfileSize,
-                            fallbackIconSize = 64.dp,
-                            cornerShape = ProfileShape
-                        )
-                        Spacer(modifier = Modifier.height(20.dp))
-                        NameAndOrganization(
-                            name = user.name,
-                            organization = user.organizations.firstOrNull()
-                        )
-                        if (user.introduce != null) {
-                            Spacer(modifier = Modifier.height(4.dp))
-                            Introduce(introduce = user.introduce!!)
-                        }
-                        Spacer(modifier = Modifier.height(8.dp))
-                        Tags(tags = user.tags)
-                        Spacer(modifier = Modifier.height(20.dp))
-                        CamstudyDivider()
-                        Spacer(modifier = Modifier.height(14.dp))
-                        InfoTile(
-                            leadingIcon = CamstudyIcons.Ranking,
-                            title = stringResource(R.string.user_dialog_weekly_ranking_title),
-                            content = {
-                                CamstudyText(
-                                    text = stringResource(
-                                        R.string.user_dialog_ranking_content,
-                                        user.weeklyRanking
-                                    ),
-                                    style = CamstudyTheme.typography.titleMedium.copy(
-                                        color = CamstudyTheme.colorScheme.systemUi08,
-                                        fontWeight = FontWeight.SemiBold
-                                    )
-                                )
-                            },
-                            trailingInfo = stringResource(
-                                R.string.user_dialog_weekly_ranking_overall_info,
-                                user.weeklyRankingOverall
-                            )
-                        )
-                        InfoTile(
-                            leadingIcon = CamstudyIcons.AccessTimeFilled,
-                            title = stringResource(R.string.user_dialog_weekly_study_time_title),
-                            content = {
-                                CamstudyText(
-                                    text = if (user.weeklyStudyTimeSec == 0) {
-                                        stringResource(R.string.none)
-                                    } else {
-                                        user.weeklyStudyTimeSec.formatDuration()
-                                    },
-                                    style = CamstudyTheme.typography.titleSmall.copy(
-                                        color = CamstudyTheme.colorScheme.systemUi08,
-                                        fontWeight = FontWeight.SemiBold
-                                    )
-                                )
-                            },
-                            trailingInfo = stringResource(
-                                R.string.user_dialog_consecutive_study_days,
-                                user.consecutiveStudyDays
-                            )
-                        )
-                        InfoTile(
-                            leadingIcon = CamstudyIcons.Crop,
-                            title = stringResource(R.string.user_dialog_plant_pot_title),
-                            content = {
-                                if (growingCrop != null) {
-                                    CamstudyIcon(
-                                        icon = growingCrop.imageIcon,
-                                        contentDescription = null,
-                                        tint = Color.Unspecified
-                                    )
-                                }
-                            },
-                            trailingInfo = if (growingCrop != null) {
-                                stringResource(
-                                    R.string.user_dialog_growing_crop_info,
-                                    growingCrop.getName(),
-                                    growingCrop.level
-                                )
-                            } else {
-                                stringResource(R.string.user_dialog_empty)
-                            }
-                        )
-                        InfoTile(
-                            leadingIcon = CamstudyIcons.Leaf,
-                            title = stringResource(R.string.user_dialog_harvested_crops_title),
-                            content = {
-                                var visibleCropCount by remember { mutableStateOf(0) }
-                                Row(verticalAlignment = Alignment.CenterVertically) {
-                                    HarvestedCropRow(
-                                        crops = user.harvestedCrops,
-                                        onPlacementComplete = { visibleCropCount = it }
-                                    )
-                                    if (visibleCropCount != user.harvestedCrops.size) {
-                                        CamstudyText(
-                                            text = stringResource(R.string.ellipsis),
-                                            style = CamstudyTheme.typography.labelMedium.copy(
-                                                color = CamstudyTheme.colorScheme.systemUi05,
-                                                fontWeight = FontWeight.Bold
-                                            )
-                                        )
-                                    }
-                                }
-                            },
-                            trailingInfo = if (user.harvestedCrops.isEmpty()) {
-                                stringResource(R.string.user_dialog_empty_harvested_crops)
-                            } else {
-                                stringResource(
-                                    R.string.user_dialog_harvested_crops_content,
-                                    user.harvestedCrops.size
-                                )
-                            }
-                        )
-                    }
+                    is UserProfileDialogUiState.Success -> SuccessContent(uiState)
                 }
+            }
+        }
+    }
+}
+
+@Composable
+private fun ColumnScope.SuccessContent(uiState: UserProfileDialogUiState.Success) {
+    val user = uiState.user
+    val growingCrop = user.growingCrop
+
+    var showFriendCancelRecheckDialog by remember { mutableStateOf(false) }
+
+    if (showFriendCancelRecheckDialog) {
+        CamstudyDialog(
+            content = stringResource(R.string.sure_you_want_to_cancel_friend),
+            onConfirm = {
+                uiState.onCancelFriend()
+                showFriendCancelRecheckDialog = false
+            },
+            onCancel = { showFriendCancelRecheckDialog = false },
+            confirmText = stringResource(id = R.string.cancel_friend)
+        )
+    }
+
+    UserProfileImage(
+        imageUrl = user.profileImage,
+        imageOrContainerSize = ProfileSize,
+        fallbackIconSize = 64.dp,
+        cornerShape = ProfileShape
+    )
+    Spacer(modifier = Modifier.height(20.dp))
+    NameAndOrganization(
+        name = user.name,
+        organization = user.organizations.firstOrNull()
+    )
+    if (user.introduce != null) {
+        Spacer(modifier = Modifier.height(4.dp))
+        Introduce(introduce = user.introduce!!)
+    }
+    Spacer(modifier = Modifier.height(8.dp))
+    Tags(tags = user.tags)
+    Spacer(modifier = Modifier.height(20.dp))
+    CamstudyDivider()
+    Spacer(modifier = Modifier.height(14.dp))
+    InfoTile(
+        leadingIcon = CamstudyIcons.Ranking,
+        title = stringResource(R.string.user_dialog_weekly_ranking_title),
+        content = {
+            CamstudyText(
+                text = stringResource(
+                    R.string.user_dialog_ranking_content,
+                    user.weeklyRanking
+                ),
+                style = CamstudyTheme.typography.titleMedium.copy(
+                    color = CamstudyTheme.colorScheme.systemUi08,
+                    fontWeight = FontWeight.SemiBold
+                )
+            )
+        },
+        trailingInfo = stringResource(
+            R.string.user_dialog_weekly_ranking_overall_info,
+            user.weeklyRankingOverall
+        )
+    )
+    InfoTile(
+        leadingIcon = CamstudyIcons.AccessTimeFilled,
+        title = stringResource(R.string.user_dialog_weekly_study_time_title),
+        content = {
+            CamstudyText(
+                text = if (user.weeklyStudyTimeSec == 0) {
+                    stringResource(R.string.none)
+                } else {
+                    user.weeklyStudyTimeSec.formatDuration()
+                },
+                style = CamstudyTheme.typography.titleSmall.copy(
+                    color = CamstudyTheme.colorScheme.systemUi08,
+                    fontWeight = FontWeight.SemiBold
+                )
+            )
+        },
+        trailingInfo = stringResource(
+            R.string.user_dialog_consecutive_study_days,
+            user.consecutiveStudyDays
+        )
+    )
+    InfoTile(
+        leadingIcon = CamstudyIcons.Crop,
+        title = stringResource(R.string.user_dialog_plant_pot_title),
+        content = {
+            if (growingCrop != null) {
+                CamstudyIcon(
+                    icon = growingCrop.imageIcon,
+                    contentDescription = null,
+                    tint = Color.Unspecified
+                )
+            }
+        },
+        trailingInfo = if (growingCrop != null) {
+            stringResource(
+                R.string.user_dialog_growing_crop_info,
+                growingCrop.getName(),
+                growingCrop.level
+            )
+        } else {
+            stringResource(R.string.user_dialog_empty)
+        }
+    )
+    InfoTile(
+        leadingIcon = CamstudyIcons.Leaf,
+        title = stringResource(R.string.user_dialog_harvested_crops_title),
+        content = {
+            var visibleCropCount by remember { mutableStateOf(0) }
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                HarvestedCropRow(
+                    crops = user.harvestedCrops,
+                    onPlacementComplete = { visibleCropCount = it }
+                )
+                if (visibleCropCount != user.harvestedCrops.size) {
+                    CamstudyText(
+                        text = stringResource(R.string.ellipsis),
+                        style = CamstudyTheme.typography.labelMedium.copy(
+                            color = CamstudyTheme.colorScheme.systemUi05,
+                            fontWeight = FontWeight.Bold
+                        )
+                    )
+                }
+            }
+        },
+        trailingInfo = if (user.harvestedCrops.isEmpty()) {
+            stringResource(R.string.user_dialog_empty_harvested_crops)
+        } else {
+            stringResource(
+                R.string.user_dialog_harvested_crops_content,
+                user.harvestedCrops.size
+            )
+        }
+    )
+    if (!user.isMe) {
+        Spacer(modifier = Modifier.height(18.dp))
+        Box(
+            modifier = Modifier
+                .align(Alignment.End)
+        ) {
+            when (user.friendStatus) {
+                FriendStatus.NONE -> CamstudyContainedButton(
+                    onClick = uiState.onRequestFriend,
+                    enabled = uiState.enabledFriendActionButton,
+                    enableLabelSizeAnimation = true,
+                    leadingIcon = uiState.friendActionLeadingIcon ?: CamstudyIcons.PersonAdd,
+                    label = stringResource(
+                        uiState.friendActionMessageRes ?: R.string.request_friend
+                    )
+                )
+                FriendStatus.REQUESTED -> CamstudyOutlinedButton(
+                    onClick = uiState.onCancelFriendRequest,
+                    enabled = uiState.enabledFriendActionButton,
+                    enableLabelSizeAnimation = true,
+                    leadingIcon = uiState.friendActionLeadingIcon
+                        ?: CamstudyIcons.CancelScheduleSend,
+                    label = stringResource(
+                        uiState.friendActionMessageRes ?: R.string.cancel_friend_request
+                    )
+                )
+                FriendStatus.ACCEPTED -> CamstudyOutlinedButton(
+                    onClick = {
+                        showFriendCancelRecheckDialog = true
+                    },
+                    enableLabelSizeAnimation = true,
+                    leadingIcon = uiState.friendActionLeadingIcon ?: CamstudyIcons.PersonRemove,
+                    enabled = uiState.enabledFriendActionButton,
+                    label = stringResource(
+                        uiState.friendActionMessageRes ?: R.string.cancel_friend
+                    )
+                )
             }
         }
     }
@@ -448,6 +510,14 @@ private fun UserProfileDialogShimmer() {
                 Spacer(modifier = Modifier.height(20.dp))
             }
         }
+        Spacer(modifier = Modifier.height(28.dp))
+        Box(
+            Modifier
+                .align(Alignment.End)
+                .size(height = 38.dp, width = 120.dp)
+                .clip(mediumShimmerClip)
+                .background(color = shimmerColor)
+        )
     }
 }
 
@@ -460,6 +530,7 @@ private fun UserProfileDialogPreview() {
                 user = User(
                     id = "id",
                     name = "김민성",
+                    isMe = false,
                     introduce = "안녕하세요",
                     profileImage = null,
                     weeklyRanking = 23,
@@ -515,8 +586,12 @@ private fun UserProfileDialogPreview() {
                     ),
                     organizations = listOf("한성대학교"),
                     tags = listOf("안드로이드", "개발", "웹"),
-                    consecutiveStudyDays = 4
-                )
+                    consecutiveStudyDays = 4,
+                    friendStatus = FriendStatus.NONE
+                ),
+                onRequestFriend = {},
+                onCancelFriendRequest = {},
+                onCancelFriend = {}
             ),
             onCancel = {}
         )

@@ -2,6 +2,7 @@ package io.foundy.welcome.ui.fake
 
 import io.foundy.core.model.CropGrade
 import io.foundy.core.model.CropType
+import io.foundy.core.model.FriendStatus
 import io.foundy.core.model.GrowingCrop
 import io.foundy.core.model.HarvestedCrop
 import io.foundy.core.model.User
@@ -15,6 +16,7 @@ class FakeUserRepository : UserRepository {
         return Result.success(
             User(
                 id = "id",
+                isMe = false,
                 name = "김민성",
                 introduce = "안녕하세요",
                 profileImage = null,
@@ -41,7 +43,8 @@ class FakeUserRepository : UserRepository {
                 ),
                 organizations = listOf("한성대학교"),
                 tags = listOf("안드로이드", "개발", "웹"),
-                consecutiveStudyDays = 4
+                consecutiveStudyDays = 4,
+                friendStatus = FriendStatus.NONE
             )
         )
     }

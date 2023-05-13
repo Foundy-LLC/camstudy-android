@@ -13,5 +13,7 @@ data class User(
     val growingCrop: GrowingCrop?,
     val harvestedCrops: List<HarvestedCrop>,
     val organizations: List<String>,
-    val tags: List<String>
+    val tags: List<String>,
+    val friendStatus: FriendStatus,
+    val isMe: Boolean
 )
