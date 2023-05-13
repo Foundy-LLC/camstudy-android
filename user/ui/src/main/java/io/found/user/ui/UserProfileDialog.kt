@@ -134,12 +134,13 @@ private fun ColumnScope.SuccessContent(uiState: UserProfileDialogUiState.Success
 
     if (showFriendCancelRecheckDialog) {
         CamstudyDialog(
-            content = "정말로 친구를 취소할까요?",
+            content = "정말로 친구를 해제할까요?",
             onConfirm = {
                 uiState.onCancelFriend()
                 showFriendCancelRecheckDialog = false
             },
-            onCancel = { showFriendCancelRecheckDialog = false }
+            onCancel = { showFriendCancelRecheckDialog = false },
+            confirmText = stringResource(id = R.string.cancel_friend)
         )
     }
 
@@ -263,21 +264,35 @@ private fun ColumnScope.SuccessContent(uiState: UserProfileDialogUiState.Success
                 .align(Alignment.End)
         ) {
             when (user.friendStatus) {
-                FriendStatus.NONE -> FriendRequestButton(
+                FriendStatus.NONE -> CamstudyContainedButton(
                     onClick = uiState.onRequestFriend,
-                    enabled = !uiState.isFriendActionLoading
+                    enabled = uiState.enabledFriendActionButton,
+                    enableLabelSizeAnimation = true,
+                    leadingIcon = uiState.friendActionLeadingIcon ?: CamstudyIcons.PersonAdd,
+                    label = stringResource(
+                        uiState.friendActionMessageRes ?: R.string.request_friend
+                    )
                 )
-                FriendStatus.REQUESTED -> FriendCancelButton(
+                FriendStatus.REQUESTED -> CamstudyOutlinedButton(
                     onClick = uiState.onCancelFriendRequest,
-                    enabled = !uiState.isFriendActionLoading,
-                    label = "친구 요청 취소"
+                    enabled = uiState.enabledFriendActionButton,
+                    enableLabelSizeAnimation = true,
+                    leadingIcon = uiState.friendActionLeadingIcon
+                        ?: CamstudyIcons.CancelScheduleSend,
+                    label = stringResource(
+                        uiState.friendActionMessageRes ?: R.string.cancel_friend_request
+                    )
                 )
-                FriendStatus.ACCEPTED -> FriendCancelButton(
+                FriendStatus.ACCEPTED -> CamstudyOutlinedButton(
                     onClick = {
                         showFriendCancelRecheckDialog = true
                     },
-                    enabled = !uiState.isFriendActionLoading,
-                    label = "친구 취소"
+                    enableLabelSizeAnimation = true,
+                    leadingIcon = uiState.friendActionLeadingIcon ?: CamstudyIcons.PersonRemove,
+                    enabled = uiState.enabledFriendActionButton,
+                    label = stringResource(
+                        uiState.friendActionMessageRes ?: R.string.cancel_friend
+                    )
                 )
             }
         }
@@ -444,33 +459,6 @@ private fun HarvestedCropRow(
 }
 
 @Composable
-private fun FriendRequestButton(
-    onClick: () -> Unit,
-    enabled: Boolean
-) {
-    CamstudyContainedButton(
-        label = "친구 요청",
-        leadingIcon = CamstudyIcons.PersonAdd,
-        enabled = enabled,
-        onClick = onClick
-    )
-}
-
-@Composable
-private fun FriendCancelButton(
-    onClick: () -> Unit,
-    label: String,
-    enabled: Boolean
-) {
-    CamstudyOutlinedButton(
-        label = label,
-        leadingIcon = CamstudyIcons.PersonRemove,
-        enabled = enabled,
-        onClick = onClick
-    )
-}
-
-@Composable
 private fun UserProfileDialogShimmer() {
     val shimmerColor = CamstudyTheme.colorScheme.systemUi01
     val smallShimmerClip = RoundedCornerShape(6.dp)
@@ -618,13 +606,5 @@ private fun LoadingPreview() {
             uiState = UserProfileDialogUiState.Loading,
             onCancel = {}
         )
-    }
-}
-
-@Preview
-@Composable
-fun FriendRequestButtonPreview() {
-    CamstudyTheme {
-        FriendRequestButton(onClick = {}, enabled = true)
     }
 }

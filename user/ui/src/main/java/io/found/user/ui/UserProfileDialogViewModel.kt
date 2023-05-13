@@ -1,12 +1,17 @@
 package io.found.user.ui
 
+import androidx.annotation.StringRes
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.foundy.core.model.FriendStatus
 import io.foundy.core.ui.UserMessage
 import io.foundy.friend.data.repository.FriendRepository
 import io.foundy.user.domain.usecase.GetUserUseCase
 import io.foundy.user.ui.R
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.syntax.simple.intent
@@ -22,6 +27,8 @@ class UserProfileDialogViewModel @Inject constructor(
 
     override val container: Container<UserProfileDialogUiState, Unit> =
         container(UserProfileDialogUiState.Loading)
+
+    private var friendActionTextResFetchJob: Job? = null
 
     fun fetchUser(id: String) = intent {
         val fetchedUser = (state as? UserProfileDialogUiState.Success)?.user
@@ -51,6 +58,32 @@ class UserProfileDialogViewModel @Inject constructor(
             }
     }
 
+    private fun setFriendActionResultTextRes(@StringRes textRes: Int) = intent {
+        friendActionTextResFetchJob?.cancel()
+        friendActionTextResFetchJob = viewModelScope.launch {
+            val uiState = state
+            if (uiState !is UserProfileDialogUiState.Success) {
+                return@launch
+            }
+            reduce { uiState.copy(friendActionSuccessMessageRes = textRes) }
+            delay(FriendActionMessageDurationMilli)
+            reduce { uiState.copy(friendActionSuccessMessageRes = null) }
+        }
+    }
+
+    private fun setFriendActionErrorTextRes(@StringRes textRes: Int) = intent {
+        friendActionTextResFetchJob?.cancel()
+        friendActionTextResFetchJob = viewModelScope.launch {
+            val uiState = state
+            if (uiState !is UserProfileDialogUiState.Success) {
+                return@launch
+            }
+            reduce { uiState.copy(friendActionFailureMessageRes = textRes) }
+            delay(FriendActionMessageDurationMilli)
+            reduce { uiState.copy(friendActionFailureMessageRes = null) }
+        }
+    }
+
     private fun requestFriend() = intent {
         val uiState = state
         check(uiState is UserProfileDialogUiState.Success)
@@ -63,9 +96,9 @@ class UserProfileDialogViewModel @Inject constructor(
                         isFriendActionLoading = false
                     )
                 }
-                // TODO: show toast message or snackbar
+                setFriendActionResultTextRes(R.string.success_to_request_friend)
             }.onFailure {
-                // TODO: Show error message
+                setFriendActionErrorTextRes(R.string.failed_to_request_friend)
                 reduce { uiState.copy(isFriendActionLoading = false) }
             }
     }
@@ -82,9 +115,9 @@ class UserProfileDialogViewModel @Inject constructor(
                         isFriendActionLoading = false
                     )
                 }
-                // TODO: show toast message or snackbar
+                setFriendActionResultTextRes(R.string.success_to_cancel_friend_request)
             }.onFailure {
-                // TODO: Show error message
+                setFriendActionErrorTextRes(R.string.failed_to_cancel_friend_request)
                 reduce { uiState.copy(isFriendActionLoading = false) }
             }
     }
@@ -101,10 +134,14 @@ class UserProfileDialogViewModel @Inject constructor(
                         isFriendActionLoading = false
                     )
                 }
-                // TODO: show toast message or snackbar
+                setFriendActionResultTextRes(R.string.success_to_cancel_friend)
             }.onFailure {
-                // TODO: Show error message
+                setFriendActionErrorTextRes(R.string.failed_to_cancel_friend)
                 reduce { uiState.copy(isFriendActionLoading = false) }
             }
+    }
+
+    companion object {
+        private const val FriendActionMessageDurationMilli = 2000L
     }
 }

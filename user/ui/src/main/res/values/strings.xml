@@ -14,4 +14,13 @@
     <string name="user_dialog_empty_harvested_crops">수확한 작물 없음</string>
     <string name="user_dialog_harvested_crops_content">총 %d개</string>
     <string name="ellipsis">…</string>
+    <string name="success_to_request_friend">친구 요청됨!</string>
+    <string name="failed_to_request_friend">요청 오류 발생!</string>
+    <string name="success_to_cancel_friend">친구 해제됨</string>
+    <string name="failed_to_cancel_friend">해제 오류 발생!</string>
+    <string name="success_to_cancel_friend_request">친구 요청 취소됨</string>
+    <string name="failed_to_cancel_friend_request">취소 오류 발생!</string>
+    <string name="request_friend">친구 요청</string>
+    <string name="cancel_friend_request">친구 요청 취소</string>
+    <string name="cancel_friend">친구 해제</string>
 </resources>
