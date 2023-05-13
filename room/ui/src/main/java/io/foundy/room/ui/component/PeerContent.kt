@@ -171,7 +171,8 @@ private fun PeerContentPreview() {
                     enabledMicrophone = false,
                     enabledHeadset = false,
                     audioTrack = null,
-                    videoTrack = null
+                    videoTrack = null,
+                    isMe = false
                 ),
                 showMoreButton = true,
                 onMoreButtonClick = { _, _ -> }

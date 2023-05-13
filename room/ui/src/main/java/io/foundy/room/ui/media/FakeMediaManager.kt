@@ -22,6 +22,7 @@ class FakeMediaManager @Inject constructor() : MediaManager {
         name = "김민성",
         enabledMicrophone = enabledLocalAudio,
         enabledHeadset = enabledLocalHeadset,
+        isMe = false
     )
     override val localVideoTrackFlow: Flow<VideoTrack?> = emptyFlow()
     override val localAudioTrack: AudioTrack? = null

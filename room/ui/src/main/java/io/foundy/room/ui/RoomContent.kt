@@ -176,7 +176,8 @@ private fun RoomContentPreview() {
                             enabledMicrophone = false,
                             enabledHeadset = false,
                             audioTrack = null,
-                            videoTrack = null
+                            videoTrack = null,
+                            isMe = false
                         )
                     ),
                     isCurrentUserMaster = false,

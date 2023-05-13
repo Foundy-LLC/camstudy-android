@@ -14,6 +14,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.core.content.getSystemService
 import dagger.hilt.android.qualifiers.ApplicationContext
+import io.foundy.auth.data.repository.AuthRepository
 import io.foundy.room.ui.R
 import io.foundy.room.ui.audio.AudioHandler
 import io.foundy.room.ui.audio.AudioSwitchHandler
@@ -25,6 +26,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 import org.webrtc.AudioTrack
 import org.webrtc.Camera2Capturer
@@ -42,7 +44,8 @@ val LocalMediaManager: ProvidableCompositionLocal<MediaManager> =
     staticCompositionLocalOf { error("WebRtcSessionManager was not initialized!") }
 
 class MediaManagerImpl @Inject constructor(
-    @ApplicationContext private val context: Context
+    @ApplicationContext private val context: Context,
+    authRepository: AuthRepository
 ) : MediaManager {
     private val logger by taggedLogger("Call:LocalRoomSessionManager")
     private val managerScope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
@@ -50,6 +53,9 @@ class MediaManagerImpl @Inject constructor(
     private val peerConnectionFactory: PeerConnectionFactoryWrapper = PeerConnectionFactoryWrapper(
         context = context
     )
+
+    private var _currentUserId: String? = null
+    private val currentUserId: String get() = requireNotNull(_currentUserId)
 
     override val eglBaseContext: EglBase.Context get() = peerConnectionFactory.eglBaseContext
 
@@ -66,11 +72,12 @@ class MediaManagerImpl @Inject constructor(
 
     override val currentUserState: PeerUiState
         get() = PeerUiState(
-            uid = "currentUser", // Using mock user id
+            uid = currentUserId,
             name = context.getString(R.string.me),
             enabledMicrophone = enabledLocalAudio,
             enabledHeadset = enabledLocalHeadset,
-            videoTrack = localVideoTrack
+            videoTrack = localVideoTrack,
+            isMe = true
         )
 
     // used to send local video track to the fragment
@@ -138,6 +145,12 @@ class MediaManagerImpl @Inject constructor(
         get() = if (enabledLocalAudio) {
             _localAudioTrack
         } else null
+
+    init {
+        managerScope.launch {
+            _currentUserId = requireNotNull(authRepository.currentUserIdStream.firstOrNull())
+        }
+    }
 
     override fun onSessionScreenReady() {
         setupVideoTrack()
