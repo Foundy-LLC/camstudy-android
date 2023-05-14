@@ -7,7 +7,6 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -44,7 +43,6 @@ import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import io.foundy.core.common.util.toBitmap
 import io.foundy.core.designsystem.component.BottomContainedButton
-import io.foundy.core.designsystem.component.BottomContainedButtonBoxHeight
 import io.foundy.core.designsystem.component.CamstudyDialog
 import io.foundy.core.designsystem.component.CamstudyDivider
 import io.foundy.core.designsystem.component.CamstudyOutlinedButton
@@ -133,10 +131,15 @@ private fun RoomCreateContent(
         },
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) }
     ) { innerPadding ->
-        Box(Modifier.padding(innerPadding)) {
+        Column(
+            Modifier
+                .padding(innerPadding)
+                .fillMaxSize()
+        ) {
             Column(
                 modifier = Modifier
-                    .fillMaxSize()
+                    .fillMaxWidth()
+                    .weight(1f)
                     .background(color = CamstudyTheme.colorScheme.systemBackground)
                     .verticalScroll(rememberScrollState())
                     .padding(horizontal = 16.dp)
@@ -215,7 +218,7 @@ private fun RoomCreateContent(
                         )
                     }
                 }
-                Spacer(modifier = Modifier.height(BottomContainedButtonBoxHeight * 2))
+                Spacer(modifier = Modifier.height(80.dp))
             }
             BottomContainedButton(
                 enabled = uiState.canCreate,

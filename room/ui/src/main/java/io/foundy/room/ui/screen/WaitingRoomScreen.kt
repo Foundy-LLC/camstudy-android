@@ -27,7 +27,6 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import io.foundy.core.designsystem.component.BottomContainedButton
-import io.foundy.core.designsystem.component.BottomContainedButtonBoxHeight
 import io.foundy.core.designsystem.component.CamstudyDivider
 import io.foundy.core.designsystem.component.CamstudyTextField
 import io.foundy.core.designsystem.component.SelectableTile
@@ -94,16 +93,16 @@ fun WaitingRoomScreen(
         }
     }
 
-    Box(
+    Column(
         modifier = Modifier
             .fillMaxSize()
             .background(color = CamstudyTheme.colorScheme.systemBackground),
     ) {
         Column(
             modifier = Modifier
-                .fillMaxSize()
+                .fillMaxWidth()
+                .weight(1f)
                 .verticalScroll(rememberScrollState())
-                .padding(bottom = BottomContainedButtonBoxHeight)
         ) {
             Box(
                 modifier = Modifier

@@ -99,13 +99,17 @@ fun PlantCropScreen(
             )
         }
     ) { innerPadding ->
-        Box(
+        Column(
             modifier = Modifier
                 .padding(innerPadding)
                 .fillMaxSize()
                 .background(color = CamstudyTheme.colorScheme.systemUi01)
         ) {
-            LazyColumn {
+            LazyColumn(
+                Modifier
+                    .fillMaxWidth()
+                    .weight(1f)
+            ) {
                 item {
                     SelectedCropDivide(selectedCropType = uiState.selectedCropType)
                 }

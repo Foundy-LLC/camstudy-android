@@ -2,7 +2,6 @@ package io.foundy.core.designsystem.component
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -12,18 +11,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import io.foundy.core.designsystem.theme.CamstudyTheme
 
-val BottomContainedButtonBoxHeight = 72.dp
-
 @Composable
-fun BoxScope.BottomContainedButton(
+fun BottomContainedButton(
     enabled: Boolean = true,
     label: String,
     onClick: () -> Unit
 ) {
     Box(
         modifier = Modifier
-            .height(BottomContainedButtonBoxHeight)
-            .align(Alignment.BottomCenter)
+            .height(72.dp)
             .background(color = CamstudyTheme.colorScheme.systemBackground)
     ) {
         CamstudyDivider()
