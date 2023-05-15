@@ -4,7 +4,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.cachedIn
 import dagger.hilt.android.lifecycle.HiltViewModel
+import io.foundy.auth.data.repository.AuthRepository
 import io.foundy.friend.data.repository.FriendRepository
+import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.launch
 import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.syntax.simple.intent
@@ -15,10 +18,9 @@ import javax.inject.Inject
 
 @HiltViewModel
 class FriendViewModel @Inject constructor(
+    private val authRepository: AuthRepository,
     private val friendRepository: FriendRepository
 ) : ViewModel(), ContainerHost<FriendUiState, FriendSideEffect> {
-
-    private var didBind = false
 
     override val container: Container<FriendUiState, FriendSideEffect> = container(
         FriendUiState(
@@ -27,18 +29,22 @@ class FriendViewModel @Inject constructor(
         )
     )
 
-    fun bind(userId: String) = intent {
-        if (didBind) {
-            return@intent
-        }
-        didBind = true
-        reduce {
-            state.copy(
-                friendPagingData = friendRepository.getFriends(userId = userId)
-                    .cachedIn(viewModelScope),
-                friendRequestPagingData = friendRepository.getFriendRequests(userId = userId)
-                    .cachedIn(viewModelScope)
-            )
+    init {
+        viewModelScope.launch {
+            val currentUserId = authRepository.currentUserIdStream.firstOrNull()
+            check(currentUserId != null)
+            intent {
+                reduce {
+                    state.copy(
+                        friendPagingData = friendRepository
+                            .getFriends(userId = currentUserId)
+                            .cachedIn(viewModelScope),
+                        friendRequestPagingData = friendRepository
+                            .getFriendRequests(userId = currentUserId)
+                            .cachedIn(viewModelScope)
+                    )
+                }
+            }
         }
     }
 
@@ -54,9 +60,8 @@ class FriendViewModel @Inject constructor(
         addPendingUserId(requesterId)
         friendRepository.acceptFriendRequest(requesterId)
             .onSuccess {
-                postSideEffect(FriendSideEffect.RefreshPagingData)
-            }
-            .onFailure {
+                // TODO: postSideEffect(FriendSideEffect.RefreshPagingData)
+            }.onFailure {
                 postSideEffect(
                     FriendSideEffect.Message(
                         content = it.message,
@@ -71,9 +76,8 @@ class FriendViewModel @Inject constructor(
         addPendingUserId(targetUserId)
         friendRepository.deleteFriend(targetUserId)
             .onSuccess {
-                postSideEffect(FriendSideEffect.RefreshPagingData)
-            }
-            .onFailure {
+                // TODO: postSideEffect(FriendSideEffect.RefreshPagingData)
+            }.onFailure {
                 postSideEffect(
                     FriendSideEffect.Message(
                         content = it.message,

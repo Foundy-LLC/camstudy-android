@@ -20,7 +20,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hierarchy
 import com.ramcosta.composedestinations.DestinationsNavHost
@@ -37,8 +36,6 @@ import io.foundy.core.designsystem.icon.CamstudyIcons
 import io.foundy.core.designsystem.theme.CamstudyTheme
 import io.foundy.crop.ui.CropRoute
 import io.foundy.crop.ui.destinations.CropRouteDestination
-import io.foundy.friend.ui.FriendRoute
-import io.foundy.friend.ui.destinations.FriendRouteDestination
 import io.foundy.home.ui.destinations.MainTabRouteDestination
 import io.foundy.home.ui.main.MainTabRoute
 import io.foundy.home.ui.navigation.HomeNavGraph
@@ -49,12 +46,10 @@ import io.foundy.home.ui.navigation.HomeTabDestination
 fun HomeRoute(
     navigator: DestinationsNavigator,
     plantResultRecipient: OpenResultRecipient<Boolean>,
-    viewModel: HomeViewModel = hiltViewModel()
 ) {
     HomeScreen(
         navigator = navigator,
         plantResultRecipient = plantResultRecipient,
-        currentUserId = viewModel.currentUserId
     )
 }
 
@@ -62,7 +57,6 @@ fun HomeRoute(
 @Composable
 fun HomeScreen(
     navigator: DestinationsNavigator,
-    currentUserId: String,
     plantResultRecipient: OpenResultRecipient<Boolean>,
     homeScreenState: HomeScreenState = rememberHomeScreenState(),
 ) {
@@ -107,9 +101,6 @@ fun HomeScreen(
                     plantResultRecipient = plantResultRecipient,
                     showSnackbar = homeScreenState::showSnackbar
                 )
-            }
-            composable(FriendRouteDestination) {
-                FriendRoute(userId = currentUserId)
             }
         }
     }
