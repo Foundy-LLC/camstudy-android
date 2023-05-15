@@ -3,6 +3,8 @@ package io.foundy.auth.data.repository
 import kotlinx.coroutines.flow.Flow
 
 interface AuthRepository {
+
+    // TODO: :domain 모듈을 만들고 GetCurrentUserIdUseCase 클래스 생성하기
     val currentUserIdStream: Flow<String?>
 
     /**
