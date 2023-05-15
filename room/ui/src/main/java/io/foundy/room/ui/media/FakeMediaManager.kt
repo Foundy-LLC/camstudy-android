@@ -10,8 +10,7 @@ import javax.inject.Inject
 
 class FakeMediaManager @Inject constructor() : MediaManager {
 
-    override val mediaEvent: Flow<MediaManagerEvent>
-        get() = TODO("Not yet implemented")
+    override val mediaEvent: Flow<MediaManagerEvent> = emptyFlow()
 
     override val eglBaseContext: EglBase.Context = EglBase.Context { 10 }
     override val enabledLocalVideo: Boolean = true
@@ -26,6 +25,9 @@ class FakeMediaManager @Inject constructor() : MediaManager {
     )
     override val localVideoTrackFlow: Flow<VideoTrack?> = emptyFlow()
     override val localAudioTrack: AudioTrack? = null
+
+    var didDisconnect: Boolean = false
+        private set
 
     override fun onSessionScreenReady() {
         TODO("Not yet implemented")
@@ -48,6 +50,6 @@ class FakeMediaManager @Inject constructor() : MediaManager {
     }
 
     override fun disconnect() {
-        TODO("Not yet implemented")
+        didDisconnect = true
     }
 }

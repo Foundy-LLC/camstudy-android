@@ -22,8 +22,9 @@ class RoomViewModelTest {
     @get:Rule
     val mainDispatcherRule = MainDispatcherRule()
 
-    private val roomService = FakeRoomService()
-    private val authRepository = FakeAuthRepository()
+    private lateinit var roomService: FakeRoomService
+    private lateinit var authRepository: FakeAuthRepository
+    private lateinit var mediaManager: FakeMediaManager
 
     private lateinit var viewModel:
         RegularTestContainerHost<RoomUiState, RoomSideEffect, RoomViewModel>
@@ -55,11 +56,27 @@ class RoomViewModelTest {
         assertTrue(states.last() is RoomUiState.WaitingRoom.FailedToConnect)
     }
 
+    @Test
+    fun `should call disconnect functions when on cleared`() = runTest {
+        initViewModel()
+        viewModel.runOnCreate()
+
+        viewModel.testIntent {
+            onCleared()
+        }
+
+        assertTrue(roomService.didDisconnect)
+        assertTrue(mediaManager.didDisconnect)
+    }
+
     private fun initViewModel() {
+        authRepository = FakeAuthRepository()
+        roomService = FakeRoomService()
+        mediaManager = FakeMediaManager()
         viewModel = RoomViewModel(
             authRepository = authRepository,
             roomService = roomService,
-            mediaManager = FakeMediaManager()
+            mediaManager = mediaManager
         ).liveTest { dispatcher = mainDispatcherRule.testDispatcher }
     }
 }

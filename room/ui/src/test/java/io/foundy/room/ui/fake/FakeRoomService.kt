@@ -23,6 +23,9 @@ class FakeRoomService : RoomService {
 
     var onConnect: suspend () -> Unit = {}
 
+    var didDisconnect: Boolean = false
+        private set
+
     override suspend fun connect(roomId: String) {
         onConnect()
         return
@@ -90,6 +93,6 @@ class FakeRoomService : RoomService {
     }
 
     override fun disconnect() {
-        TODO("Not yet implemented")
+        didDisconnect = true
     }
 }

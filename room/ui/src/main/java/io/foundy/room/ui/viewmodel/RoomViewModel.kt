@@ -1,5 +1,6 @@
 package io.foundy.room.ui.viewmodel
 
+import androidx.annotation.VisibleForTesting
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -415,7 +416,8 @@ class RoomViewModel @Inject constructor(
         }
     }
 
-    override fun onCleared() {
+    @VisibleForTesting(otherwise = VisibleForTesting.PROTECTED)
+    public override fun onCleared() {
         roomService.disconnect()
         mediaManager.disconnect()
     }
