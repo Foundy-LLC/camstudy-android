@@ -25,9 +25,8 @@ import io.foundy.friend.ui.component.FriendRecommendContent
 import io.foundy.friend.ui.component.RequestedFriendContent
 import io.foundy.friend.ui.navigation.FriendTabDestination
 import kotlinx.coroutines.launch
+import org.orbitmvi.orbit.compose.collectAsState
 import org.orbitmvi.orbit.compose.collectSideEffect
-
-// TODO: 친구 요청 목록 페이지
 
 @OptIn(ExperimentalFoundationApi::class)
 @Destination
@@ -39,6 +38,7 @@ fun FriendRoute(
     val coroutineScope = rememberCoroutineScope()
     val context = LocalContext.current
     val pagerState = rememberPagerState(0)
+    val uiState = viewModel.collectAsState().value
 
     viewModel.collectSideEffect {
         when (it) {
@@ -52,7 +52,8 @@ fun FriendRoute(
 
     FriendScreen(
         pagerState = pagerState,
-        snackbarHostState = snackbarHostState
+        snackbarHostState = snackbarHostState,
+        uiState = uiState
     )
 }
 
@@ -61,6 +62,7 @@ fun FriendRoute(
 fun FriendScreen(
     snackbarHostState: SnackbarHostState,
     pagerState: PagerState,
+    uiState: FriendUiState
 ) {
     Scaffold(
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) }
@@ -89,9 +91,15 @@ fun FriendScreen(
                 state = pagerState
             ) { page ->
                 when (FriendTabDestination.values[page]) {
-                    FriendTabDestination.List -> FriendListContent()
-                    FriendTabDestination.Recommend -> FriendRecommendContent()
-                    FriendTabDestination.Requested -> RequestedFriendContent()
+                    FriendTabDestination.List -> FriendListContent(
+                        uiState = uiState.friendListTabUiState
+                    )
+                    FriendTabDestination.Recommend -> FriendRecommendContent(
+                        uiState = uiState.friendRecommendTabUiState
+                    )
+                    FriendTabDestination.Requested -> RequestedFriendContent(
+                        uiState = uiState.requestedFriendTabUiState
+                    )
                 }
             }
         }

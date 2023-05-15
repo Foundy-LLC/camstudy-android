@@ -24,8 +24,16 @@ class FriendViewModel @Inject constructor(
 
     override val container: Container<FriendUiState, FriendSideEffect> = container(
         FriendUiState(
-            onAcceptClick = ::acceptFriendRequest,
-            onRemoveFriendClick = ::deleteFriend
+            friendListTabUiState = FriendListTabUiState(
+                onRemoveFriendClick = ::deleteFriend,
+            ),
+            friendRecommendTabUiState = FriendRecommendTabUiState(
+                onRequestFriend = { /* TODO */ }
+            ),
+            requestedFriendTabUiState = RequestedFriendTabUiState(
+                onAcceptClick = ::acceptFriendRequest,
+                onRejectClick = { /* TODO */ }
+            )
         )
     )
 
@@ -36,28 +44,31 @@ class FriendViewModel @Inject constructor(
             intent {
                 reduce {
                     state.copy(
-                        friendPagingData = friendRepository
-                            .getFriends(userId = currentUserId)
-                            .cachedIn(viewModelScope),
-                        friendRequestPagingData = friendRepository
-                            .getFriendRequests(userId = currentUserId)
-                            .cachedIn(viewModelScope)
+                        friendListTabUiState = state.friendListTabUiState.copy(
+                            friendPagingData = friendRepository
+                                .getFriends(userId = currentUserId)
+                                .cachedIn(viewModelScope)
+                        ),
+                        requestedFriendTabUiState = state.requestedFriendTabUiState.copy(
+                            requesterPagingData = friendRepository
+                                .getFriendRequests(userId = currentUserId)
+                                .cachedIn(viewModelScope)
+                        )
                     )
                 }
             }
         }
     }
 
-    private fun addPendingUserId(userId: String) = intent {
-        reduce { state.copy(inPendingUserIds = state.inPendingUserIds + userId) }
-    }
-
-    private fun removePendingUserId(userId: String) = intent {
-        reduce { state.copy(inPendingUserIds = state.inPendingUserIds.filterNot { it == userId }) }
-    }
-
     private fun acceptFriendRequest(requesterId: String) = intent {
-        addPendingUserId(requesterId)
+        reduce {
+            val requestedFriendUiState = state.requestedFriendTabUiState
+            state.copy(
+                requestedFriendTabUiState = requestedFriendUiState.copy(
+                    inPendingUserIds = requestedFriendUiState.inPendingUserIds + requesterId
+                )
+            )
+        }
         friendRepository.acceptFriendRequest(requesterId)
             .onSuccess {
                 // TODO: postSideEffect(FriendSideEffect.RefreshPagingData)
@@ -69,11 +80,25 @@ class FriendViewModel @Inject constructor(
                     )
                 )
             }
-        removePendingUserId(requesterId)
+        reduce {
+            val requestedFriendUiState = state.requestedFriendTabUiState
+            state.copy(
+                requestedFriendTabUiState = requestedFriendUiState.copy(
+                    inPendingUserIds = requestedFriendUiState.inPendingUserIds - requesterId
+                )
+            )
+        }
     }
 
     private fun deleteFriend(targetUserId: String) = intent {
-        addPendingUserId(targetUserId)
+        reduce {
+            val friendListTabUiState = state.friendListTabUiState
+            state.copy(
+                friendListTabUiState = friendListTabUiState.copy(
+                    inRemovingUserIds = friendListTabUiState.inRemovingUserIds + targetUserId
+                )
+            )
+        }
         friendRepository.deleteFriend(targetUserId)
             .onSuccess {
                 // TODO: postSideEffect(FriendSideEffect.RefreshPagingData)
@@ -85,6 +110,13 @@ class FriendViewModel @Inject constructor(
                     )
                 )
             }
-        removePendingUserId(targetUserId)
+        reduce {
+            val friendListTabUiState = state.friendListTabUiState
+            state.copy(
+                friendListTabUiState = friendListTabUiState.copy(
+                    inRemovingUserIds = friendListTabUiState.inRemovingUserIds - targetUserId
+                )
+            )
+        }
     }
 }
