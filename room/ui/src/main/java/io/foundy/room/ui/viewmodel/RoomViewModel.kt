@@ -417,5 +417,6 @@ class RoomViewModel @Inject constructor(
 
     override fun onCleared() {
         roomService.disconnect()
+        mediaManager.disconnect()
     }
 }
