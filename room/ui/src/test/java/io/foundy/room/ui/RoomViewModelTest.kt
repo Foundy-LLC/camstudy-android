@@ -11,6 +11,7 @@ import junit.framework.TestCase.assertTrue
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.withTimeout
+import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.orbitmvi.orbit.RegularTestContainerHost
@@ -29,11 +30,13 @@ class RoomViewModelTest {
     private lateinit var viewModel:
         RegularTestContainerHost<RoomUiState, RoomSideEffect, RoomViewModel>
 
+    @Before
+    fun setup() {
+        initViewModel()
+    }
+
     @Test
     fun `should join waiting room when success to connect`() = runTest {
-        initViewModel()
-        viewModel.runOnCreate()
-
         viewModel.testIntent {
             connect("id")
         }
@@ -44,9 +47,7 @@ class RoomViewModelTest {
 
     @Test
     fun `should be FailedToConnect when occurs timeout to join waiting room`() = runTest {
-        initViewModel()
         roomService.onConnect = { withTimeout(0L) {} }
-        viewModel.runOnCreate()
 
         viewModel.testIntent {
             connect("id")
@@ -58,9 +59,6 @@ class RoomViewModelTest {
 
     @Test
     fun `should call disconnect functions when on cleared`() = runTest {
-        initViewModel()
-        viewModel.runOnCreate()
-
         viewModel.testIntent {
             onCleared()
         }
@@ -78,5 +76,6 @@ class RoomViewModelTest {
             roomService = roomService,
             mediaManager = mediaManager
         ).liveTest { dispatcher = mainDispatcherRule.testDispatcher }
+        viewModel.runOnCreate()
     }
 }
