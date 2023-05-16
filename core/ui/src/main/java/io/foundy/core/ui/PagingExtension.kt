@@ -28,7 +28,7 @@ fun <T : Any> Flow<PagingData<T>>.collectAsLazyPagingItems(
     LaunchedEffect(fetchFlag) {
         launch(Dispatchers.Main) {
             if (fetchFlag != InitFetchFlag) {
-                lazyPagingItems.retry()
+                lazyPagingItems.refresh()
             }
         }
     }
