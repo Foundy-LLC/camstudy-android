@@ -48,6 +48,7 @@ android {
 dependencies {
     implementation project(path: ':core:model')
     implementation project(path: ':core:designsystem')
+    implementation project(path: ':core:ui')
     implementation project(path: ':friend:data')
     implementation project(path: ':auth:data')
 
@@ -59,6 +60,9 @@ dependencies {
     implementation("org.orbit-mvi:orbit-viewmodel:$orbit_version")
     implementation("org.orbit-mvi:orbit-compose:$orbit_version")
     testImplementation("org.orbit-mvi:orbit-test:$orbit_version")
+
+    // coil
+    implementation("io.coil-kt:coil-compose:$coil_version")
 
     // paging
     implementation "androidx.paging:paging-common-ktx:$paging"
