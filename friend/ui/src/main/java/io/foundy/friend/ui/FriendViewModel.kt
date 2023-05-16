@@ -32,7 +32,7 @@ class FriendViewModel @Inject constructor(
             ),
             requestedFriendTabUiState = RequestedFriendTabUiState(
                 onAcceptClick = ::acceptFriendRequest,
-                onRejectClick = { /* TODO */ }
+                onRejectClick = ::rejectFriendRequest
             )
         )
     )
@@ -60,18 +60,39 @@ class FriendViewModel @Inject constructor(
         }
     }
 
-    private fun acceptFriendRequest(requesterId: String) = intent {
+    private fun addPendingAtRequestedFriendUiState(pendingUserId: String) = intent {
         reduce {
             val requestedFriendUiState = state.requestedFriendTabUiState
             state.copy(
                 requestedFriendTabUiState = requestedFriendUiState.copy(
-                    inPendingUserIds = requestedFriendUiState.inPendingUserIds + requesterId
+                    inPendingUserIds = requestedFriendUiState.inPendingUserIds + pendingUserId
                 )
             )
         }
+    }
+
+    private fun removePendingAtRequestedFriendUiState(pendingUserId: String) = intent {
+        reduce {
+            val requestedFriendUiState = state.requestedFriendTabUiState
+            state.copy(
+                requestedFriendTabUiState = requestedFriendUiState.copy(
+                    inPendingUserIds = requestedFriendUiState.inPendingUserIds - pendingUserId
+                )
+            )
+        }
+    }
+
+    private fun acceptFriendRequest(requesterId: String) = intent {
+        addPendingAtRequestedFriendUiState(requesterId)
         friendRepository.acceptFriendRequest(requesterId)
             .onSuccess {
-                // TODO: postSideEffect(FriendSideEffect.RefreshPagingData)
+                postSideEffect(FriendSideEffect.RefreshFriendRequestingUserList)
+                postSideEffect(FriendSideEffect.RefreshFriendList)
+                postSideEffect(
+                    FriendSideEffect.Message(
+                        defaultStringRes = R.string.accepted_friend
+                    )
+                )
             }.onFailure {
                 postSideEffect(
                     FriendSideEffect.Message(
@@ -80,14 +101,28 @@ class FriendViewModel @Inject constructor(
                     )
                 )
             }
-        reduce {
-            val requestedFriendUiState = state.requestedFriendTabUiState
-            state.copy(
-                requestedFriendTabUiState = requestedFriendUiState.copy(
-                    inPendingUserIds = requestedFriendUiState.inPendingUserIds - requesterId
+        removePendingAtRequestedFriendUiState(requesterId)
+    }
+
+    private fun rejectFriendRequest(requesterId: String) = intent {
+        addPendingAtRequestedFriendUiState(requesterId)
+        friendRepository.rejectFriendRequest(requesterId)
+            .onSuccess {
+                postSideEffect(FriendSideEffect.RefreshFriendRequestingUserList)
+                postSideEffect(
+                    FriendSideEffect.Message(
+                        defaultStringRes = R.string.rejected_friend_request
+                    )
                 )
-            )
-        }
+            }.onFailure {
+                postSideEffect(
+                    FriendSideEffect.Message(
+                        content = it.message,
+                        defaultStringRes = R.string.failed_to_reject_friend_request
+                    )
+                )
+            }
+        removePendingAtRequestedFriendUiState(requesterId)
     }
 
     private fun deleteFriend(targetUserId: String) = intent {

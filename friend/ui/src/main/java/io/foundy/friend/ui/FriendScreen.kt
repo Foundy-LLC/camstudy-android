@@ -31,7 +31,6 @@ import io.foundy.friend.ui.component.FriendListContent
 import io.foundy.friend.ui.component.FriendRecommendContent
 import io.foundy.friend.ui.component.RequestedFriendContent
 import io.foundy.friend.ui.navigation.FriendTabDestination
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.orbitmvi.orbit.compose.collectAsState
 import org.orbitmvi.orbit.compose.collectSideEffect
@@ -48,7 +47,13 @@ fun FriendRoute(
     val pagerState = rememberPagerState(0)
     val uiState = viewModel.collectAsState().value
     var userIdForShowDialog by remember { mutableStateOf<String?>(null) }
-    val (friends, refreshFriends) = uiState.friendListTabUiState.friendPagingData
+    val (friends, refreshFriends) = uiState
+        .friendListTabUiState
+        .friendPagingData
+        .collectAsLazyPagingItems()
+    val (friendRequestingUsers, refreshFriendRequestingUsers) = uiState
+        .requestedFriendTabUiState
+        .requesterPagingData
         .collectAsLazyPagingItems()
 
     viewModel.collectSideEffect {
@@ -58,8 +63,11 @@ fun FriendRoute(
                     it.content ?: context.getString(it.defaultStringRes)
                 )
             }
-            FriendSideEffect.RefreshFriendList -> coroutineScope.launch(Dispatchers.Main) {
+            FriendSideEffect.RefreshFriendList -> {
                 refreshFriends()
+            }
+            FriendSideEffect.RefreshFriendRequestingUserList -> {
+                refreshFriendRequestingUsers()
             }
         }
     }
@@ -73,6 +81,7 @@ fun FriendRoute(
         snackbarHostState = snackbarHostState,
         uiState = uiState,
         friends = friends,
+        friendRequestingUsers = friendRequestingUsers,
         onUserClick = { userIdForShowDialog = it }
     )
 }
@@ -84,6 +93,7 @@ fun FriendScreen(
     pagerState: PagerState,
     uiState: FriendUiState,
     friends: LazyPagingItems<UserOverview>,
+    friendRequestingUsers: LazyPagingItems<UserOverview>,
     onUserClick: (String) -> Unit
 ) {
     Scaffold(
@@ -122,7 +132,9 @@ fun FriendScreen(
                         uiState = uiState.friendRecommendTabUiState
                     )
                     FriendTabDestination.Requested -> RequestedFriendContent(
-                        uiState = uiState.requestedFriendTabUiState
+                        uiState = uiState.requestedFriendTabUiState,
+                        users = friendRequestingUsers,
+                        onUserClick = onUserClick
                     )
                 }
             }

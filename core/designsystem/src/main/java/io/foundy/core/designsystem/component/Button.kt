@@ -23,7 +23,6 @@ import androidx.compose.ui.unit.dp
 import io.foundy.core.designsystem.icon.CamstudyIcon
 import io.foundy.core.designsystem.theme.CamstudyTheme
 
-
 @Composable
 fun ButtonDefaults.camstudyTextButtonColors(
     containerColor: Color = Color.Transparent,
