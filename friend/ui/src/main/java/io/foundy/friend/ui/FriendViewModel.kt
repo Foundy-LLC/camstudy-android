@@ -101,7 +101,12 @@ class FriendViewModel @Inject constructor(
         }
         friendRepository.deleteFriend(targetUserId)
             .onSuccess {
-                // TODO: postSideEffect(FriendSideEffect.RefreshPagingData)
+                postSideEffect(FriendSideEffect.RefreshFriendList)
+                postSideEffect(
+                    FriendSideEffect.Message(
+                        defaultStringRes = R.string.dissmissed_friend
+                    )
+                )
             }.onFailure {
                 postSideEffect(
                     FriendSideEffect.Message(

@@ -11,19 +11,27 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.paging.compose.LazyPagingItems
 import com.ramcosta.composedestinations.annotation.Destination
+import io.found.user.ui.UserProfileDialog
 import io.foundy.core.designsystem.component.CamstudyTab
 import io.foundy.core.designsystem.component.CamstudyTabRow
+import io.foundy.core.model.UserOverview
+import io.foundy.core.ui.collectAsLazyPagingItems
 import io.foundy.friend.ui.component.FriendListContent
 import io.foundy.friend.ui.component.FriendRecommendContent
 import io.foundy.friend.ui.component.RequestedFriendContent
 import io.foundy.friend.ui.navigation.FriendTabDestination
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.orbitmvi.orbit.compose.collectAsState
 import org.orbitmvi.orbit.compose.collectSideEffect
@@ -39,6 +47,9 @@ fun FriendRoute(
     val context = LocalContext.current
     val pagerState = rememberPagerState(0)
     val uiState = viewModel.collectAsState().value
+    var userIdForShowDialog by remember { mutableStateOf<String?>(null) }
+    val (friends, refreshFriends) = uiState.friendListTabUiState.friendPagingData
+        .collectAsLazyPagingItems()
 
     viewModel.collectSideEffect {
         when (it) {
@@ -47,13 +58,22 @@ fun FriendRoute(
                     it.content ?: context.getString(it.defaultStringRes)
                 )
             }
+            FriendSideEffect.RefreshFriendList -> coroutineScope.launch(Dispatchers.Main) {
+                refreshFriends()
+            }
         }
+    }
+
+    userIdForShowDialog?.let {
+        UserProfileDialog(userId = it, onCancel = { userIdForShowDialog = null })
     }
 
     FriendScreen(
         pagerState = pagerState,
         snackbarHostState = snackbarHostState,
-        uiState = uiState
+        uiState = uiState,
+        friends = friends,
+        onUserClick = { userIdForShowDialog = it }
     )
 }
 
@@ -62,7 +82,9 @@ fun FriendRoute(
 fun FriendScreen(
     snackbarHostState: SnackbarHostState,
     pagerState: PagerState,
-    uiState: FriendUiState
+    uiState: FriendUiState,
+    friends: LazyPagingItems<UserOverview>,
+    onUserClick: (String) -> Unit
 ) {
     Scaffold(
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) }
@@ -92,7 +114,9 @@ fun FriendScreen(
             ) { page ->
                 when (FriendTabDestination.values[page]) {
                     FriendTabDestination.List -> FriendListContent(
-                        uiState = uiState.friendListTabUiState
+                        uiState = uiState.friendListTabUiState,
+                        onUserClick = onUserClick,
+                        users = friends
                     )
                     FriendTabDestination.Recommend -> FriendRecommendContent(
                         uiState = uiState.friendRecommendTabUiState
