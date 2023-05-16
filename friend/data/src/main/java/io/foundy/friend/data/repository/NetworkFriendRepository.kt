@@ -69,10 +69,18 @@ class NetworkFriendRepository @Inject constructor(
         }
     }
 
+    override suspend fun rejectFriendRequest(requesterId: String): Result<Unit> {
+        val currentUserId = requireCurrentUserId()
+        return runCatching {
+            val response = api.deleteFriend(requesterId = requesterId, acceptorId = currentUserId)
+            return@runCatching response.getDataOrThrowMessage()
+        }
+    }
+
     override suspend fun deleteFriend(targetUserId: String): Result<Unit> {
         val currentUserId = requireCurrentUserId()
         return runCatching {
-            val response = api.deleteFriend(userId = currentUserId, friendId = targetUserId)
+            val response = api.deleteFriend(requesterId = currentUserId, acceptorId = targetUserId)
             return@runCatching response.getDataOrThrowMessage()
         }
     }
