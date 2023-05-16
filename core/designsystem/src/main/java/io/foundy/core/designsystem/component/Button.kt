@@ -23,6 +23,20 @@ import androidx.compose.ui.unit.dp
 import io.foundy.core.designsystem.icon.CamstudyIcon
 import io.foundy.core.designsystem.theme.CamstudyTheme
 
+
+@Composable
+fun ButtonDefaults.camstudyTextButtonColors(
+    containerColor: Color = Color.Transparent,
+    contentColor: Color = CamstudyTheme.colorScheme.primary,
+    disabledContainerColor: Color = Color.Transparent,
+    disabledContentColor: Color = CamstudyTheme.colorScheme.systemUi04
+) = buttonColors(
+    containerColor = containerColor,
+    contentColor = contentColor,
+    disabledContainerColor = disabledContainerColor,
+    disabledContentColor = disabledContentColor
+)
+
 @Composable
 internal fun RawButton(
     modifier: Modifier = Modifier,
@@ -143,9 +157,9 @@ fun CamstudyTextButton(
     leadingIcon: CamstudyIcon? = null,
     shape: Shape = RoundedCornerShape(8.dp),
     enabled: Boolean = true,
+    colors: ButtonColors = ButtonDefaults.camstudyTextButtonColors(),
     onClick: () -> Unit
 ) {
-    val colorScheme = CamstudyTheme.colorScheme
     RawButton(
         modifier = modifier,
         onClick = onClick,
@@ -153,12 +167,7 @@ fun CamstudyTextButton(
         shape = shape,
         leadingIcon = leadingIcon,
         enabled = enabled,
-        colors = ButtonDefaults.buttonColors(
-            containerColor = Color.Transparent,
-            contentColor = colorScheme.primary,
-            disabledContainerColor = Color.Transparent,
-            disabledContentColor = colorScheme.systemUi04
-        ),
+        colors = colors,
     )
 }
 
