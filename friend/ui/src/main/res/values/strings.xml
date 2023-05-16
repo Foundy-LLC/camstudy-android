@@ -10,4 +10,5 @@
     <string name="are_you_sure_dismiss">정말로 친구를 해제할까요?</string>
     <string name="there_is_no_friend">아직 친구가 없어요</string>
     <string name="dissmissed_friend">친구를 해제했습니다.</string>
+    <string name="in_developmenting">개발중이에요!</string>
 </resources>
