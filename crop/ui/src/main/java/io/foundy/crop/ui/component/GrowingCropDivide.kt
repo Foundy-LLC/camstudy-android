@@ -146,7 +146,11 @@ private fun GrowingCropIcon(growingCrop: GrowingCrop?) {
             CamstudyIcon(
                 modifier = Modifier.fillMaxSize(),
                 icon = cropIcon,
-                tint = Color.Unspecified,
+                tint = if (growingCrop.isDead) {
+                    CamstudyTheme.colorScheme.systemUi04
+                } else {
+                    Color.Unspecified
+                },
                 contentDescription = null
             )
         } else {
