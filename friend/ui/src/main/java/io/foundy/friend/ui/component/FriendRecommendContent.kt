@@ -23,7 +23,7 @@ fun FriendRecommendContent(
             modifier = Modifier
                 .padding(16.dp)
                 .align(Alignment.Center),
-            text = stringResource(R.string.in_developmenting),
+            text = stringResource(R.string.in_developing),
             style = CamstudyTheme.typography.headlineSmall.copy(
                 color = CamstudyTheme.colorScheme.systemUi04,
                 fontWeight = FontWeight.SemiBold
