@@ -89,10 +89,7 @@ fun RoomScreen(
             content = stringResource(R.string.recheck_dialog_content),
             confirmText = stringResource(R.string.exit),
             onCancel = { showRecheckDialog = false },
-            onConfirm = {
-                mediaManager.disconnect()
-                popBackStack()
-            }
+            onConfirm = popBackStack
         )
     }
 
