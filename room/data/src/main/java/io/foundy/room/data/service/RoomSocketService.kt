@@ -1,5 +1,6 @@
 package io.foundy.room.data.service
 
+import android.annotation.SuppressLint
 import io.foundy.core.data.extension.getDataOrThrowMessage
 import io.foundy.room.data.BuildConfig
 import io.foundy.room.data.api.MediaRoutingApi
@@ -31,6 +32,7 @@ import io.foundy.room.domain.PeerState
 import io.foundy.room.domain.PomodoroTimerProperty
 import io.foundy.room.domain.PomodoroTimerState
 import io.getstream.log.taggedLogger
+import io.socket.client.IO
 import io.socket.client.Manager
 import io.socket.client.Socket
 import kotlinx.coroutines.CancellableContinuation
@@ -38,6 +40,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withTimeout
+import okhttp3.OkHttpClient
 import org.json.JSONObject
 import org.mediasoup.droid.Consumer
 import org.mediasoup.droid.Device
@@ -48,7 +51,11 @@ import org.webrtc.AudioTrack
 import org.webrtc.MediaStreamTrack
 import org.webrtc.VideoTrack
 import java.net.URI
+import java.security.cert.X509Certificate
 import javax.inject.Inject
+import javax.net.ssl.SSLContext
+import javax.net.ssl.TrustManager
+import javax.net.ssl.X509TrustManager
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class RoomSocketService @Inject constructor(
@@ -72,10 +79,43 @@ class RoomSocketService @Inject constructor(
 
     private var mutedHeadset: Boolean = false
 
+    // TODO: Media server SSL 인증서 공인 인증 받고 나서 인증 무시하고 접속하는 코드 삭제하기
+    @SuppressLint("CustomX509TrustManager")
+    private fun buildSocketOptions(): IO.Options {
+        val trustAllCerts = arrayOf<TrustManager>(object : X509TrustManager {
+
+            @SuppressLint("TrustAllX509TrustManager")
+            override fun checkClientTrusted(chain: Array<X509Certificate>, authType: String) {
+            }
+
+            @SuppressLint("TrustAllX509TrustManager")
+            override fun checkServerTrusted(chain: Array<X509Certificate>, authType: String) {
+            }
+
+            override fun getAcceptedIssuers(): Array<X509Certificate> {
+                return arrayOf()
+            }
+        })
+        val sslContext = SSLContext.getInstance("TLS")
+        sslContext.init(null, trustAllCerts, null)
+        return IO.Options().apply {
+            // Disable SSL certificate validation (not recommended for production)
+            this.secure = true
+            this.callFactory = OkHttpClient.Builder()
+                .hostnameVerifier { _, _ -> true }
+                .sslSocketFactory(
+                    sslSocketFactory = sslContext.socketFactory,
+                    trustManager = trustAllCerts[0] as X509TrustManager
+                )
+                .build()
+        }
+    }
+
     override suspend fun connect(roomId: String) {
         val response = mediaRoutingApi.getMediaServer(roomId = roomId)
         val url = response.getDataOrThrowMessage().url
-        _socket = Manager(URI(url)).socket(Protocol.NAME_SPACE)
+
+        _socket = Manager(URI(url), buildSocketOptions()).socket(Protocol.NAME_SPACE)
 
         suspendCoroutineWithTimeout { continuation ->
             socket.run {
