@@ -552,8 +552,19 @@ class RoomSocketService @Inject constructor(
         _socket = null
         eventFlow.resetReplayCache()
         _device = null
+
+        // close() 호출 후에 dispose()를 호출해야함
+        // https://github.com/haiyangwu/mediasoup-client-android/issues/12#issuecomment-792287813
+        _sendTransport?.close()
+        receiveTransportWrappers.forEach { wrapper ->
+            wrapper.transport.close()
+        }
+
         _sendTransport?.dispose()
         _sendTransport = null
+        receiveTransportWrappers.forEach { wrapper ->
+            wrapper.transport.dispose()
+        }
         receiveTransportWrappers.clear()
         mutedHeadset = false
     }
