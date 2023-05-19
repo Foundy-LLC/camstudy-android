@@ -19,12 +19,11 @@ data class JoinRoomSuccessResponse(
     val timerState: PomodoroTimerState,
     val timerProperty: PomodoroTimerProperty
 ) {
-    val timerStartedDateTime: LocalDateTime?
-        get() {
-            if (timerStartedDate == null) {
-                return null
-            }
-            val instant = Instant.parse(timerStartedDate)
-            return instant.toLocalDateTime(WebRtcServerTimeZone)
+    val timerStartedDateTime: LocalDateTime? = run {
+        if (timerStartedDate == null) {
+            return@run null
         }
+        val instant = Instant.parse(timerStartedDate)
+        return@run instant.toLocalDateTime(WebRtcServerTimeZone)
+    }
 }
