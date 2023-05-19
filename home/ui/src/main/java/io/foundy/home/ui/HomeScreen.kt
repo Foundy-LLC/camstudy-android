@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
@@ -40,6 +41,7 @@ import io.foundy.home.ui.destinations.MainTabRouteDestination
 import io.foundy.home.ui.main.MainTabRoute
 import io.foundy.home.ui.navigation.HomeNavGraph
 import io.foundy.home.ui.navigation.HomeTabDestination
+import io.foundy.search.ui.destinations.SearchRouteDestination
 
 @Destination(style = DestinationStyle.Runtime::class)
 @Composable
@@ -69,6 +71,14 @@ fun HomeScreen(
                         tint = Color.Unspecified,
                         contentDescription = null,
                     )
+                },
+                leading = {
+                    IconButton(onClick = { navigator.navigate(SearchRouteDestination) }) {
+                        CamstudyIcon(
+                            icon = CamstudyIcons.Search,
+                            contentDescription = stringResource(R.string.search_content_description)
+                        )
+                    }
                 }
             )
         },

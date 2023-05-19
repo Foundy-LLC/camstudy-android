@@ -70,6 +70,7 @@ dependencies {
     implementation project(":organization:ui")
     implementation project(":crop:ui")
     implementation project(path: ':dashboard:ui')
+    implementation project(path: ':search:ui')
 
     // stream log
     implementation("io.getstream:stream-log-android:$stream_log_version")

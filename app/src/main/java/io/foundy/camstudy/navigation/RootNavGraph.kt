@@ -9,6 +9,7 @@ import io.foundy.home.ui.destinations.HomeRouteDestination
 import io.foundy.home.ui.navigation.HomeNavGraph
 import io.foundy.organization.ui.destinations.OrganizationRouteDestination
 import io.foundy.room_list.ui.create.destinations.RoomCreateScreenDestination
+import io.foundy.search.ui.destinations.SearchRouteDestination
 import io.foundy.welcome.ui.destinations.WelcomeRouteDestination
 
 internal object RootNavGraph : NavGraphSpec {
@@ -23,7 +24,8 @@ internal object RootNavGraph : NavGraphSpec {
         WelcomeRouteDestination,
         OrganizationRouteDestination,
         PlantCropRouteDestination,
-        RoomCreateScreenDestination
+        RoomCreateScreenDestination,
+        SearchRouteDestination
     ).associateBy { it.route }
 
     override val nestedNavGraphs: List<NavGraphSpec> = listOf(

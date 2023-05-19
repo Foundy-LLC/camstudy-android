@@ -26,7 +26,8 @@ import io.foundy.core.designsystem.theme.CamstudyTheme
 @Composable
 fun CamstudyTopAppBar(
     onBackClick: (() -> Unit)? = null,
-    title: @Composable () -> Unit
+    title: @Composable () -> Unit,
+    leading: (@Composable () -> Unit)? = null
 ) {
     val componentColor = CamstudyTheme.colorScheme.systemUi09
 
@@ -62,6 +63,7 @@ fun CamstudyTopAppBar(
                         content = title
                     )
                 }
+                leading?.invoke()
             }
             CamstudyDivider(modifier = Modifier.align(Alignment.BottomCenter))
         }
