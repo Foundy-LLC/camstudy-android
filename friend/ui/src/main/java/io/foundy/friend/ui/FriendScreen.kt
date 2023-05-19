@@ -25,6 +25,7 @@ import com.ramcosta.composedestinations.annotation.Destination
 import io.found.user.ui.UserProfileDialog
 import io.foundy.core.designsystem.component.CamstudyTab
 import io.foundy.core.designsystem.component.CamstudyTabRow
+import io.foundy.core.designsystem.theme.CamstudyTheme
 import io.foundy.core.model.UserOverview
 import io.foundy.core.ui.collectAsLazyPagingItems
 import io.foundy.friend.ui.component.FriendListContent
@@ -101,7 +102,8 @@ fun FriendScreen(
     onFriendRequestsRefresh: () -> Unit
 ) {
     Scaffold(
-        snackbarHost = { SnackbarHost(hostState = snackbarHostState) }
+        snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
+        containerColor = CamstudyTheme.colorScheme.systemBackground
     ) { padding ->
         val coroutineScope = rememberCoroutineScope()
 
