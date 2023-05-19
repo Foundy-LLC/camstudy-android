@@ -52,6 +52,7 @@ import org.webrtc.MediaStreamTrack
 import org.webrtc.VideoTrack
 import java.net.URI
 import java.security.cert.X509Certificate
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 import javax.net.ssl.SSLContext
 import javax.net.ssl.TrustManager
@@ -79,7 +80,7 @@ class RoomSocketService @Inject constructor(
 
     private var mutedHeadset: Boolean = false
 
-    // TODO: Media server SSL 인증서 공인 인증 받고 나서 인증 무시하고 접속하는 코드 삭제하기
+    // TODO: 발급 받은 SSL 인증서로 접속하도록 수정
     @SuppressLint("CustomX509TrustManager")
     private fun buildSocketOptions(): IO.Options {
         val trustAllCerts = arrayOf<TrustManager>(object : X509TrustManager {
@@ -99,9 +100,11 @@ class RoomSocketService @Inject constructor(
         val sslContext = SSLContext.getInstance("TLS")
         sslContext.init(null, trustAllCerts, null)
         return IO.Options().apply {
-            // Disable SSL certificate validation (not recommended for production)
             this.secure = true
             this.callFactory = OkHttpClient.Builder()
+                .connectTimeout(0, TimeUnit.MILLISECONDS)
+                .readTimeout(0, TimeUnit.MILLISECONDS)
+                .writeTimeout(0, TimeUnit.MILLISECONDS)
                 .hostnameVerifier { _, _ -> true }
                 .sslSocketFactory(
                     sslSocketFactory = sslContext.socketFactory,
@@ -119,13 +122,25 @@ class RoomSocketService @Inject constructor(
 
         suspendCoroutineWithTimeout { continuation ->
             socket.run {
-                connect()
+                on(Socket.EVENT_CONNECT) {
+                    logger.d { "Connected to socket server." }
+                }
+
+                on(Socket.EVENT_CONNECT_ERROR) { error ->
+                    logger.e { "Socket connection error: $error" }
+                }
+
+                on(Socket.EVENT_DISCONNECT) { args ->
+                    logger.e { "Disconnected socket: $args" }
+                }
 
                 on(Protocol.CONNECTION_SUCCESS) {
                     logger.d { "Connected socket server." }
                     off(Protocol.CONNECTION_SUCCESS)
                     continuation.resume(Unit) {}
                 }
+
+                connect()
             }
         }
     }
