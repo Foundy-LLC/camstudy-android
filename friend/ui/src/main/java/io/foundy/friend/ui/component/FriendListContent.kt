@@ -15,6 +15,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.itemKey
 import io.foundy.core.designsystem.component.CamstudyDialog
@@ -23,6 +24,7 @@ import io.foundy.core.designsystem.icon.CamstudyIcon
 import io.foundy.core.designsystem.icon.CamstudyIcons
 import io.foundy.core.designsystem.theme.CamstudyTheme
 import io.foundy.core.model.UserOverview
+import io.foundy.core.ui.pullrefresh.RefreshableContent
 import io.foundy.friend.ui.FriendListTabUiState
 import io.foundy.friend.ui.R
 
@@ -30,7 +32,8 @@ import io.foundy.friend.ui.R
 fun FriendListContent(
     uiState: FriendListTabUiState,
     users: LazyPagingItems<UserOverview>,
-    onUserClick: (String) -> Unit
+    onUserClick: (String) -> Unit,
+    onRefresh: () -> Unit
 ) {
     var userIdForRemoveFriend by remember { mutableStateOf<String?>(null) }
 
@@ -47,34 +50,40 @@ fun FriendListContent(
         )
     }
 
-    if (users.itemCount == 0) {
-        EmptyFriends()
-    } else {
-        LazyColumn(Modifier.fillMaxSize()) {
-            items(
-                count = users.itemCount,
-                key = users.itemKey { it.id }
-            ) { index ->
-                val user = users[index] ?: return@items
-                val isInRemoving = uiState.inRemovingUserIds.contains(user.id)
+    RefreshableContent(
+        modifier = Modifier.fillMaxSize(),
+        refreshing = users.loadState.refresh is LoadState.Loading,
+        onRefresh = onRefresh
+    ) {
+        if (users.itemCount == 0) {
+            EmptyFriends()
+        } else {
+            LazyColumn(Modifier.fillMaxSize()) {
+                items(
+                    count = users.itemCount,
+                    key = users.itemKey { it.id }
+                ) { index ->
+                    val user = users[index] ?: return@items
+                    val isInRemoving = uiState.inRemovingUserIds.contains(user.id)
 
-                UserTile(
-                    user = user,
-                    onClick = { onUserClick(it.id) },
-                    leading = {
-                        IconButton(
-                            modifier = Modifier.padding(end = 4.dp),
-                            onClick = { userIdForRemoveFriend = user.id },
-                            enabled = !isInRemoving
-                        ) {
-                            CamstudyIcon(
-                                icon = CamstudyIcons.PersonRemove,
-                                contentDescription = null,
-                                tint = CamstudyTheme.colorScheme.systemUi08
-                            )
+                    UserTile(
+                        user = user,
+                        onClick = { onUserClick(it.id) },
+                        leading = {
+                            IconButton(
+                                modifier = Modifier.padding(end = 4.dp),
+                                onClick = { userIdForRemoveFriend = user.id },
+                                enabled = !isInRemoving
+                            ) {
+                                CamstudyIcon(
+                                    icon = CamstudyIcons.PersonRemove,
+                                    contentDescription = null,
+                                    tint = CamstudyTheme.colorScheme.systemUi08
+                                )
+                            }
                         }
-                    }
-                )
+                    )
+                }
             }
         }
     }

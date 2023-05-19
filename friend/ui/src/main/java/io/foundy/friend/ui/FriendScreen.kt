@@ -82,7 +82,9 @@ fun FriendRoute(
         uiState = uiState,
         friends = friends,
         friendRequestingUsers = friendRequestingUsers,
-        onUserClick = { userIdForShowDialog = it }
+        onUserClick = { userIdForShowDialog = it },
+        onFriendListRefresh = refreshFriends,
+        onFriendRequestsRefresh = refreshFriendRequestingUsers
     )
 }
 
@@ -94,7 +96,9 @@ fun FriendScreen(
     uiState: FriendUiState,
     friends: LazyPagingItems<UserOverview>,
     friendRequestingUsers: LazyPagingItems<UserOverview>,
-    onUserClick: (String) -> Unit
+    onUserClick: (String) -> Unit,
+    onFriendListRefresh: () -> Unit,
+    onFriendRequestsRefresh: () -> Unit
 ) {
     Scaffold(
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) }
@@ -126,7 +130,8 @@ fun FriendScreen(
                     FriendTabDestination.List -> FriendListContent(
                         uiState = uiState.friendListTabUiState,
                         onUserClick = onUserClick,
-                        users = friends
+                        users = friends,
+                        onRefresh = onFriendListRefresh
                     )
                     FriendTabDestination.Recommend -> FriendRecommendContent(
                         uiState = uiState.friendRecommendTabUiState
@@ -134,7 +139,8 @@ fun FriendScreen(
                     FriendTabDestination.Requested -> RequestedFriendContent(
                         uiState = uiState.requestedFriendTabUiState,
                         users = friendRequestingUsers,
-                        onUserClick = onUserClick
+                        onUserClick = onUserClick,
+                        onRefresh = onFriendRequestsRefresh
                     )
                 }
             }
