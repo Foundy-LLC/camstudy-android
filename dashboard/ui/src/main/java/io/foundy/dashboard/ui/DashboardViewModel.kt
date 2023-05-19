@@ -26,7 +26,10 @@ class DashboardViewModel @Inject constructor(
 ) : ViewModel(), ContainerHost<DashboardUiState, DashboardSideEffect> {
 
     override val container: Container<DashboardUiState, DashboardSideEffect> = container(
-        DashboardUiState(fetchGrowingCrop = ::fetchGrowingCrop)
+        DashboardUiState(
+            fetchGrowingCrop = ::fetchGrowingCrop,
+            onRefresh = ::refresh
+        )
     )
 
     private lateinit var currentUserId: String
@@ -36,9 +39,7 @@ class DashboardViewModel @Inject constructor(
             currentUserId = requireNotNull(authRepository.currentUserIdStream.firstOrNull()) {
                 "현재 회원 아이디를 얻을 수 없습니다. 로그인 하지 않고 대시보드에 접근했습니다."
             }
-            fetchUserRanking()
-            fetchGrowingCrop()
-            fetchRecentRooms()
+            refresh()
         }
         viewModelScope.launch {
             cropRepository.currentUserGrowingCropFlow.collectLatest { growingCrop ->
@@ -53,6 +54,12 @@ class DashboardViewModel @Inject constructor(
                 }
             }
         }
+    }
+
+    private fun refresh() = intent {
+        fetchUserRanking()
+        fetchGrowingCrop()
+        fetchRecentRooms()
     }
 
     private fun fetchUserRanking() = intent {

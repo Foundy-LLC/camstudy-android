@@ -8,8 +8,16 @@ data class DashboardUiState(
     val userRankingUiState: UserRankingUiState = UserRankingUiState.Loading,
     val growingCropUiState: GrowingCropUiState = GrowingCropUiState.Loading,
     val recentRoomsUiState: RecentRoomsUiState = RecentRoomsUiState.Loading,
-    val fetchGrowingCrop: () -> Unit
-)
+    val fetchGrowingCrop: () -> Unit,
+    val onRefresh: () -> Unit
+) {
+    val isLoading: Boolean
+        get() {
+            return userRankingUiState is UserRankingUiState.Loading &&
+                growingCropUiState is GrowingCropUiState.Loading &&
+                recentRoomsUiState is RecentRoomsUiState.Loading
+        }
+}
 
 sealed class UserRankingUiState {
 

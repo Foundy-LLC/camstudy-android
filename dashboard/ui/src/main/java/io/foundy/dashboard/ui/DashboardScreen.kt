@@ -21,6 +21,7 @@ import io.foundy.core.designsystem.theme.CamstudyTheme
 import io.foundy.core.model.GrowingCrop
 import io.foundy.core.model.RoomOverview
 import io.foundy.core.model.constant.RoomConstants
+import io.foundy.core.ui.pullrefresh.RefreshableContent
 import io.foundy.dashboard.ui.component.Header
 import io.foundy.dashboard.ui.component.recentRoomDivide
 import io.foundy.dashboard.ui.component.recommendedRoomDivide
@@ -84,7 +85,6 @@ fun DashboardRoute(
     )
 }
 
-// TODO: 실제 데이터 전달하기
 @Composable
 fun DashboardScreen(
     uiState: DashboardUiState,
@@ -93,29 +93,33 @@ fun DashboardScreen(
     onRecentRoomClick: (RoomOverview) -> Unit,
     onSeeRankingClick: () -> Unit
 ) {
-    LazyColumn(
+    RefreshableContent(
         modifier = Modifier
             .background(color = CamstudyTheme.colorScheme.systemUi01)
-            .fillMaxHeight()
+            .fillMaxHeight(),
+        refreshing = uiState.isLoading,
+        onRefresh = uiState.onRefresh
     ) {
-        item {
-            Header(
-                userRankingUiState = uiState.userRankingUiState,
-                growingCropUiState = uiState.growingCropUiState,
-                onCropTileClick = onCropTileClick,
-                onSeeRankingClick = onSeeRankingClick
+        LazyColumn {
+            item {
+                Header(
+                    userRankingUiState = uiState.userRankingUiState,
+                    growingCropUiState = uiState.growingCropUiState,
+                    onCropTileClick = onCropTileClick,
+                    onSeeRankingClick = onSeeRankingClick
+                )
+            }
+            dividePadding()
+            recentRoomDivide(
+                recentRoomsUiState = uiState.recentRoomsUiState,
+                onRoomClick = onRecentRoomClick
+            )
+            dividePadding()
+            recommendedRoomDivide(
+                rooms = recommendedRooms,
+                onJoinClick = { /* TODO: 구현하기 */ }
             )
         }
-        dividePadding()
-        recentRoomDivide(
-            recentRoomsUiState = uiState.recentRoomsUiState,
-            onRoomClick = onRecentRoomClick
-        )
-        dividePadding()
-        recommendedRoomDivide(
-            rooms = recommendedRooms,
-            onJoinClick = { /* TODO: 구현하기 */ }
-        )
     }
 }
 
@@ -162,7 +166,8 @@ private fun DashboardScreenPreview() {
         DashboardScreen(
             recommendedRooms = recommendedRooms,
             uiState = DashboardUiState(
-                fetchGrowingCrop = {}
+                fetchGrowingCrop = {},
+                onRefresh = {}
             ),
             onCropTileClick = {},
             onRecentRoomClick = {},
