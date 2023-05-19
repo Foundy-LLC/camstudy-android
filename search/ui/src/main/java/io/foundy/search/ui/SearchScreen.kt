@@ -62,9 +62,7 @@ import io.foundy.core.model.SearchedUser
 import io.foundy.core.ui.RoomTileWithJoinButton
 import io.foundy.core.ui.UserProfileImage
 import io.foundy.core.ui.collectAsLazyPagingItems
-import io.foundy.core.ui.pullrefresh.PullRefreshIndicator
-import io.foundy.core.ui.pullrefresh.pullRefresh
-import io.foundy.core.ui.pullrefresh.rememberPullRefreshState
+import io.foundy.core.ui.pullrefresh.RefreshableContent
 import io.foundy.room.ui.RoomActivity
 import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.launch
@@ -195,16 +193,12 @@ private fun UserList(
     onRefresh: () -> Unit,
     onUserClick: (String) -> Unit
 ) {
-    val pullRefreshState = rememberPullRefreshState(
-        refreshing = isUserRefreshing,
-        onRefresh = onRefresh
-    )
-
-    Box(
+    RefreshableContent(
         modifier = Modifier
             .fillMaxSize()
-            .background(color = CamstudyTheme.colorScheme.systemBackground)
-            .pullRefresh(pullRefreshState)
+            .background(color = CamstudyTheme.colorScheme.systemBackground),
+        onRefresh = onRefresh,
+        refreshing = isUserRefreshing
     ) {
         if (users.isEmpty() && !isUserRefreshing) {
             EmptyText()
@@ -217,12 +211,6 @@ private fun UserList(
                 }
             }
         }
-
-        PullRefreshIndicator(
-            modifier = Modifier.align(Alignment.TopCenter),
-            refreshing = isUserRefreshing,
-            state = pullRefreshState
-        )
     }
 }
 
@@ -233,16 +221,13 @@ fun StudyRoomList(
     onJoinClick: (RoomOverview) -> Unit
 ) {
     val isRoomRefreshing = rooms.loadState.refresh is LoadState.Loading
-    val pullRefreshState = rememberPullRefreshState(
-        refreshing = isRoomRefreshing,
-        onRefresh = onRefresh
-    )
 
-    Box(
+    RefreshableContent(
+        refreshing = isRoomRefreshing,
+        onRefresh = onRefresh,
         modifier = Modifier
             .fillMaxSize()
             .background(color = CamstudyTheme.colorScheme.systemBackground)
-            .pullRefresh(pullRefreshState)
     ) {
         if (rooms.itemCount == 0 && !isRoomRefreshing) {
             EmptyText()
@@ -261,12 +246,6 @@ fun StudyRoomList(
                 }
             }
         }
-
-        PullRefreshIndicator(
-            modifier = Modifier.align(Alignment.TopCenter),
-            refreshing = isRoomRefreshing,
-            state = pullRefreshState
-        )
     }
 }
 
