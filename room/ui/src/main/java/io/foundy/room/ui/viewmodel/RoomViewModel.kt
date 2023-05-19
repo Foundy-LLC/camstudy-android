@@ -292,7 +292,9 @@ class RoomViewModel @Inject constructor(
 
     private fun handleStudyRoomEvent(studyRoomEvent: StudyRoomEvent) = intent {
         val uiState = state
-        check(uiState is RoomUiState.StudyRoom)
+        if (uiState !is RoomUiState.StudyRoom) {
+            return@intent
+        }
         when (studyRoomEvent) {
             is StudyRoomEvent.OnChangePeerState -> {
                 val existsState = uiState.peerStates.any { it.uid == studyRoomEvent.state.uid }
@@ -390,6 +392,9 @@ class RoomViewModel @Inject constructor(
                     kickedUserId = studyRoomEvent.userId,
                     uiState = uiState.copy(blacklist = newBlacklist)
                 )
+            }
+            StudyRoomEvent.DisconnectedSocket -> {
+                postSideEffect(RoomSideEffect.Disconnected)
             }
         }
     }

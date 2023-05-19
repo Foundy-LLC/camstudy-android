@@ -140,6 +140,7 @@ private fun ColumnScope.SuccessContent(uiState: UserProfileDialogUiState.Success
                 showFriendCancelRecheckDialog = false
             },
             onCancel = { showFriendCancelRecheckDialog = false },
+            onDismissRequest = { showFriendCancelRecheckDialog = false },
             confirmText = stringResource(id = R.string.cancel_friend)
         )
     }

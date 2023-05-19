@@ -54,6 +54,7 @@ fun RoomScreen(
     val snackbarHostState = remember { SnackbarHostState() }
     val coroutineScope = rememberCoroutineScope()
     var showRecheckDialog by remember { mutableStateOf(false) }
+    var showDisconnectedDialog by remember { mutableStateOf(false) }
     val handleBackClick = {
         if (uiState is RoomUiState.StudyRoom) {
             showRecheckDialog = !showRecheckDialog
@@ -68,6 +69,9 @@ fun RoomScreen(
                 snackbarHostState.showSnackbar(
                     it.content ?: context.getString(it.defaultContentRes, it.stringResArgs)
                 )
+            }
+            RoomSideEffect.Disconnected -> {
+                showDisconnectedDialog = true
             }
         }
     }
@@ -89,6 +93,16 @@ fun RoomScreen(
             content = stringResource(R.string.recheck_dialog_content),
             confirmText = stringResource(R.string.exit),
             onCancel = { showRecheckDialog = false },
+            onDismissRequest = { showRecheckDialog = false },
+            onConfirm = popBackStack
+        )
+    }
+
+    if (showDisconnectedDialog) {
+        CamstudyDialog(
+            content = stringResource(R.string.disconnected_room_socket),
+            confirmText = stringResource(R.string.exit),
+            onDismissRequest = {},
             onConfirm = popBackStack
         )
     }

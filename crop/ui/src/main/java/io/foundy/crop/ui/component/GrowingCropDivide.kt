@@ -109,6 +109,7 @@ private fun DivideContent(
                 if (showReplantCropDialog) {
                     CamstudyDialog(
                         content = stringResource(R.string.replant_dialog_content),
+                        onDismissRequest = { showReplantCropDialog = false },
                         onCancel = { showReplantCropDialog = false },
                         confirmText = stringResource(id = R.string.replant),
                         onConfirm = {

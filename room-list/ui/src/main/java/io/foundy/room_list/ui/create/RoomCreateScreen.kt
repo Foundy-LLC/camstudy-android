@@ -92,6 +92,7 @@ fun RoomCreateScreen(
         CamstudyDialog(
             content = stringResource(R.string.room_create_recheck_dialog_content),
             onCancel = { showRecheckDialog = false },
+            onDismissRequest = { showRecheckDialog = false },
             onConfirm = { navigator.navigateUp() },
             confirmText = stringResource(R.string.room_create_recheck_dialog_confirm)
         )

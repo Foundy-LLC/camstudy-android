@@ -41,6 +41,7 @@ fun FriendListContent(
                 uiState.onRemoveFriendClick(id)
                 userIdForRemoveFriend = null
             },
+            onDismissRequest = { userIdForRemoveFriend = null },
             onCancel = { userIdForRemoveFriend = null },
             confirmText = stringResource(R.string.dismiss)
         )

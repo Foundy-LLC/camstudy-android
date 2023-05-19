@@ -132,6 +132,8 @@ class RoomSocketService @Inject constructor(
 
                 on(Socket.EVENT_DISCONNECT) { args ->
                     logger.e { "Disconnected socket: $args" }
+                    eventFlow.tryEmit(StudyRoomEvent.DisconnectedSocket)
+                    disconnect()
                 }
 
                 on(Protocol.CONNECTION_SUCCESS) {

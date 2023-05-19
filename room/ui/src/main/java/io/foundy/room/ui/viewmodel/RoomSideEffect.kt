@@ -9,4 +9,6 @@ sealed class RoomSideEffect {
         @StringRes val defaultContentRes: Int,
         val stringResArgs: List<String> = emptyList()
     ) : RoomSideEffect()
+
+    object Disconnected : RoomSideEffect()
 }

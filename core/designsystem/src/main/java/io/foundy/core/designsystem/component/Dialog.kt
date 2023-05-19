@@ -35,10 +35,11 @@ fun CamstudyDialog(
     title: String? = null,
     content: String,
     confirmText: String = stringResource(R.string.confirm),
-    onCancel: () -> Unit,
+    onDismissRequest: () -> Unit,
+    onCancel: (() -> Unit)? = null,
     onConfirm: () -> Unit
 ) {
-    Dialog(onDismissRequest = onCancel) {
+    Dialog(onDismissRequest = onDismissRequest) {
         Box(
             modifier = Modifier
                 .sizeIn(minWidth = DialogMinWidth, maxWidth = DialogMaxWidth)
@@ -97,11 +98,13 @@ private fun Texts(
 private fun ColumnScope.Buttons(
     modifier: Modifier = Modifier,
     confirmText: String,
-    onCancelClick: () -> Unit,
+    onCancelClick: (() -> Unit)? = null,
     onConfirmClick: () -> Unit
 ) {
     Row(modifier.align(Alignment.End)) {
-        CamstudyTextButton(label = stringResource(R.string.cancel), onClick = onCancelClick)
+        if (onCancelClick != null) {
+            CamstudyTextButton(label = stringResource(R.string.cancel), onClick = onCancelClick)
+        }
         CamstudyTextButton(label = confirmText, onClick = onConfirmClick)
     }
 }
@@ -114,7 +117,7 @@ private fun CamstudyDialogPreview() {
             title = "Title 타이틀",
             content = "Dialog 메시지",
             onConfirm = {},
-            onCancel = {},
+            onDismissRequest = {},
         )
     }
 }
@@ -126,7 +129,7 @@ private fun CamstudyDialogOnlyContentPreview() {
         CamstudyDialog(
             content = "Dialog 메시지",
             onConfirm = {},
-            onCancel = {},
+            onDismissRequest = {},
         )
     }
 }
@@ -137,7 +140,11 @@ private fun CamstudyDialogWorkingPreview() {
     CamstudyTheme {
         var showDialog by remember { mutableStateOf(false) }
         if (showDialog) {
-            CamstudyDialog(content = "다이어로그", onConfirm = {}, onCancel = { showDialog = false })
+            CamstudyDialog(
+                content = "다이어로그",
+                onConfirm = {},
+                onDismissRequest = { showDialog = false }
+            )
         }
         CamstudyTextButton(onClick = { showDialog = true }, label = "show dialog")
     }

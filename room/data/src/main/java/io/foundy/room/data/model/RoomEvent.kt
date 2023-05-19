@@ -24,4 +24,5 @@ sealed class StudyRoomEvent : RoomEvent() {
     data class OnDisconnectPeer(val disposedPeerId: String) : StudyRoomEvent()
     data class OnKicked(val userId: String) : StudyRoomEvent()
     data class OnBlocked(val userId: String) : StudyRoomEvent()
+    object DisconnectedSocket : StudyRoomEvent()
 }
