@@ -2,6 +2,7 @@ package io.foundy.search.ui
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.paging.cachedIn
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.foundy.room_list.data.repository.RoomListRepository
 import io.foundy.search.data.repository.SearchRepository
@@ -24,6 +25,7 @@ class SearchViewModel @Inject constructor(
 
     override val container: Container<SearchUiState, SearchSideEffect> = container(
         SearchUiState(
+            searchedRoomFlow = roomListRepository.getRooms("").cachedIn(viewModelScope),
             onQueryChanged = ::updateQueryInput,
             onSearchClick = ::search,
             onSelectChip = ::updateSelectedChip
@@ -56,6 +58,7 @@ class SearchViewModel @Inject constructor(
     }
 
     private fun searchUsers(query: String) = intent {
+        reduce { state.copy(isUserRefreshing = true) }
         searchRepository.searchUsers(userName = query).onSuccess {
             reduce { state.copy(searchedUsers = it) }
         }.onFailure {
@@ -66,9 +69,14 @@ class SearchViewModel @Inject constructor(
                 )
             )
         }
+        reduce { state.copy(isUserRefreshing = false) }
     }
 
     private fun searchRooms(query: String) = intent {
-        reduce { state.copy(searchedRoomFlow = roomListRepository.getRooms(query)) }
+        reduce {
+            state.copy(
+                searchedRoomFlow = roomListRepository.getRooms(query).cachedIn(viewModelScope)
+            )
+        }
     }
 }

@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -42,6 +43,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.paging.LoadState
 import androidx.paging.PagingData
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.itemKey
@@ -60,6 +62,9 @@ import io.foundy.core.model.SearchedUser
 import io.foundy.core.ui.RoomTileWithJoinButton
 import io.foundy.core.ui.UserProfileImage
 import io.foundy.core.ui.collectAsLazyPagingItems
+import io.foundy.core.ui.pullrefresh.PullRefreshIndicator
+import io.foundy.core.ui.pullrefresh.pullRefresh
+import io.foundy.core.ui.pullrefresh.rememberPullRefreshState
 import io.foundy.room.ui.RoomActivity
 import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.launch
@@ -77,7 +82,7 @@ fun SearchRoute(
     val coroutineScope = rememberCoroutineScope()
     val context = LocalContext.current
     var userIdForShowDialog by remember { mutableStateOf<String?>(null) }
-    val (rooms) = uiState.searchedRoomFlow.collectAsLazyPagingItems()
+    val (rooms, refreshRooms) = uiState.searchedRoomFlow.collectAsLazyPagingItems()
 
     viewModel.collectSideEffect {
         when (it) {
@@ -102,7 +107,8 @@ fun SearchRoute(
         onRoomJoinClick = { room ->
             val intent = RoomActivity.getIntent(context, room)
             context.startActivity(intent)
-        }
+        },
+        onRoomRefresh = { refreshRooms() }
     )
 }
 
@@ -111,6 +117,7 @@ fun SearchRoute(
 fun SearchScreen(
     uiState: SearchUiState,
     rooms: LazyPagingItems<RoomOverview>,
+    onRoomRefresh: () -> Unit,
     onUserClick: (String) -> Unit,
     onRoomJoinClick: (RoomOverview) -> Unit,
     popBackStack: () -> Unit,
@@ -131,7 +138,7 @@ fun SearchScreen(
                 title = {
                     CamstudyTextField(
                         modifier = Modifier
-                            .padding(vertical = 10.dp)
+                            .padding(vertical = 8.dp)
                             .padding(end = 14.dp)
                             .focusRequester(focusRequester),
                         value = uiState.query,
@@ -166,11 +173,14 @@ fun SearchScreen(
                 when (uiState.selectedChip) {
                     SearchChip.User -> UserList(
                         users = uiState.searchedUsers,
-                        onUserClick = onUserClick
+                        isUserRefreshing = uiState.isUserRefreshing,
+                        onUserClick = onUserClick,
+                        onRefresh = { uiState.onSearchClick(uiState.query) }
                     )
                     SearchChip.StudyRoom -> StudyRoomList(
                         rooms = rooms,
-                        onJoinClick = onRoomJoinClick
+                        onJoinClick = onRoomJoinClick,
+                        onRefresh = onRoomRefresh
                     )
                 }
             }
@@ -179,39 +189,84 @@ fun SearchScreen(
 }
 
 @Composable
-private fun UserList(users: List<SearchedUser>, onUserClick: (String) -> Unit) {
-    if (users.isEmpty()) {
-        EmptyText()
-    } else {
-        LazyColumn {
-            items(users, key = { it.id }) { user ->
-                UserTile(searchedUser = user, onClick = { onUserClick(user.id) })
+private fun UserList(
+    users: List<SearchedUser>,
+    isUserRefreshing: Boolean,
+    onRefresh: () -> Unit,
+    onUserClick: (String) -> Unit
+) {
+    val pullRefreshState = rememberPullRefreshState(
+        refreshing = isUserRefreshing,
+        onRefresh = onRefresh
+    )
+
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(color = CamstudyTheme.colorScheme.systemBackground)
+            .pullRefresh(pullRefreshState)
+    ) {
+        if (users.isEmpty() && !isUserRefreshing) {
+            EmptyText()
+        } else {
+            LazyColumn(
+                modifier = Modifier.fillMaxHeight()
+            ) {
+                items(users, key = { it.id }) { user ->
+                    UserTile(searchedUser = user, onClick = { onUserClick(user.id) })
+                }
             }
         }
+
+        PullRefreshIndicator(
+            modifier = Modifier.align(Alignment.TopCenter),
+            refreshing = isUserRefreshing,
+            state = pullRefreshState
+        )
     }
 }
 
 @Composable
 fun StudyRoomList(
     rooms: LazyPagingItems<RoomOverview>,
+    onRefresh: () -> Unit,
     onJoinClick: (RoomOverview) -> Unit
 ) {
-    if (rooms.itemCount == 0) {
-        EmptyText()
-    } else {
-        LazyColumn(Modifier.fillMaxSize()) {
-            items(count = rooms.itemCount, key = rooms.itemKey { it.id }) { index ->
-                val room = rooms[index] ?: return@items
+    val isRoomRefreshing = rooms.loadState.refresh is LoadState.Loading
+    val pullRefreshState = rememberPullRefreshState(
+        refreshing = isRoomRefreshing,
+        onRefresh = onRefresh
+    )
 
-                Box {
-                    RoomTileWithJoinButton(
-                        room = room,
-                        onJoinClick = onJoinClick
-                    )
-                    CamstudyDivider(Modifier.align(Alignment.BottomCenter))
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(color = CamstudyTheme.colorScheme.systemBackground)
+            .pullRefresh(pullRefreshState)
+    ) {
+        if (rooms.itemCount == 0 && !isRoomRefreshing) {
+            EmptyText()
+        } else {
+            LazyColumn(Modifier.fillMaxSize()) {
+                items(count = rooms.itemCount, key = rooms.itemKey { it.id }) { index ->
+                    val room = rooms[index] ?: return@items
+
+                    Box {
+                        RoomTileWithJoinButton(
+                            room = room,
+                            onJoinClick = onJoinClick
+                        )
+                        CamstudyDivider(Modifier.align(Alignment.BottomCenter))
+                    }
                 }
             }
         }
+
+        PullRefreshIndicator(
+            modifier = Modifier.align(Alignment.TopCenter),
+            refreshing = isRoomRefreshing,
+            state = pullRefreshState
+        )
     }
 }
 
@@ -287,7 +342,11 @@ fun Chips(selectedChip: SearchChip, onSelectChip: (SearchChip) -> Unit) {
 
 @Composable
 private fun EmptyText() {
-    Box(modifier = Modifier.fillMaxSize()) {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(color = CamstudyTheme.colorScheme.systemBackground)
+    ) {
         CamstudyText(
             modifier = Modifier.align(Alignment.Center),
             text = stringResource(R.string.empty),
@@ -308,6 +367,7 @@ private fun SearchScreenPreview() {
         SearchScreen(
             uiState = SearchUiState(
                 query = "김민성",
+                searchedRoomFlow = emptyFlow(),
                 onSearchClick = {},
                 onQueryChanged = {},
                 onSelectChip = {}
@@ -316,7 +376,8 @@ private fun SearchScreenPreview() {
             onUserClick = {},
             popBackStack = {},
             snackbarHostState = SnackbarHostState(),
-            onRoomJoinClick = {}
+            onRoomJoinClick = {},
+            onRoomRefresh = {}
         )
     }
 }
