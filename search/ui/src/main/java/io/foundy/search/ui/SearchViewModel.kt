@@ -32,7 +32,8 @@ class SearchViewModel @Inject constructor(
         )
     )
 
-    private var searchJob: Job? = null
+    private var searchUserJob: Job? = null
+    private var searchRoomJob: Job? = null
 
     private fun updateQueryInput(query: String) = intent {
         reduce { state.copy(query = query) }
@@ -45,38 +46,43 @@ class SearchViewModel @Inject constructor(
     }
 
     private fun search(query: String, debounceMillis: Long = 0) = intent {
-        if (query.isNotEmpty()) {
-            searchJob?.cancel()
-            searchJob = viewModelScope.launch {
-                delay(debounceMillis)
-                when (state.selectedChip) {
-                    SearchChip.User -> searchUsers(query)
-                    SearchChip.StudyRoom -> searchRooms(query)
-                }
-            }
+        when (state.selectedChip) {
+            SearchChip.User -> searchUsers(query, debounceMillis = debounceMillis)
+            SearchChip.StudyRoom -> searchRooms(query, debounceMillis = debounceMillis)
         }
     }
 
-    private fun searchUsers(query: String) = intent {
-        reduce { state.copy(isUserRefreshing = true) }
-        searchRepository.searchUsers(userName = query).onSuccess {
-            reduce { state.copy(searchedUsers = it) }
-        }.onFailure {
-            postSideEffect(
-                SearchSideEffect.Message(
-                    content = it.message,
-                    defaultStringRes = R.string.failed_to_search_user
+    private fun searchUsers(query: String, debounceMillis: Long = 0) = intent {
+        if (query.isEmpty()) {
+            return@intent
+        }
+        searchUserJob?.cancel()
+        searchUserJob = viewModelScope.launch {
+            delay(debounceMillis)
+            reduce { state.copy(isUserRefreshing = true) }
+            searchRepository.searchUsers(userName = query).onSuccess {
+                reduce { state.copy(searchedUsers = it) }
+            }.onFailure {
+                postSideEffect(
+                    SearchSideEffect.Message(
+                        content = it.message,
+                        defaultStringRes = R.string.failed_to_search_user
+                    )
                 )
-            )
+            }
+            reduce { state.copy(isUserRefreshing = false) }
         }
-        reduce { state.copy(isUserRefreshing = false) }
     }
 
-    private fun searchRooms(query: String) = intent {
-        reduce {
-            state.copy(
-                searchedRoomFlow = roomListRepository.getRooms(query).cachedIn(viewModelScope)
-            )
+    private fun searchRooms(query: String, debounceMillis: Long = 0) = intent {
+        searchRoomJob?.cancel()
+        searchRoomJob = viewModelScope.launch {
+            delay(debounceMillis)
+            reduce {
+                state.copy(
+                    searchedRoomFlow = roomListRepository.getRooms(query).cachedIn(viewModelScope)
+                )
+            }
         }
     }
 }
