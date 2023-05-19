@@ -78,7 +78,7 @@ fun FriendListContent(
                                 CamstudyIcon(
                                     icon = CamstudyIcons.PersonRemove,
                                     contentDescription = null,
-                                    tint = CamstudyTheme.colorScheme.systemUi08
+                                    tint = CamstudyTheme.colorScheme.error
                                 )
                             }
                         }
