@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
@@ -187,14 +188,24 @@ fun CamstudyTextField(
             visualTransformation = visualTransformation,
             cursorBrush = SolidColor(colorScheme.primary),
             decorationBox = { innerTextField ->
-                Box(Modifier.padding(horizontal = 16.dp, vertical = 15.dp)) {
+                Box(
+                    modifier = Modifier
+                        .heightIn(min = 48.dp)
+                        .padding(horizontal = 16.dp)
+                ) {
+                    val verticalAlignmentModifier = Modifier.align(Alignment.CenterStart)
+
                     if (value.isEmpty() && placeholder != null) {
                         CamstudyText(
+                            modifier = verticalAlignmentModifier,
                             text = placeholder,
                             style = textStyle
                         )
                     }
-                    Row(verticalAlignment = Alignment.CenterVertically) {
+                    Row(
+                        modifier = verticalAlignmentModifier,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
                         if (prefix != null) {
                             ProvideTextStyle(value = CamstudyTextFieldTextStyle) {
                                 prefix()
@@ -297,6 +308,25 @@ fun ErrorCamstudyTextFieldPreview() {
             placeholder = "플레이스 홀더",
             supportingText = "보조/알림 텍스트",
             onValueChange = {}
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun TopAppBarTextFieldPreview() {
+    CamstudyTheme {
+        CamstudyTopAppBar(
+            height = 56.dp,
+            title = {
+                CamstudyTextField(
+                    modifier = Modifier
+                        .padding(vertical = 10.dp)
+                        .padding(end = 14.dp),
+                    value = "안녕하세요",
+                    onValueChange = {},
+                )
+            }
         )
     }
 }
