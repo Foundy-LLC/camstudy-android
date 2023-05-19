@@ -9,7 +9,6 @@ import io.foundy.friend.ui.destinations.FriendRouteDestination
 import io.foundy.home.ui.R
 import io.foundy.home.ui.destinations.MainTabRouteDestination
 import io.foundy.ranking.ui.destinations.RankingRouteDestination
-import io.foundy.search.ui.destinations.SearchRouteDestination
 
 enum class HomeTabDestination(
     val direction: DestinationSpec<*>,
@@ -30,11 +29,6 @@ enum class HomeTabDestination(
         direction = RankingRouteDestination,
         icon = CamstudyIcons.Ranking,
         label = R.string.ranking
-    ),
-    Search(
-        direction = SearchRouteDestination,
-        icon = CamstudyIcons.Search,
-        label = R.string.search
     ),
     Friend(
         direction = FriendRouteDestination,
