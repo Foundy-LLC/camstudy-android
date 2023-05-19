@@ -18,6 +18,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import io.foundy.core.designsystem.icon.CamstudyIcon
 import io.foundy.core.designsystem.icon.CamstudyIcons
@@ -27,7 +28,8 @@ import io.foundy.core.designsystem.theme.CamstudyTheme
 fun CamstudyTopAppBar(
     onBackClick: (() -> Unit)? = null,
     title: @Composable () -> Unit,
-    leading: (@Composable () -> Unit)? = null
+    leading: (@Composable () -> Unit)? = null,
+    height: Dp = 44.dp
 ) {
     val componentColor = CamstudyTheme.colorScheme.systemUi09
 
@@ -37,7 +39,7 @@ fun CamstudyTopAppBar(
         Box {
             Row(
                 modifier = Modifier
-                    .height(44.dp)
+                    .height(height)
                     .fillMaxWidth()
                     .padding(horizontal = 4.dp),
                 verticalAlignment = Alignment.CenterVertically

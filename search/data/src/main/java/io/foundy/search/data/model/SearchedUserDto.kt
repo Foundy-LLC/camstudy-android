@@ -9,12 +9,14 @@ data class SearchedUserDto(
     val id: String,
     val name: String,
     val profileImage: String?,
+    val introduce: String?,
     @SerializedName("requestHistory") val friendStatus: FriendStatusDto
 )
 
 fun SearchedUserDto.toEntity() = SearchedUser(
     id = id,
     name = name,
+    introduce = introduce,
     profileImage = profileImage,
     friendStatus = friendStatus.toEntity()
 )

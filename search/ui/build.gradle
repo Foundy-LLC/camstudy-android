@@ -48,6 +48,8 @@ android {
 dependencies {
     implementation project(path: ':core:designsystem')
     implementation project(path: ':core:model')
+    implementation project(path: ':core:ui')
+    implementation project(path: ':user:ui')
     implementation project(path: ':search:data')
     implementation project(path: ':friend:data')
 

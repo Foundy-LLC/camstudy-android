@@ -4,4 +4,6 @@
     <string name="failed_to_request_friend">친구 요청을 실패했습니다.</string>
     <string name="failed_to_cancel_friend_request">친구 요청 취소를 실패했습니다.</string>
     <string name="failed_to_cancel_friend">친구 취소를 실패했습니다.</string>
+    <string name="search_text_field_placeholder">검색어를 입력하세요</string>
+    <string name="empty">텅</string>
 </resources>
