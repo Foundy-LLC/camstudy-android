@@ -147,31 +147,14 @@ private fun RankingContent(
     uiState: RankingUiState,
     onClickUser: (id: String) -> Unit
 ) {
-    val (users, currentUser, isLoading) = when (tab) {
-        RankingTabDestination.Total -> Triple(
-            uiState.totalRanking.rankingFlow.collectAsLazyPagingItems(),
-            uiState.totalRanking.currentUserRanking,
-            uiState.totalRanking.isCurrentUserRankingLoading
-        )
-        RankingTabDestination.Weekly -> Triple(
-            uiState.weeklyRanking.rankingFlow.collectAsLazyPagingItems(),
-            uiState.weeklyRanking.currentUserRanking,
-            uiState.weeklyRanking.isCurrentUserRankingLoading
-        )
-    }
+    val currentTab = uiState.getCurrentTabUiStateBy(tab)
+    val users = currentTab.rankingFlow.collectAsLazyPagingItems()
+    val currentUser = currentTab.currentUserRanking
+    val isLoading = currentTab.isCurrentUserRankingLoading
 
     LaunchedEffect(Unit) {
-        when (tab) {
-            RankingTabDestination.Total -> {
-                if (uiState.totalRanking.shouldFetchCurrentUserRanking) {
-                    uiState.totalRanking.fetchCurrentUserRanking()
-                }
-            }
-            RankingTabDestination.Weekly -> {
-                if (uiState.weeklyRanking.shouldFetchCurrentUserRanking) {
-                    uiState.weeklyRanking.fetchCurrentUserRanking()
-                }
-            }
+        if (currentTab.shouldFetchCurrentUserRanking) {
+            currentTab.fetchCurrentUserRanking()
         }
     }
 

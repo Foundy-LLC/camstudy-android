@@ -12,7 +12,14 @@ data class RankingUiState(
     val organizations: List<OrganizationOverview> = emptyList(),
     val selectedOrganization: OrganizationOverview? = null,
     val onSelectOrganization: (OrganizationOverview?) -> Unit
-)
+) {
+    fun getCurrentTabUiStateBy(tab: RankingTabDestination): RankingTabUiState {
+        return when (tab) {
+            RankingTabDestination.Total -> totalRanking
+            RankingTabDestination.Weekly -> weeklyRanking
+        }
+    }
+}
 
 data class RankingTabUiState(
     val currentUserRanking: UserRankingOverview? = null,
