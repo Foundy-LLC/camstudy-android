@@ -28,14 +28,14 @@ class RankingViewModel @Inject constructor(
     override val container: Container<RankingUiState, RankingSideEffect> = container(
         RankingUiState(
             totalRanking = RankingTabUiState(
-                fetchCurrentUserRanking = {
-                    fetchCurrentUserRanking(RankingTabDestination.Total)
-                }
+                fetchRanking = {
+                    fetchRanking(RankingTabDestination.Total)
+                },
             ),
             weeklyRanking = RankingTabUiState(
-                fetchCurrentUserRanking = {
-                    fetchCurrentUserRanking(RankingTabDestination.Weekly)
-                }
+                fetchRanking = {
+                    fetchRanking(RankingTabDestination.Weekly)
+                },
             ),
             onSelectOrganization = ::updateSelectedOrganization
         )
@@ -66,7 +66,7 @@ class RankingViewModel @Inject constructor(
     private fun updateSelectedOrganization(organization: OrganizationOverview?) = intent {
         reduce { state.copy(selectedOrganization = organization) }
         RankingTabDestination.values.forEach {
-            fetchCurrentUserRanking(it)
+            fetchRanking(it)
         }
     }
 
@@ -89,7 +89,7 @@ class RankingViewModel @Inject constructor(
         }
     }
 
-    private fun fetchCurrentUserRanking(tabDestination: RankingTabDestination) {
+    private fun fetchRanking(tabDestination: RankingTabDestination) {
         updateLoadingState(isLoading = true, tabDestination = tabDestination)
         intent {
             val organizationId = state.selectedOrganization?.id

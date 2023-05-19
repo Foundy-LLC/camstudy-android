@@ -25,9 +25,8 @@ data class RankingTabUiState(
     val currentUserRanking: UserRankingOverview? = null,
     val rankingFlow: Flow<PagingData<UserRankingOverview>> = emptyFlow(),
     val isCurrentUserRankingLoading: Boolean = false,
-    val fetchCurrentUserRanking: () -> Unit
+    val fetchRanking: () -> Unit,
 ) {
-    val shouldFetchCurrentUserRanking: Boolean
-        get() = currentUserRanking == null &&
-            !isCurrentUserRankingLoading
+    val shouldFetchRanking: Boolean
+        get() = currentUserRanking == null && !isCurrentUserRankingLoading
 }

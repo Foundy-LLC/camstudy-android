@@ -15,7 +15,6 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
@@ -33,6 +32,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.items
 import com.ramcosta.composedestinations.annotation.Destination
@@ -43,6 +43,7 @@ import io.foundy.core.designsystem.component.CamstudyTabRow
 import io.foundy.core.designsystem.component.CamstudyText
 import io.foundy.core.designsystem.theme.CamstudyTheme
 import io.foundy.core.model.OrganizationOverview
+import io.foundy.core.ui.pullrefresh.RefreshableContent
 import io.foundy.ranking.ui.component.RankingTile
 import kotlinx.coroutines.launch
 import org.orbitmvi.orbit.compose.collectAsState
@@ -132,8 +133,7 @@ fun RankingScreen(
                 state = pagerState
             ) { page ->
                 RankingContent(
-                    tab = RankingTabDestination.values[page],
-                    uiState = uiState,
+                    uiState = uiState.getCurrentTabUiStateBy(RankingTabDestination.values[page]),
                     onClickUser = showUserProfileDialog
                 )
             }
@@ -143,29 +143,33 @@ fun RankingScreen(
 
 @Composable
 private fun RankingContent(
-    tab: RankingTabDestination,
-    uiState: RankingUiState,
-    onClickUser: (id: String) -> Unit
+    uiState: RankingTabUiState,
+    onClickUser: (id: String) -> Unit,
 ) {
-    val currentTab = uiState.getCurrentTabUiStateBy(tab)
-    val users = currentTab.rankingFlow.collectAsLazyPagingItems()
-    val currentUser = currentTab.currentUserRanking
-    val isLoading = currentTab.isCurrentUserRankingLoading
+    val users = uiState.rankingFlow.collectAsLazyPagingItems()
+    val currentUser = uiState.currentUserRanking
+    val isLoading = uiState.isCurrentUserRankingLoading ||
+        users.loadState.refresh is LoadState.Loading
 
     LaunchedEffect(Unit) {
-        if (currentTab.shouldFetchCurrentUserRanking) {
-            currentTab.fetchCurrentUserRanking()
+        if (uiState.shouldFetchRanking) {
+            uiState.fetchRanking()
         }
     }
 
-    LazyColumn(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(color = CamstudyTheme.colorScheme.systemBackground)
+    RefreshableContent(
+        modifier = Modifier.fillMaxSize(),
+        refreshing = isLoading,
+        onRefresh = {
+            uiState.fetchRanking()
+            users.refresh()
+        }
     ) {
-        if (isLoading) {
-            item { CircularProgressIndicator() }
-        } else {
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(color = CamstudyTheme.colorScheme.systemBackground)
+        ) {
             item {
                 if (currentUser != null) {
                     RankingTile(user = currentUser, isMe = true, onClick = onClickUser)
@@ -177,8 +181,8 @@ private fun RankingContent(
                 }
                 RankingTile(user = user, onClick = onClickUser)
             }
+            // TODO: 에러 보이기
         }
-        // TODO: 로딩, 에러 보이기
     }
 }
 
@@ -229,8 +233,8 @@ fun RankingScreenPreview() {
         RankingScreen(
             pagerState = pagerState,
             uiState = RankingUiState(
-                totalRanking = RankingTabUiState(fetchCurrentUserRanking = {}),
-                weeklyRanking = RankingTabUiState(fetchCurrentUserRanking = {}),
+                totalRanking = RankingTabUiState(fetchRanking = {}),
+                weeklyRanking = RankingTabUiState(fetchRanking = {}),
                 onSelectOrganization = {}
             ),
             clickedUserId = null,
