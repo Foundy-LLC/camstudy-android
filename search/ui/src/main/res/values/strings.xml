@@ -6,4 +6,6 @@
     <string name="failed_to_cancel_friend">친구 취소를 실패했습니다.</string>
     <string name="search_text_field_placeholder">검색어를 입력하세요</string>
     <string name="empty">텅</string>
+    <string name="chip_user">회원</string>
+    <string name="chip_study_room">스터디 룸</string>
 </resources>

@@ -6,11 +6,15 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -38,17 +42,26 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.paging.PagingData
+import androidx.paging.compose.LazyPagingItems
+import androidx.paging.compose.itemKey
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import io.found.user.ui.UserProfileDialog
 import io.foundy.core.designsystem.component.CamstudyDivider
+import io.foundy.core.designsystem.component.CamstudyFilterChip
 import io.foundy.core.designsystem.component.CamstudyText
 import io.foundy.core.designsystem.component.CamstudyTextField
 import io.foundy.core.designsystem.component.CamstudyTopAppBar
 import io.foundy.core.designsystem.theme.CamstudyTheme
 import io.foundy.core.model.FriendStatus
+import io.foundy.core.model.RoomOverview
 import io.foundy.core.model.SearchedUser
+import io.foundy.core.ui.RoomTileWithJoinButton
 import io.foundy.core.ui.UserProfileImage
+import io.foundy.core.ui.collectAsLazyPagingItems
+import io.foundy.room.ui.RoomActivity
+import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.launch
 import org.orbitmvi.orbit.compose.collectAsState
 import org.orbitmvi.orbit.compose.collectSideEffect
@@ -64,6 +77,7 @@ fun SearchRoute(
     val coroutineScope = rememberCoroutineScope()
     val context = LocalContext.current
     var userIdForShowDialog by remember { mutableStateOf<String?>(null) }
+    val (rooms) = uiState.searchedRoomFlow.collectAsLazyPagingItems()
 
     viewModel.collectSideEffect {
         when (it) {
@@ -81,9 +95,14 @@ fun SearchRoute(
 
     SearchScreen(
         uiState = uiState,
+        rooms = rooms,
         snackbarHostState = snackbarHostState,
         popBackStack = { navigator.popBackStack() },
-        onUserClick = { userIdForShowDialog = it }
+        onUserClick = { userIdForShowDialog = it },
+        onRoomJoinClick = { room ->
+            val intent = RoomActivity.getIntent(context, room)
+            context.startActivity(intent)
+        }
     )
 }
 
@@ -91,7 +110,9 @@ fun SearchRoute(
 @Composable
 fun SearchScreen(
     uiState: SearchUiState,
+    rooms: LazyPagingItems<RoomOverview>,
     onUserClick: (String) -> Unit,
+    onRoomJoinClick: (RoomOverview) -> Unit,
     popBackStack: () -> Unit,
     snackbarHostState: SnackbarHostState
 ) {
@@ -134,20 +155,60 @@ fun SearchScreen(
                 .padding(innerPadding)
                 .fillMaxSize()
         ) {
-            if (uiState.searchedUsers.isEmpty()) {
-                CamstudyText(
-                    modifier = Modifier.align(Alignment.Center),
-                    text = stringResource(R.string.empty),
-                    style = CamstudyTheme.typography.displayMedium.copy(
-                        color = CamstudyTheme.colorScheme.systemUi03,
-                        fontWeight = FontWeight.SemiBold
-                    )
+            Column(
+                modifier = Modifier.fillMaxSize()
+            ) {
+                Chips(
+                    selectedChip = uiState.selectedChip,
+                    onSelectChip = uiState.onSelectChip
                 )
-            } else {
-                LazyColumn {
-                    items(uiState.searchedUsers, key = { it.id }) { user ->
-                        UserTile(searchedUser = user, onClick = { onUserClick(user.id) })
-                    }
+
+                when (uiState.selectedChip) {
+                    SearchChip.User -> UserList(
+                        users = uiState.searchedUsers,
+                        onUserClick = onUserClick
+                    )
+                    SearchChip.StudyRoom -> StudyRoomList(
+                        rooms = rooms,
+                        onJoinClick = onRoomJoinClick
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun UserList(users: List<SearchedUser>, onUserClick: (String) -> Unit) {
+    if (users.isEmpty()) {
+        EmptyText()
+    } else {
+        LazyColumn {
+            items(users, key = { it.id }) { user ->
+                UserTile(searchedUser = user, onClick = { onUserClick(user.id) })
+            }
+        }
+    }
+}
+
+@Composable
+fun StudyRoomList(
+    rooms: LazyPagingItems<RoomOverview>,
+    onJoinClick: (RoomOverview) -> Unit
+) {
+    if (rooms.itemCount == 0) {
+        EmptyText()
+    } else {
+        LazyColumn(Modifier.fillMaxSize()) {
+            items(count = rooms.itemCount, key = rooms.itemKey { it.id }) { index ->
+                val room = rooms[index] ?: return@items
+
+                Box {
+                    RoomTileWithJoinButton(
+                        room = room,
+                        onJoinClick = onJoinClick
+                    )
+                    CamstudyDivider(Modifier.align(Alignment.BottomCenter))
                 }
             }
         }
@@ -195,6 +256,68 @@ private fun UserTile(
             }
         }
         CamstudyDivider(modifier = Modifier.align(Alignment.BottomCenter))
+    }
+}
+
+@Composable
+fun Chips(selectedChip: SearchChip, onSelectChip: (SearchChip) -> Unit) {
+    Box(
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        LazyRow(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(color = CamstudyTheme.colorScheme.systemBackground)
+                .padding(horizontal = 16.dp)
+        ) {
+            itemsIndexed(items = SearchChip.values()) { index, chip ->
+                CamstudyFilterChip(
+                    selected = chip == selectedChip,
+                    onClick = { onSelectChip(chip) },
+                    label = { CamstudyText(text = stringResource(id = chip.labelRes)) }
+                )
+                if (index != SearchChip.values().size - 1) {
+                    Spacer(modifier = Modifier.width(8.dp))
+                }
+            }
+        }
+        CamstudyDivider(Modifier.align(Alignment.BottomCenter))
+    }
+}
+
+@Composable
+private fun EmptyText() {
+    Box(modifier = Modifier.fillMaxSize()) {
+        CamstudyText(
+            modifier = Modifier.align(Alignment.Center),
+            text = stringResource(R.string.empty),
+            style = CamstudyTheme.typography.displayMedium.copy(
+                color = CamstudyTheme.colorScheme.systemUi03,
+                fontWeight = FontWeight.SemiBold
+            )
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun SearchScreenPreview() {
+    val (rooms) = emptyFlow<PagingData<RoomOverview>>().collectAsLazyPagingItems()
+
+    CamstudyTheme {
+        SearchScreen(
+            uiState = SearchUiState(
+                query = "김민성",
+                onSearchClick = {},
+                onQueryChanged = {},
+                onSelectChip = {}
+            ),
+            rooms = rooms,
+            onUserClick = {},
+            popBackStack = {},
+            snackbarHostState = SnackbarHostState(),
+            onRoomJoinClick = {}
+        )
     }
 }
 

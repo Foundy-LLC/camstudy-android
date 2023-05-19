@@ -3,6 +3,7 @@ package io.foundy.search.ui
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import io.foundy.room_list.data.repository.RoomListRepository
 import io.foundy.search.data.repository.SearchRepository
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -17,6 +18,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SearchViewModel @Inject constructor(
+    private val roomListRepository: RoomListRepository,
     private val searchRepository: SearchRepository
 ) : ViewModel(), ContainerHost<SearchUiState, SearchSideEffect> {
 
@@ -47,7 +49,7 @@ class SearchViewModel @Inject constructor(
                 delay(debounceMillis)
                 when (state.selectedChip) {
                     SearchChip.User -> searchUsers(query)
-                    SearchChip.StudyRoom -> TODO()
+                    SearchChip.StudyRoom -> searchRooms(query)
                 }
             }
         }
@@ -64,5 +66,9 @@ class SearchViewModel @Inject constructor(
                 )
             )
         }
+    }
+
+    private fun searchRooms(query: String) = intent {
+        reduce { state.copy(searchedRoomFlow = roomListRepository.getRooms(query)) }
     }
 }
