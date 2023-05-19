@@ -556,13 +556,13 @@ class RoomSocketService @Inject constructor(
         // close() 호출 후에 dispose()를 호출해야함
         // https://github.com/haiyangwu/mediasoup-client-android/issues/12#issuecomment-792287813
         _sendTransport?.close()
-        receiveTransportWrappers.forEach { wrapper ->
+        for (wrapper in receiveTransportWrappers) {
             wrapper.transport.close()
         }
 
         _sendTransport?.dispose()
         _sendTransport = null
-        receiveTransportWrappers.forEach { wrapper ->
+        for (wrapper in receiveTransportWrappers) {
             wrapper.transport.dispose()
         }
         receiveTransportWrappers.clear()
