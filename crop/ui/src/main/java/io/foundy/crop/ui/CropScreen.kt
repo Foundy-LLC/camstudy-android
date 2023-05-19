@@ -20,6 +20,7 @@ import io.foundy.core.model.CropGrade
 import io.foundy.core.model.CropType
 import io.foundy.core.model.GrowingCrop
 import io.foundy.core.model.HarvestedCrop
+import io.foundy.core.ui.pullrefresh.RefreshableContent
 import io.foundy.crop.ui.component.GrowingCropDivide
 import io.foundy.crop.ui.component.harvestedCropGridDivide
 import io.foundy.crop.ui.destinations.PlantCropRouteDestination
@@ -62,31 +63,33 @@ fun CropRoute(
     }
 
     CropScreen(
-        growingCropUiState = uiState.growingCropUiState,
-        harvestedCropsUiState = uiState.harvestedCropsUiState,
+        uiState = uiState,
         onPlantClick = navigateToPlantScreen,
     )
 }
 
 @Composable
 fun CropScreen(
-    growingCropUiState: GrowingCropUiState,
-    harvestedCropsUiState: HarvestedCropsUiState,
+    uiState: CropUiState,
     onPlantClick: () -> Unit,
 ) {
-    LazyColumn(
+    RefreshableContent(
         modifier = Modifier
             .fillMaxSize()
-            .background(color = CamstudyTheme.colorScheme.systemUi01)
+            .background(color = CamstudyTheme.colorScheme.systemUi01),
+        refreshing = uiState.isRefreshing,
+        onRefresh = uiState.onRefreshing
     ) {
-        item {
-            GrowingCropDivide(
-                growingCropUiState = growingCropUiState,
-                onPlantClick = onPlantClick,
-            )
+        LazyColumn {
+            item {
+                GrowingCropDivide(
+                    growingCropUiState = uiState.growingCropUiState,
+                    onPlantClick = onPlantClick,
+                )
+            }
+            item { Spacer(modifier = Modifier.height(8.dp)) }
+            harvestedCropGridDivide(harvestedCropsUiState = uiState.harvestedCropsUiState)
         }
-        item { Spacer(modifier = Modifier.height(8.dp)) }
-        harvestedCropGridDivide(harvestedCropsUiState = harvestedCropsUiState)
     }
 }
 
@@ -95,32 +98,36 @@ fun CropScreen(
 private fun CropScreenPreview() {
     CamstudyTheme {
         CropScreen(
-            growingCropUiState = GrowingCropUiState.Success(
-                growingCrop = GrowingCrop(
-                    id = "id",
-                    ownerId = "id",
-                    type = CropType.CARROT,
-                    level = 2,
-                    expectedGrade = CropGrade.SILVER,
-                    isDead = false,
-                    plantedAt = Calendar.getInstance().apply {
-                        set(2023, 3, 14, 21, 59)
-                    }.time
-                ),
-                onHarvestClick = {},
-                onReplantClick = {}
-            ),
-            harvestedCropsUiState = HarvestedCropsUiState.Success(
-                harvestedCrops = listOf(
-                    HarvestedCrop(
+            uiState = CropUiState(
+                growingCropUiState = GrowingCropUiState.Success(
+                    growingCrop = GrowingCrop(
+                        id = "id",
+                        ownerId = "id",
                         type = CropType.CARROT,
-                        grade = CropGrade.GOLD,
+                        level = 2,
+                        expectedGrade = CropGrade.SILVER,
+                        isDead = false,
                         plantedAt = Calendar.getInstance().apply {
-                            set(2023, 3, 1, 2, 2)
-                        }.time,
-                        harvestedAt = Date()
+                            set(2023, 3, 14, 21, 59)
+                        }.time
+                    ),
+                    onHarvestClick = {},
+                    onReplantClick = {}
+                ),
+                harvestedCropsUiState = HarvestedCropsUiState.Success(
+                    harvestedCrops = listOf(
+                        HarvestedCrop(
+                            type = CropType.CARROT,
+                            grade = CropGrade.GOLD,
+                            plantedAt = Calendar.getInstance().apply {
+                                set(2023, 3, 1, 2, 2)
+                            }.time,
+                            harvestedAt = Date()
+                        )
                     )
-                )
+                ),
+                onRefreshing = {},
+                fetchGrowingCrop = {}
             ),
             onPlantClick = {},
         )

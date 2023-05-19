@@ -7,7 +7,14 @@ data class CropUiState(
     val growingCropUiState: GrowingCropUiState = GrowingCropUiState.Loading,
     val harvestedCropsUiState: HarvestedCropsUiState = HarvestedCropsUiState.Loading,
     val fetchGrowingCrop: () -> Unit,
-)
+    val onRefreshing: () -> Unit
+) {
+    val isRefreshing: Boolean
+        get() {
+            return growingCropUiState is GrowingCropUiState.Loading &&
+                harvestedCropsUiState is HarvestedCropsUiState.Loading
+        }
+}
 
 sealed class GrowingCropUiState {
 

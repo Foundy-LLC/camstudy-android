@@ -201,6 +201,7 @@ fun GrowingCropTile(
     growingCropUiState: GrowingCropUiState,
     onClick: (GrowingCrop?) -> Unit
 ) {
+    // TODO: 작물 죽었거나 수확 가능한 경우 다르게 보이기
     when (growingCropUiState) {
         GrowingCropUiState.Loading -> GrowingCropTileSurface {}
         is GrowingCropUiState.Success -> GrowingCropTileContent(
