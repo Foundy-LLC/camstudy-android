@@ -8,4 +8,5 @@ data class RoomListUiState(
     val roomPagingDataStream: Flow<PagingData<RoomOverview>>,
     val searchQuery: String = "",
     val onSearchQueryChange: (String) -> Unit,
+    val onRefresh: () -> Unit
 )

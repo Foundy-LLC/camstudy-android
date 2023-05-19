@@ -1,6 +1,5 @@
 package io.foundy.room_list.ui
 
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -12,7 +11,6 @@ import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
@@ -20,7 +18,6 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -44,6 +41,7 @@ import io.foundy.core.designsystem.theme.CamstudyTheme
 import io.foundy.core.model.RoomOverview
 import io.foundy.core.ui.RoomTileWithJoinButton
 import io.foundy.core.ui.isScrollingUp
+import io.foundy.core.ui.pullrefresh.RefreshableContent
 import io.foundy.room.ui.RoomActivity
 import io.foundy.room_list.ui.create.destinations.RoomCreateScreenDestination
 import org.orbitmvi.orbit.compose.collectAsState
@@ -97,53 +95,56 @@ fun RoomListScreen(
 ) {
     val listState = rememberLazyListState()
 
-    Scaffold(
-        snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
-        containerColor = CamstudyTheme.colorScheme.systemBackground,
-        floatingActionButton = {
-            CamstudyExtendedFloatingActionButton(
-                onClick = onRoomCreateClick,
-                expanded = listState.isScrollingUp(),
-                text = { Text(text = stringResource(R.string.room_create_app_bar_title)) },
-                icon = {
-                    CamstudyIcon(icon = CamstudyIcons.Add, contentDescription = null)
-                }
-            )
-        }
-    ) { padding ->
-        LazyColumn(
-            modifier = Modifier.padding(padding),
-            state = listState
-        ) {
-            headerItem(query = uiState.searchQuery, onQueryChange = uiState.onSearchQueryChange)
-            items(
-                items = rooms,
-                key = { it.id }
-            ) { roomOverview ->
-                if (roomOverview == null) {
-                    return@items
-                }
-                Box {
-                    RoomTileWithJoinButton(
-                        modifier = Modifier.fillMaxWidth(),
-                        room = roomOverview,
-                        onJoinClick = onRoomJoinClick
-                    )
-                    CamstudyDivider()
-                }
+    RefreshableContent(
+        refreshing = rooms.loadState.refresh is LoadState.Loading,
+        onRefresh = uiState.onRefresh
+    ) {
+        Scaffold(
+            snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
+            containerColor = CamstudyTheme.colorScheme.systemBackground,
+            floatingActionButton = {
+                CamstudyExtendedFloatingActionButton(
+                    onClick = onRoomCreateClick,
+                    expanded = listState.isScrollingUp(),
+                    text = { Text(text = stringResource(R.string.room_create_app_bar_title)) },
+                    icon = {
+                        CamstudyIcon(icon = CamstudyIcons.Add, contentDescription = null)
+                    }
+                )
             }
-            item { CamstudyDivider() }
-            when (rooms.loadState.refresh) { // FIRST LOAD
-                is LoadState.Error -> errorItem(rooms.loadState)
-                is LoadState.Loading -> loadingItem()
-                else -> {}
+        ) { padding ->
+            LazyColumn(
+                modifier = Modifier.padding(padding),
+                state = listState
+            ) {
+                headerItem(query = uiState.searchQuery, onQueryChange = uiState.onSearchQueryChange)
+                items(
+                    items = rooms,
+                    key = { it.id }
+                ) { roomOverview ->
+                    if (roomOverview == null) {
+                        return@items
+                    }
+                    Box {
+                        RoomTileWithJoinButton(
+                            modifier = Modifier.fillMaxWidth(),
+                            room = roomOverview,
+                            onJoinClick = onRoomJoinClick
+                        )
+                        CamstudyDivider()
+                    }
+                }
+                item { CamstudyDivider() }
+                when (rooms.loadState.refresh) { // FIRST LOAD
+                    is LoadState.Error -> errorItem(rooms.loadState)
+                    else -> {}
+                }
+                when (rooms.loadState.append) { // Pagination
+                    is LoadState.Error -> errorItem(rooms.loadState)
+                    else -> {}
+                }
+                item { Spacer(modifier = Modifier.height(FloatingActionButtonBottomPadding)) }
             }
-            when (rooms.loadState.append) { // Pagination
-                is LoadState.Error -> errorItem(rooms.loadState)
-                is LoadState.Loading -> loadingItem()
-                else -> {}
-            }
-            item { Spacer(modifier = Modifier.height(FloatingActionButtonBottomPadding)) }
         }
     }
 }
@@ -184,18 +185,5 @@ private fun LazyListScope.errorItem(loadState: CombinedLoadStates) {
     item {
         val message = error.error.message ?: stringResource(R.string.unknown_error_caused)
         Text(text = message)
-    }
-}
-
-private fun LazyListScope.loadingItem() {
-    item {
-        Column(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center,
-        ) {
-            Text(text = "Pagination Loading")
-            CircularProgressIndicator()
-        }
     }
 }

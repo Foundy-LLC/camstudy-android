@@ -24,10 +24,15 @@ class RoomListViewModel @Inject constructor(
         RoomListUiState(
             roomPagingDataStream = roomListRepository.getRooms("").cachedIn(viewModelScope),
             onSearchQueryChange = ::updateSearchQuery,
+            onRefresh = ::refresh
         )
     )
 
     private var roomSearchJob: Job? = null
+
+    private fun refresh() = intent {
+        updateSearchQuery(state.searchQuery)
+    }
 
     private fun updateSearchQuery(query: String) = intent {
         reduce { state.copy(searchQuery = query) }
