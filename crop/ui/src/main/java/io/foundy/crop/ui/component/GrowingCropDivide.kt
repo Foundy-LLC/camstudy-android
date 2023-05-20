@@ -2,6 +2,7 @@ package io.foundy.crop.ui.component
 
 import android.content.res.Configuration
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -52,6 +53,7 @@ import java.util.Calendar
 fun GrowingCropDivide(
     growingCropUiState: GrowingCropUiState,
     onPlantClick: () -> Unit,
+    onQuestionClick: () -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -64,6 +66,7 @@ fun GrowingCropDivide(
         DivideContent(
             growingCropUiState = growingCropUiState,
             onPlantClick = onPlantClick,
+            onQuestionClick = onQuestionClick
         )
     }
 }
@@ -72,6 +75,7 @@ fun GrowingCropDivide(
 private fun DivideContent(
     growingCropUiState: GrowingCropUiState,
     onPlantClick: () -> Unit,
+    onQuestionClick: () -> Unit
 ) {
     val growingCropSuccessUiState = growingCropUiState as? GrowingCropUiState.Success
     val growingCrop = growingCropSuccessUiState?.growingCrop
@@ -86,7 +90,10 @@ private fun DivideContent(
                 }
                 is GrowingCropUiState.Success -> {
                     if (growingCropUiState.growingCrop != null) {
-                        GrowingCropInfo(growingCrop = growingCropUiState.growingCrop)
+                        GrowingCropInfo(
+                            growingCrop = growingCropUiState.growingCrop,
+                            onQuestionClick = onQuestionClick
+                        )
                     } else {
                         EmptyGrowingCropInfo(onPlantClick = onPlantClick)
                     }
@@ -185,7 +192,7 @@ private fun EmptyGrowingCropInfo(onPlantClick: () -> Unit) {
 }
 
 @Composable
-private fun GrowingCropInfo(growingCrop: GrowingCrop) {
+private fun GrowingCropInfo(growingCrop: GrowingCrop, onQuestionClick: () -> Unit) {
     val titleSmallFixedSizeTextStyle = CamstudyTheme.typography.titleSmall.copy(
         fontSize = CamstudyTheme.typography.titleSmall.fontSize.nonScaledSp
     )
@@ -268,16 +275,28 @@ private fun GrowingCropInfo(growingCrop: GrowingCrop) {
                     },
                     style = textStyle
                 )
-                Spacer(modifier = Modifier.height(8.dp))
-                CamstudyText(
-                    modifier = Modifier.height(18.dp),
-                    text = if (growingCrop.isDead) {
-                        stringResource(R.string.empty_content)
-                    } else {
-                        growingCrop.getExpectedGradeText()
-                    },
-                    style = textStyle
-                )
+                Row(
+                    modifier = Modifier
+                        .clickable(onClick = onQuestionClick)
+                        .padding(top = 8.dp, end = 8.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    CamstudyText(
+                        modifier = Modifier.height(18.dp),
+                        text = if (growingCrop.isDead) {
+                            stringResource(R.string.empty_content)
+                        } else {
+                            growingCrop.getExpectedGradeText()
+                        },
+                        style = textStyle
+                    )
+                    CamstudyIcon(
+                        modifier = Modifier.size(18.dp),
+                        icon = CamstudyIcons.Question,
+                        contentDescription = null,
+                        tint = Color.Unspecified
+                    )
+                }
             }
         }
     }
@@ -314,6 +333,7 @@ fun LoadingGrowingCropDividePreview() {
         GrowingCropDivide(
             growingCropUiState = GrowingCropUiState.Loading,
             onPlantClick = {},
+            onQuestionClick = {}
         )
     }
 }
@@ -340,6 +360,7 @@ fun GrowingCropDividePreview() {
                 onReplantClick = {},
             ),
             onPlantClick = {},
+            onQuestionClick = {}
         )
     }
 }
@@ -365,6 +386,7 @@ fun GrowingCropDivideCanHarvestPreview() {
                 onReplantClick = {},
             ),
             onPlantClick = {},
+            onQuestionClick = {}
         )
     }
 }
@@ -390,6 +412,7 @@ fun GrowingCropDivideDeadPreview() {
                 onReplantClick = {},
             ),
             onPlantClick = {},
+            onQuestionClick = {}
         )
     }
 }
@@ -406,6 +429,7 @@ fun EmptyGrowingCropDividePreview() {
                 onReplantClick = {},
             ),
             onPlantClick = {},
+            onQuestionClick = {}
         )
     }
 }
@@ -417,6 +441,7 @@ fun FailureGrowingCropDividePreview() {
         GrowingCropDivide(
             growingCropUiState = GrowingCropUiState.Failure(message = null),
             onPlantClick = {},
+            onQuestionClick = {}
         )
     }
 }

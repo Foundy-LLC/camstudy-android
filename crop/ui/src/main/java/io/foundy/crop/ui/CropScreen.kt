@@ -6,8 +6,13 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -15,6 +20,7 @@ import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.ramcosta.composedestinations.result.NavResult
 import com.ramcosta.composedestinations.result.OpenResultRecipient
+import io.foundy.core.designsystem.component.CamstudyDialog
 import io.foundy.core.designsystem.theme.CamstudyTheme
 import io.foundy.core.model.CropGrade
 import io.foundy.core.model.CropType
@@ -42,6 +48,7 @@ fun CropRoute(
     val navigateToPlantScreen = {
         navigator.navigate(PlantCropRouteDestination)
     }
+    var showCropQuestionDialog by remember { mutableStateOf(false) }
 
     plantResultRecipient.onNavResult {
         when (it) {
@@ -62,9 +69,19 @@ fun CropRoute(
         }
     }
 
+    if (showCropQuestionDialog) {
+        CamstudyDialog(
+            title = stringResource(R.string.crop_question_title),
+            content = stringResource(R.string.crop_question_content),
+            onDismissRequest = { showCropQuestionDialog = false },
+            onConfirm = { showCropQuestionDialog = false }
+        )
+    }
+
     CropScreen(
         uiState = uiState,
         onPlantClick = navigateToPlantScreen,
+        onQuestionClick = { showCropQuestionDialog = true }
     )
 }
 
@@ -72,6 +89,7 @@ fun CropRoute(
 fun CropScreen(
     uiState: CropUiState,
     onPlantClick: () -> Unit,
+    onQuestionClick: () -> Unit,
 ) {
     RefreshableContent(
         modifier = Modifier
@@ -85,6 +103,7 @@ fun CropScreen(
                 GrowingCropDivide(
                     growingCropUiState = uiState.growingCropUiState,
                     onPlantClick = onPlantClick,
+                    onQuestionClick = onQuestionClick
                 )
             }
             item { Spacer(modifier = Modifier.height(8.dp)) }
@@ -130,6 +149,7 @@ private fun CropScreenPreview() {
                 fetchGrowingCrop = {}
             ),
             onPlantClick = {},
+            onQuestionClick = {}
         )
     }
 }

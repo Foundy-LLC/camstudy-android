@@ -36,4 +36,6 @@
     <string name="crop_deleted">작물을 제거했어요</string>
     <string name="failed_to_delete_crop">작물 제거를 실패했어요</string>
     <string name="replant_dialog_content">작물을 제거하고 심는 페이지로 이동합니다.</string>
+    <string name="crop_question_title">작물 등급 계산 방식 안내</string>
+    <string name="crop_question_content">하루 평균 공부 시간에 따라 작물 등급이 산정됩니다. 하루 평균 공부 시간의 계산식은 아래와 같습니다.\n\nTOTAL = 작물을 심고 수확할 때 까지의 공부한 시간 합\nHARVEST = 작물을 수확하는 데에 필요한 날짜 수\n하루 평균 공부 시간 = TOTAL / HARVEST\n\n하루 평균 공부 시간 당 작물 등급은 아래와 같습니다.\n\n0시간~ : 살짝 시든 작물\n1시간~ : 싱싱한 일반 작물\n2시간~ : 실버 작물\n4시간~ : 황금 작물\n8시간~ : 다이아 작물</string>
 </resources>
