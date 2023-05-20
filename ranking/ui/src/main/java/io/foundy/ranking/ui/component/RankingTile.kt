@@ -28,7 +28,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import io.foundy.core.ui.util.secToHourMinuteFormat
 import io.foundy.core.designsystem.component.CamstudyDivider
 import io.foundy.core.designsystem.component.CamstudyText
 import io.foundy.core.designsystem.icon.CamstudyIcon
@@ -36,6 +35,7 @@ import io.foundy.core.designsystem.icon.CamstudyIcons
 import io.foundy.core.designsystem.theme.CamstudyTheme
 import io.foundy.core.model.UserRankingOverview
 import io.foundy.core.ui.UserProfileImage
+import io.foundy.core.ui.util.secToHourMinuteFormat
 import io.foundy.ranking.ui.R
 
 private fun getRankingNumberBoxColorBy(ranking: Int): Color {

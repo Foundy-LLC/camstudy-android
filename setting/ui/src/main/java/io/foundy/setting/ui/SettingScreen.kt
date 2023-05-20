@@ -1,7 +1,9 @@
 package io.foundy.setting.ui
 
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -9,11 +11,14 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import io.foundy.core.designsystem.component.CamstudyText
 import io.foundy.core.designsystem.component.CamstudyTopAppBar
+import io.foundy.core.designsystem.theme.CamstudyTheme
+import io.foundy.core.ui.UserProfileInfoGroup
 import io.foundy.setting.ui.component.UserTile
 import io.foundy.setting.ui.component.UserTileShimmer
 import org.orbitmvi.orbit.compose.collectAsState
@@ -36,6 +41,7 @@ fun SettingScreen(
     popBackStack: () -> Unit
 ) {
     Scaffold(
+        containerColor = CamstudyTheme.colorScheme.systemUi01,
         topBar = {
             CamstudyTopAppBar(
                 onBackClick = popBackStack,
@@ -66,6 +72,20 @@ private fun SuccessContent(uiState: SettingUiState.Success) {
                 introduce = user.introduce,
                 tags = user.tags,
                 onClick = { /* TODO */ }
+            )
+        }
+        item {
+            Spacer(modifier = Modifier.height(8.dp))
+        }
+        item {
+            UserProfileInfoGroup(
+                modifier = Modifier.padding(vertical = 10.dp, horizontal = 16.dp),
+                weeklyRankingOverall = user.weeklyRankingOverall,
+                weeklyStudyTimeSec = user.weeklyStudyTimeSec,
+                weeklyRanking = user.weeklyRanking,
+                consecutiveStudyDays = user.consecutiveStudyDays,
+                growingCrop = user.growingCrop,
+                harvestedCrops = user.harvestedCrops
             )
         }
     }

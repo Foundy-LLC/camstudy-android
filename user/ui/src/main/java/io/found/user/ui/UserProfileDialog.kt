@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -29,9 +28,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.Layout
-import androidx.compose.ui.layout.Placeable
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -40,7 +36,6 @@ import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
 import io.found.user.ui.UserProfileDialogProperty.ProfileShape
 import io.found.user.ui.UserProfileDialogProperty.ProfileSize
-import io.foundy.core.ui.util.secToHourMinuteFormat
 import io.foundy.core.designsystem.component.CamstudyContainedButton
 import io.foundy.core.designsystem.component.CamstudyDialog
 import io.foundy.core.designsystem.component.CamstudyDivider
@@ -48,7 +43,6 @@ import io.foundy.core.designsystem.component.CamstudyOutlinedButton
 import io.foundy.core.designsystem.component.CamstudyText
 import io.foundy.core.designsystem.component.DialogMaxWidth
 import io.foundy.core.designsystem.component.DialogMinWidth
-import io.foundy.core.designsystem.icon.CamstudyIcon
 import io.foundy.core.designsystem.icon.CamstudyIcons
 import io.foundy.core.designsystem.theme.CamstudyTheme
 import io.foundy.core.model.CropGrade
@@ -58,8 +52,7 @@ import io.foundy.core.model.GrowingCrop
 import io.foundy.core.model.HarvestedCrop
 import io.foundy.core.model.User
 import io.foundy.core.ui.UserProfileImage
-import io.foundy.core.ui.crop.getName
-import io.foundy.core.ui.crop.imageIcon
+import io.foundy.core.ui.UserProfileInfoGroup
 import io.foundy.user.ui.R
 import org.orbitmvi.orbit.compose.collectAsState
 import java.util.Date
@@ -128,7 +121,6 @@ private fun UserProfileDialogContent(
 @Composable
 private fun ColumnScope.SuccessContent(uiState: UserProfileDialogUiState.Success) {
     val user = uiState.user
-    val growingCrop = user.growingCrop
 
     var showFriendCancelRecheckDialog by remember { mutableStateOf(false) }
 
@@ -165,98 +157,13 @@ private fun ColumnScope.SuccessContent(uiState: UserProfileDialogUiState.Success
     Spacer(modifier = Modifier.height(20.dp))
     CamstudyDivider()
     Spacer(modifier = Modifier.height(14.dp))
-    InfoTile(
-        leadingIcon = CamstudyIcons.Ranking,
-        title = stringResource(R.string.user_dialog_weekly_ranking_title),
-        content = {
-            CamstudyText(
-                text = stringResource(
-                    R.string.user_dialog_ranking_content,
-                    user.weeklyRanking
-                ),
-                style = CamstudyTheme.typography.titleMedium.copy(
-                    color = CamstudyTheme.colorScheme.systemUi08,
-                    fontWeight = FontWeight.SemiBold
-                )
-            )
-        },
-        trailingInfo = stringResource(
-            R.string.user_dialog_weekly_ranking_overall_info,
-            user.weeklyRankingOverall
-        )
-    )
-    InfoTile(
-        leadingIcon = CamstudyIcons.AccessTimeFilled,
-        title = stringResource(R.string.user_dialog_weekly_study_time_title),
-        content = {
-            CamstudyText(
-                text = if (user.weeklyStudyTimeSec == 0) {
-                    stringResource(R.string.none)
-                } else {
-                    user.weeklyStudyTimeSec.secToHourMinuteFormat()
-                },
-                style = CamstudyTheme.typography.titleSmall.copy(
-                    color = CamstudyTheme.colorScheme.systemUi08,
-                    fontWeight = FontWeight.SemiBold
-                )
-            )
-        },
-        trailingInfo = stringResource(
-            R.string.user_dialog_consecutive_study_days,
-            user.consecutiveStudyDays
-        )
-    )
-    InfoTile(
-        leadingIcon = CamstudyIcons.Crop,
-        title = stringResource(R.string.user_dialog_plant_pot_title),
-        content = {
-            if (growingCrop != null) {
-                CamstudyIcon(
-                    icon = growingCrop.imageIcon,
-                    contentDescription = null,
-                    tint = Color.Unspecified
-                )
-            }
-        },
-        trailingInfo = if (growingCrop != null) {
-            stringResource(
-                R.string.user_dialog_growing_crop_info,
-                growingCrop.getName(),
-                growingCrop.level
-            )
-        } else {
-            stringResource(R.string.user_dialog_empty)
-        }
-    )
-    InfoTile(
-        leadingIcon = CamstudyIcons.Leaf,
-        title = stringResource(R.string.user_dialog_harvested_crops_title),
-        content = {
-            var visibleCropCount by remember { mutableStateOf(0) }
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                HarvestedCropRow(
-                    crops = user.harvestedCrops,
-                    onPlacementComplete = { visibleCropCount = it }
-                )
-                if (visibleCropCount != user.harvestedCrops.size) {
-                    CamstudyText(
-                        text = stringResource(R.string.ellipsis),
-                        style = CamstudyTheme.typography.labelMedium.copy(
-                            color = CamstudyTheme.colorScheme.systemUi05,
-                            fontWeight = FontWeight.Bold
-                        )
-                    )
-                }
-            }
-        },
-        trailingInfo = if (user.harvestedCrops.isEmpty()) {
-            stringResource(R.string.user_dialog_empty_harvested_crops)
-        } else {
-            stringResource(
-                R.string.user_dialog_harvested_crops_content,
-                user.harvestedCrops.size
-            )
-        }
+    UserProfileInfoGroup(
+        weeklyRankingOverall = user.weeklyRankingOverall,
+        weeklyStudyTimeSec = user.weeklyStudyTimeSec,
+        weeklyRanking = user.weeklyRanking,
+        consecutiveStudyDays = user.consecutiveStudyDays,
+        growingCrop = user.growingCrop,
+        harvestedCrops = user.harvestedCrops
     )
     if (!user.isMe) {
         Spacer(modifier = Modifier.height(18.dp))
@@ -362,100 +269,6 @@ private fun TagItem(tag: String) {
                 fontWeight = FontWeight.Normal
             )
         )
-    }
-}
-
-@Composable
-private fun InfoTile(
-    leadingIcon: CamstudyIcon,
-    title: String,
-    content: @Composable () -> Unit,
-    trailingInfo: String
-) {
-    Row(
-        modifier = Modifier
-            .padding(vertical = 10.dp)
-            .height(24.dp)
-            .fillMaxWidth(),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Row(
-            modifier = Modifier.fillMaxHeight(),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            CamstudyIcon(
-                icon = leadingIcon,
-                contentDescription = null,
-                tint = CamstudyTheme.colorScheme.systemUi09
-            )
-            Spacer(modifier = Modifier.width(4.dp))
-            CamstudyText(
-                text = title,
-                style = CamstudyTheme.typography.titleSmall.copy(
-                    color = CamstudyTheme.colorScheme.systemUi08,
-                    fontWeight = FontWeight.SemiBold
-                )
-            )
-        }
-        Box(
-            modifier = Modifier
-                .weight(1f)
-                .padding(horizontal = 6.dp)
-        ) {
-            Box(modifier = Modifier.align(Alignment.Center)) {
-                content()
-            }
-        }
-        CamstudyText(
-            text = trailingInfo,
-            style = CamstudyTheme.typography.labelMedium.copy(
-                color = CamstudyTheme.colorScheme.systemUi06,
-                fontWeight = FontWeight.Normal
-            )
-        )
-    }
-}
-
-private data class CropRowItem(val placeable: Placeable, val xPosition: Int)
-
-@Composable
-private fun HarvestedCropRow(
-    crops: List<HarvestedCrop>,
-    onPlacementComplete: (visibleCropCount: Int) -> Unit,
-) {
-    Layout(
-        content = {
-            for (crop in crops) {
-                CamstudyIcon(
-                    modifier = Modifier.padding(end = 8.dp),
-                    icon = crop.imageIcon,
-                    contentDescription = null,
-                    tint = Color.Unspecified
-                )
-            }
-        }
-    ) { measurables, constraints ->
-        val placeables = measurables.map { it.measure(constraints) }
-        val items = mutableListOf<CropRowItem>()
-        var xPosition = 0
-
-        for (placeable in placeables) {
-            if (xPosition + placeable.width > constraints.maxWidth) {
-                break
-            }
-            items.add(CropRowItem(placeable, xPosition))
-            xPosition += placeable.width
-        }
-
-        layout(
-            width = items.lastOrNull()?.let { it.xPosition + it.placeable.width } ?: 0,
-            height = items.maxOfOrNull { it.placeable.height } ?: 0
-        ) {
-            for (item in items) {
-                item.placeable.place(item.xPosition, 0)
-            }
-            onPlacementComplete(items.count())
-        }
     }
 }
 

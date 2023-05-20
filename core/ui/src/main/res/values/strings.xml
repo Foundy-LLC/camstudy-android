@@ -20,4 +20,19 @@
     <string name="already_inputed_tag">이미 입력한 태그입니다</string>
     <string name="hours_format">%d시간</string>
     <string name="minutes_format">%d분</string>
+
+    <string name="user_dialog_failed_to_load_user">회원을 불러오지 못했어요</string>
+    <string name="user_dialog_plant_pot_title">화분</string>
+    <string name="user_dialog_empty">비어있음</string>
+    <string name="user_dialog_growing_crop_info">%s %d단계</string>
+    <string name="user_dialog_ranking_content">%d위</string>
+    <string name="user_dialog_weekly_ranking_overall_info">상위 %d\%%</string>
+    <string name="user_dialog_weekly_ranking_title">이번 주 랭킹</string>
+    <string name="user_dialog_weekly_study_time_title">주간 공부시간</string>
+    <string name="user_dialog_consecutive_study_days">%d일 연속 공부중</string>
+    <string name="none">없음</string>
+    <string name="user_dialog_harvested_crops_title">작물 현황</string>
+    <string name="user_dialog_empty_harvested_crops">수확한 작물 없음</string>
+    <string name="user_dialog_harvested_crops_content">총 %d개</string>
+    <string name="ellipsis">…</string>
 </resources>
