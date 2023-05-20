@@ -63,6 +63,7 @@ dependencies {
     implementation project(":core:test")
     implementation project(":auth:data")
     implementation project(":auth:ui")
+    implementation project(":setting:ui")
     implementation project(":welcome:ui")
     implementation project(":home:ui")
     implementation project(":room-list:ui")

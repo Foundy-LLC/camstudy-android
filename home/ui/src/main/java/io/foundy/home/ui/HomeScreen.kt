@@ -48,6 +48,7 @@ import io.foundy.home.ui.main.MainTabRoute
 import io.foundy.home.ui.navigation.HomeNavGraph
 import io.foundy.home.ui.navigation.HomeTabDestination
 import io.foundy.search.ui.destinations.SearchRouteDestination
+import io.foundy.setting.ui.destinations.SettingRouteDestination
 import kotlinx.coroutines.launch
 import org.orbitmvi.orbit.compose.collectAsState
 import org.orbitmvi.orbit.compose.collectSideEffect
@@ -108,7 +109,7 @@ fun HomeScreen(
                                 )
                             )
                         }
-                        IconButton(onClick = { /*TODO*/ }) {
+                        IconButton(onClick = { navigator.navigate(SettingRouteDestination) }) {
                             UserProfileImage(
                                 imageUrl = uiState.currentUserProfileImage,
                                 imageOrContainerSize = 32.dp,

@@ -9,7 +9,7 @@ plugins {
 android {
     def globalConfiguration = rootProject.extensions.getByName("ext")
 
-    namespace 'io.foundy.home.ui'
+    namespace 'io.foundy.setting.ui'
     compileSdk globalConfiguration["android_compile_sdk_version"]
 
     defaultConfig {
@@ -30,42 +30,38 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
     buildFeatures {
         compose true
     }
     composeOptions {
         kotlinCompilerExtensionVersion '1.4.2'
     }
-    kotlinOptions {
-        jvmTarget = '1.8'
-    }
     ksp {
-        arg("compose-destinations.moduleName", "home")
+        arg("compose-destinations.moduleName", "setting")
         arg("compose-destinations.mode", "destinations")
     }
 }
 
 dependencies {
-    implementation project(path: ':core:navigation')
     implementation project(path: ':core:designsystem')
-    implementation project(path: ':dashboard:ui')
-    implementation project(path: ':room-list:ui')
-    implementation project(path: ':crop:ui')
-    implementation project(path: ':core:ui')
     implementation project(path: ':core:model')
-    implementation project(path: ':ranking:ui')
-    implementation project(path: ':search:ui')
-    implementation project(path: ':friend:ui')
-    implementation project(path: ':auth:data')
-    implementation project(path: ':setting:ui')
-    implementation project(path: ':user:domain')
+    implementation project(path: ':core:ui')
 
     // compose destination
     implementation "io.github.raamcosta.compose-destinations:core:$compose_destination_version"
     ksp "io.github.raamcosta.compose-destinations:ksp:$compose_destination_version"
 
+    // orbit
+    implementation("org.orbit-mvi:orbit-viewmodel:$orbit_version")
+    implementation("org.orbit-mvi:orbit-compose:$orbit_version")
+    testImplementation("org.orbit-mvi:orbit-test:$orbit_version")
+
     // hilt
     implementation "com.google.dagger:hilt-android:$hilt_version"
+    implementation "androidx.hilt:hilt-navigation-compose:$hilt_navigation_compose"
     kapt "com.google.dagger:hilt-android-compiler:$hilt_version"
     testImplementation "com.google.dagger:hilt-android-testing:$hilt_version"
     kaptTest "com.google.dagger:hilt-android-compiler:$hilt_version"
@@ -73,17 +69,6 @@ dependencies {
     androidTestImplementation "com.google.dagger:hilt-android-testing:$hilt_version"
     kaptAndroidTest "com.google.dagger:hilt-android-compiler:$hilt_version"
     androidTestAnnotationProcessor "com.google.dagger:hilt-android-compiler:$hilt_version"
-    implementation "androidx.hilt:hilt-navigation-compose:$hilt_navigation_compose"
-
-    // orbit
-    implementation("org.orbit-mvi:orbit-viewmodel:$orbit_version")
-    implementation("org.orbit-mvi:orbit-compose:$orbit_version")
-    testImplementation("org.orbit-mvi:orbit-test:$orbit_version")
-
-    // navigation
-    implementation "androidx.navigation:navigation-compose:$nav_version"
-    implementation "androidx.hilt:hilt-navigation-compose:$hilt_navigation_compose"
-    implementation "com.google.accompanist:accompanist-navigation-animation:$accompanist_navigation_animation"
 
     implementation 'androidx.core:core-ktx:1.9.0'
     implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.5.1'
@@ -102,3 +87,4 @@ dependencies {
 kapt {
     correctErrorTypes true
 }
+
