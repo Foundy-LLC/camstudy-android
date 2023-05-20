@@ -4,23 +4,28 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hierarchy
 import com.ramcosta.composedestinations.DestinationsNavHost
@@ -35,6 +40,7 @@ import io.foundy.core.designsystem.component.CamstudyTopAppBar
 import io.foundy.core.designsystem.icon.CamstudyIcon
 import io.foundy.core.designsystem.icon.CamstudyIcons
 import io.foundy.core.designsystem.theme.CamstudyTheme
+import io.foundy.core.ui.UserProfileImage
 import io.foundy.crop.ui.CropRoute
 import io.foundy.crop.ui.destinations.CropRouteDestination
 import io.foundy.home.ui.destinations.MainTabRouteDestination
@@ -42,25 +48,45 @@ import io.foundy.home.ui.main.MainTabRoute
 import io.foundy.home.ui.navigation.HomeNavGraph
 import io.foundy.home.ui.navigation.HomeTabDestination
 import io.foundy.search.ui.destinations.SearchRouteDestination
+import kotlinx.coroutines.launch
+import org.orbitmvi.orbit.compose.collectAsState
+import org.orbitmvi.orbit.compose.collectSideEffect
 
 @Destination(style = DestinationStyle.Runtime::class)
 @Composable
 fun HomeRoute(
     navigator: DestinationsNavigator,
     plantResultRecipient: OpenResultRecipient<Boolean>,
+    viewModel: HomeViewModel = hiltViewModel(),
+    homeScreenState: HomeScreenState = rememberHomeScreenState(),
 ) {
+    val uiState = viewModel.collectAsState().value
+    val coroutineScope = rememberCoroutineScope()
+    val context = LocalContext.current
+
+    viewModel.collectSideEffect {
+        when (it) {
+            is HomeSideEffect.Message -> coroutineScope.launch {
+                homeScreenState.showSnackbar(it.content ?: context.getString(it.defaultRes))
+            }
+        }
+    }
+
     HomeScreen(
+        uiState = uiState,
         navigator = navigator,
         plantResultRecipient = plantResultRecipient,
+        homeScreenState = homeScreenState
     )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
+    uiState: HomeUiState,
     navigator: DestinationsNavigator,
     plantResultRecipient: OpenResultRecipient<Boolean>,
-    homeScreenState: HomeScreenState = rememberHomeScreenState(),
+    homeScreenState: HomeScreenState,
 ) {
     Scaffold(
         topBar = {
@@ -73,11 +99,22 @@ fun HomeScreen(
                     )
                 },
                 leading = {
-                    IconButton(onClick = { navigator.navigate(SearchRouteDestination) }) {
-                        CamstudyIcon(
-                            icon = CamstudyIcons.Search,
-                            contentDescription = stringResource(R.string.search_content_description)
-                        )
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        IconButton(onClick = { navigator.navigate(SearchRouteDestination) }) {
+                            CamstudyIcon(
+                                icon = CamstudyIcons.Search,
+                                contentDescription = stringResource(
+                                    id = R.string.search_content_description
+                                )
+                            )
+                        }
+                        IconButton(onClick = { /*TODO*/ }) {
+                            UserProfileImage(
+                                imageUrl = uiState.currentUserProfileImage,
+                                imageOrContainerSize = 32.dp,
+                                cornerShape = RoundedCornerShape(32.dp)
+                            )
+                        }
                     }
                 }
             )
