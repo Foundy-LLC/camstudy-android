@@ -49,6 +49,8 @@ dependencies {
     implementation project(path: ':core:designsystem')
     implementation project(path: ':core:model')
     implementation project(path: ':core:ui')
+    implementation project(path: ':auth:data')
+    implementation project(path: ':user:domain')
 
     // compose destination
     implementation "io.github.raamcosta.compose-destinations:core:$compose_destination_version"

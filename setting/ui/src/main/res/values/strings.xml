@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="failed_to_load_my_profile">내 정보를 불러오지 못했어요</string>
+    <string name="my_profile">내 정보</string>
+</resources>
