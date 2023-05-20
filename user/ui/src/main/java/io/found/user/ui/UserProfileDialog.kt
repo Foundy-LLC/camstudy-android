@@ -40,7 +40,7 @@ import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
 import io.found.user.ui.UserProfileDialogProperty.ProfileShape
 import io.found.user.ui.UserProfileDialogProperty.ProfileSize
-import io.foundy.core.common.util.formatDuration
+import io.foundy.core.ui.util.secToHourMinuteFormat
 import io.foundy.core.designsystem.component.CamstudyContainedButton
 import io.foundy.core.designsystem.component.CamstudyDialog
 import io.foundy.core.designsystem.component.CamstudyDivider
@@ -193,7 +193,7 @@ private fun ColumnScope.SuccessContent(uiState: UserProfileDialogUiState.Success
                 text = if (user.weeklyStudyTimeSec == 0) {
                     stringResource(R.string.none)
                 } else {
-                    user.weeklyStudyTimeSec.formatDuration()
+                    user.weeklyStudyTimeSec.secToHourMinuteFormat()
                 },
                 style = CamstudyTheme.typography.titleSmall.copy(
                     color = CamstudyTheme.colorScheme.systemUi08,

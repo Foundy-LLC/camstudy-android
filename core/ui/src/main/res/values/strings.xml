@@ -18,4 +18,6 @@
     <string name="gold">골드</string>
     <string name="diamond">다이아몬드</string>
     <string name="already_inputed_tag">이미 입력한 태그입니다</string>
+    <string name="hours_format">%d시간</string>
+    <string name="minutes_format">%d분</string>
 </resources>

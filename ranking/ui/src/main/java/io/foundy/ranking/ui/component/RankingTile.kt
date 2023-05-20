@@ -28,7 +28,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import io.foundy.core.common.util.formatDuration
+import io.foundy.core.ui.util.secToHourMinuteFormat
 import io.foundy.core.designsystem.component.CamstudyDivider
 import io.foundy.core.designsystem.component.CamstudyText
 import io.foundy.core.designsystem.icon.CamstudyIcon
@@ -204,7 +204,7 @@ private fun RankingDetail(score: Int, studyTimeSec: Int) {
         )
         Spacer(modifier = Modifier.width(12.dp))
         CamstudyText(
-            text = studyTimeSec.formatDuration(),
+            text = studyTimeSec.secToHourMinuteFormat(),
             style = infoTextStyle
         )
     }
