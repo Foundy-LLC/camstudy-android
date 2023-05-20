@@ -201,7 +201,6 @@ fun GrowingCropTile(
     growingCropUiState: GrowingCropUiState,
     onClick: (GrowingCrop?) -> Unit
 ) {
-    // TODO: 작물 죽었거나 수확 가능한 경우 다르게 보이기
     when (growingCropUiState) {
         GrowingCropUiState.Loading -> GrowingCropTileSurface {}
         is GrowingCropUiState.Success -> GrowingCropTileContent(
@@ -227,11 +226,15 @@ private fun GrowingCropTileContent(crop: GrowingCrop?, onClick: () -> Unit) {
     val text = if (crop == null) {
         buildAnnotatedString { append(stringResource(R.string.no_growing_crop)) }
     } else {
-        val stateText = stringResource(
-            R.string.current_growing_crop,
-            crop.getName(),
-            crop.level
-        )
+        val stateText = when {
+            crop.isDead -> stringResource(R.string.dashboard_growing_crop_is_dead)
+            crop.canHarvest -> stringResource(R.string.dashboard_growing_crop_can_harvest)
+            else -> stringResource(
+                R.string.current_growing_crop,
+                crop.getName(),
+                crop.level
+            )
+        }
         buildAnnotatedString {
             append(stringResource(R.string.current_growing_crop_prefix))
             withStyle(style = SpanStyle(color = CamstudyTheme.colorScheme.error)) {
