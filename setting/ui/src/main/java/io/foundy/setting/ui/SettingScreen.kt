@@ -18,9 +18,12 @@ import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import io.foundy.core.designsystem.component.CamstudyText
 import io.foundy.core.designsystem.component.CamstudyTopAppBar
 import io.foundy.core.designsystem.theme.CamstudyTheme
+import io.foundy.core.model.User
 import io.foundy.core.ui.UserProfileInfoGroup
 import io.foundy.setting.ui.component.UserTile
 import io.foundy.setting.ui.component.UserTileShimmer
+import io.foundy.setting.ui.destinations.EditProfileRouteDestination
+import io.foundy.setting.ui.profile.StringList
 import org.orbitmvi.orbit.compose.collectAsState
 
 @Destination
@@ -31,14 +34,28 @@ fun SettingRoute(
 ) {
     val uiState = viewModel.collectAsState().value
 
-    SettingScreen(uiState = uiState, popBackStack = navigator::popBackStack)
+    SettingScreen(
+        uiState = uiState,
+        popBackStack = navigator::popBackStack,
+        onUserTileClick = { user ->
+            navigator.navigate(
+                EditProfileRouteDestination(
+                    name = user.name,
+                    introduce = user.introduce,
+                    imageUrl = user.profileImage,
+                    tags = StringList(user.tags)
+                )
+            )
+        }
+    )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingScreen(
     uiState: SettingUiState,
-    popBackStack: () -> Unit
+    popBackStack: () -> Unit,
+    onUserTileClick: (User) -> Unit
 ) {
     Scaffold(
         containerColor = CamstudyTheme.colorScheme.systemUi01,
@@ -53,14 +70,17 @@ fun SettingScreen(
             when (uiState) {
                 is SettingUiState.Failure -> Box { /* TODO */ }
                 SettingUiState.Loading -> LoadingContent()
-                is SettingUiState.Success -> SuccessContent(uiState = uiState)
+                is SettingUiState.Success -> SuccessContent(
+                    uiState = uiState,
+                    onUserTileClick = onUserTileClick
+                )
             }
         }
     }
 }
 
 @Composable
-private fun SuccessContent(uiState: SettingUiState.Success) {
+private fun SuccessContent(uiState: SettingUiState.Success, onUserTileClick: (User) -> Unit) {
     val user = uiState.currentUser
 
     LazyColumn(modifier = Modifier.fillMaxSize()) {
@@ -71,7 +91,7 @@ private fun SuccessContent(uiState: SettingUiState.Success) {
                 organization = user.organizations.firstOrNull(),
                 introduce = user.introduce,
                 tags = user.tags,
-                onClick = { /* TODO */ }
+                onClick = { onUserTileClick(user) }
             )
         }
         item {
