@@ -3,6 +3,7 @@ package io.foundy.setting.ui.profile
 import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Parcelable
+import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
@@ -22,8 +23,11 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -36,6 +40,7 @@ import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.result.ResultBackNavigator
 import io.foundy.core.common.util.toBitmap
 import io.foundy.core.designsystem.component.BottomContainedButton
+import io.foundy.core.designsystem.component.CamstudyDialog
 import io.foundy.core.designsystem.component.CamstudyOutlinedButton
 import io.foundy.core.designsystem.component.CamstudyText
 import io.foundy.core.designsystem.component.CamstudyTextButton
@@ -71,6 +76,14 @@ fun EditProfileRoute(
     val snackbarHostState = remember { SnackbarHostState() }
     val coroutineScope = rememberCoroutineScope()
     val context = LocalContext.current
+    var showRecheckDialog by remember { mutableStateOf(false) }
+    val handleBackButton: () -> Unit = {
+        if (uiState.isEdited) {
+            showRecheckDialog = true
+        } else {
+            resultNavigator.navigateBack()
+        }
+    }
 
     LaunchedEffect(Unit) {
         viewModel.bind(
@@ -94,12 +107,24 @@ fun EditProfileRoute(
         }
     }
 
-    // TODO: 편집된 경우 정말 뒤로 갈 것이냐고 물어보기
+    BackHandler(enabled = true, onBack = handleBackButton)
+
+    if (showRecheckDialog) {
+        CamstudyDialog(
+            content = stringResource(R.string.edit_profile_recheck_dialog_content),
+            onDismissRequest = { showRecheckDialog = false },
+            onCancel = { showRecheckDialog = false },
+            onConfirm = {
+                resultNavigator.navigateBack()
+            },
+            confirmText = stringResource(R.string.edit_profile_recheck_dialog_confirm_text)
+        )
+    }
 
     EditProfileScreen(
         uiState = uiState,
         snackbarHostState = snackbarHostState,
-        onBackClick = { resultNavigator.navigateBack() }
+        onBackClick = handleBackButton
     )
 }
 

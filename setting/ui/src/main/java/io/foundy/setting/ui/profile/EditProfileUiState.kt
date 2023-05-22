@@ -54,7 +54,7 @@ data class EditProfileUiState(
             return previousImageUrl != null && imageUrl == null && selectedImage == null
         }
 
-    private val isEdited: Boolean
+    val isEdited: Boolean
         get() {
             return previousName != name ||
                 previousIntroduce != introduce ||

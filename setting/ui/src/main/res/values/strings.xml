@@ -22,4 +22,6 @@
     <string name="failed_to_load_recommended_user_tags">추천 태그를 불러오지 못했어요</string>
     <string name="failed_to_save_user_profile">저장에 실패했습니다</string>
     <string name="profile_updated">프로필이 수정되었어요</string>
+    <string name="edit_profile_recheck_dialog_content">저정하지 않고 뒤로갈까요?</string>
+    <string name="edit_profile_recheck_dialog_confirm_text">뒤로가기</string>
 </resources>
