@@ -73,7 +73,7 @@ private fun ProfileImage(imageUrl: String?) {
     UserProfileImage(
         imageOrContainerSize = 40.dp,
         fallbackIconSize = 24.dp,
-        imageUrl = imageUrl
+        model = imageUrl
     )
 }
 

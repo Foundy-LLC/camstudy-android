@@ -88,7 +88,7 @@ private fun RankingTileContent(
             ) {
                 RankingNumber(ranking = user.ranking)
                 Spacer(modifier = Modifier.width(12.dp))
-                UserProfileImage(imageUrl = user.profileImage)
+                UserProfileImage(model = user.profileImage)
                 Spacer(modifier = Modifier.width(12.dp))
                 UserNameAndIntroduce(
                     modifier = Modifier.weight(1f),

@@ -15,6 +15,8 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import com.ramcosta.composedestinations.result.NavResult
+import com.ramcosta.composedestinations.result.OpenResultRecipient
 import io.foundy.core.designsystem.component.CamstudyText
 import io.foundy.core.designsystem.component.CamstudyTopAppBar
 import io.foundy.core.designsystem.theme.CamstudyTheme
@@ -30,9 +32,20 @@ import org.orbitmvi.orbit.compose.collectAsState
 @Composable
 fun SettingRoute(
     navigator: DestinationsNavigator,
+    profileEditResultRecipient: OpenResultRecipient<Boolean>,
     viewModel: SettingViewModel = hiltViewModel()
 ) {
     val uiState = viewModel.collectAsState().value
+
+    profileEditResultRecipient.onNavResult {
+        when (it) {
+            is NavResult.Value -> {
+                // TODO: 수정이 완료된 경우 SettingScreen도 갱신해야 함.
+                // TODO: 수정이 완료된 경우 snackbar 보여야 함
+            }
+            NavResult.Canceled -> {}
+        }
+    }
 
     SettingScreen(
         uiState = uiState,

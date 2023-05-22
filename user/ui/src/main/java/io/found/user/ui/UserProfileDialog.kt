@@ -138,7 +138,7 @@ private fun ColumnScope.SuccessContent(uiState: UserProfileDialogUiState.Success
     }
 
     UserProfileImage(
-        imageUrl = user.profileImage,
+        model = user.profileImage,
         imageOrContainerSize = ProfileSize,
         fallbackIconSize = 64.dp,
         cornerShape = ProfileShape

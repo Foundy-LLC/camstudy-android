@@ -19,7 +19,7 @@ import io.foundy.core.designsystem.theme.CamstudyTheme
 
 @Composable
 fun UserProfileImage(
-    imageUrl: String?,
+    model: Any?,
     imageOrContainerSize: Dp = 40.dp,
     fallbackIconSize: Dp = 24.dp,
     cornerShape: Shape = RoundedCornerShape(8.dp)
@@ -28,10 +28,10 @@ fun UserProfileImage(
         .size(imageOrContainerSize)
         .clip(cornerShape)
 
-    if (imageUrl != null) {
+    if (model != null) {
         AsyncImage(
             modifier = thumbnailModifier,
-            model = imageUrl,
+            model = model,
             contentScale = ContentScale.Crop,
             contentDescription = null
         )

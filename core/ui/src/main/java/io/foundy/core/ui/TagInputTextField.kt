@@ -31,6 +31,7 @@ private fun Char.isAddingAction(): Boolean {
     return this == ' ' || this == '\n'
 }
 
+// TODO: 태그 제거하는 버튼 추가하기
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun TagInputTextField(

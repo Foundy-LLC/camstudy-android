@@ -46,7 +46,7 @@ fun UserTile(
         verticalAlignment = Alignment.CenterVertically
     ) {
         UserProfileImage(
-            imageUrl = profileImageUrl,
+            model = profileImageUrl,
             imageOrContainerSize = ProfileSize,
             fallbackIconSize = 40.dp,
             cornerShape = ProfileShape

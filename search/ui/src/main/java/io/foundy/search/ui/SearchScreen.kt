@@ -264,7 +264,7 @@ private fun UserTile(
                 .padding(top = 12.dp, bottom = 11.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            UserProfileImage(imageUrl = searchedUser.profileImage)
+            UserProfileImage(model = searchedUser.profileImage)
             Column(
                 modifier = Modifier
                     .weight(1f)

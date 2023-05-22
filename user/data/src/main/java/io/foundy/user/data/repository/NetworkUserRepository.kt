@@ -8,6 +8,7 @@ import io.foundy.crop.data.api.CropApi
 import io.foundy.crop.data.model.toEntity
 import io.foundy.ranking.data.api.RankingApi
 import io.foundy.user.data.model.UserCreateRequestBody
+import io.foundy.user.data.model.UserUpdateRequestBody
 import io.foundy.user.data.model.toEntity
 import io.foundy.user.data.source.UserRemoteDataSource
 import io.foundy.user.domain.repository.UserRepository
@@ -101,6 +102,47 @@ class NetworkUserRepository @Inject constructor(
                     profileImage.asRequestBody("multipart/form-data".toMediaTypeOrNull())
                 )
                 userDataSource.uploadUserProfileImage(userId, multipart).getDataOrThrowMessage()
+            }
+        }
+    }
+
+    override suspend fun updateUserProfile(
+        name: String,
+        introduce: String?,
+        tags: List<String>,
+        profileImage: File?,
+        shouldRemoveProfileImage: Boolean
+    ): Result<Unit> {
+        if (profileImage != null) {
+            require(!shouldRemoveProfileImage) { "업로드할 프로필 이지미가 있는 경우 기본 이미지로 설정할 수 없습니다" }
+        }
+        if (shouldRemoveProfileImage) {
+            require(profileImage == null) { "기본 이미지로 바꿀때는 profileImage가 null이어야 합니다" }
+        }
+        val currentUserId = requireNotNull(authRepository.currentUserIdStream.firstOrNull()) {
+            "로그인 없이 다른 회원 정보를 업데이트하려 했습니다."
+        }
+        val requestBody = UserUpdateRequestBody(
+            userId = currentUserId,
+            nickName = name,
+            introduce = introduce,
+            tags = tags,
+        )
+        return runCatching {
+            // TODO: async await로 성능 향상하기
+            userDataSource.updateUserProfile(userId = currentUserId, body = requestBody)
+                .getDataOrThrowMessage()
+            if (profileImage != null) {
+                val multipart = MultipartBody.Part.createFormData(
+                    PROFILE_IMAGE_KEY,
+                    profileImage.name,
+                    profileImage.asRequestBody("multipart/form-data".toMediaTypeOrNull())
+                )
+                userDataSource.uploadUserProfileImage(currentUserId, multipart)
+                    .getDataOrThrowMessage()
+            } else if (shouldRemoveProfileImage) {
+                userDataSource.removeProfileImage(userId = currentUserId)
+                    .getDataOrThrowMessage()
             }
         }
     }

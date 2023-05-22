@@ -14,4 +14,12 @@ interface UserRepository {
         tags: List<String>,
         profileImage: File?
     ): Result<Unit>
+
+    suspend fun updateUserProfile(
+        name: String,
+        introduce: String?,
+        tags: List<String>,
+        profileImage: File?,
+        shouldRemoveProfileImage: Boolean
+    ): Result<Unit>
 }

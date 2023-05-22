@@ -1,25 +1,51 @@
 package io.foundy.setting.ui.profile
 
+import android.graphics.Bitmap
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import io.foundy.core.common.util.ConvertBitmapToFileUseCase
+import io.foundy.core.model.constant.UserConstants
+import io.foundy.core.ui.UserMessage
+import io.foundy.setting.ui.R
+import io.foundy.user.domain.repository.UserRepository
+import io.foundy.welcome.data.repository.WelcomeRepository
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.syntax.simple.intent
+import org.orbitmvi.orbit.syntax.simple.postSideEffect
 import org.orbitmvi.orbit.syntax.simple.reduce
 import org.orbitmvi.orbit.viewmodel.container
 import javax.inject.Inject
 
 @HiltViewModel
-class EditProfileViewModel @Inject constructor() :
-    ViewModel(), ContainerHost<EditProfileUiState, EditProfileSideEffect> {
+class EditProfileViewModel @Inject constructor(
+    private val welcomeRepository: WelcomeRepository,
+    private val userRepository: UserRepository,
+    private val convertBitmapToFileUseCase: ConvertBitmapToFileUseCase
+) : ViewModel(), ContainerHost<EditProfileUiState, EditProfileSideEffect> {
 
     override val container: Container<EditProfileUiState, EditProfileSideEffect> = container(
-        EditProfileUiState()
+        EditProfileUiState(
+            onNameChange = ::changeName,
+            onIntroduceChange = ::changeIntroduce,
+            onTagChange = ::changeTagInput,
+            onTagAdd = ::addTag,
+            onTagRemove = ::removeTag,
+            onSaveClick = ::save,
+            onUseDefaultImageClick = ::useDefaultImage,
+            onSelectImage = ::changeProfileImage
+        )
     )
+
+    private var recommendedTagsFetchJob: Job? = null
 
     fun bind(
         name: String,
-        introduce: String?,
+        introduce: String,
         imageUrl: String?,
         tags: List<String>
     ) = intent {
@@ -30,10 +56,102 @@ class EditProfileViewModel @Inject constructor() :
             state.copy(
                 didBind = true,
                 name = name,
-                introduce = introduce ?: "",
+                introduce = introduce,
                 imageUrl = imageUrl,
-                tags = tags
+                tags = tags,
+                previousName = name,
+                previousIntroduce = introduce,
+                previousTags = tags,
+                previousImageUrl = imageUrl
             )
         }
+    }
+
+    private fun changeName(name: String) = intent {
+        reduce { state.copy(name = name) }
+    }
+
+    private fun changeIntroduce(introduce: String) = intent {
+        reduce { state.copy(introduce = introduce) }
+    }
+
+    private fun changeTagInput(tagInput: String) = intent {
+        if (state.isTagFull || tagInput.length > UserConstants.MaxTagLength) {
+            return@intent
+        }
+        reduce { state.copy(tagInput = tagInput) }
+        if (tagInput.isEmpty()) {
+            reduce { state.copy(recommendedTags = emptyList()) }
+        } else {
+            fetchRecommendedTags(userTagInput = tagInput)
+        }
+    }
+
+    private fun addTag(tag: String) = intent {
+        reduce { state.copy(tags = state.tags + tag) }
+    }
+
+    private fun removeTag(tag: String) = intent {
+        reduce { state.copy(tags = state.tags - tag) }
+    }
+
+    private fun useDefaultImage() = intent {
+        reduce { state.copy(imageUrl = null, selectedImage = null) }
+    }
+
+    private fun changeProfileImage(bitmap: Bitmap?) = intent {
+        // TODO: 이미지 크기 제한하기
+        reduce { state.copy(selectedImage = bitmap) }
+    }
+
+    private fun fetchRecommendedTags(userTagInput: String) = intent {
+        recommendedTagsFetchJob?.cancel()
+        recommendedTagsFetchJob = viewModelScope.launch {
+            delay(300)
+            welcomeRepository.getTags(userTagInput)
+                .onSuccess { tags ->
+                    reduce {
+                        state.copy(
+                            recommendedTags = tags.map { it.name }
+                                .filterNot { state.tags.contains(it) }
+                        )
+                    }
+                }.onFailure {
+                    postSideEffect(
+                        EditProfileSideEffect.ErrorMessage(
+                            UserMessage(
+                                content = it.message,
+                                defaultRes = R.string.failed_to_load_recommended_user_tags
+                            )
+                        )
+                    )
+                }
+        }
+    }
+
+    private fun save() = intent {
+        assert(state.canSave)
+        reduce { state.copy(isInSaving = true) }
+        userRepository.updateUserProfile(
+            name = state.name,
+            introduce = state.introduce.ifEmpty { null },
+            tags = state.tags,
+            profileImage = state.selectedImage?.let {
+                convertBitmapToFileUseCase(it, fileName = "user_profile.png")
+            },
+            shouldRemoveProfileImage = state.shouldRemoveProfileImage
+        ).onSuccess {
+            postSideEffect(EditProfileSideEffect.SuccessToSave)
+        }.onFailure {
+            postSideEffect(
+                EditProfileSideEffect.ErrorMessage(
+                    UserMessage(
+                        content = it.message,
+                        defaultRes = R.string.failed_to_save_user_profile
+                    )
+                )
+            )
+        }
+        reduce { state.copy(isInSaving = false) }
     }
 }

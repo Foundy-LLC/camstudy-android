@@ -2,4 +2,23 @@
 <resources>
     <string name="failed_to_load_my_profile">내 정보를 불러오지 못했어요</string>
     <string name="my_profile">내 정보</string>
+    <string name="edit_profile_title">프로필 편집</string>
+    <string name="change_profile_image">사진 변경</string>
+    <string name="use_default_image">기본 사진으로 변경</string>
+    <string name="name_title">닉네임</string>
+    <string name="name_placeholder">김농부</string>
+    <string name="name_is_exceed_supporting_text">이름은 최대 %d자 입니다</string>
+    <string name="name_supporting_text">한글, 영문, 숫자만 사용 가능합니다</string>
+    <string name="save">저장하기</string>
+    <string name="in_saving">저장중…</string>
+    <string name="introduce_is_exceed_supporting_text">자기소개는 최대 %d자 입니다</string>
+    <string name="introduce_supporting_text">나를 나타낼 수 있는 최대 %d자 이내의 소개 내용을 입력해주세요</string>
+    <string name="introduce">자기소개</string>
+    <string name="introduce_placeholder">안녕하세요, 같이 열심히 공부해요!</string>
+    <string name="tag_label">관심분야</string>
+    <string name="tag_placeholder">#수능 #개발 #공시</string>
+    <string name="user_tag_is_done">태그 입력이 완료되었어요</string>
+    <string name="user_tag_supporting_text">관심이 있거나 공부하려고 하는 분야를 3개 입력해주세요</string>
+    <string name="failed_to_load_recommended_user_tags">추천 태그를 불러오지 못했어요</string>
+    <string name="failed_to_save_user_profile">저장에 실패했습니다</string>
 </resources>

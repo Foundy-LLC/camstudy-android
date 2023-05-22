@@ -3,10 +3,13 @@ package io.foundy.user.data.api
 import io.foundy.core.data.util.CamstudyResponse
 import io.foundy.user.data.model.UserCreateRequestBody
 import io.foundy.user.data.model.UserDto
+import io.foundy.user.data.model.UserUpdateRequestBody
 import okhttp3.MultipartBody
 import retrofit2.http.Body
+import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.Multipart
+import retrofit2.http.PATCH
 import retrofit2.http.POST
 import retrofit2.http.Part
 import retrofit2.http.Path
@@ -36,4 +39,15 @@ interface UserApi {
         @Path("userId") userId: String,
         @Part profileImage: MultipartBody.Part
     ): CamstudyResponse<String>
+
+    @PATCH("users/{userId}")
+    suspend fun updateUserProfile(
+        @Path("userId") userId: String,
+        @Body body: UserUpdateRequestBody
+    ): CamstudyResponse<Unit>
+
+    @DELETE("users/{userId}/profile-image")
+    suspend fun removeUserProfileImage(
+        @Path("userId") userId: String,
+    ): CamstudyResponse<Unit>
 }

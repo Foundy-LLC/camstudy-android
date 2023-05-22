@@ -58,4 +58,13 @@ class FakeUserRepository : UserRepository {
     ): Result<Unit> {
         return Result.success(Unit)
     }
+
+    override suspend fun updateUserProfile(
+        name: String,
+        introduce: String?,
+        tags: List<String>,
+        profileImage: File?
+    ): Result<Unit> {
+        TODO("Not yet implemented")
+    }
 }

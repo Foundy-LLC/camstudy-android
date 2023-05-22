@@ -16,6 +16,9 @@ import io.foundy.core.designsystem.theme.CamstudyTheme
 import io.foundy.crop.ui.destinations.PlantCropRouteDestination
 import io.foundy.home.ui.HomeRoute
 import io.foundy.home.ui.destinations.HomeRouteDestination
+import io.foundy.setting.ui.SettingRoute
+import io.foundy.setting.ui.destinations.EditProfileRouteDestination
+import io.foundy.setting.ui.destinations.SettingRouteDestination
 
 @OptIn(ExperimentalAnimationApi::class, ExperimentalMaterialNavigationApi::class)
 @Composable
@@ -34,6 +37,13 @@ fun CamstudyApp(navController: NavHostController) {
                 HomeRoute(
                     navigator = destinationsNavigator,
                     plantResultRecipient = resultRecipient<PlantCropRouteDestination, Boolean>()
+                )
+            }
+            composable(SettingRouteDestination) {
+                val resultRecipient = resultRecipient<EditProfileRouteDestination, Boolean>()
+                SettingRoute(
+                    navigator = destinationsNavigator,
+                    profileEditResultRecipient = resultRecipient
                 )
             }
         }

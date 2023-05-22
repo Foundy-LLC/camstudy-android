@@ -111,7 +111,7 @@ fun HomeScreen(
                         }
                         IconButton(onClick = { navigator.navigate(SettingRouteDestination) }) {
                             UserProfileImage(
-                                imageUrl = uiState.currentUserProfileImage,
+                                model = uiState.currentUserProfileImage,
                                 imageOrContainerSize = 32.dp,
                                 cornerShape = RoundedCornerShape(32.dp)
                             )
