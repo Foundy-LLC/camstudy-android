@@ -9,7 +9,7 @@
     <string name="name_placeholder">김농부</string>
     <string name="name_is_exceed_supporting_text">이름은 최대 %d자 입니다</string>
     <string name="name_supporting_text">한글, 영문, 숫자만 사용 가능합니다</string>
-    <string name="save">저장하기</string>
+    <string name="edit_profile_screen_save_button">저장하기</string>
     <string name="in_saving">저장중…</string>
     <string name="introduce_is_exceed_supporting_text">자기소개는 최대 %d자 입니다</string>
     <string name="introduce_supporting_text">나를 나타낼 수 있는 최대 %d자 이내의 소개 내용을 입력해주세요</string>

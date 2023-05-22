@@ -128,69 +128,71 @@ fun EditProfileScreen(
                 .padding(innerPadding)
                 .fillMaxSize()
         ) {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .weight(1f)
-                    .background(color = CamstudyTheme.colorScheme.systemBackground)
-                    .verticalScroll(rememberScrollState())
-                    .padding(horizontal = 16.dp)
-            ) {
-                ProfileImage(
-                    model = uiState.selectedImage ?: uiState.imageUrl,
-                    onSelectImage = uiState.onSelectImage,
-                    onUseDefaultClick = uiState.onUseDefaultImageClick
-                )
-                CamstudyTextField(
-                    value = uiState.name,
-                    onValueChange = uiState.onNameChange,
-                    label = stringResource(R.string.name_title),
-                    singleLine = true,
-                    isError = uiState.shouldShowNameError,
-                    placeholder = stringResource(R.string.name_placeholder),
-                    supportingText = uiState.nameSupportingTextRes,
-                    keyboardOptions = KeyboardOptions(
-                        imeAction = ImeAction.Next
+            if (uiState.didBind) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(1f)
+                        .background(color = CamstudyTheme.colorScheme.systemBackground)
+                        .verticalScroll(rememberScrollState())
+                        .padding(horizontal = 16.dp)
+                ) {
+                    ProfileImage(
+                        model = uiState.selectedImage ?: uiState.imageUrl,
+                        onSelectImage = uiState.onSelectImage,
+                        onUseDefaultClick = uiState.onUseDefaultImageClick
                     )
-                )
-                Spacer(modifier = Modifier.height(20.dp))
-                CamstudyTextField(
-                    value = uiState.introduce,
-                    onValueChange = uiState.onIntroduceChange,
-                    label = stringResource(R.string.introduce),
-                    singleLine = false,
-                    isError = uiState.shouldShowIntroduceError,
-                    placeholder = stringResource(R.string.introduce_placeholder),
-                    supportingText = uiState.introduceSupportingTextRes,
-                    keyboardOptions = KeyboardOptions(
-                        imeAction = ImeAction.Next
+                    CamstudyTextField(
+                        value = uiState.name,
+                        onValueChange = uiState.onNameChange,
+                        label = stringResource(R.string.name_title),
+                        singleLine = true,
+                        isError = uiState.shouldShowNameError,
+                        placeholder = stringResource(R.string.name_placeholder),
+                        supportingText = uiState.nameSupportingTextRes,
+                        keyboardOptions = KeyboardOptions(
+                            imeAction = ImeAction.Next
+                        )
                     )
-                )
-                Spacer(modifier = Modifier.height(20.dp))
-                TagInputTextField(
-                    value = uiState.tagInput,
-                    onValueChange = uiState.onTagChange,
-                    addedTags = uiState.tags,
-                    recommendedTags = uiState.recommendedTags,
-                    onAdd = { tag ->
-                        if (uiState.tags.size == UserConstants.MaxTagCount - 1) {
-                            focusManager.clearFocus()
-                        }
-                        uiState.onTagAdd(tag)
-                    },
-                    onRemove = uiState.onTagRemove,
-                    label = stringResource(R.string.tag_label),
-                    placeholder = stringResource(R.string.tag_placeholder),
-                    supportingText = uiState.tagSupportingTextRes
-                )
-                Spacer(modifier = Modifier.height(80.dp))
+                    Spacer(modifier = Modifier.height(20.dp))
+                    CamstudyTextField(
+                        value = uiState.introduce,
+                        onValueChange = uiState.onIntroduceChange,
+                        label = stringResource(R.string.introduce),
+                        singleLine = false,
+                        isError = uiState.shouldShowIntroduceError,
+                        placeholder = stringResource(R.string.introduce_placeholder),
+                        supportingText = uiState.introduceSupportingTextRes,
+                        keyboardOptions = KeyboardOptions(
+                            imeAction = ImeAction.Next
+                        )
+                    )
+                    Spacer(modifier = Modifier.height(20.dp))
+                    TagInputTextField(
+                        value = uiState.tagInput,
+                        onValueChange = uiState.onTagChange,
+                        addedTags = uiState.tags,
+                        recommendedTags = uiState.recommendedTags,
+                        onAdd = { tag ->
+                            if (uiState.tags.size == UserConstants.MaxTagCount - 1) {
+                                focusManager.clearFocus()
+                            }
+                            uiState.onTagAdd(tag)
+                        },
+                        onRemove = uiState.onTagRemove,
+                        label = stringResource(R.string.tag_label),
+                        placeholder = stringResource(R.string.tag_placeholder),
+                        supportingText = uiState.tagSupportingTextRes
+                    )
+                    Spacer(modifier = Modifier.height(80.dp))
+                }
             }
             BottomContainedButton(
                 enabled = uiState.canSave,
                 label = if (uiState.isInSaving) {
                     stringResource(R.string.in_saving)
                 } else {
-                    stringResource(R.string.save)
+                    stringResource(R.string.edit_profile_screen_save_button)
                 },
                 onClick = uiState.onSaveClick
             )
