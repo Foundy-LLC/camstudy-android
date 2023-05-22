@@ -8,7 +8,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -29,6 +33,7 @@ import io.foundy.setting.ui.component.UserTileShimmer
 import io.foundy.setting.ui.destinations.EditProfileRouteDestination
 import io.foundy.setting.ui.model.EditProfileResult
 import io.foundy.setting.ui.profile.StringList
+import kotlinx.coroutines.launch
 import org.orbitmvi.orbit.compose.collectAsState
 
 @Destination
@@ -40,15 +45,19 @@ fun SettingRoute(
 ) {
     val uiState = viewModel.collectAsState().value
     val context = LocalContext.current
+    val snackbarHostState = remember { SnackbarHostState() }
+    val coroutineScope = rememberCoroutineScope()
 
     profileEditResultRecipient.onNavResult {
         when (it) {
             is NavResult.Value -> {
-                // TODO: 수정이 완료된 경우 snackbar 보여야 함
                 viewModel.updateProfile(it.value)
                 val profileImage = it.value.profileImage
                 if (profileImage != null) {
                     context.clearImageCache(profileImage)
+                }
+                coroutineScope.launch {
+                    snackbarHostState.showSnackbar(context.getString(R.string.profile_updated))
                 }
             }
             NavResult.Canceled -> {}
@@ -58,6 +67,7 @@ fun SettingRoute(
     SettingScreen(
         uiState = uiState,
         popBackStack = navigator::popBackStack,
+        snackbarHostState = snackbarHostState,
         onUserTileClick = { user ->
             navigator.navigate(
                 EditProfileRouteDestination(
@@ -75,11 +85,13 @@ fun SettingRoute(
 @Composable
 fun SettingScreen(
     uiState: SettingUiState,
+    snackbarHostState: SnackbarHostState,
     popBackStack: () -> Unit,
     onUserTileClick: (User) -> Unit
 ) {
     Scaffold(
         containerColor = CamstudyTheme.colorScheme.systemUi01,
+        snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
         topBar = {
             CamstudyTopAppBar(
                 onBackClick = popBackStack,

@@ -21,4 +21,5 @@
     <string name="user_tag_supporting_text">관심이 있거나 공부하려고 하는 분야를 3개 입력해주세요</string>
     <string name="failed_to_load_recommended_user_tags">추천 태그를 불러오지 못했어요</string>
     <string name="failed_to_save_user_profile">저장에 실패했습니다</string>
+    <string name="profile_updated">프로필이 수정되었어요</string>
 </resources>
