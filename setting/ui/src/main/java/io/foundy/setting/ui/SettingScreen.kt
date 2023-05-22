@@ -35,6 +35,7 @@ import io.foundy.setting.ui.model.EditProfileResult
 import io.foundy.setting.ui.profile.StringList
 import kotlinx.coroutines.launch
 import org.orbitmvi.orbit.compose.collectAsState
+import org.orbitmvi.orbit.compose.collectSideEffect
 
 @Destination
 @Composable
@@ -47,6 +48,16 @@ fun SettingRoute(
     val context = LocalContext.current
     val snackbarHostState = remember { SnackbarHostState() }
     val coroutineScope = rememberCoroutineScope()
+
+    viewModel.collectSideEffect {
+        when (it) {
+            is SettingSideEffect.Message -> coroutineScope.launch {
+                snackbarHostState.showSnackbar(
+                    message = it.content ?: context.getString(it.defaultRes)
+                )
+            }
+        }
+    }
 
     profileEditResultRecipient.onNavResult {
         when (it) {
