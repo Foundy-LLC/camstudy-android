@@ -3,6 +3,7 @@ package io.foundy.room.ui.viewmodel
 import androidx.annotation.StringRes
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
+import io.foundy.core.model.constant.RoomConstants
 import io.foundy.room.data.model.WaitingRoomData
 import io.foundy.room.domain.ChatMessage
 import io.foundy.room.domain.PeerOverview
@@ -72,7 +73,9 @@ sealed class RoomUiState {
                     if (data.joinerList.any { it.id == currentUserId }) {
                         return stringResource(R.string.already_joined)
                     }
-                    if (data.hasPassword && passwordInput.isEmpty()) {
+                    if (data.hasPassword &&
+                        passwordInput.length < RoomConstants.PasswordRange.first
+                    ) {
                         return stringResource(R.string.input_password)
                     }
                     if (isCurrentUserMaster) {

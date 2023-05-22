@@ -14,7 +14,7 @@
     <string name="failed_to_load_recommended_tags">추천 태그를 불러오지 못했어요</string>
     <string name="room_title_supporting_text">필수 입력 항목입니다</string>
     <string name="room_title_max_length_error">스터디 룸 이름은 최대 %d자 입니다</string>
-    <string name="room_password_max_length_error">비밀번호는 최대 %d자 입니다</string>
+    <string name="room_password_length_error">비밀번호는 최소 %d자에서 최대 %d자 입니다</string>
     <string name="room_password_supporting_text">비공개 방으로 설정할 경우 필수 입력 항목입니다</string>
     <string name="create_and_join">생성 및 입장</string>
     <string name="creating">생성중…</string>

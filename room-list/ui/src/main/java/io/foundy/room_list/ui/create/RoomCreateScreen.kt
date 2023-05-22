@@ -199,7 +199,7 @@ private fun RoomCreateContent(
                         Spacer(modifier = Modifier.height(8.dp))
                         CamstudyTextField(
                             value = uiState.password ?: "",
-                            isError = uiState.isExceedPasswordLength,
+                            isError = !uiState.isPasswordLengthValid,
                             onValueChange = uiState.onPasswordChange,
                             placeholder = stringResource(R.string.room_password_placeholder),
                             supportingText = uiState.passwordSupportingTextRes,

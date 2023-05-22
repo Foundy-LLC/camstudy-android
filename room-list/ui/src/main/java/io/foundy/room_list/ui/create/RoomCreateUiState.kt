@@ -42,30 +42,23 @@ data class RoomCreateUiState(
             return stringResource(id = R.string.room_title_supporting_text)
         }
 
-    val isExceedPasswordLength: Boolean
-        get() {
-            if (password == null) {
-                return false
-            }
-            return password.length > RoomConstants.MaxPasswordLength
-        }
-
-    private val isPasswordLengthValid: Boolean
+    val isPasswordLengthValid: Boolean
         get() {
             if (password == null) {
                 return true
             }
-            return password.isNotEmpty() && !isExceedPasswordLength
+            return RoomConstants.PasswordRange.contains(password.length)
         }
 
     val passwordSupportingTextRes: String
         @Composable
         @ReadOnlyComposable
         get() {
-            if (isExceedPasswordLength) {
+            if (!isPasswordLengthValid) {
                 return stringResource(
-                    id = R.string.room_password_max_length_error,
-                    RoomConstants.MaxPasswordLength
+                    id = R.string.room_password_length_error,
+                    RoomConstants.PasswordRange.first,
+                    RoomConstants.PasswordRange.last
                 )
             }
             return stringResource(id = R.string.room_password_supporting_text)

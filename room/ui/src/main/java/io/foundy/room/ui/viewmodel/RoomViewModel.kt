@@ -109,7 +109,7 @@ class RoomViewModel @Inject constructor(
                     data = waitingRoomData,
                     currentUserId = currentUserId,
                     onPasswordChange = { password ->
-                        if (password.length <= RoomConstants.MaxPasswordLength) {
+                        if (password.length <= RoomConstants.PasswordRange.last) {
                             intent {
                                 val uiState = state
                                 check(uiState is RoomUiState.WaitingRoom.Connected)
