@@ -24,6 +24,7 @@ import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Send
 import androidx.compose.material.icons.filled.VideocamOff
 import androidx.compose.material.icons.outlined.Timer
+import androidx.compose.material.icons.sharp.BusinessCenter
 import androidx.compose.material.icons.sharp.Lock
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalContentColor
@@ -68,6 +69,7 @@ object CamstudyIcons {
     val PersonRemove = Icons.Default.PersonRemove.asCamstudyIcon()
     val CancelScheduleSend = Icons.Default.CancelScheduleSend.asCamstudyIcon()
     val PersonOff = Icons.Default.PersonOff.asCamstudyIcon()
+    val BusinessCenter = Icons.Sharp.BusinessCenter.asCamstudyIcon()
     val People = Icons.Default.People.asCamstudyIcon()
     val Timer = Icons.Outlined.Timer.asCamstudyIcon()
     val Search = Icons.Default.Search.asCamstudyIcon()

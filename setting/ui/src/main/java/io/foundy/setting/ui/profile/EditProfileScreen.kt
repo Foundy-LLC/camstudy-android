@@ -62,6 +62,7 @@ class StringList(
     private val list: List<String>
 ) : Parcelable, List<String> by list
 
+// TODO: ProfileEditRoute로 이름 리팩토링
 @Composable
 @Destination
 fun EditProfileRoute(

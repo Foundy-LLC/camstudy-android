@@ -24,4 +24,5 @@
     <string name="profile_updated">프로필이 수정되었어요</string>
     <string name="edit_profile_recheck_dialog_content">저정하지 않고 뒤로갈까요?</string>
     <string name="edit_profile_recheck_dialog_confirm_text">뒤로가기</string>
+    <string name="organization_edit">소속 편집</string>
 </resources>
