@@ -112,7 +112,7 @@ class NetworkUserRepository @Inject constructor(
         tags: List<String>,
         profileImage: File?,
         shouldRemoveProfileImage: Boolean
-    ): Result<Unit> {
+    ): Result<String?> {
         if (profileImage != null) {
             require(!shouldRemoveProfileImage) { "업로드할 프로필 이지미가 있는 경우 기본 이미지로 설정할 수 없습니다" }
         }
@@ -129,6 +129,7 @@ class NetworkUserRepository @Inject constructor(
             tags = tags,
         )
         return runCatching {
+            var newImageUrl: String? = null
             // TODO: async await로 성능 향상하기
             userDataSource.updateUserProfile(userId = currentUserId, body = requestBody)
                 .getDataOrThrowMessage()
@@ -138,12 +139,13 @@ class NetworkUserRepository @Inject constructor(
                     profileImage.name,
                     profileImage.asRequestBody("multipart/form-data".toMediaTypeOrNull())
                 )
-                userDataSource.uploadUserProfileImage(currentUserId, multipart)
+                newImageUrl = userDataSource.uploadUserProfileImage(currentUserId, multipart)
                     .getDataOrThrowMessage()
             } else if (shouldRemoveProfileImage) {
                 userDataSource.removeProfileImage(userId = currentUserId)
                     .getDataOrThrowMessage()
             }
+            return@runCatching newImageUrl
         }
     }
 

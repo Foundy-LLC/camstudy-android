@@ -10,6 +10,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -22,9 +23,11 @@ import io.foundy.core.designsystem.component.CamstudyTopAppBar
 import io.foundy.core.designsystem.theme.CamstudyTheme
 import io.foundy.core.model.User
 import io.foundy.core.ui.UserProfileInfoGroup
+import io.foundy.core.ui.clearImageCache
 import io.foundy.setting.ui.component.UserTile
 import io.foundy.setting.ui.component.UserTileShimmer
 import io.foundy.setting.ui.destinations.EditProfileRouteDestination
+import io.foundy.setting.ui.model.EditProfileResult
 import io.foundy.setting.ui.profile.StringList
 import org.orbitmvi.orbit.compose.collectAsState
 
@@ -32,16 +35,21 @@ import org.orbitmvi.orbit.compose.collectAsState
 @Composable
 fun SettingRoute(
     navigator: DestinationsNavigator,
-    profileEditResultRecipient: OpenResultRecipient<Boolean>,
+    profileEditResultRecipient: OpenResultRecipient<EditProfileResult>,
     viewModel: SettingViewModel = hiltViewModel()
 ) {
     val uiState = viewModel.collectAsState().value
+    val context = LocalContext.current
 
     profileEditResultRecipient.onNavResult {
         when (it) {
             is NavResult.Value -> {
-                // TODO: 수정이 완료된 경우 SettingScreen도 갱신해야 함.
                 // TODO: 수정이 완료된 경우 snackbar 보여야 함
+                viewModel.updateProfile(it.value)
+                val profileImage = it.value.profileImage
+                if (profileImage != null) {
+                    context.clearImageCache(profileImage)
+                }
             }
             NavResult.Canceled -> {}
         }

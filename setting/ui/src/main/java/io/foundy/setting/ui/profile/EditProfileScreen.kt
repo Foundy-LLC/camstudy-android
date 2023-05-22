@@ -46,6 +46,7 @@ import io.foundy.core.model.constant.UserConstants
 import io.foundy.core.ui.TagInputTextField
 import io.foundy.core.ui.UserProfileImage
 import io.foundy.setting.ui.R
+import io.foundy.setting.ui.model.EditProfileResult
 import kotlinx.coroutines.launch
 import kotlinx.parcelize.Parcelize
 import org.orbitmvi.orbit.compose.collectAsState
@@ -59,7 +60,7 @@ class StringList(
 @Composable
 @Destination
 fun EditProfileRoute(
-    resultNavigator: ResultBackNavigator<Boolean>,
+    resultNavigator: ResultBackNavigator<EditProfileResult>,
     name: String,
     introduce: String?,
     imageUrl: String?,
@@ -87,8 +88,8 @@ fun EditProfileRoute(
                     it.message.content ?: context.getString(it.message.defaultRes)
                 )
             }
-            EditProfileSideEffect.SuccessToSave -> {
-                resultNavigator.navigateBack(result = true)
+            is EditProfileSideEffect.SuccessToSave -> {
+                resultNavigator.navigateBack(result = it.result)
             }
         }
     }

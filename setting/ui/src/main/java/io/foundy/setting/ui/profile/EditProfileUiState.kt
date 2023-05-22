@@ -51,7 +51,7 @@ data class EditProfileUiState(
 
     val shouldRemoveProfileImage: Boolean
         get() {
-            return previousImageUrl != null && imageUrl == null
+            return previousImageUrl != null && imageUrl == null && selectedImage == null
         }
 
     private val isEdited: Boolean

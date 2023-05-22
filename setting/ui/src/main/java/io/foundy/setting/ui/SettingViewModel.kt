@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.foundy.auth.data.repository.AuthRepository
 import io.foundy.core.ui.UserMessage
+import io.foundy.setting.ui.model.EditProfileResult
 import io.foundy.user.domain.usecase.GetUserUseCase
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
@@ -54,5 +55,22 @@ class SettingViewModel @Inject constructor(
                 )
                 reduce { SettingUiState.Failure(message = message) }
             }
+    }
+
+    fun updateProfile(editProfileResult: EditProfileResult) = intent {
+        val uiState = state
+        if (uiState !is SettingUiState.Success) {
+            return@intent
+        }
+        reduce {
+            uiState.copy(
+                currentUser = uiState.currentUser.copy(
+                    name = editProfileResult.name,
+                    introduce = editProfileResult.introduce,
+                    profileImage = editProfileResult.profileImage,
+                    tags = editProfileResult.tags
+                )
+            )
+        }
     }
 }

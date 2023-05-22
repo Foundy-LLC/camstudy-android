@@ -59,6 +59,9 @@ dependencies {
     implementation "io.github.raamcosta.compose-destinations:core:$compose_destination_version"
     ksp "io.github.raamcosta.compose-destinations:ksp:$compose_destination_version"
 
+    // coil
+    implementation("io.coil-kt:coil-base:$coil_version")
+
     // orbit
     implementation("org.orbit-mvi:orbit-viewmodel:$orbit_version")
     implementation("org.orbit-mvi:orbit-compose:$orbit_version")

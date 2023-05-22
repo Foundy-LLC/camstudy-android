@@ -8,6 +8,7 @@ import io.foundy.core.common.util.ConvertBitmapToFileUseCase
 import io.foundy.core.model.constant.UserConstants
 import io.foundy.core.ui.UserMessage
 import io.foundy.setting.ui.R
+import io.foundy.setting.ui.model.EditProfileResult
 import io.foundy.user.domain.repository.UserRepository
 import io.foundy.welcome.data.repository.WelcomeRepository
 import kotlinx.coroutines.Job
@@ -140,8 +141,28 @@ class EditProfileViewModel @Inject constructor(
                 convertBitmapToFileUseCase(it, fileName = "user_profile.png")
             },
             shouldRemoveProfileImage = state.shouldRemoveProfileImage
-        ).onSuccess {
-            postSideEffect(EditProfileSideEffect.SuccessToSave)
+        ).onSuccess { newImageUrl ->
+            postSideEffect(
+                EditProfileSideEffect.SuccessToSave(
+                    result = EditProfileResult(
+                        name = state.name,
+                        introduce = state.introduce.ifEmpty { null },
+                        tags = StringList(state.tags),
+                        /*
+                         * - 기본 -> 기본: 둘 다 null
+                         * - 기본 -> 새 이미지: newImageUrl 있음
+                         * - 이미지 -> 기본: shouldRemoveProfileImage가 true
+                         * - 이미지 -> 새 이미지: newImageUrl 있음
+                         * - 이미지 -> 이미지: newImageUrl 없음, imageUrl있음
+                         */
+                        profileImage = newImageUrl ?: if (state.shouldRemoveProfileImage) {
+                            null
+                        } else {
+                            state.imageUrl
+                        }
+                    )
+                )
+            )
         }.onFailure {
             postSideEffect(
                 EditProfileSideEffect.ErrorMessage(

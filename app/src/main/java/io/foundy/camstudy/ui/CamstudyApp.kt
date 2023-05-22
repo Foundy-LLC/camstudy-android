@@ -19,6 +19,7 @@ import io.foundy.home.ui.destinations.HomeRouteDestination
 import io.foundy.setting.ui.SettingRoute
 import io.foundy.setting.ui.destinations.EditProfileRouteDestination
 import io.foundy.setting.ui.destinations.SettingRouteDestination
+import io.foundy.setting.ui.model.EditProfileResult
 
 @OptIn(ExperimentalAnimationApi::class, ExperimentalMaterialNavigationApi::class)
 @Composable
@@ -40,10 +41,10 @@ fun CamstudyApp(navController: NavHostController) {
                 )
             }
             composable(SettingRouteDestination) {
-                val resultRecipient = resultRecipient<EditProfileRouteDestination, Boolean>()
+                val result = resultRecipient<EditProfileRouteDestination, EditProfileResult>()
                 SettingRoute(
                     navigator = destinationsNavigator,
-                    profileEditResultRecipient = resultRecipient
+                    profileEditResultRecipient = result
                 )
             }
         }
