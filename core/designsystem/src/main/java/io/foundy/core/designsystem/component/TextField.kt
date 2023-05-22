@@ -145,7 +145,8 @@ fun CamstudyTextField(
         else -> colorScheme.systemUi05
     }
     val textColor = when {
-        isError || isFocused || value.isNotEmpty() -> colorScheme.systemUi08
+        isFocused && value.isNotEmpty() -> colorScheme.systemUi08
+        value.isNotEmpty() -> colorScheme.systemUi07
         !enabled -> colorScheme.systemUi03
         else -> colorScheme.systemUi05
     }
