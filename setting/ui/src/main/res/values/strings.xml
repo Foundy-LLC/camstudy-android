@@ -44,4 +44,5 @@
     <string name="valid_email_supporting_text">올바른 이메일이에요</string>
     <string name="invalid_organization_supporting_text">%s 이메일은 @%s 형식이에요</string>
     <string name="invalid_email_format_supporting_text">올바른 이메일 형식이 아니에요</string>
+    <string name="request_organization_enroll_mail">소속 등록 메일 요청하기</string>
 </resources>

@@ -35,14 +35,17 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import io.foundy.core.designsystem.component.BottomContainedButton
 import io.foundy.core.designsystem.component.CamstudyDialog
 import io.foundy.core.designsystem.component.CamstudyText
 import io.foundy.core.designsystem.component.CamstudyTextField
@@ -136,6 +139,7 @@ private fun Failure() {
 @Composable
 private fun Success(uiState: OrganizationEditUiState.Success) {
     var organizationToDelete by remember { mutableStateOf<OrganizationOverview?>(null) }
+    val focusManager = LocalFocusManager.current
     val emailFocusRequester = remember { FocusRequester() }
 
     organizationToDelete?.let { organization ->
@@ -154,72 +158,95 @@ private fun Success(uiState: OrganizationEditUiState.Success) {
         )
     }
 
-    LazyColumn(Modifier.fillMaxSize()) {
-        item {
-            MyOrganizations(
-                organizations = uiState.registeredOrganizations,
-                deletingOrganizationIds = uiState.deletingOrganizationIds,
-                onDeleteClick = { organizationToDelete = it }
-            )
-            Box(
-                Modifier
-                    .height(8.dp)
-                    .fillMaxWidth()
-                    .background(color = CamstudyTheme.colorScheme.systemUi01)
-            )
-        }
-        item {
-            Spacer(Modifier.height(20.dp))
-            CamstudyTextField(
-                modifier = Modifier.padding(horizontal = 16.dp),
-                value = uiState.name,
-                onValueChange = uiState.onNameChange,
-                label = stringResource(R.string.organization_name_label),
-                placeholder = stringResource(R.string.organization_name_placeholder),
-                singleLine = true,
-                supportingText = uiState.nameSupportingText,
-                isError = uiState.shouldShowNameError,
-                borderShape = if (uiState.recommendedOrganizationNames.isNotEmpty()) {
-                    RoundedCornerShape(topStart = 8.dp, topEnd = 8.dp)
-                } else {
-                    RoundedCornerShape(8.dp)
-                },
-                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
-                keyboardActions = KeyboardActions(
-                    onNext = {
-                        // TODO: Hide popup
-                        emailFocusRequester.requestFocus()
+    Column(Modifier.fillMaxSize()) {
+        LazyColumn(Modifier.weight(1f)) {
+            item {
+                MyOrganizations(
+                    organizations = uiState.registeredOrganizations,
+                    deletingOrganizationIds = uiState.deletingOrganizationIds,
+                    onDeleteClick = { organizationToDelete = it }
+                )
+                Box(
+                    Modifier
+                        .height(8.dp)
+                        .fillMaxWidth()
+                        .background(color = CamstudyTheme.colorScheme.systemUi01)
+                )
+            }
+            item {
+                Spacer(Modifier.height(20.dp))
+                CamstudyTextField(
+                    modifier = Modifier.padding(horizontal = 16.dp),
+                    value = uiState.name,
+                    onValueChange = uiState.onNameChange,
+                    label = stringResource(R.string.organization_name_label),
+                    placeholder = stringResource(R.string.organization_name_placeholder),
+                    singleLine = true,
+                    supportingText = uiState.nameSupportingText,
+                    isError = uiState.shouldShowNameError,
+                    borderShape = if (uiState.recommendedOrganizationNames.isNotEmpty()) {
+                        RoundedCornerShape(topStart = 8.dp, topEnd = 8.dp)
+                    } else {
+                        RoundedCornerShape(8.dp)
+                    },
+                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
+                    keyboardActions = KeyboardActions(
+                        onNext = {
+                            // TODO: Hide popup
+                            emailFocusRequester.requestFocus()
+                        }
+                    ),
+                    supportingContent = {
+                        // TODO: 바깥을 탭하거나 텍스트 필드에 포커스가 잃어지는 경우 사라지게 하기
+                        if (uiState.recommendedOrganizationNames.isNotEmpty()) {
+                            RecommendListPopup(
+                                modifier = Modifier.padding(horizontal = 16.dp),
+                                items = uiState.recommendedOrganizationNames,
+                                onItemClick = { organizationName ->
+                                    uiState.onNameChange(organizationName)
+                                    // TODO: Hide popup
+                                    emailFocusRequester.requestFocus()
+                                }
+                            )
+                        }
                     }
-                ),
-                supportingContent = {
-                    // TODO: 바깥을 탭하거나 텍스트 필드에 포커스가 잃어지는 경우 사라지게 하기
-                    if (uiState.recommendedOrganizationNames.isNotEmpty()) {
-                        RecommendListPopup(
-                            modifier = Modifier.padding(horizontal = 16.dp),
-                            items = uiState.recommendedOrganizationNames,
-                            onItemClick = { organizationName ->
-                                uiState.onNameChange(organizationName)
-                                // TODO: Hide popup
-                                emailFocusRequester.requestFocus()
+                )
+                Spacer(Modifier.height(20.dp))
+                CamstudyTextField(
+                    modifier = Modifier
+                        .padding(horizontal = 16.dp)
+                        .focusRequester(emailFocusRequester),
+                    value = uiState.email,
+                    onValueChange = uiState.onEmailChange,
+                    singleLine = true,
+                    placeholder = stringResource(R.string.organization_email_placeholder),
+                    label = stringResource(R.string.organization_email_label),
+                    supportingText = uiState.emailSupportingText,
+                    isError = uiState.shouldShowEmailError,
+                    keyboardOptions = KeyboardOptions(
+                        keyboardType = KeyboardType.Email,
+                        imeAction = ImeAction.Send
+                    ),
+                    keyboardActions = KeyboardActions(
+                        onSend = {
+                            if (!uiState.canRequest) {
+                                return@KeyboardActions
                             }
-                        )
-                    }
-                }
-            )
-            Spacer(Modifier.height(20.dp))
-            CamstudyTextField(
-                modifier = Modifier
-                    .padding(horizontal = 16.dp)
-                    .focusRequester(emailFocusRequester),
-                value = uiState.email,
-                onValueChange = uiState.onEmailChange,
-                singleLine = true,
-                placeholder = stringResource(R.string.organization_email_placeholder),
-                label = stringResource(R.string.organization_email_label),
-                supportingText = uiState.emailSupportingText,
-                isError = uiState.shouldShowEmailError
-            )
+                            focusManager.clearFocus()
+                            // TODO
+                        }
+                    )
+                )
+            }
         }
+        BottomContainedButton(
+            label = stringResource(R.string.request_organization_enroll_mail),
+            enabled = uiState.canRequest,
+            onClick = {
+                focusManager.clearFocus()
+                // TODO
+            }
+        )
     }
 }
 

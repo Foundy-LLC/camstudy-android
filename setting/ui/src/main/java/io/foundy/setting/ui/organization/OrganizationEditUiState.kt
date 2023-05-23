@@ -100,6 +100,11 @@ sealed class OrganizationEditUiState {
                 }
                 return stringResource(R.string.organization_email_supporting_text)
             }
+
+        val canRequest: Boolean = run {
+            selectedOrganization != null &&
+                isValidEmailForSelectedOrganization
+        }
     }
 
     data class Failure(val userMessage: UserMessage) : OrganizationEditUiState()
