@@ -107,7 +107,7 @@ fun OrganizationEditScreen(
             modifier = Modifier.padding(innerPadding)
         ) {
             when (uiState) {
-                is OrganizationEditUiState.Failure -> TODO()
+                is OrganizationEditUiState.Failure -> Failure()
                 OrganizationEditUiState.Loading -> Loading()
                 is OrganizationEditUiState.Success -> Success(uiState = uiState)
             }
@@ -117,6 +117,11 @@ fun OrganizationEditScreen(
 
 @Composable
 private fun Loading() {
+    // TODO
+}
+
+@Composable
+private fun Failure() {
     // TODO
 }
 
