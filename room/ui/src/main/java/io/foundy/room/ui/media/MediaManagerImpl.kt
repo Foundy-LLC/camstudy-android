@@ -68,7 +68,9 @@ class MediaManagerImpl @Inject constructor(
     override var enabledLocalHeadset by mutableStateOf(false)
         private set
 
-    override val mediaEvent: MutableSharedFlow<MediaManagerEvent> = MutableSharedFlow(replay = 0)
+    override val mediaEvent: MutableSharedFlow<MediaManagerEvent> = MutableSharedFlow(
+        extraBufferCapacity = 1
+    )
 
     override val currentUserState: PeerUiState
         get() = PeerUiState(
