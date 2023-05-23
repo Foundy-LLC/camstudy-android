@@ -55,6 +55,7 @@ import io.foundy.core.designsystem.icon.CamstudyIcons
 import io.foundy.core.designsystem.theme.CamstudyTheme
 import io.foundy.core.model.OrganizationOverview
 import io.foundy.core.ui.RecommendListPopup
+import io.foundy.core.ui.rememberRecommendListPopupState
 import io.foundy.setting.ui.R
 import kotlinx.coroutines.launch
 import org.orbitmvi.orbit.compose.collectAsState
@@ -141,6 +142,9 @@ private fun Success(uiState: OrganizationEditUiState.Success) {
     var organizationToDelete by remember { mutableStateOf<OrganizationOverview?>(null) }
     val focusManager = LocalFocusManager.current
     val emailFocusRequester = remember { FocusRequester() }
+    val recommendListPopupState = rememberRecommendListPopupState()
+    val shouldShowRecommendPopup =
+        recommendListPopupState.isVisible && uiState.recommendedOrganizationNames.isNotEmpty()
 
     organizationToDelete?.let { organization ->
         CamstudyDialog(
@@ -175,16 +179,21 @@ private fun Success(uiState: OrganizationEditUiState.Success) {
             }
             item {
                 Spacer(Modifier.height(20.dp))
+                // TODO: 필드 누르면 다시 보이기
+                // TODO: 키보드 입력이 이상함. 포인터 위치가 하나 뒤로 밀리는 걸 보면 포인터를 못따라 가는것 같음.
                 CamstudyTextField(
                     modifier = Modifier.padding(horizontal = 16.dp),
                     value = uiState.name,
-                    onValueChange = uiState.onNameChange,
+                    onValueChange = {
+                        uiState.onNameChange(it)
+                        recommendListPopupState.show()
+                    },
                     label = stringResource(R.string.organization_name_label),
                     placeholder = stringResource(R.string.organization_name_placeholder),
                     singleLine = true,
                     supportingText = uiState.nameSupportingText,
                     isError = uiState.shouldShowNameError,
-                    borderShape = if (uiState.recommendedOrganizationNames.isNotEmpty()) {
+                    borderShape = if (shouldShowRecommendPopup) {
                         RoundedCornerShape(topStart = 8.dp, topEnd = 8.dp)
                     } else {
                         RoundedCornerShape(8.dp)
@@ -192,19 +201,19 @@ private fun Success(uiState: OrganizationEditUiState.Success) {
                     keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
                     keyboardActions = KeyboardActions(
                         onNext = {
-                            // TODO: Hide popup
+                            recommendListPopupState.dismiss()
                             emailFocusRequester.requestFocus()
                         }
                     ),
                     supportingContent = {
-                        // TODO: 바깥을 탭하거나 텍스트 필드에 포커스가 잃어지는 경우 사라지게 하기
-                        if (uiState.recommendedOrganizationNames.isNotEmpty()) {
+                        if (shouldShowRecommendPopup) {
                             RecommendListPopup(
                                 modifier = Modifier.padding(horizontal = 16.dp),
                                 items = uiState.recommendedOrganizationNames,
+                                state = recommendListPopupState,
                                 onItemClick = { organizationName ->
                                     uiState.onNameChange(organizationName)
-                                    // TODO: Hide popup
+                                    recommendListPopupState.dismiss()
                                     emailFocusRequester.requestFocus()
                                 }
                             )

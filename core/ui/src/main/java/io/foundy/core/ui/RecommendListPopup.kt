@@ -8,6 +8,11 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Stable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Shape
@@ -19,20 +24,45 @@ import io.foundy.core.designsystem.component.CamstudyTextFieldTextStyle
 import io.foundy.core.designsystem.theme.CamstudyTheme
 
 @Composable
+fun rememberRecommendListPopupState(initState: Boolean = false): RecommendListPopupState {
+    return remember { RecommendListPopupState(initState) }
+}
+
+@Stable
+class RecommendListPopupState(initState: Boolean = false) {
+
+    var isVisible: Boolean by mutableStateOf(initState)
+        private set
+
+    fun show() {
+        isVisible = true
+    }
+
+    fun dismiss() {
+        isVisible = false
+    }
+}
+
+@Composable
 fun RecommendListPopup(
     items: List<String>,
     onItemClick: (String) -> Unit,
     modifier: Modifier = Modifier,
+    state: RecommendListPopupState = rememberRecommendListPopupState(),
     shape: Shape = RoundedCornerShape(bottomStart = 8.dp, bottomEnd = 8.dp)
 ) {
-    Box {
-        Popup {
-            RecommendList(
-                items = items,
-                onItemClick = onItemClick,
-                modifier = modifier,
-                shape = shape
-            )
+    if (state.isVisible) {
+        Box {
+            Popup(
+                onDismissRequest = state::dismiss
+            ) {
+                RecommendList(
+                    items = items,
+                    onItemClick = onItemClick,
+                    modifier = modifier,
+                    shape = shape
+                )
+            }
         }
     }
 }
