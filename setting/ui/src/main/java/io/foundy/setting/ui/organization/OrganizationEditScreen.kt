@@ -4,6 +4,7 @@ import android.content.res.Configuration.UI_MODE_NIGHT_YES
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
@@ -176,10 +177,9 @@ private fun Success(uiState: OrganizationEditUiState.Success) {
                         .fillMaxWidth()
                         .background(color = CamstudyTheme.colorScheme.systemUi01)
                 )
+                Spacer(Modifier.height(20.dp))
             }
             item {
-                Spacer(Modifier.height(20.dp))
-                // TODO: 필드 누르면 다시 보이기
                 // TODO: 키보드 입력이 이상함. 포인터 위치가 하나 뒤로 밀리는 걸 보면 포인터를 못따라 가는것 같음.
                 CamstudyTextField(
                     modifier = Modifier.padding(horizontal = 16.dp),
@@ -187,6 +187,11 @@ private fun Success(uiState: OrganizationEditUiState.Success) {
                     onValueChange = {
                         uiState.onNameChange(it)
                         recommendListPopupState.show()
+                    },
+                    interactionSource = remember { MutableInteractionSource() }.apply {
+                        if (collectIsPressedAsState().value) {
+                            recommendListPopupState.show()
+                        }
                     },
                     label = stringResource(R.string.organization_name_label),
                     placeholder = stringResource(R.string.organization_name_placeholder),
