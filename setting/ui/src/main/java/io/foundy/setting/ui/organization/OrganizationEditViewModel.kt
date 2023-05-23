@@ -72,12 +72,6 @@ class OrganizationEditViewModel @Inject constructor(
         fetchRecommendedOrganizations(organizationName)
     }
 
-    private fun handleRecommendedNameClick(organizationName: String) = intent {
-        val uiState = state
-        check(uiState is OrganizationEditUiState.Success)
-        reduce { uiState.copy(name = organizationName) }
-    }
-
     private fun changeEmail(email: String) = intent {
         val uiState = state
         check(uiState is OrganizationEditUiState.Success)
