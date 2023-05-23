@@ -8,6 +8,7 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowForwardIos
 import androidx.compose.material.icons.filled.CancelScheduleSend
 import androidx.compose.material.icons.filled.Chat
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Done
 import androidx.compose.material.icons.filled.Error
@@ -73,6 +74,7 @@ object CamstudyIcons {
     val People = Icons.Default.People.asCamstudyIcon()
     val Timer = Icons.Outlined.Timer.asCamstudyIcon()
     val Search = Icons.Default.Search.asCamstudyIcon()
+    val Close = Icons.Default.Close.asCamstudyIcon()
     val LockSharp = Icons.Sharp.Lock.asCamstudyIcon()
     val KeyboardArrowUp = Icons.Default.KeyboardArrowUp.asCamstudyIcon()
     val KeyboardArrowDown = Icons.Default.KeyboardArrowDown.asCamstudyIcon()

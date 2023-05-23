@@ -25,4 +25,9 @@
     <string name="edit_profile_recheck_dialog_content">저정하지 않고 뒤로갈까요?</string>
     <string name="edit_profile_recheck_dialog_confirm_text">뒤로가기</string>
     <string name="organization_edit">소속 편집</string>
+    <string name="failed_to_load_my_organizations">나의 소속을 불러오지 못했어요</string>
+    <string name="empty_registered_organization">등록된 소속이 없습니다</string>
+    <string name="registered_organization_title">등록된 소속</string>
+    <string name="remove_organization_recheck_content">정말로 %s를 삭제할까요?</string>
+    <string name="remove_organization_confirm_button">삭제</string>
 </resources>
