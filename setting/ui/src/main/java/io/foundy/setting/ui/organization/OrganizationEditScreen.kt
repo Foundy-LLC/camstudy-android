@@ -104,7 +104,9 @@ fun OrganizationEditScreen(
         containerColor = CamstudyTheme.colorScheme.systemUi01
     ) { innerPadding ->
         Box(
-            modifier = Modifier.padding(innerPadding)
+            modifier = Modifier
+                .padding(innerPadding)
+                .fillMaxSize()
         ) {
             when (uiState) {
                 is OrganizationEditUiState.Failure -> Failure()
@@ -145,7 +147,7 @@ private fun Success(uiState: OrganizationEditUiState.Success) {
         )
     }
 
-    LazyColumn {
+    LazyColumn(Modifier.fillMaxSize()) {
         item {
             MyOrganizations(
                 organizations = uiState.registeredOrganizations,
@@ -156,35 +158,39 @@ private fun Success(uiState: OrganizationEditUiState.Success) {
     }
 }
 
+private val MyOrganizationsMinHeight = 140.dp
+
 @Composable
 private fun MyOrganizations(
     organizations: List<OrganizationOverview>,
     deletingOrganizationIds: Set<String>,
     onDeleteClick: (OrganizationOverview) -> Unit
 ) {
-    Column(
-        modifier = Modifier
-            .heightIn(min = 140.dp)
-            .fillMaxWidth()
-            .background(color = CamstudyTheme.colorScheme.systemBackground)
-            .padding(vertical = 20.dp)
-    ) {
-        if (organizations.isEmpty()) {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(horizontal = 16.dp)
-            ) {
-                CamstudyText(
-                    modifier = Modifier.align(Alignment.Center),
-                    text = stringResource(R.string.empty_registered_organization),
-                    style = CamstudyTheme.typography.titleLarge.copy(
-                        color = CamstudyTheme.colorScheme.systemUi04,
-                        fontWeight = FontWeight.SemiBold
-                    )
+    if (organizations.isEmpty()) {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .heightIn(min = MyOrganizationsMinHeight)
+                .background(color = CamstudyTheme.colorScheme.systemBackground)
+                .padding(horizontal = 16.dp)
+        ) {
+            CamstudyText(
+                modifier = Modifier.align(Alignment.Center),
+                text = stringResource(R.string.empty_registered_organization),
+                style = CamstudyTheme.typography.titleLarge.copy(
+                    color = CamstudyTheme.colorScheme.systemUi04,
+                    fontWeight = FontWeight.SemiBold
                 )
-            }
-        } else {
+            )
+        }
+    } else {
+        Column(
+            modifier = Modifier
+                .heightIn(min = MyOrganizationsMinHeight)
+                .fillMaxWidth()
+                .background(color = CamstudyTheme.colorScheme.systemBackground)
+                .padding(vertical = 20.dp)
+        ) {
             CamstudyText(
                 modifier = Modifier.padding(horizontal = 16.dp),
                 text = stringResource(R.string.registered_organization_title),
@@ -304,6 +310,18 @@ private fun OrganizationChipFlowRowPreview() {
                 OrganizationOverview(id = "id2", name = "서울대학교")
             ),
             deletingOrganizationIds = setOf("id2"),
+            onDeleteClick = {}
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun MyOrganizationsEmptyPreview() {
+    CamstudyTheme {
+        MyOrganizations(
+            organizations = listOf(),
+            deletingOrganizationIds = setOf(),
             onDeleteClick = {}
         )
     }
