@@ -80,6 +80,12 @@ class OrganizationEditViewModel @Inject constructor(
 
     private fun fetchRecommendedOrganizations(name: String) = intent {
         recommendOrganizationFetchJob?.cancel()
+        if (name.isEmpty()) {
+            (state as? OrganizationEditUiState.Success)?.let { uiState ->
+                reduce { uiState.copy(recommendedOrganizations = emptyList()) }
+            }
+            return@intent
+        }
         recommendOrganizationFetchJob = viewModelScope.launch {
             delay(300)
             organizationRepository.getOrganizations(name = name)
