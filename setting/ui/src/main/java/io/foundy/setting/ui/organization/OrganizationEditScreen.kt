@@ -46,6 +46,7 @@ import io.foundy.core.designsystem.icon.CamstudyIcon
 import io.foundy.core.designsystem.icon.CamstudyIcons
 import io.foundy.core.designsystem.theme.CamstudyTheme
 import io.foundy.core.model.OrganizationOverview
+import io.foundy.core.ui.RecommendListPopup
 import io.foundy.setting.ui.R
 import kotlinx.coroutines.launch
 import org.orbitmvi.orbit.compose.collectAsState
@@ -170,6 +171,23 @@ private fun Success(uiState: OrganizationEditUiState.Success) {
                 label = stringResource(R.string.organization_name_label),
                 supportingText = uiState.nameSupportingText,
                 isError = uiState.shouldShowNameError,
+                borderShape = if (uiState.recommendedOrganizationNames.isNotEmpty()) {
+                    RoundedCornerShape(topStart = 8.dp, topEnd = 8.dp)
+                } else {
+                    RoundedCornerShape(8.dp)
+                },
+                supportingContent = {
+                    if (uiState.recommendedOrganizationNames.isNotEmpty()) {
+                        RecommendListPopup(
+                            modifier = Modifier.padding(horizontal = 16.dp),
+                            items = uiState.recommendedOrganizationNames,
+                            onItemClick = { organizationName ->
+                                uiState.onNameChange(organizationName)
+                                // TODO: focus to email text field
+                            }
+                        )
+                    }
+                }
             )
             Spacer(Modifier.height(20.dp))
         }

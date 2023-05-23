@@ -78,9 +78,15 @@ class OrganizationEditViewModel @Inject constructor(
             delay(300)
             organizationRepository.getOrganizations(name = name)
                 .onSuccess { organizations ->
-                    (state as? OrganizationEditUiState.Success)?.let {
+                    (state as? OrganizationEditUiState.Success)?.let { uiState ->
                         reduce {
-                            it.copy(recommendedOrganizations = organizations)
+                            uiState.copy(
+                                recommendedOrganizations = organizations.filterNot { organization ->
+                                    return@filterNot uiState.registeredOrganizations
+                                        .map { it.id }
+                                        .contains(organization.id)
+                                }
+                            )
                         }
                     }
                 }.onFailure {

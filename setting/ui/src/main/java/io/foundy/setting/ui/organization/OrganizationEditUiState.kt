@@ -14,7 +14,7 @@ sealed class OrganizationEditUiState {
 
     data class Success(
         val registeredOrganizations: List<OrganizationOverview>,
-        val recommendedOrganizations: List<Organization> = emptyList(),
+        private val recommendedOrganizations: List<Organization> = emptyList(),
         val name: String = "",
         val email: String = "",
         val deletingOrganizationIds: Set<String> = emptySet(),
@@ -24,11 +24,19 @@ sealed class OrganizationEditUiState {
         val onRequestEmailClick: () -> Unit
     ) : OrganizationEditUiState() {
 
+        val recommendedOrganizationNames: List<String>
+            get() {
+                return recommendedOrganizations
+                    .filterNot { it.name == name }
+                    .map { it.name }
+                    .take(3)
+            }
+
         val selectedOrganization: Organization?
             get() {
                 return recommendedOrganizations.firstOrNull { it.name == name }
             }
-        
+
         val shouldShowNameError: Boolean
             get() {
                 return name.isNotEmpty() && selectedOrganization == null
