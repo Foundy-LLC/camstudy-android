@@ -37,4 +37,11 @@
     <string name="organization_name_error_supporting_text">소속 이름을 정확히 입력해주세요</string>
     <string name="organization_name_is_valid_supporting_text">소속 이름이 입력되었어요</string>
     <string name="failed_to_load_organization_list">소속 목록을 가져오지 못했어요</string>
+    <string name="organization_email_supporting_text">소속된 학교, 회사의 이메일 주소를 입력해주세요</string>
+    <string name="organization_email_label">이메일</string>
+    <string name="organization_name_placeholder">농부대학교</string>
+    <string name="organization_email_placeholder">abc@studyingfarmer.link</string>
+    <string name="valid_email_supporting_text">올바른 이메일이에요</string>
+    <string name="invalid_organization_supporting_text">%s 이메일은 @%s 형식이에요</string>
+    <string name="invalid_email_format_supporting_text">올바른 이메일 형식이 아니에요</string>
 </resources>

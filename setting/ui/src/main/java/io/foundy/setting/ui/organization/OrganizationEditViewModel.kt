@@ -44,7 +44,7 @@ class OrganizationEditViewModel @Inject constructor(
                             OrganizationEditUiState.Success(
                                 registeredOrganizations = organizations,
                                 onNameChange = ::changeName,
-                                onEmailChange = { /* TODO */ },
+                                onEmailChange = ::changeEmail,
                                 onDeleteClick = ::deleteOrganization,
                                 onRequestEmailClick = { /* TODO */ }
                             )
@@ -70,6 +70,18 @@ class OrganizationEditViewModel @Inject constructor(
         check(uiState is OrganizationEditUiState.Success)
         reduce { uiState.copy(name = organizationName) }
         fetchRecommendedOrganizations(organizationName)
+    }
+
+    private fun handleRecommendedNameClick(organizationName: String) = intent {
+        val uiState = state
+        check(uiState is OrganizationEditUiState.Success)
+        reduce { uiState.copy(name = organizationName) }
+    }
+
+    private fun changeEmail(email: String) = intent {
+        val uiState = state
+        check(uiState is OrganizationEditUiState.Success)
+        reduce { uiState.copy(email = email) }
     }
 
     private fun fetchRecommendedOrganizations(name: String) = intent {

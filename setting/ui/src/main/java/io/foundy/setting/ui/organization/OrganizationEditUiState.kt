@@ -3,6 +3,7 @@ package io.foundy.setting.ui.organization
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.ui.res.stringResource
+import androidx.core.util.PatternsCompat.EMAIL_ADDRESS
 import io.foundy.core.model.Organization
 import io.foundy.core.model.OrganizationOverview
 import io.foundy.core.ui.UserMessage
@@ -24,22 +25,46 @@ sealed class OrganizationEditUiState {
         val onRequestEmailClick: () -> Unit
     ) : OrganizationEditUiState() {
 
-        val recommendedOrganizationNames: List<String>
-            get() {
-                return recommendedOrganizations
-                    .filterNot { it.name == name }
-                    .map { it.name }
-                    .take(3)
-            }
+        val recommendedOrganizationNames: List<String> = run {
+            recommendedOrganizations
+                .filterNot { it.name == name }
+                .map { it.name }
+                .take(3)
+        }
 
-        val selectedOrganization: Organization?
-            get() {
-                return recommendedOrganizations.firstOrNull { it.name == name }
+        val selectedOrganization: Organization? = run {
+            recommendedOrganizations.firstOrNull { it.name == name }
+        }
+
+        private val isValidEmailForSelectedOrganization: Boolean = run {
+            val selectedOrganizationEmailAddress = selectedOrganization?.address
+            if (selectedOrganizationEmailAddress != null) {
+                val enteredEmailAddress = email
+                    .split("@")
+                    .getOrNull(1) ?: return@run false
+                return@run enteredEmailAddress == selectedOrganizationEmailAddress
             }
+            return@run false
+        }
+
+        private val isValidEmailFormat: Boolean = run {
+            EMAIL_ADDRESS.matcher(email).matches()
+        }
 
         val shouldShowNameError: Boolean
             get() {
                 return name.isNotEmpty() && selectedOrganization == null
+            }
+
+        val shouldShowEmailError: Boolean
+            get() {
+                if (email.isEmpty()) {
+                    return false
+                }
+                if (selectedOrganization != null) {
+                    return !isValidEmailForSelectedOrganization
+                }
+                return !isValidEmailFormat
             }
 
         val nameSupportingText: String
@@ -53,6 +78,27 @@ sealed class OrganizationEditUiState {
                     return stringResource(R.string.organization_name_error_supporting_text)
                 }
                 return stringResource(id = R.string.organization_name_supporting_text)
+            }
+
+        val emailSupportingText: String
+            @Composable
+            @ReadOnlyComposable
+            get() {
+                if (selectedOrganization != null) {
+                    return if (isValidEmailForSelectedOrganization) {
+                        stringResource(R.string.valid_email_supporting_text)
+                    } else {
+                        stringResource(
+                            R.string.invalid_organization_supporting_text,
+                            selectedOrganization.name,
+                            selectedOrganization.address
+                        )
+                    }
+                }
+                if (email.isNotEmpty() && !isValidEmailFormat) {
+                    return stringResource(R.string.invalid_email_format_supporting_text)
+                }
+                return stringResource(R.string.organization_email_supporting_text)
             }
     }
 

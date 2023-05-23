@@ -17,6 +17,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
@@ -30,9 +32,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -131,6 +136,7 @@ private fun Failure() {
 @Composable
 private fun Success(uiState: OrganizationEditUiState.Success) {
     var organizationToDelete by remember { mutableStateOf<OrganizationOverview?>(null) }
+    val emailFocusRequester = remember { FocusRequester() }
 
     organizationToDelete?.let { organization ->
         CamstudyDialog(
@@ -169,6 +175,8 @@ private fun Success(uiState: OrganizationEditUiState.Success) {
                 value = uiState.name,
                 onValueChange = uiState.onNameChange,
                 label = stringResource(R.string.organization_name_label),
+                placeholder = stringResource(R.string.organization_name_placeholder),
+                singleLine = true,
                 supportingText = uiState.nameSupportingText,
                 isError = uiState.shouldShowNameError,
                 borderShape = if (uiState.recommendedOrganizationNames.isNotEmpty()) {
@@ -176,20 +184,41 @@ private fun Success(uiState: OrganizationEditUiState.Success) {
                 } else {
                     RoundedCornerShape(8.dp)
                 },
+                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
+                keyboardActions = KeyboardActions(
+                    onNext = {
+                        // TODO: Hide popup
+                        emailFocusRequester.requestFocus()
+                    }
+                ),
                 supportingContent = {
+                    // TODO: 바깥을 탭하거나 텍스트 필드에 포커스가 잃어지는 경우 사라지게 하기
                     if (uiState.recommendedOrganizationNames.isNotEmpty()) {
                         RecommendListPopup(
                             modifier = Modifier.padding(horizontal = 16.dp),
                             items = uiState.recommendedOrganizationNames,
                             onItemClick = { organizationName ->
                                 uiState.onNameChange(organizationName)
-                                // TODO: focus to email text field
+                                // TODO: Hide popup
+                                emailFocusRequester.requestFocus()
                             }
                         )
                     }
                 }
             )
             Spacer(Modifier.height(20.dp))
+            CamstudyTextField(
+                modifier = Modifier
+                    .padding(horizontal = 16.dp)
+                    .focusRequester(emailFocusRequester),
+                value = uiState.email,
+                onValueChange = uiState.onEmailChange,
+                singleLine = true,
+                placeholder = stringResource(R.string.organization_email_placeholder),
+                label = stringResource(R.string.organization_email_label),
+                supportingText = uiState.emailSupportingText,
+                isError = uiState.shouldShowEmailError
+            )
         }
     }
 }
