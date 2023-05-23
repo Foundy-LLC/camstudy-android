@@ -63,8 +63,9 @@ class FakeUserRepository : UserRepository {
         name: String,
         introduce: String?,
         tags: List<String>,
-        profileImage: File?
-    ): Result<Unit> {
+        profileImage: File?,
+        shouldRemoveProfileImage: Boolean
+    ): Result<String?> {
         TODO("Not yet implemented")
     }
 }
