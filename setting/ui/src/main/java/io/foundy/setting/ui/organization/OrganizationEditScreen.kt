@@ -233,7 +233,7 @@ private fun Success(uiState: OrganizationEditUiState.Success) {
                                 return@KeyboardActions
                             }
                             focusManager.clearFocus()
-                            // TODO
+                            uiState.onRequestEmailClick()
                         }
                     )
                 )
@@ -244,7 +244,7 @@ private fun Success(uiState: OrganizationEditUiState.Success) {
             enabled = uiState.canRequest,
             onClick = {
                 focusManager.clearFocus()
-                // TODO
+                uiState.onRequestEmailClick()
             }
         )
     }

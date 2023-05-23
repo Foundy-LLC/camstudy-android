@@ -19,6 +19,7 @@ sealed class OrganizationEditUiState {
         val name: String = "",
         val email: String = "",
         val deletingOrganizationIds: Set<String> = emptySet(),
+        val inRequesting: Boolean = false,
         val onNameChange: (String) -> Unit,
         val onEmailChange: (String) -> Unit,
         val onDeleteClick: (OrganizationOverview) -> Unit,
@@ -103,7 +104,8 @@ sealed class OrganizationEditUiState {
 
         val canRequest: Boolean = run {
             selectedOrganization != null &&
-                isValidEmailForSelectedOrganization
+                isValidEmailForSelectedOrganization &&
+                !inRequesting
         }
     }
 

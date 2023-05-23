@@ -46,7 +46,7 @@ class OrganizationEditViewModel @Inject constructor(
                                 onNameChange = ::changeName,
                                 onEmailChange = ::changeEmail,
                                 onDeleteClick = ::deleteOrganization,
-                                onRequestEmailClick = { /* TODO */ }
+                                onRequestEmailClick = ::requestOrganizationEnrollEmail
                             )
                         }
                     }
@@ -157,5 +157,46 @@ class OrganizationEditViewModel @Inject constructor(
             )
         }
         removeDeletingOrganizationId(organization.id)
+    }
+
+    private fun setInRequesting(inRequesting: Boolean) = intent {
+        val uiState = state
+        check(uiState is OrganizationEditUiState.Success)
+        reduce { uiState.copy(inRequesting = inRequesting) }
+    }
+
+    private fun requestOrganizationEnrollEmail() = intent {
+        setInRequesting(inRequesting = true)
+        val uiState = state
+        check(uiState is OrganizationEditUiState.Success)
+        check(uiState.selectedOrganization != null)
+        organizationRepository.requestOrganizationAdding(
+            userId = currentUserId,
+            organizationId = uiState.selectedOrganization.id,
+            email = uiState.email
+        ).onSuccess {
+            (state as? OrganizationEditUiState.Success)?.let {
+                reduce {
+                    it.copy(email = "", name = "", recommendedOrganizations = emptyList())
+                }
+            }
+            postSideEffect(
+                OrganizationEditSideEffect.Message(
+                    userMessage = UserMessage(
+                        defaultRes = R.string.success_to_request_organization_adding
+                    )
+                )
+            )
+        }.onFailure {
+            postSideEffect(
+                OrganizationEditSideEffect.Message(
+                    userMessage = UserMessage(
+                        content = it.message,
+                        defaultRes = R.string.failed_to_request_organization
+                    )
+                )
+            )
+        }
+        setInRequesting(inRequesting = false)
     }
 }

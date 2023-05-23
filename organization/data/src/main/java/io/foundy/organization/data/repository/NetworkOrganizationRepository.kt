@@ -4,6 +4,7 @@ import io.foundy.core.data.extension.getDataOrThrowMessage
 import io.foundy.core.model.Organization
 import io.foundy.core.model.OrganizationOverview
 import io.foundy.organization.data.api.OrganizationApi
+import io.foundy.organization.data.model.OrganizationAddingRequestBody
 import io.foundy.organization.data.model.toEntity
 import javax.inject.Inject
 
@@ -22,6 +23,24 @@ class NetworkOrganizationRepository @Inject constructor(
         return runCatching {
             val response = api.getUserOrganizations(userId = userId)
             response.getDataOrThrowMessage().map { it.toEntity() }
+        }
+    }
+
+    override suspend fun requestOrganizationAdding(
+        userId: String,
+        organizationId: String,
+        email: String
+    ): Result<Unit> {
+        return runCatching {
+            val requestBody = OrganizationAddingRequestBody(
+                email = email,
+                organizationId = organizationId
+            )
+            val response = api.requestOrganizationAdding(
+                userId = userId,
+                body = requestBody
+            )
+            response.getDataOrThrowMessage()
         }
     }
 

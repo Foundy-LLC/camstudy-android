@@ -1,10 +1,13 @@
 package io.foundy.organization.data.api
 
 import io.foundy.core.data.util.CamstudyResponse
+import io.foundy.organization.data.model.OrganizationAddingRequestBody
 import io.foundy.organization.data.model.OrganizationDto
 import io.foundy.organization.data.model.OrganizationOverviewDto
+import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
+import retrofit2.http.POST
 import retrofit2.http.Path
 import retrofit2.http.Query
 
@@ -20,6 +23,12 @@ interface OrganizationApi {
     suspend fun getUserOrganizations(
         @Path("userId") userId: String
     ): CamstudyResponse<List<OrganizationOverviewDto>>
+
+    @POST("users/{userId}/organizations")
+    suspend fun requestOrganizationAdding(
+        @Path("userId") userId: String,
+        @Body body: OrganizationAddingRequestBody
+    ): CamstudyResponse<Unit>
 
     @DELETE("users/{userId}/organizations/{organizationId}")
     suspend fun deleteOrganization(
