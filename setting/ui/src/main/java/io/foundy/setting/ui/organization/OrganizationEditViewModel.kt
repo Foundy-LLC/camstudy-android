@@ -8,6 +8,8 @@ import io.foundy.core.model.OrganizationOverview
 import io.foundy.core.ui.UserMessage
 import io.foundy.organization.data.repository.OrganizationRepository
 import io.foundy.setting.ui.R
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 import org.orbitmvi.orbit.Container
@@ -30,6 +32,8 @@ class OrganizationEditViewModel @Inject constructor(
     private var _currentUserId: String? = null
     private val currentUserId: String get() = requireNotNull(_currentUserId)
 
+    private var recommendOrganizationFetchJob: Job? = null
+
     init {
         viewModelScope.launch {
             _currentUserId = requireNotNull(authRepository.currentUserIdStream.firstOrNull())
@@ -39,7 +43,7 @@ class OrganizationEditViewModel @Inject constructor(
                         reduce {
                             OrganizationEditUiState.Success(
                                 registeredOrganizations = organizations,
-                                onNameChange = { /* TODO */ },
+                                onNameChange = ::changeName,
                                 onEmailChange = { /* TODO */ },
                                 onDeleteClick = ::deleteOrganization,
                                 onRequestEmailClick = { /* TODO */ }
@@ -57,6 +61,37 @@ class OrganizationEditViewModel @Inject constructor(
                             )
                         }
                     }
+                }
+        }
+    }
+
+    private fun changeName(organizationName: String) = intent {
+        val uiState = state
+        check(uiState is OrganizationEditUiState.Success)
+        reduce { uiState.copy(name = organizationName) }
+        fetchRecommendedOrganizations(organizationName)
+    }
+
+    private fun fetchRecommendedOrganizations(name: String) = intent {
+        recommendOrganizationFetchJob?.cancel()
+        recommendOrganizationFetchJob = viewModelScope.launch {
+            delay(300)
+            organizationRepository.getOrganizations(name = name)
+                .onSuccess { organizations ->
+                    (state as? OrganizationEditUiState.Success)?.let {
+                        reduce {
+                            it.copy(recommendedOrganizations = organizations)
+                        }
+                    }
+                }.onFailure {
+                    postSideEffect(
+                        OrganizationEditSideEffect.Message(
+                            UserMessage(
+                                content = it.message,
+                                defaultRes = R.string.failed_to_load_organization_list
+                            )
+                        )
+                    )
                 }
         }
     }

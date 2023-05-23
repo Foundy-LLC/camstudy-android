@@ -32,4 +32,9 @@
     <string name="remove_organization_confirm_button">삭제</string>
     <string name="removed_organization">소속이 삭제되었습니다.</string>
     <string name="failed_to_remove_organization">소속 삭제를 실패했어요.</string>
+    <string name="organization_name_supporting_text">소속된 학교, 회사 등을 검색해주세요</string>
+    <string name="organization_name_label">소속명</string>
+    <string name="organization_name_error_supporting_text">소속 이름을 정확히 입력해주세요</string>
+    <string name="organization_name_is_valid_supporting_text">소속 이름이 입력되었어요</string>
+    <string name="failed_to_load_organization_list">소속 목록을 가져오지 못했어요</string>
 </resources>

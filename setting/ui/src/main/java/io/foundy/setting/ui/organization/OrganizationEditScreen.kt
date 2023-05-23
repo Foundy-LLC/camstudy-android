@@ -40,6 +40,7 @@ import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import io.foundy.core.designsystem.component.CamstudyDialog
 import io.foundy.core.designsystem.component.CamstudyText
+import io.foundy.core.designsystem.component.CamstudyTextField
 import io.foundy.core.designsystem.component.CamstudyTopAppBar
 import io.foundy.core.designsystem.icon.CamstudyIcon
 import io.foundy.core.designsystem.icon.CamstudyIcons
@@ -100,8 +101,7 @@ fun OrganizationEditScreen(
                 onBackClick = popBackStack
             )
         },
-        // TODO: CamstudyScaffold 만들어서 중복되는 색상 코드 제거하기
-        containerColor = CamstudyTheme.colorScheme.systemUi01
+        containerColor = CamstudyTheme.colorScheme.systemBackground
     ) { innerPadding ->
         Box(
             modifier = Modifier
@@ -154,6 +154,24 @@ private fun Success(uiState: OrganizationEditUiState.Success) {
                 deletingOrganizationIds = uiState.deletingOrganizationIds,
                 onDeleteClick = { organizationToDelete = it }
             )
+            Box(
+                Modifier
+                    .height(8.dp)
+                    .fillMaxWidth()
+                    .background(color = CamstudyTheme.colorScheme.systemUi01)
+            )
+        }
+        item {
+            Spacer(Modifier.height(20.dp))
+            CamstudyTextField(
+                modifier = Modifier.padding(horizontal = 16.dp),
+                value = uiState.name,
+                onValueChange = uiState.onNameChange,
+                label = stringResource(R.string.organization_name_label),
+                supportingText = uiState.nameSupportingText,
+                isError = uiState.shouldShowNameError,
+            )
+            Spacer(Modifier.height(20.dp))
         }
     }
 }
