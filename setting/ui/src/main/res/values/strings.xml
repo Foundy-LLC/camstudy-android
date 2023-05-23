@@ -28,6 +28,8 @@
     <string name="failed_to_load_my_organizations">나의 소속을 불러오지 못했어요</string>
     <string name="empty_registered_organization">등록된 소속이 없습니다</string>
     <string name="registered_organization_title">등록된 소속</string>
-    <string name="remove_organization_recheck_content">정말로 %s를 삭제할까요?</string>
+    <string name="remove_organization_recheck_content">정말로 %s 소속을 삭제할까요?</string>
     <string name="remove_organization_confirm_button">삭제</string>
+    <string name="removed_organization">소속이 삭제되었습니다.</string>
+    <string name="failed_to_remove_organization">소속 삭제를 실패했어요.</string>
 </resources>

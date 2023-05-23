@@ -14,6 +14,7 @@ sealed class OrganizationEditUiState {
         val recommendedOrganizations: List<Organization> = emptyList(),
         val name: String = "",
         val email: String = "",
+        val deletingOrganizationIds: Set<String> = emptySet(),
         val onNameChange: (String) -> Unit,
         val onEmailChange: (String) -> Unit,
         val onDeleteClick: (OrganizationOverview) -> Unit,

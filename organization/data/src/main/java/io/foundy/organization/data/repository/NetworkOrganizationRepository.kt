@@ -31,4 +31,11 @@ class NetworkOrganizationRepository @Inject constructor(
             response.getDataOrThrowMessage().map { it.toEntity() }
         }
     }
+
+    override suspend fun removeOrganization(userId: String, organizationId: String): Result<Unit> {
+        return runCatching {
+            val response = api.deleteOrganization(userId = userId, organizationId = organizationId)
+            response.getDataOrThrowMessage()
+        }
+    }
 }

@@ -19,14 +19,18 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -42,7 +46,9 @@ import io.foundy.core.designsystem.icon.CamstudyIcons
 import io.foundy.core.designsystem.theme.CamstudyTheme
 import io.foundy.core.model.OrganizationOverview
 import io.foundy.setting.ui.R
+import kotlinx.coroutines.launch
 import org.orbitmvi.orbit.compose.collectAsState
+import org.orbitmvi.orbit.compose.collectSideEffect
 
 @Destination
 @Composable
@@ -52,6 +58,19 @@ fun OrganizationEditRoute(
     viewModel: OrganizationEditViewModel = hiltViewModel()
 ) {
     val uiState = viewModel.collectAsState().value
+    val coroutineScope = rememberCoroutineScope()
+    val context = LocalContext.current
+    val snackbarHostState = remember { SnackbarHostState() }
+
+    viewModel.collectSideEffect {
+        when (it) {
+            is OrganizationEditSideEffect.Message -> coroutineScope.launch {
+                snackbarHostState.showSnackbar(
+                    it.userMessage.content ?: context.getString(it.userMessage.defaultRes)
+                )
+            }
+        }
+    }
 
     // TODO: 소속 이름, 이메일 입력한 경우 뒤로가기 눌렀을 때 다시 묻기
 
@@ -59,7 +78,8 @@ fun OrganizationEditRoute(
         uiState = uiState,
         popBackStack = {
             navigator.popBackStack()
-        }
+        },
+        snackbarHostState = snackbarHostState
     )
 }
 
@@ -67,9 +87,11 @@ fun OrganizationEditRoute(
 @Composable
 fun OrganizationEditScreen(
     uiState: OrganizationEditUiState,
+    snackbarHostState: SnackbarHostState,
     popBackStack: () -> Unit
 ) {
     Scaffold(
+        snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
         topBar = {
             CamstudyTopAppBar(
                 title = {
@@ -122,6 +144,7 @@ private fun Success(uiState: OrganizationEditUiState.Success) {
         item {
             MyOrganizations(
                 organizations = uiState.registeredOrganizations,
+                deletingOrganizationIds = uiState.deletingOrganizationIds,
                 onDeleteClick = { organizationToDelete = it }
             )
         }
@@ -131,6 +154,7 @@ private fun Success(uiState: OrganizationEditUiState.Success) {
 @Composable
 private fun MyOrganizations(
     organizations: List<OrganizationOverview>,
+    deletingOrganizationIds: Set<String>,
     onDeleteClick: (OrganizationOverview) -> Unit
 ) {
     Column(
@@ -168,6 +192,7 @@ private fun MyOrganizations(
             OrganizationChipFlowRow(
                 modifier = Modifier.padding(4.dp),
                 organizations = organizations,
+                deletingOrganizationIds = deletingOrganizationIds,
                 onDeleteClick = onDeleteClick
             )
         }
@@ -179,12 +204,14 @@ private fun MyOrganizations(
 private fun OrganizationChipFlowRow(
     modifier: Modifier = Modifier,
     organizations: List<OrganizationOverview>,
+    deletingOrganizationIds: Set<String>,
     onDeleteClick: (OrganizationOverview) -> Unit
 ) {
     FlowRow(modifier = modifier) {
         for (organization in organizations) {
             OrganizationChip(
                 organization = organization,
+                enabledDeleteButton = !deletingOrganizationIds.contains(organization.id),
                 onDeleteClick = { onDeleteClick(organization) }
             )
         }
@@ -194,6 +221,7 @@ private fun OrganizationChipFlowRow(
 @Composable
 private fun OrganizationChip(
     organization: OrganizationOverview,
+    enabledDeleteButton: Boolean,
     onDeleteClick: () -> Unit
 ) {
     Box {
@@ -217,12 +245,19 @@ private fun OrganizationChip(
                 .size(32.dp)
                 .clickable(
                     onClick = onDeleteClick,
+                    enabled = enabledDeleteButton,
                     indication = null,
                     interactionSource = remember { MutableInteractionSource() }
                 )
                 .padding(8.dp)
                 .clip(RoundedCornerShape(4.dp))
-                .background(color = CamstudyTheme.colorScheme.systemUi06)
+                .background(
+                    color = if (enabledDeleteButton) {
+                        CamstudyTheme.colorScheme.systemUi06
+                    } else {
+                        CamstudyTheme.colorScheme.systemUi04
+                    }
+                )
                 .align(Alignment.TopEnd)
         ) {
             CamstudyIcon(
@@ -244,12 +279,13 @@ private fun OrganizationChipPreview() {
     CamstudyTheme {
         OrganizationChip(
             organization = OrganizationOverview(id = "id", name = "한성대학교"),
+            enabledDeleteButton = true,
             onDeleteClick = {}
         )
     }
 }
 
-@Preview
+@Preview(showBackground = true)
 @Composable
 private fun OrganizationChipFlowRowPreview() {
     CamstudyTheme {
@@ -262,6 +298,7 @@ private fun OrganizationChipFlowRowPreview() {
                 OrganizationOverview(id = "id", name = "구글"),
                 OrganizationOverview(id = "id2", name = "서울대학교")
             ),
+            deletingOrganizationIds = setOf("id2"),
             onDeleteClick = {}
         )
     }

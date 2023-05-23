@@ -13,6 +13,7 @@ import kotlinx.coroutines.launch
 import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.syntax.simple.intent
+import org.orbitmvi.orbit.syntax.simple.postSideEffect
 import org.orbitmvi.orbit.syntax.simple.reduce
 import org.orbitmvi.orbit.viewmodel.container
 import javax.inject.Inject
@@ -26,9 +27,12 @@ class OrganizationEditViewModel @Inject constructor(
     override val container: Container<OrganizationEditUiState, OrganizationEditSideEffect> =
         container(OrganizationEditUiState.Loading)
 
+    private var _currentUserId: String? = null
+    private val currentUserId: String get() = requireNotNull(_currentUserId)
+
     init {
         viewModelScope.launch {
-            val currentUserId = requireNotNull(authRepository.currentUserIdStream.firstOrNull())
+            _currentUserId = requireNotNull(authRepository.currentUserIdStream.firstOrNull())
             organizationRepository.getUserOrganizations(userId = currentUserId)
                 .onSuccess { organizations ->
                     intent {
@@ -57,7 +61,54 @@ class OrganizationEditViewModel @Inject constructor(
         }
     }
 
+    private fun addDeletingOrganizationId(id: String) = intent {
+        val uiState = state
+        check(uiState is OrganizationEditUiState.Success)
+        reduce {
+            uiState.copy(
+                deletingOrganizationIds = uiState.deletingOrganizationIds + id
+            )
+        }
+    }
+
+    private fun removeDeletingOrganizationId(id: String) = intent {
+        val uiState = state
+        check(uiState is OrganizationEditUiState.Success)
+        reduce {
+            uiState.copy(
+                deletingOrganizationIds = uiState.deletingOrganizationIds - id
+            )
+        }
+    }
+
     private fun deleteOrganization(organization: OrganizationOverview) = intent {
-        // TODO
+        addDeletingOrganizationId(organization.id)
+        organizationRepository.removeOrganization(
+            userId = currentUserId,
+            organizationId = organization.id
+        ).onSuccess {
+            (state as? OrganizationEditUiState.Success)?.let { uiState ->
+                reduce {
+                    uiState.copy(
+                        registeredOrganizations = uiState.registeredOrganizations - organization
+                    )
+                }
+            }
+            postSideEffect(
+                OrganizationEditSideEffect.Message(
+                    userMessage = UserMessage(defaultRes = R.string.removed_organization)
+                )
+            )
+        }.onFailure {
+            postSideEffect(
+                OrganizationEditSideEffect.Message(
+                    userMessage = UserMessage(
+                        content = it.message,
+                        defaultRes = R.string.failed_to_remove_organization
+                    )
+                )
+            )
+        }
+        removeDeletingOrganizationId(organization.id)
     }
 }
