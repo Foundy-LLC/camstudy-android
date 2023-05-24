@@ -41,8 +41,9 @@ import io.foundy.core.designsystem.component.CamstudyTextField
 import io.foundy.core.designsystem.icon.CamstudyIcon
 import io.foundy.core.designsystem.icon.CamstudyIcons
 import io.foundy.core.designsystem.theme.CamstudyTheme
-import io.foundy.room.domain.ChatMessage
 import io.foundy.room.ui.R
+import io.foundy.room.ui.model.ChatMessageUiState
+import kotlinx.datetime.LocalDateTime
 import kotlin.random.Random
 
 private val ShadeOverlayHeight = 48.dp
@@ -51,7 +52,7 @@ private val ShadeOverlayHeight = 48.dp
 fun ChatDivide(
     modifier: Modifier = Modifier,
     expanded: Boolean,
-    messages: List<ChatMessage>,
+    messages: List<ChatMessageUiState>,
     chatInput: String,
     onChatInputChange: (String) -> Unit,
     onSendClick: (String) -> Unit,
@@ -82,7 +83,7 @@ fun ChatDivide(
 private fun ExpandableMessageHolder(
     modifier: Modifier = Modifier,
     expanded: Boolean,
-    messages: List<ChatMessage>,
+    messages: List<ChatMessageUiState>,
     onExpandClick: () -> Unit,
     onCollapseClick: () -> Unit,
 ) {
@@ -103,32 +104,39 @@ private fun ExpandableMessageHolder(
 @Composable
 private fun MessageContent(
     modifier: Modifier = Modifier,
-    message: ChatMessage,
+    message: ChatMessageUiState,
     maxLines: Int = Int.MAX_VALUE
 ) {
     val textStyle = CamstudyTheme.typography.titleSmall
 
-    Row(
-        modifier = modifier,
-    ) {
-        CamstudyText(
-            text = message.authorName,
+    when (message) {
+        is ChatMessageUiState.System -> CamstudyText(
+            modifier = modifier,
+            text = message.message,
             style = textStyle.copy(color = CamstudyTheme.colorScheme.systemUi05)
         )
-        Box(modifier = Modifier.width(8.dp))
-        CamstudyText(
-            text = message.content,
-            style = textStyle.copy(color = CamstudyTheme.colorScheme.systemUi09),
-            maxLines = maxLines,
-            overflow = TextOverflow.Ellipsis
-        )
+        is ChatMessageUiState.User -> Row(
+            modifier = modifier,
+        ) {
+            CamstudyText(
+                text = message.authorName,
+                style = textStyle.copy(color = CamstudyTheme.colorScheme.systemUi05)
+            )
+            Box(modifier = Modifier.width(8.dp))
+            CamstudyText(
+                text = message.content,
+                style = textStyle.copy(color = CamstudyTheme.colorScheme.systemUi09),
+                maxLines = maxLines,
+                overflow = TextOverflow.Ellipsis
+            )
+        }
     }
 }
 
 @Composable
 private fun ExpandedMessageHolder(
     modifier: Modifier = Modifier,
-    messages: List<ChatMessage>,
+    messages: List<ChatMessageUiState>,
     onCollapseClick: () -> Unit
 ) {
     Box(modifier = modifier) {
@@ -148,7 +156,7 @@ private fun ExpandedMessageHolder(
                 item {
                     Box(modifier = Modifier.height(12.dp))
                 }
-                items(items = messages, key = { it.id }) { message ->
+                items(items = messages) { message ->
                     MessageContent(
                         modifier = Modifier.padding(start = 16.dp, end = 52.dp, top = 8.dp),
                         message = message,
@@ -191,7 +199,7 @@ private fun ExpandedMessageHolder(
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun CollapsedMessageHolder(
-    lastMessage: ChatMessage?,
+    lastMessage: ChatMessageUiState?,
     onExpandClick: () -> Unit
 ) {
     Row(
@@ -304,12 +312,12 @@ private fun ExpandedChatDividePreview() {
         ChatDivide(
             expanded = true,
             messages = listOf(
-                ChatMessage(
+                ChatMessageUiState.User(
                     id = "1",
                     authorId = "uid",
                     authorName = "홍길동",
                     content = "안녕하세요~!",
-                    sentAt = "2022-05-08T19:57:12.123+09:00"
+                    sentDateTime = LocalDateTime.parse("2022-05-08T19:57:12.123+09:00")
                 )
             ),
             chatInput = "",
@@ -326,19 +334,19 @@ private fun ExpandedChatDividePreview() {
 private fun CollapsedChatDividePreview() {
     val messages = remember {
         mutableStateListOf(
-            ChatMessage(
+            ChatMessageUiState.User(
                 id = "1",
                 authorId = "uid",
                 authorName = "홍길동",
                 content = "안녕하세요~!",
-                sentAt = "2022-05-08T19:57:12.123+09:00"
+                sentDateTime = LocalDateTime.parse("2022-05-08T19:57:12.123+09:00")
             ),
-            ChatMessage(
+            ChatMessageUiState.User(
                 id = "2",
                 authorId = "uid",
                 authorName = "박민성",
                 content = "네 반가워요.",
-                sentAt = "2022-05-08T19:57:12.123+09:00"
+                sentDateTime = LocalDateTime.parse("2022-05-08T19:57:12.123+09:00")
             )
         )
     }
@@ -351,12 +359,12 @@ private fun CollapsedChatDividePreview() {
             onSendClick = {
                 messages.add(
                     index = 0,
-                    element = ChatMessage(
+                    element = ChatMessageUiState.User(
                         id = Random.nextInt().toString(),
                         authorId = "uid",
                         authorName = "박민성",
                         content = it,
-                        sentAt = "2022-05-08T19:57:12.123+09:00"
+                        sentDateTime = LocalDateTime.parse("2022-05-08T19:57:12.123+09:00")
                     )
                 )
             },
@@ -370,12 +378,12 @@ private fun CollapsedChatDividePreview() {
 @Composable
 private fun ExpandedMessageHolderPreview() {
     val messages = List(100) {
-        ChatMessage(
+        ChatMessageUiState.User(
             id = it.toString(),
             authorId = "uid",
             authorName = "홍길동",
-            content = "안녕하세요~!안녕하세요~!안녕하세요~!안녕하세요~!안녕하세요~!안녕하세요~!안녕하세요~!안녕하세요~!안녕하세요~!",
-            sentAt = "2022-05-08T19:57:12.123+09:00"
+            content = "안녕하세요~!안녕하세요~!안녕하세요~!안녕하세요~!안녕하세요~!안녕하세요~!안녕하세요~!안녕하세요~!",
+            sentDateTime = LocalDateTime.parse("2022-05-08T19:57:12.123+09:00")
         )
     }
     CamstudyTheme {

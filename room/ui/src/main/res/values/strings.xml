@@ -67,4 +67,9 @@
     <string name="disconnected_room_socket">공부방 연결이 끊어졌어요.</string>
     <string name="remove_from_blacklist">차단 해제</string>
     <string name="empty_blacklist">차단된 회원이 없어요</string>
+    <string name="user_has_been_exit">%s님이 나갔습니다.</string>
+    <string name="study_timer_has_been_started">공부 타이머가 시작되었어요.</string>
+    <string name="short_break_has_been_started">짧은 휴식 타이머가 시작되었어요.</string>
+    <string name="long_break_has_been_started">긴 휴식 타이머가 시작되었어요.</string>
+    <string name="user_has_been_joined">%s님이 입장했습니다.</string>
 </resources>

@@ -10,6 +10,7 @@ import io.foundy.room.domain.PeerOverview
 import io.foundy.room.domain.PomodoroTimerProperty
 import io.foundy.room.domain.PomodoroTimerState
 import io.foundy.room.ui.R
+import io.foundy.room.ui.model.ChatMessageUiState
 import io.foundy.room.ui.peer.PeerUiState
 import kotlinx.datetime.LocalDateTime
 import org.webrtc.AudioTrack
@@ -110,7 +111,7 @@ sealed class RoomUiState {
         val chatMessageInput: String = "",
         val onChatMessageInputChange: (String) -> Unit,
         val onSendChatClick: (String) -> Unit,
-        val chatMessages: List<ChatMessage> = emptyList(),
+        val chatMessages: List<ChatMessageUiState> = emptyList(),
 
         // Pomodoro Timer
         val pomodoroTimerEventDate: LocalDateTime?,

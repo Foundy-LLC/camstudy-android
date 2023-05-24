@@ -16,6 +16,8 @@ import io.foundy.room.domain.WebRtcServerTimeZone
 import io.foundy.room.ui.R
 import io.foundy.room.ui.media.MediaManager
 import io.foundy.room.ui.media.MediaManagerEvent
+import io.foundy.room.ui.model.ChatMessageUiState
+import io.foundy.room.ui.model.toUiState
 import io.foundy.room.ui.peer.merge
 import io.foundy.room.ui.peer.toInitialUiState
 import kotlinx.coroutines.TimeoutCancellationException
@@ -315,7 +317,13 @@ class RoomViewModel @Inject constructor(
                         uiState.copy(
                             peerStates = uiState.peerStates + studyRoomEvent.state.toInitialUiState(
                                 isMe = currentUserId == studyRoomEvent.state.uid
-                            )
+                            ),
+                            chatMessages = listOf(
+                                ChatMessageUiState.System(
+                                    stringRes = R.string.user_has_been_joined,
+                                    stringArgs = listOf(studyRoomEvent.state.name)
+                                )
+                            ) + uiState.chatMessages
                         )
                     }
                 }
@@ -354,17 +362,32 @@ class RoomViewModel @Inject constructor(
             is StudyRoomEvent.OnReceiveChatMessage -> {
                 reduce {
                     uiState.copy(
-                        chatMessages = listOf(studyRoomEvent.message) + uiState.chatMessages
+                        chatMessages = listOf(studyRoomEvent.message.toUiState()) +
+                            uiState.chatMessages
                     )
                 }
             }
             is StudyRoomEvent.TimerStateChanged -> {
+                val chatMessage = when (studyRoomEvent.state) {
+                    PomodoroTimerState.STOPPED -> null
+                    PomodoroTimerState.STARTED -> ChatMessageUiState.System(
+                        stringRes = R.string.study_timer_has_been_started
+                    )
+                    PomodoroTimerState.SHORT_BREAK -> ChatMessageUiState.System(
+                        stringRes = R.string.short_break_has_been_started
+                    )
+                    PomodoroTimerState.LONG_BREAK -> ChatMessageUiState.System(
+                        stringRes = R.string.long_break_has_been_started
+                    )
+                }
                 reduce {
                     uiState.copy(
                         pomodoroTimerEventDate = Clock.System.now().toLocalDateTime(
                             WebRtcServerTimeZone
                         ),
-                        pomodoroTimerState = studyRoomEvent.state
+                        pomodoroTimerState = studyRoomEvent.state,
+                        chatMessages = (chatMessage?.let { listOf(it) } ?: emptyList()) +
+                            uiState.chatMessages
                     )
                 }
             }
@@ -379,10 +402,27 @@ class RoomViewModel @Inject constructor(
                 postSideEffect(RoomSideEffect.Message(defaultContentRes = R.string.edited_timer))
             }
             is StudyRoomEvent.OnDisconnectPeer -> {
+                val disconnectedPeer = uiState.peerStates.firstOrNull {
+                    it.uid == studyRoomEvent.disposedPeerId
+                }
                 val newPeerStates = uiState.peerStates.filter {
                     it.uid != studyRoomEvent.disposedPeerId
                 }
-                reduce { uiState.copy(peerStates = newPeerStates) }
+                reduce {
+                    uiState.copy(
+                        peerStates = newPeerStates,
+                        chatMessages = if (disconnectedPeer != null) {
+                            listOf(
+                                ChatMessageUiState.System(
+                                    stringRes = R.string.user_has_been_exit,
+                                    stringArgs = listOf(disconnectedPeer.name)
+                                )
+                            ) + uiState.chatMessages
+                        } else {
+                            uiState.chatMessages
+                        }
+                    )
+                }
             }
             is StudyRoomEvent.OnKicked -> onKickedUser(
                 kickedUserId = studyRoomEvent.userId,
@@ -422,7 +462,13 @@ class RoomViewModel @Inject constructor(
                 )
                 reduce {
                     uiState.copy(
-                        peerStates = uiState.peerStates.filter { it.uid != user.uid }
+                        peerStates = uiState.peerStates.filter { it.uid != user.uid },
+                        chatMessages = listOf(
+                            ChatMessageUiState.System(
+                                stringRes = R.string.user_has_been_kicked,
+                                stringArgs = listOf(kickedUser.name)
+                            )
+                        ) + uiState.chatMessages
                     )
                 }
             }
