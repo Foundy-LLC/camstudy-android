@@ -71,11 +71,11 @@ fun CamstudyDialog(
 @Composable
 fun CamstudyDialog(
     title: String? = null,
-    content: @Composable () -> Unit,
     confirmText: String = stringResource(R.string.confirm),
     onDismissRequest: () -> Unit,
     onCancel: (() -> Unit)? = null,
-    onConfirm: () -> Unit
+    onConfirm: () -> Unit,
+    content: @Composable () -> Unit
 ) {
     Dialog(onDismissRequest = onDismissRequest) {
         Box(

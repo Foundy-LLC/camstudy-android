@@ -28,6 +28,7 @@ import io.foundy.core.model.GrowingCrop
 import io.foundy.core.model.HarvestedCrop
 import io.foundy.core.ui.pullrefresh.RefreshableContent
 import io.foundy.crop.ui.component.GrowingCropDivide
+import io.foundy.crop.ui.component.HarvestedCropDialog
 import io.foundy.crop.ui.component.harvestedCropGridDivide
 import io.foundy.crop.ui.destinations.PlantCropRouteDestination
 import org.orbitmvi.orbit.compose.collectAsState
@@ -49,6 +50,7 @@ fun CropRoute(
         navigator.navigate(PlantCropRouteDestination)
     }
     var showCropQuestionDialog by remember { mutableStateOf(false) }
+    var harvestedCropForDialog by remember { mutableStateOf<HarvestedCrop?>(null) }
 
     plantResultRecipient.onNavResult {
         when (it) {
@@ -78,10 +80,18 @@ fun CropRoute(
         )
     }
 
+    harvestedCropForDialog?.let { crop ->
+        HarvestedCropDialog(
+            harvestedCrop = crop,
+            onDismissRequest = { harvestedCropForDialog = null }
+        )
+    }
+
     CropScreen(
         uiState = uiState,
         onPlantClick = navigateToPlantScreen,
-        onQuestionClick = { showCropQuestionDialog = true }
+        onQuestionClick = { showCropQuestionDialog = true },
+        onHarvestedCropClick = { harvestedCropForDialog = it }
     )
 }
 
@@ -90,6 +100,7 @@ fun CropScreen(
     uiState: CropUiState,
     onPlantClick: () -> Unit,
     onQuestionClick: () -> Unit,
+    onHarvestedCropClick: (HarvestedCrop) -> Unit
 ) {
     RefreshableContent(
         modifier = Modifier
@@ -107,7 +118,10 @@ fun CropScreen(
                 )
             }
             item { Spacer(modifier = Modifier.height(8.dp)) }
-            harvestedCropGridDivide(harvestedCropsUiState = uiState.harvestedCropsUiState)
+            harvestedCropGridDivide(
+                harvestedCropsUiState = uiState.harvestedCropsUiState,
+                onCropClick = onHarvestedCropClick
+            )
         }
     }
 }
@@ -149,7 +163,8 @@ private fun CropScreenPreview() {
                 fetchGrowingCrop = {}
             ),
             onPlantClick = {},
-            onQuestionClick = {}
+            onQuestionClick = {},
+            onHarvestedCropClick = {}
         )
     }
 }

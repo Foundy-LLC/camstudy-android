@@ -50,8 +50,18 @@ fun CropType.getName(): String {
 
 @Composable
 fun GrowingCrop.getExpectedGradeText(): String {
+    return this.expectedGrade.getText()
+}
+
+@Composable
+fun HarvestedCrop.getGradeText(): String {
+    return this.grade.getText()
+}
+
+@Composable
+private fun CropGrade.getText(): String {
     return stringResource(
-        id = when (this.expectedGrade) {
+        id = when (this) {
             CropGrade.NOT_FRESH -> R.string.not_fresh
             CropGrade.FRESH -> R.string.fresh
             CropGrade.SILVER -> R.string.silver

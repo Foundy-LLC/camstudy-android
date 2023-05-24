@@ -1,6 +1,7 @@
 package io.foundy.crop.ui.component
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
@@ -32,7 +33,10 @@ import io.foundy.crop.ui.R
 import java.util.Calendar
 import java.util.Date
 
-fun LazyListScope.harvestedCropGridDivide(harvestedCropsUiState: HarvestedCropsUiState) {
+fun LazyListScope.harvestedCropGridDivide(
+    harvestedCropsUiState: HarvestedCropsUiState,
+    onCropClick: (HarvestedCrop) -> Unit
+) {
     item {
         DivideTitle(
             modifier = Modifier
@@ -59,7 +63,10 @@ fun LazyListScope.harvestedCropGridDivide(harvestedCropsUiState: HarvestedCropsU
                     nColumns = 4,
                     contentPadding = PaddingValues(horizontal = 10.dp, vertical = 8.dp)
                 ) { crop ->
-                    HarvestedCropItem(crop)
+                    HarvestedCropItem(
+                        crop = crop,
+                        onClick = { onCropClick(crop) }
+                    )
                 }
             }
         }
@@ -74,7 +81,8 @@ fun LazyListScope.harvestedCropGridDivide(harvestedCropsUiState: HarvestedCropsU
 
 @Composable
 private fun HarvestedCropItem(
-    crop: HarvestedCrop
+    crop: HarvestedCrop,
+    onClick: () -> Unit
 ) {
     Box(
         modifier = Modifier
@@ -82,6 +90,7 @@ private fun HarvestedCropItem(
             .padding(horizontal = 6.dp, vertical = 8.dp)
             .fillMaxSize()
             .clip(RoundedCornerShape(12.dp))
+            .clickable(onClick = onClick)
             .background(color = CamstudyTheme.colorScheme.systemUi01)
             .padding(10.5.dp)
     ) {
@@ -115,7 +124,8 @@ private fun LoadingHarvestedCropGridDividePreview() {
     CamstudyTheme {
         LazyColumn {
             harvestedCropGridDivide(
-                harvestedCropsUiState = HarvestedCropsUiState.Loading
+                harvestedCropsUiState = HarvestedCropsUiState.Loading,
+                onCropClick = {}
             )
         }
     }
@@ -138,7 +148,8 @@ private fun HarvestedCropGridDividePreview() {
     CamstudyTheme {
         LazyColumn {
             harvestedCropGridDivide(
-                harvestedCropsUiState = HarvestedCropsUiState.Success(items.toList())
+                harvestedCropsUiState = HarvestedCropsUiState.Success(items.toList()),
+                onCropClick = {}
             )
         }
     }
@@ -150,7 +161,8 @@ private fun EmptyHarvestedCropGridDividePreview() {
     CamstudyTheme {
         LazyColumn {
             harvestedCropGridDivide(
-                harvestedCropsUiState = HarvestedCropsUiState.Success(emptyList())
+                harvestedCropsUiState = HarvestedCropsUiState.Success(emptyList()),
+                onCropClick = {}
             )
         }
     }
