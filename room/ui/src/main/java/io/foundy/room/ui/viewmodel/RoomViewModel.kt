@@ -24,6 +24,8 @@ import kotlinx.datetime.Clock
 import kotlinx.datetime.toLocalDateTime
 import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.ContainerHost
+import org.orbitmvi.orbit.annotation.OrbitExperimental
+import org.orbitmvi.orbit.syntax.simple.blockingIntent
 import org.orbitmvi.orbit.syntax.simple.intent
 import org.orbitmvi.orbit.syntax.simple.postSideEffect
 import org.orbitmvi.orbit.syntax.simple.reduce
@@ -33,6 +35,7 @@ import org.webrtc.VideoTrack
 import javax.inject.Inject
 
 // TODO: WaitingRoom이랑 StudyRoom 분리하기
+@OptIn(OrbitExperimental::class)
 @HiltViewModel
 class RoomViewModel @Inject constructor(
     private val roomService: RoomService,
@@ -110,7 +113,7 @@ class RoomViewModel @Inject constructor(
                     currentUserId = currentUserId,
                     onPasswordChange = { password ->
                         if (password.length <= RoomConstants.PasswordRange.last) {
-                            intent {
+                            blockingIntent {
                                 val uiState = state
                                 check(uiState is RoomUiState.WaitingRoom.Connected)
                                 reduce { uiState.copy(passwordInput = password) }
@@ -252,7 +255,7 @@ class RoomViewModel @Inject constructor(
         roomService.startPomodoroTimer()
     }
 
-    private fun updateChatMessageInput(message: String) = intent {
+    private fun updateChatMessageInput(message: String) = blockingIntent {
         val uiState = state
         check(uiState is RoomUiState.StudyRoom)
         reduce { uiState.copy(chatMessageInput = message) }

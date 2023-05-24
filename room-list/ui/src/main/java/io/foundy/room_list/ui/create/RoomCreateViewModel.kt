@@ -19,6 +19,8 @@ import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.ContainerHost
+import org.orbitmvi.orbit.annotation.OrbitExperimental
+import org.orbitmvi.orbit.syntax.simple.blockingIntent
 import org.orbitmvi.orbit.syntax.simple.intent
 import org.orbitmvi.orbit.syntax.simple.postSideEffect
 import org.orbitmvi.orbit.syntax.simple.reduce
@@ -29,6 +31,7 @@ import java.util.Locale
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
+@OptIn(OrbitExperimental::class)
 @HiltViewModel
 class RoomCreateViewModel @Inject constructor(
     private val welcomeRepository: WelcomeRepository,
@@ -55,13 +58,13 @@ class RoomCreateViewModel @Inject constructor(
         reduce { state.copy(thumbnail = thumbnail) }
     }
 
-    private fun updateTitle(title: String) = intent {
+    private fun updateTitle(title: String) = blockingIntent {
         reduce { state.copy(title = title.filterNot { it == '\n' }) }
     }
 
-    private fun updateTagInput(tag: String) = intent {
+    private fun updateTagInput(tag: String) = blockingIntent {
         if (state.isTagFull || tag.length > UserConstants.MaxTagLength) {
-            return@intent
+            return@blockingIntent
         }
         reduce { state.copy(tag = tag) }
         if (tag.isEmpty()) {
@@ -104,7 +107,7 @@ class RoomCreateViewModel @Inject constructor(
         reduce { state.copy(addedTags = state.addedTags.filter { it != tag }) }
     }
 
-    private fun updatePassword(password: String?) = intent {
+    private fun updatePassword(password: String?) = blockingIntent {
         reduce { state.copy(password = password) }
     }
 

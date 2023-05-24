@@ -16,12 +16,15 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.ContainerHost
+import org.orbitmvi.orbit.annotation.OrbitExperimental
+import org.orbitmvi.orbit.syntax.simple.blockingIntent
 import org.orbitmvi.orbit.syntax.simple.intent
 import org.orbitmvi.orbit.syntax.simple.postSideEffect
 import org.orbitmvi.orbit.syntax.simple.reduce
 import org.orbitmvi.orbit.viewmodel.container
 import javax.inject.Inject
 
+@OptIn(OrbitExperimental::class)
 @HiltViewModel
 class EditProfileViewModel @Inject constructor(
     private val welcomeRepository: WelcomeRepository,
@@ -68,17 +71,17 @@ class EditProfileViewModel @Inject constructor(
         }
     }
 
-    private fun changeName(name: String) = intent {
+    private fun changeName(name: String) = blockingIntent {
         reduce { state.copy(name = name) }
     }
 
-    private fun changeIntroduce(introduce: String) = intent {
+    private fun changeIntroduce(introduce: String) = blockingIntent {
         reduce { state.copy(introduce = introduce) }
     }
 
-    private fun changeTagInput(tagInput: String) = intent {
+    private fun changeTagInput(tagInput: String) = blockingIntent {
         if (state.isTagFull || tagInput.length > UserConstants.MaxTagLength) {
-            return@intent
+            return@blockingIntent
         }
         reduce { state.copy(tagInput = tagInput) }
         if (tagInput.isEmpty()) {

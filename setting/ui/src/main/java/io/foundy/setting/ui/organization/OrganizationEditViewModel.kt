@@ -14,12 +14,15 @@ import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.ContainerHost
+import org.orbitmvi.orbit.annotation.OrbitExperimental
+import org.orbitmvi.orbit.syntax.simple.blockingIntent
 import org.orbitmvi.orbit.syntax.simple.intent
 import org.orbitmvi.orbit.syntax.simple.postSideEffect
 import org.orbitmvi.orbit.syntax.simple.reduce
 import org.orbitmvi.orbit.viewmodel.container
 import javax.inject.Inject
 
+@OptIn(OrbitExperimental::class)
 @HiltViewModel
 class OrganizationEditViewModel @Inject constructor(
     private val organizationRepository: OrganizationRepository,
@@ -65,14 +68,14 @@ class OrganizationEditViewModel @Inject constructor(
         }
     }
 
-    private fun changeName(organizationName: String) = intent {
+    private fun changeName(organizationName: String) = blockingIntent {
         val uiState = state
         check(uiState is OrganizationEditUiState.Success)
         reduce { uiState.copy(name = organizationName) }
         fetchRecommendedOrganizations(organizationName)
     }
 
-    private fun changeEmail(email: String) = intent {
+    private fun changeEmail(email: String) = blockingIntent {
         val uiState = state
         check(uiState is OrganizationEditUiState.Success)
         reduce { uiState.copy(email = email) }

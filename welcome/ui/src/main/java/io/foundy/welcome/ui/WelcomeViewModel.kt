@@ -15,12 +15,15 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.ContainerHost
+import org.orbitmvi.orbit.annotation.OrbitExperimental
+import org.orbitmvi.orbit.syntax.simple.blockingIntent
 import org.orbitmvi.orbit.syntax.simple.intent
 import org.orbitmvi.orbit.syntax.simple.postSideEffect
 import org.orbitmvi.orbit.syntax.simple.reduce
 import org.orbitmvi.orbit.viewmodel.container
 import javax.inject.Inject
 
+@OptIn(OrbitExperimental::class)
 @HiltViewModel
 class WelcomeViewModel @Inject constructor(
     private val postUserInitInfoUseCase: PostUserInitInfoUseCase,
@@ -42,24 +45,24 @@ class WelcomeViewModel @Inject constructor(
         reduce { state.copy(selectedProfileImage = null) }
     }
 
-    fun updateNameInput(name: String) = intent {
+    fun updateNameInput(name: String) = blockingIntent {
         if (name.length > UserConstants.MaxNameLength) {
-            return@intent
+            return@blockingIntent
         }
         reduce { state.copy(nameInput = name) }
         updateNameErrorMessage()
     }
 
-    fun updateIntroduceInput(introduce: String) = intent {
+    fun updateIntroduceInput(introduce: String) = blockingIntent {
         if (introduce.length > UserConstants.MaxIntroduceLength) {
-            return@intent
+            return@blockingIntent
         }
         reduce { state.copy(introduceInput = introduce) }
     }
 
-    fun updateTagInput(tag: String) = intent {
+    fun updateTagInput(tag: String) = blockingIntent {
         if (tag.length > UserConstants.MaxTagLength) {
-            return@intent
+            return@blockingIntent
         }
         reduce { state.copy(tagInput = tag) }
         fetchRecommendedTags(inputTag = tag)

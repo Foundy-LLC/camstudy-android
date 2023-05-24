@@ -180,7 +180,6 @@ private fun Success(uiState: OrganizationEditUiState.Success) {
                 Spacer(Modifier.height(20.dp))
             }
             item {
-                // TODO: 키보드 입력이 이상함. 포인터 위치가 하나 뒤로 밀리는 걸 보면 포인터를 못따라 가는것 같음.
                 CamstudyTextField(
                     modifier = Modifier.padding(horizontal = 16.dp),
                     value = uiState.name,

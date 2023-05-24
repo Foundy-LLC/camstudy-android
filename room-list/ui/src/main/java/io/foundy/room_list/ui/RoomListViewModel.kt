@@ -10,11 +10,14 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.ContainerHost
+import org.orbitmvi.orbit.annotation.OrbitExperimental
+import org.orbitmvi.orbit.syntax.simple.blockingIntent
 import org.orbitmvi.orbit.syntax.simple.intent
 import org.orbitmvi.orbit.syntax.simple.reduce
 import org.orbitmvi.orbit.viewmodel.container
 import javax.inject.Inject
 
+@OptIn(OrbitExperimental::class)
 @HiltViewModel
 class RoomListViewModel @Inject constructor(
     private val roomListRepository: RoomListRepository
@@ -34,7 +37,7 @@ class RoomListViewModel @Inject constructor(
         updateSearchQuery(state.searchQuery)
     }
 
-    private fun updateSearchQuery(query: String) = intent {
+    private fun updateSearchQuery(query: String) = blockingIntent {
         reduce { state.copy(searchQuery = query) }
         searchRooms(query = query)
     }
