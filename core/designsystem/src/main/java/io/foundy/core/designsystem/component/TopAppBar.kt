@@ -2,6 +2,7 @@ package io.foundy.core.designsystem.component
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -28,7 +29,7 @@ import io.foundy.core.designsystem.theme.CamstudyTheme
 fun CamstudyTopAppBar(
     onBackClick: (() -> Unit)? = null,
     title: @Composable () -> Unit,
-    leading: (@Composable () -> Unit)? = null,
+    trailing: (@Composable RowScope.() -> Unit)? = null,
     height: Dp = 44.dp
 ) {
     val componentColor = CamstudyTheme.colorScheme.systemUi09
@@ -65,7 +66,11 @@ fun CamstudyTopAppBar(
                         content = title
                     )
                 }
-                leading?.invoke()
+                if (trailing != null) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        trailing()
+                    }
+                }
             }
             CamstudyDivider(modifier = Modifier.align(Alignment.BottomCenter))
         }

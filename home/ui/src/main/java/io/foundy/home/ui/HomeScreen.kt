@@ -4,7 +4,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.height
@@ -99,23 +98,21 @@ fun HomeScreen(
                         contentDescription = null,
                     )
                 },
-                leading = {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        IconButton(onClick = { navigator.navigate(SearchRouteDestination) }) {
-                            CamstudyIcon(
-                                icon = CamstudyIcons.Search,
-                                contentDescription = stringResource(
-                                    id = R.string.search_content_description
-                                )
+                trailing = {
+                    IconButton(onClick = { navigator.navigate(SearchRouteDestination) }) {
+                        CamstudyIcon(
+                            icon = CamstudyIcons.Search,
+                            contentDescription = stringResource(
+                                id = R.string.search_content_description
                             )
-                        }
-                        IconButton(onClick = { navigator.navigate(SettingRouteDestination) }) {
-                            UserProfileImage(
-                                model = uiState.currentUserProfileImage,
-                                imageOrContainerSize = 32.dp,
-                                cornerShape = RoundedCornerShape(32.dp)
-                            )
-                        }
+                        )
+                    }
+                    IconButton(onClick = { navigator.navigate(SettingRouteDestination) }) {
+                        UserProfileImage(
+                            model = uiState.currentUserProfileImage,
+                            imageOrContainerSize = 32.dp,
+                            cornerShape = RoundedCornerShape(32.dp)
+                        )
                     }
                 }
             )
