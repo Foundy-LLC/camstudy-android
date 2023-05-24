@@ -8,7 +8,10 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
@@ -17,7 +20,6 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Button
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -37,11 +39,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.holix.android.bottomsheetdialog.compose.BottomSheetDialog
+import io.foundy.core.designsystem.component.CamstudyBottomSheetDialog
 import io.foundy.core.designsystem.component.CamstudyCheckbox
 import io.foundy.core.designsystem.component.CamstudyDialog
+import io.foundy.core.designsystem.component.CamstudyText
 import io.foundy.core.designsystem.icon.CamstudyIcon
 import io.foundy.core.designsystem.icon.CamstudyIcons
 import io.foundy.core.designsystem.theme.CamstudyTheme
@@ -85,7 +90,9 @@ fun StudyRoomContent(
     shouldExpandChatDivide: Boolean,
     onChatExpandClick: () -> Unit,
     onChatCollapseClick: () -> Unit,
-    userBottomSheetState: UserBottomSheetState = remember { UserBottomSheetState() },
+    userOptionBottomSheetState: UserOptionBottomSheetState = remember {
+        UserOptionBottomSheetState()
+    },
     kickUserRecheckDialogState: KickUserRecheckDialogState = remember {
         KickUserRecheckDialogState()
     },
@@ -144,23 +151,15 @@ fun StudyRoomContent(
         onKickUserClick = uiState.onKickUserClick
     )
 
-    val selectedUser = userBottomSheetState.selectedUser
-    if (selectedUser != null) {
-        // TODO: 아래 코드 다른 composable 함수로 분리하기
-        BottomSheetDialog(onDismissRequest = userBottomSheetState::hide) {
-            Button(
-                onClick = {
-                    kickUserRecheckDialogState.show(
-                        userId = selectedUser.id,
-                        userName = selectedUser.name
-                    )
-                    userBottomSheetState.hide()
-                }
-            ) {
-                Text(stringResource(R.string.kick_user))
-            }
+    UserOptionBottomSheet(
+        state = userOptionBottomSheetState,
+        onKickClick = {
+            kickUserRecheckDialogState.show(
+                userId = it.id,
+                userName = it.name
+            )
         }
-    }
+    )
 
     if (showPomodoroTimerEditBottomSheet) {
         PomodoroTimerEditBottomSheet(
@@ -185,7 +184,7 @@ fun StudyRoomContent(
                 modifier = Modifier.weight(1f),
                 peerStates = listOf(mediaManager.currentUserState) + uiState.peerStates,
                 isCurrentUserMaster = uiState.isCurrentUserMaster,
-                onMoreButtonClick = userBottomSheetState::show
+                onMoreButtonClick = userOptionBottomSheetState::show
             )
         }
         ActionBar(
@@ -317,7 +316,7 @@ data class UserState(
 )
 
 @Stable
-class UserBottomSheetState {
+class UserOptionBottomSheetState {
 
     var selectedUser by mutableStateOf<UserState?>(null)
         private set
@@ -331,6 +330,58 @@ class UserBottomSheetState {
 
     fun hide() {
         selectedUser = null
+    }
+}
+
+@Composable
+fun UserOptionBottomSheet(
+    state: UserOptionBottomSheetState,
+    onKickClick: (UserState) -> Unit
+) {
+    val selectedUser = state.selectedUser
+
+    if (selectedUser != null) {
+        CamstudyBottomSheetDialog(onDismissRequest = state::hide) {
+            Column {
+                UserOptionItem(
+                    leadingIcon = CamstudyIcons.PersonOff,
+                    label = stringResource(R.string.kick_user),
+                    onClick = {
+                        onKickClick(selectedUser)
+                        state.hide()
+                    }
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun UserOptionItem(
+    leadingIcon: CamstudyIcon,
+    label: String,
+    onClick: () -> Unit
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable(onClick = onClick)
+            .padding(horizontal = 16.dp, vertical = 12.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        CamstudyIcon(
+            icon = leadingIcon,
+            contentDescription = null,
+            tint = CamstudyTheme.colorScheme.error
+        )
+        Spacer(modifier = Modifier.width(16.dp))
+        CamstudyText(
+            text = label,
+            style = CamstudyTheme.typography.titleMedium.copy(
+                color = CamstudyTheme.colorScheme.systemUi08,
+                fontWeight = FontWeight.SemiBold
+            )
+        )
     }
 }
 
