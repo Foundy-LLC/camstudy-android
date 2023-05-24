@@ -11,6 +11,7 @@ import io.foundy.room.data.model.WaitingRoomEvent
 import io.foundy.room.data.service.RoomService
 import io.foundy.room.domain.PeerOverview
 import io.foundy.room.domain.PomodoroTimerProperty
+import io.foundy.room.domain.PomodoroTimerState
 import io.foundy.room.domain.WebRtcServerTimeZone
 import io.foundy.room.ui.R
 import io.foundy.room.ui.media.MediaManager
@@ -369,7 +370,11 @@ class RoomViewModel @Inject constructor(
             }
             is StudyRoomEvent.TimerPropertyChanged -> {
                 reduce {
-                    uiState.copy(pomodoroTimer = studyRoomEvent.property)
+                    uiState.copy(
+                        pomodoroTimer = studyRoomEvent.property,
+                        pomodoroTimerState = PomodoroTimerState.STOPPED,
+                        pomodoroTimerEventDate = null
+                    )
                 }
                 postSideEffect(RoomSideEffect.Message(defaultContentRes = R.string.edited_timer))
             }

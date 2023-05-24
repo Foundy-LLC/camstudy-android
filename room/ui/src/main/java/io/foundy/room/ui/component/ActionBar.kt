@@ -147,7 +147,9 @@ private fun PomodoroTimer(
     pomodoroTimerEventDate: LocalDateTime?,
     onStartClick: () -> Unit
 ) {
-    var elapsedTimeText by remember { mutableStateOf(pomodoroTimerEventDate.elapsedTimeText) }
+    var elapsedTimeText by remember(pomodoroTimerEventDate) {
+        mutableStateOf(pomodoroTimerEventDate.elapsedTimeText)
+    }
     val color = when (state) {
         PomodoroTimerState.STOPPED -> Color.White
         PomodoroTimerState.STARTED -> CamstudyTheme.colorScheme.primary
