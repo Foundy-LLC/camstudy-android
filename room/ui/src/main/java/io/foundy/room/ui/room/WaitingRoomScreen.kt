@@ -1,4 +1,4 @@
-package io.foundy.room.ui.screen
+package io.foundy.room.ui.room
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -51,7 +51,6 @@ import io.foundy.room.ui.component.VideoRenderer
 import io.foundy.room.ui.mapper.toUserOverviewWithoutIntroduce
 import io.foundy.room.ui.media.FakeMediaManager
 import io.foundy.room.ui.media.LocalMediaManager
-import io.foundy.room.ui.viewmodel.RoomUiState
 
 @Immutable
 private data class Action(

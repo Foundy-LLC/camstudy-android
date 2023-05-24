@@ -1,4 +1,4 @@
-package io.foundy.room.ui.viewmodel
+package io.foundy.room.ui.room
 
 import androidx.annotation.VisibleForTesting
 import androidx.lifecycle.ViewModel

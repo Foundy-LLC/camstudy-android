@@ -34,9 +34,10 @@ import io.foundy.core.model.RoomOverview
 import io.foundy.room.ui.media.MediaManager
 import io.foundy.room.ui.receiver.AudioToggleReceiver
 import io.foundy.room.ui.receiver.VideoToggleReceiver
-import io.foundy.room.ui.screen.PermissionRequestScreen
-import io.foundy.room.ui.viewmodel.RoomUiState
-import io.foundy.room.ui.viewmodel.RoomViewModel
+import io.foundy.room.ui.room.PermissionRequestScreen
+import io.foundy.room.ui.room.RoomScreen
+import io.foundy.room.ui.room.RoomUiState
+import io.foundy.room.ui.room.RoomViewModel
 
 @AndroidEntryPoint
 class RoomActivity : ComponentActivity() {

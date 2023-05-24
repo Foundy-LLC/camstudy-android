@@ -4,9 +4,9 @@ import io.foundy.core.test.MainDispatcherRule
 import io.foundy.room.ui.fake.FakeAuthRepository
 import io.foundy.room.ui.fake.FakeRoomService
 import io.foundy.room.ui.media.FakeMediaManager
-import io.foundy.room.ui.viewmodel.RoomSideEffect
-import io.foundy.room.ui.viewmodel.RoomUiState
-import io.foundy.room.ui.viewmodel.RoomViewModel
+import io.foundy.room.ui.room.RoomSideEffect
+import io.foundy.room.ui.room.RoomUiState
+import io.foundy.room.ui.room.RoomViewModel
 import junit.framework.TestCase.assertTrue
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest

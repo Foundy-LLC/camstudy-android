@@ -1,4 +1,4 @@
-package io.foundy.room.ui
+package io.foundy.room.ui.room
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.material3.SnackbarHostState
@@ -20,15 +20,11 @@ import io.foundy.core.model.RoomOverview
 import io.foundy.core.model.constant.RoomConstants
 import io.foundy.room.domain.PomodoroTimerProperty
 import io.foundy.room.domain.PomodoroTimerState
+import io.foundy.room.ui.R
 import io.foundy.room.ui.media.FakeMediaManager
 import io.foundy.room.ui.media.LocalMediaManager
 import io.foundy.room.ui.media.MediaManager
 import io.foundy.room.ui.peer.PeerUiState
-import io.foundy.room.ui.screen.StudyRoomScreen
-import io.foundy.room.ui.screen.WaitingRoomScreen
-import io.foundy.room.ui.viewmodel.RoomSideEffect
-import io.foundy.room.ui.viewmodel.RoomUiState
-import io.foundy.room.ui.viewmodel.RoomViewModel
 import kotlinx.coroutines.launch
 import org.orbitmvi.orbit.compose.collectAsState
 import org.orbitmvi.orbit.compose.collectSideEffect

@@ -1,4 +1,4 @@
-package io.foundy.room.ui.screen
+package io.foundy.room.ui.room
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
@@ -72,7 +72,6 @@ import io.foundy.room.ui.component.rememberPomodoroTimerEditBottomSheetState
 import io.foundy.room.ui.media.FakeMediaManager
 import io.foundy.room.ui.media.LocalMediaManager
 import io.foundy.room.ui.peer.PeerUiState
-import io.foundy.room.ui.viewmodel.RoomUiState
 
 @Composable
 fun StudyRoomScreen(
