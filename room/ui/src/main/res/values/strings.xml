@@ -65,4 +65,6 @@
     <string name="exit">나가기</string>
     <string name="recheck_dialog_content">공부를 종료하고 방을 나갑니다.</string>
     <string name="disconnected_room_socket">공부방 연결이 끊어졌어요.</string>
+    <string name="remove_from_blacklist">차단 해제</string>
+    <string name="empty_blacklist">차단된 회원이 없어요</string>
 </resources>

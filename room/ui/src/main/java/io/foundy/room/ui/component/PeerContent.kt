@@ -90,6 +90,7 @@ fun PeerContent(
             )
         }
         if (showMoreButton) {
+            // TODO: 클릭이 잘 안됨. 하단부만 클릭이 됨
             MoreButton(
                 modifier = Modifier.align(Alignment.TopEnd),
                 onClick = { onMoreButtonClick(peerState.uid, peerState.name) }

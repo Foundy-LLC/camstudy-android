@@ -47,11 +47,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.holix.android.bottomsheetdialog.compose.BottomSheetDialog
 import io.foundy.core.designsystem.component.CamstudyBottomSheetDialog
 import io.foundy.core.designsystem.component.CamstudyCheckbox
 import io.foundy.core.designsystem.component.CamstudyDialog
 import io.foundy.core.designsystem.component.CamstudyText
+import io.foundy.core.designsystem.component.CamstudyTextButton
 import io.foundy.core.designsystem.component.CamstudyTooltipBox
 import io.foundy.core.designsystem.component.CamstudyTopAppBar
 import io.foundy.core.designsystem.icon.CamstudyIcon
@@ -334,17 +334,36 @@ private fun BlacklistBottomSheet(
     onDeleteClick: (PeerOverview) -> Unit,
     onDismissRequest: () -> Unit,
 ) {
-    BottomSheetDialog(
+    CamstudyBottomSheetDialog(
         onDismissRequest = onDismissRequest
     ) {
         Column {
-            Text(stringResource(id = R.string.blacklist))
-            LazyColumn {
-                items(items = blacklist) { peer ->
-                    BlacklistItem(
-                        peerOverview = peer,
-                        onDeleteClick = onDeleteClick
+            CamstudyText(
+                modifier = Modifier.padding(horizontal = 16.dp, vertical = 20.dp),
+                text = stringResource(id = R.string.blacklist),
+                style = CamstudyTheme.typography.titleLarge.copy(
+                    color = CamstudyTheme.colorScheme.systemUi09,
+                    fontWeight = FontWeight.SemiBold
+                )
+            )
+            if (blacklist.isEmpty()) {
+                CamstudyText(
+                    modifier = Modifier
+                        .padding(horizontal = 16.dp)
+                        .padding(bottom = 20.dp),
+                    text = stringResource(R.string.empty_blacklist),
+                    style = CamstudyTheme.typography.titleMedium.copy(
+                        color = CamstudyTheme.colorScheme.systemUi05
                     )
+                )
+            } else {
+                LazyColumn {
+                    items(items = blacklist) { peer ->
+                        BlacklistItem(
+                            peerOverview = peer,
+                            onDeleteClick = onDeleteClick
+                        )
+                    }
                 }
             }
         }
@@ -356,13 +375,24 @@ private fun BlacklistItem(
     peerOverview: PeerOverview,
     onDeleteClick: (PeerOverview) -> Unit
 ) {
-    Row {
-        Text(
+    Row(
+        modifier = Modifier
+            .padding(start = 16.dp, end = 8.dp)
+            .padding(vertical = 8.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        CamstudyText(
+            modifier = Modifier.weight(1f),
             text = peerOverview.name,
+            style = CamstudyTheme.typography.titleMedium.copy(
+                color = CamstudyTheme.colorScheme.systemUi07,
+                fontWeight = FontWeight.Medium
+            )
         )
-        IconButton(onClick = { onDeleteClick(peerOverview) }) {
-            CamstudyIcon(icon = CamstudyIcons.Delete, contentDescription = null)
-        }
+        CamstudyTextButton(
+            label = stringResource(R.string.remove_from_blacklist),
+            onClick = { onDeleteClick(peerOverview) }
+        )
     }
 }
 
@@ -637,5 +667,17 @@ private fun ExpandedChatStudyRoomScreenPreview() {
                 onBackClick = {}
             )
         }
+    }
+}
+
+@Preview
+@Composable
+fun BlacklistBottomSheetPreview() {
+    CamstudyTheme {
+        BlacklistBottomSheet(
+            blacklist = listOf(PeerOverview(id = "id", name = "홍길동")),
+            onDismissRequest = {},
+            onDeleteClick = {}
+        )
     }
 }
