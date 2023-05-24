@@ -72,26 +72,38 @@ class PomodoroTimerEditBottomSheetState(
 @Composable
 fun PomodoroTimerEditBottomSheet(
     state: PomodoroTimerEditBottomSheetState,
+    isTimerRunning: Boolean,
     onSaveClick: (PomodoroTimerProperty) -> Unit,
     onDismiss: () -> Unit
 ) {
     val timerProperty = state.timerProperty
-    var showRecheckDialog by remember { mutableStateOf(false) }
+    var showCancelRecheckDialog by remember { mutableStateOf(false) }
+    var showStopWarningDialog by remember { mutableStateOf(false) }
 
-    if (state.canSave && showRecheckDialog) {
+    if (showCancelRecheckDialog) {
         CamstudyDialog(
             content = stringResource(R.string.are_you_sure_do_not_save_timer),
-            onDismissRequest = { showRecheckDialog = false },
+            onDismissRequest = { showCancelRecheckDialog = false },
             onConfirm = onDismiss,
-            onCancel = { showRecheckDialog = false },
+            onCancel = { showCancelRecheckDialog = false },
             confirmText = stringResource(R.string.quit)
+        )
+    }
+
+    if (showStopWarningDialog) {
+        CamstudyDialog(
+            content = "진행 중인 타이머는 정지 후 저장됩니다.",
+            onDismissRequest = { showStopWarningDialog = false },
+            onCancel = { showStopWarningDialog = false },
+            onConfirm = { onSaveClick(state.timerProperty) },
+            confirmText = "정지 및 저장"
         )
     }
 
     CamstudyBottomSheetDialog(
         onDismissRequest = {
             if (state.canSave) {
-                showRecheckDialog = true
+                showCancelRecheckDialog = true
             } else {
                 onDismiss()
             }
@@ -112,7 +124,13 @@ fun PomodoroTimerEditBottomSheet(
                 )
                 CamstudyTextButton(
                     label = stringResource(R.string.save),
-                    onClick = { onSaveClick(state.timerProperty) },
+                    onClick = {
+                        if (isTimerRunning) {
+                            showStopWarningDialog = true
+                        } else {
+                            onSaveClick(state.timerProperty)
+                        }
+                    },
                     enabled = state.canSave
                 )
             }

@@ -186,7 +186,8 @@ fun StudyRoomContent(
                 uiState.onSavePomodoroTimerClick(property)
                 showPomodoroTimerEditBottomSheet = false
             },
-            onDismiss = { showPomodoroTimerEditBottomSheet = false }
+            onDismiss = { showPomodoroTimerEditBottomSheet = false },
+            isTimerRunning = uiState.pomodoroTimerState != PomodoroTimerState.STOPPED
         )
     }
 
