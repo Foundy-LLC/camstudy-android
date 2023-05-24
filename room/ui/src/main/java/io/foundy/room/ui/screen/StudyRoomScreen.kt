@@ -52,6 +52,7 @@ import io.foundy.core.designsystem.component.CamstudyBottomSheetDialog
 import io.foundy.core.designsystem.component.CamstudyCheckbox
 import io.foundy.core.designsystem.component.CamstudyDialog
 import io.foundy.core.designsystem.component.CamstudyText
+import io.foundy.core.designsystem.component.CamstudyTooltipBox
 import io.foundy.core.designsystem.component.CamstudyTopAppBar
 import io.foundy.core.designsystem.icon.CamstudyIcon
 import io.foundy.core.designsystem.icon.CamstudyIcons
@@ -197,6 +198,44 @@ fun StudyRoomContent(
                 onBackClick = onBackClick,
                 title = {
                     Text(text = title, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                },
+                trailing = {
+                    if (uiState.isCurrentUserMaster) {
+                        CamstudyTooltipBox(
+                            tooltip = {
+                                CamstudyText(text = stringResource(R.string.blacklist))
+                            }
+                        ) {
+                            IconButton(
+                                modifier = Modifier.tooltipAnchor(),
+                                onClick = { showBlacklistBottomSheet = true }
+                            ) {
+                                CamstudyIcon(
+                                    icon = CamstudyIcons.NoAccounts,
+                                    contentDescription = stringResource(R.string.blacklist),
+                                    tint = CamstudyTheme.colorScheme.systemUi09
+                                )
+                            }
+                        }
+                        CamstudyTooltipBox(
+                            tooltip = {
+                                CamstudyText(text = stringResource(R.string.edit_pomodoro_timer))
+                            }
+                        ) {
+                            IconButton(
+                                modifier = Modifier.tooltipAnchor(),
+                                onClick = { showPomodoroTimerEditBottomSheet = true }
+                            ) {
+                                CamstudyIcon(
+                                    icon = CamstudyIcons.Timer,
+                                    contentDescription = stringResource(
+                                        id = R.string.edit_pomodoro_timer
+                                    ),
+                                    tint = CamstudyTheme.colorScheme.systemUi09
+                                )
+                            }
+                        }
+                    }
                 }
             )
         },
@@ -231,20 +270,6 @@ fun StudyRoomContent(
                 onToggleHeadset = mediaManager::toggleHeadset,
                 onFlipCamera = mediaManager::switchCamera
             )
-            if (uiState.isCurrentUserMaster) {
-                IconButton(onClick = { showBlacklistBottomSheet = true }) {
-                    CamstudyIcon(
-                        icon = CamstudyIcons.Person,
-                        contentDescription = stringResource(R.string.blacklist)
-                    )
-                }
-                IconButton(onClick = { showPomodoroTimerEditBottomSheet = true }) {
-                    CamstudyIcon(
-                        icon = CamstudyIcons.Timer,
-                        contentDescription = stringResource(R.string.edit_pomodoro_timer)
-                    )
-                }
-            }
             ChatDivide(
                 chatInput = uiState.chatMessageInput,
                 onChatInputChange = uiState.onChatMessageInputChange,

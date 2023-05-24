@@ -16,6 +16,7 @@ import androidx.compose.material.icons.filled.FlipCameraAndroid
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.filled.MoreHoriz
+import androidx.compose.material.icons.filled.NoAccounts
 import androidx.compose.material.icons.filled.People
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.PersonAdd
@@ -66,6 +67,7 @@ object CamstudyIcons {
     val Delete = Icons.Default.Delete.asCamstudyIcon()
     val Error = Icons.Default.Error.asCamstudyIcon()
     val Person = Icons.Default.Person.asCamstudyIcon()
+    val NoAccounts = Icons.Default.NoAccounts.asCamstudyIcon()
     val PersonAdd = Icons.Default.PersonAdd.asCamstudyIcon()
     val PersonRemove = Icons.Default.PersonRemove.asCamstudyIcon()
     val CancelScheduleSend = Icons.Default.CancelScheduleSend.asCamstudyIcon()
