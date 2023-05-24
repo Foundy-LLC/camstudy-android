@@ -1,13 +1,7 @@
 package io.foundy.room.ui
 
 import androidx.activity.compose.BackHandler
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
@@ -19,10 +13,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import io.foundy.core.designsystem.component.CamstudyDialog
-import io.foundy.core.designsystem.component.CamstudyTopAppBar
 import io.foundy.core.designsystem.theme.CamstudyTheme
 import io.foundy.core.model.RoomOverview
 import io.foundy.core.model.constant.RoomConstants
@@ -119,7 +111,6 @@ fun RoomScreen(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun RoomContent(
     modifier: Modifier = Modifier,
@@ -129,36 +120,22 @@ private fun RoomContent(
     onBackClick: () -> Unit,
     popBackStack: () -> Unit,
 ) {
-    Scaffold(
-        modifier = modifier,
-        topBar = {
-            val title = when (uiState) {
-                is RoomUiState.WaitingRoom -> stringResource(R.string.join_study_room)
-                is RoomUiState.StudyRoom -> roomOverview.title
-            }
-            CamstudyTopAppBar(
-                onBackClick = onBackClick,
-                title = {
-                    Text(text = title, maxLines = 1, overflow = TextOverflow.Ellipsis)
-                }
-            )
-        },
-        snackbarHost = { SnackbarHost(hostState = snackbarHostState) }
-    ) { padding ->
-        Box(Modifier.padding(padding)) {
-            when (uiState) {
-                is RoomUiState.WaitingRoom -> WaitingRoomScreen(
-                    roomOverview = roomOverview,
-                    uiState = uiState
-                )
-                is RoomUiState.StudyRoom -> StudyRoomScreen(
-                    uiState = uiState,
-                    onDismissKickedDialog = {
-                        popBackStack()
-                    },
-                )
-            }
-        }
+    when (uiState) {
+        is RoomUiState.WaitingRoom -> WaitingRoomScreen(
+            modifier = modifier,
+            roomOverview = roomOverview,
+            uiState = uiState,
+            snackbarHostState = snackbarHostState,
+            onBackClick = onBackClick
+        )
+        is RoomUiState.StudyRoom -> StudyRoomScreen(
+            modifier = modifier,
+            uiState = uiState,
+            onDismissKickedDialog = popBackStack,
+            onBackClick = onBackClick,
+            snackbarHostState = snackbarHostState,
+            title = roomOverview.title
+        )
     }
 }
 

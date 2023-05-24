@@ -13,6 +13,10 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -24,11 +28,14 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import io.foundy.core.designsystem.component.BottomContainedButton
 import io.foundy.core.designsystem.component.CamstudyDivider
+import io.foundy.core.designsystem.component.CamstudyText
 import io.foundy.core.designsystem.component.CamstudyTextField
+import io.foundy.core.designsystem.component.CamstudyTopAppBar
 import io.foundy.core.designsystem.component.SelectableTile
 import io.foundy.core.designsystem.icon.CamstudyIcons
 import io.foundy.core.designsystem.theme.CamstudyTheme
@@ -54,10 +61,14 @@ private data class Action(
     val onCheckChange: (Boolean) -> Unit
 )
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun WaitingRoomScreen(
     roomOverview: RoomOverview,
     uiState: RoomUiState.WaitingRoom,
+    modifier: Modifier = Modifier,
+    snackbarHostState: SnackbarHostState,
+    onBackClick: () -> Unit
 ) {
     if (uiState is RoomUiState.WaitingRoom.NotExists) {
         NotExistsContent()
@@ -93,89 +104,107 @@ fun WaitingRoomScreen(
         }
     }
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(color = CamstudyTheme.colorScheme.systemBackground),
-    ) {
+    Scaffold(
+        modifier = modifier,
+        topBar = {
+            CamstudyTopAppBar(
+                onBackClick = onBackClick,
+                title = {
+                    CamstudyText(
+                        text = stringResource(R.string.join_study_room),
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                }
+            )
+        },
+        snackbarHost = { SnackbarHost(hostState = snackbarHostState) }
+    ) { padding ->
         Column(
             modifier = Modifier
-                .fillMaxWidth()
-                .weight(1f)
-                .verticalScroll(rememberScrollState())
+                .padding(padding)
+                .fillMaxSize()
+                .background(color = CamstudyTheme.colorScheme.systemBackground),
         ) {
-            Box(
+            Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(240.dp)
-                    .background(CamstudyTheme.colorScheme.systemUi09),
+                    .weight(1f)
+                    .verticalScroll(rememberScrollState())
             ) {
-                Box(Modifier.align(Alignment.Center)) {
-                    if (localVideoTrack != null && enabledLocalVideo) {
-                        VideoRenderer(
-                            modifier = Modifier.size(200.dp),
-                            eglBaseContext = mediaManager.eglBaseContext,
-                            videoTrack = localVideoTrack
-                        )
-                    } else {
-                        PeerContentIcon(icon = CamstudyIcons.MaterialVideoCamOff)
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(240.dp)
+                        .background(CamstudyTheme.colorScheme.systemUi09),
+                ) {
+                    Box(Modifier.align(Alignment.Center)) {
+                        if (localVideoTrack != null && enabledLocalVideo) {
+                            VideoRenderer(
+                                modifier = Modifier.size(200.dp),
+                                eglBaseContext = mediaManager.eglBaseContext,
+                                videoTrack = localVideoTrack
+                            )
+                        } else {
+                            PeerContentIcon(icon = CamstudyIcons.MaterialVideoCamOff)
+                        }
                     }
                 }
-            }
-            Spacer(modifier = Modifier.height(20.dp))
-            RoomTile(
-                modifier = Modifier.padding(horizontal = 16.dp),
-                room = if (connectedWaitingRoomUiState != null) {
-                    roomOverview.copy(
-                        joinedUsers = connectedWaitingRoomUiState.data.joinerList.map {
-                            it.toUserOverviewWithoutIntroduce()
-                        }
-                    )
-                } else {
-                    roomOverview
-                }
-            )
-            if (roomOverview.hasPassword) {
                 Spacer(modifier = Modifier.height(20.dp))
-                CamstudyTextField(
+                RoomTile(
                     modifier = Modifier.padding(horizontal = 16.dp),
-                    enabled = connectedWaitingRoomUiState != null,
-                    value = connectedWaitingRoomUiState?.passwordInput ?: "",
-                    onValueChange = connectedWaitingRoomUiState?.onPasswordChange ?: {},
-                    placeholder = stringResource(R.string.input_password_of_study_room),
-                    singleLine = true,
-                    visualTransformation = PasswordVisualTransformation(),
-                    keyboardOptions = KeyboardOptions(
-                        imeAction = ImeAction.Go,
-                        keyboardType = KeyboardType.Password
-                    ),
-                    keyboardActions = KeyboardActions(
-                        onGo = { onJoinClick() }
+                    room = if (connectedWaitingRoomUiState != null) {
+                        roomOverview.copy(
+                            joinedUsers = connectedWaitingRoomUiState.data.joinerList.map {
+                                it.toUserOverviewWithoutIntroduce()
+                            }
+                        )
+                    } else {
+                        roomOverview
+                    }
+                )
+                if (roomOverview.hasPassword) {
+                    Spacer(modifier = Modifier.height(20.dp))
+                    CamstudyTextField(
+                        modifier = Modifier.padding(horizontal = 16.dp),
+                        enabled = connectedWaitingRoomUiState != null,
+                        value = connectedWaitingRoomUiState?.passwordInput ?: "",
+                        onValueChange = connectedWaitingRoomUiState?.onPasswordChange ?: {},
+                        placeholder = stringResource(R.string.input_password_of_study_room),
+                        singleLine = true,
+                        visualTransformation = PasswordVisualTransformation(),
+                        keyboardOptions = KeyboardOptions(
+                            imeAction = ImeAction.Go,
+                            keyboardType = KeyboardType.Password
+                        ),
+                        keyboardActions = KeyboardActions(
+                            onGo = { onJoinClick() }
+                        )
                     )
+                }
+                Spacer(modifier = Modifier.height(24.dp))
+                CamstudyDivider(
+                    modifier = Modifier.padding(horizontal = 16.dp),
+                    color = CamstudyTheme.colorScheme.systemUi02
                 )
+                Spacer(modifier = Modifier.height(8.dp))
+                for (action in actions) {
+                    SelectableTile(
+                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp),
+                        title = action.title,
+                        subtitle = action.subtitle,
+                        checked = action.checked,
+                        onCheckedChange = action.onCheckChange
+                    )
+                }
             }
-            Spacer(modifier = Modifier.height(24.dp))
-            CamstudyDivider(
-                modifier = Modifier.padding(horizontal = 16.dp),
-                color = CamstudyTheme.colorScheme.systemUi02
+            BottomContainedButton(
+                enabled = uiState.isEnabledJoinButton(),
+                label = uiState.getCannotJoinMessage()
+                    ?: stringResource(id = uiState.joinButtonTextRes),
+                onClick = onJoinClick
             )
-            Spacer(modifier = Modifier.height(8.dp))
-            for (action in actions) {
-                SelectableTile(
-                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp),
-                    title = action.title,
-                    subtitle = action.subtitle,
-                    checked = action.checked,
-                    onCheckedChange = action.onCheckChange
-                )
-            }
         }
-        BottomContainedButton(
-            enabled = uiState.isEnabledJoinButton(),
-            label = uiState.getCannotJoinMessage()
-                ?: stringResource(id = uiState.joinButtonTextRes),
-            onClick = onJoinClick
-        )
     }
 }
 
@@ -225,7 +254,9 @@ private fun WaitingRoomScreenPreview() {
                     ),
                     onPasswordChange = {},
                     onJoinClick = { _, _, _ -> }
-                )
+                ),
+                snackbarHostState = SnackbarHostState(),
+                onBackClick = {}
             )
         }
     }

@@ -20,7 +20,11 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -40,6 +44,7 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.holix.android.bottomsheetdialog.compose.BottomSheetDialog
@@ -47,6 +52,7 @@ import io.foundy.core.designsystem.component.CamstudyBottomSheetDialog
 import io.foundy.core.designsystem.component.CamstudyCheckbox
 import io.foundy.core.designsystem.component.CamstudyDialog
 import io.foundy.core.designsystem.component.CamstudyText
+import io.foundy.core.designsystem.component.CamstudyTopAppBar
 import io.foundy.core.designsystem.icon.CamstudyIcon
 import io.foundy.core.designsystem.icon.CamstudyIcons
 import io.foundy.core.designsystem.theme.CamstudyTheme
@@ -69,34 +75,46 @@ import io.foundy.room.ui.viewmodel.RoomUiState
 
 @Composable
 fun StudyRoomScreen(
+    modifier: Modifier,
     uiState: RoomUiState.StudyRoom,
+    title: String,
+    snackbarHostState: SnackbarHostState,
     onDismissKickedDialog: () -> Unit,
+    onBackClick: () -> Unit
 ) {
     var shouldExpandChatDivide by remember { mutableStateOf(false) }
 
     StudyRoomContent(
+        modifier = modifier,
         uiState = uiState,
+        title = title,
+        snackbarHostState = snackbarHostState,
+        onDismissKickedDialog = onDismissKickedDialog,
+        onBackClick = onBackClick,
         shouldExpandChatDivide = shouldExpandChatDivide,
         onChatExpandClick = { shouldExpandChatDivide = true },
         onChatCollapseClick = { shouldExpandChatDivide = false },
-        onDismissKickedDialog = onDismissKickedDialog
     )
 }
 
-@OptIn(ExperimentalComposeUiApi::class)
+@OptIn(ExperimentalComposeUiApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun StudyRoomContent(
+    modifier: Modifier = Modifier,
     uiState: RoomUiState.StudyRoom,
+    title: String,
     shouldExpandChatDivide: Boolean,
+    snackbarHostState: SnackbarHostState,
     onChatExpandClick: () -> Unit,
     onChatCollapseClick: () -> Unit,
+    onDismissKickedDialog: () -> Unit,
+    onBackClick: () -> Unit,
     userOptionBottomSheetState: UserOptionBottomSheetState = remember {
         UserOptionBottomSheetState()
     },
     kickUserRecheckDialogState: KickUserRecheckDialogState = remember {
         KickUserRecheckDialogState()
-    },
-    onDismissKickedDialog: () -> Unit,
+    }
 ) {
     if (uiState.isPipMode) {
         StudyRoomContentInPip()
@@ -172,56 +190,71 @@ fun StudyRoomContent(
         )
     }
 
-    Column(
-        modifier = Modifier.clickable(
-            interactionSource = remember { MutableInteractionSource() },
-            indication = null,
-            onClick = freeChatFocus
-        )
-    ) {
-        if (!shouldExpandChatDivide) {
-            PeerGridView(
-                modifier = Modifier.weight(1f),
-                peerStates = listOf(mediaManager.currentUserState) + uiState.peerStates,
-                isCurrentUserMaster = uiState.isCurrentUserMaster,
-                onMoreButtonClick = userOptionBottomSheetState::show
+    Scaffold(
+        modifier = modifier,
+        topBar = {
+            CamstudyTopAppBar(
+                onBackClick = onBackClick,
+                title = {
+                    Text(text = title, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                }
+            )
+        },
+        snackbarHost = { SnackbarHost(hostState = snackbarHostState) }
+    ) { padding ->
+        Column(
+            modifier = Modifier
+                .padding(padding)
+                .clickable(
+                    interactionSource = remember { MutableInteractionSource() },
+                    indication = null,
+                    onClick = freeChatFocus
+                )
+        ) {
+            if (!shouldExpandChatDivide) {
+                PeerGridView(
+                    modifier = Modifier.weight(1f),
+                    peerStates = listOf(mediaManager.currentUserState) + uiState.peerStates,
+                    isCurrentUserMaster = uiState.isCurrentUserMaster,
+                    onMoreButtonClick = userOptionBottomSheetState::show
+                )
+            }
+            ActionBar(
+                timerState = uiState.pomodoroTimerState,
+                timerEventDate = uiState.pomodoroTimerEventDate,
+                onStartTimerClick = uiState.onStartPomodoroClick,
+                enabledLocalVideo = enabledLocalVideo,
+                enabledLocalAudio = enabledLocalAudio,
+                enabledLocalHeadset = enabledLocalHeadset,
+                onToggleVideo = mediaManager::toggleVideo,
+                onToggleAudio = mediaManager::toggleMicrophone,
+                onToggleHeadset = mediaManager::toggleHeadset,
+                onFlipCamera = mediaManager::switchCamera
+            )
+            if (uiState.isCurrentUserMaster) {
+                IconButton(onClick = { showBlacklistBottomSheet = true }) {
+                    CamstudyIcon(
+                        icon = CamstudyIcons.Person,
+                        contentDescription = stringResource(R.string.blacklist)
+                    )
+                }
+                IconButton(onClick = { showPomodoroTimerEditBottomSheet = true }) {
+                    CamstudyIcon(
+                        icon = CamstudyIcons.Timer,
+                        contentDescription = stringResource(R.string.edit_pomodoro_timer)
+                    )
+                }
+            }
+            ChatDivide(
+                chatInput = uiState.chatMessageInput,
+                onChatInputChange = uiState.onChatMessageInputChange,
+                onSendClick = uiState.onSendChatClick,
+                messages = uiState.chatMessages,
+                expanded = shouldExpandChatDivide,
+                onExpandClick = onChatExpandClick,
+                onCollapseClick = onChatCollapseClick
             )
         }
-        ActionBar(
-            timerState = uiState.pomodoroTimerState,
-            timerEventDate = uiState.pomodoroTimerEventDate,
-            onStartTimerClick = uiState.onStartPomodoroClick,
-            enabledLocalVideo = enabledLocalVideo,
-            enabledLocalAudio = enabledLocalAudio,
-            enabledLocalHeadset = enabledLocalHeadset,
-            onToggleVideo = mediaManager::toggleVideo,
-            onToggleAudio = mediaManager::toggleMicrophone,
-            onToggleHeadset = mediaManager::toggleHeadset,
-            onFlipCamera = mediaManager::switchCamera
-        )
-        if (uiState.isCurrentUserMaster) {
-            IconButton(onClick = { showBlacklistBottomSheet = true }) {
-                CamstudyIcon(
-                    icon = CamstudyIcons.Person,
-                    contentDescription = stringResource(R.string.blacklist)
-                )
-            }
-            IconButton(onClick = { showPomodoroTimerEditBottomSheet = true }) {
-                CamstudyIcon(
-                    icon = CamstudyIcons.Timer,
-                    contentDescription = stringResource(R.string.edit_pomodoro_timer)
-                )
-            }
-        }
-        ChatDivide(
-            chatInput = uiState.chatMessageInput,
-            onChatInputChange = uiState.onChatMessageInputChange,
-            onSendClick = uiState.onSendChatClick,
-            messages = uiState.chatMessages,
-            expanded = shouldExpandChatDivide,
-            onExpandClick = onChatExpandClick,
-            onCollapseClick = onChatCollapseClick
-        )
     }
 }
 
@@ -526,7 +559,10 @@ private fun StudyRoomScreenPreview() {
                 shouldExpandChatDivide = false,
                 onChatCollapseClick = {},
                 onChatExpandClick = {},
+                snackbarHostState = SnackbarHostState(),
+                title = "방 제목",
                 onDismissKickedDialog = {},
+                onBackClick = {}
             )
         }
     }
@@ -571,7 +607,10 @@ private fun ExpandedChatStudyRoomScreenPreview() {
                 shouldExpandChatDivide = true,
                 onChatCollapseClick = {},
                 onChatExpandClick = {},
+                snackbarHostState = SnackbarHostState(),
+                title = "방 제목",
                 onDismissKickedDialog = {},
+                onBackClick = {}
             )
         }
     }
