@@ -1,6 +1,8 @@
 package io.foundy.core.ui
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -8,6 +10,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
@@ -42,6 +45,8 @@ fun TagInputTextField(
     supportingText: String? = null
 ) {
     val isDuplicatedInput = addedTags.contains(value)
+    val recommendListPopupState = rememberRecommendListPopupState(false)
+    val shouldShowRecommendPopup = recommendListPopupState.isVisible && recommendedTags.isNotEmpty()
 
     Column {
         CamstudyTextField(
@@ -62,9 +67,16 @@ fun TagInputTextField(
                     }
                     onValueChange("")
                     onAdd(value)
+                    recommendListPopupState.dismiss()
                     return@CamstudyTextField
                 }
                 onValueChange(input.filterNot { it.isAddingAction() })
+                recommendListPopupState.show()
+            },
+            interactionSource = remember { MutableInteractionSource() }.apply {
+                if (collectIsPressedAsState().value) {
+                    recommendListPopupState.show()
+                }
             },
             label = label,
             prefix = {
@@ -83,16 +95,17 @@ fun TagInputTextField(
             } else {
                 supportingText
             },
-            borderShape = if (recommendedTags.isEmpty()) {
-                RoundedCornerShape(8.dp)
-            } else {
+            borderShape = if (shouldShowRecommendPopup) {
                 RoundedCornerShape(topStart = 8.dp, topEnd = 8.dp)
+            } else {
+                RoundedCornerShape(8.dp)
             },
             supportingContent = {
-                if (recommendedTags.isNotEmpty()) {
+                if (shouldShowRecommendPopup) {
                     RecommendListPopup(
                         modifier = Modifier.padding(horizontal = 16.dp),
                         items = recommendedTags,
+                        state = recommendListPopupState,
                         onItemClick = {tag ->
                             if (addedTags.contains(tag)) {
                                 error("Already input that tag!")
