@@ -1,40 +1,42 @@
 package io.foundy.room.ui.component
 
-import android.content.Context
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Button
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.input.KeyboardType
-import com.holix.android.bottomsheetdialog.compose.BottomSheetDialog
-import io.foundy.core.designsystem.component.CamstudyTextField
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
+import io.foundy.core.designsystem.component.CamstudyBottomSheetDialog
+import io.foundy.core.designsystem.component.CamstudyDialog
+import io.foundy.core.designsystem.component.CamstudyDivider
+import io.foundy.core.designsystem.component.CamstudySlider
+import io.foundy.core.designsystem.component.CamstudyText
+import io.foundy.core.designsystem.component.CamstudyTextButton
+import io.foundy.core.designsystem.theme.CamstudyTheme
+import io.foundy.core.model.constant.RoomConstants
 import io.foundy.room.domain.PomodoroTimerProperty
 import io.foundy.room.ui.R
+import kotlin.math.round
 
-private val TimerLengthMinutesRange = IntRange(20, 50)
-private val ShortBreakMinutesRange = IntRange(3, 10)
-private val LongBreakMinutesRange = IntRange(10, 30)
-private val LongIntervalRange = IntRange(2, 6)
+private fun IntRange.toFloatRange() = this.first.toFloat()..this.last.toFloat()
 
 @Composable
 fun rememberPomodoroTimerEditBottomSheetState(
     initTimerProperty: PomodoroTimerProperty
 ): PomodoroTimerEditBottomSheetState {
-    val context = LocalContext.current
     return remember {
         PomodoroTimerEditBottomSheetState(
-            context = context,
             initTimerProperty = initTimerProperty
         )
     }
@@ -42,69 +44,14 @@ fun rememberPomodoroTimerEditBottomSheetState(
 
 @Stable
 class PomodoroTimerEditBottomSheetState(
-    private val context: Context,
-    initTimerProperty: PomodoroTimerProperty
+    private val initTimerProperty: PomodoroTimerProperty
 ) {
     var timerProperty by mutableStateOf(initTimerProperty)
         private set
 
-    var didUpdate by mutableStateOf(false)
-
-    val timerLengthErrorMessage: String?
-        get() {
-            if (!TimerLengthMinutesRange.contains(timerProperty.timerLengthMinutes)) {
-                return context.getString(
-                    R.string.timer_length_error,
-                    TimerLengthMinutesRange.first,
-                    TimerLengthMinutesRange.last
-                )
-            }
-            return null
-        }
-
-    val shortBreakLengthErrorMessage: String?
-        get() {
-            if (!ShortBreakMinutesRange.contains(timerProperty.shortBreakMinutes)) {
-                return context.getString(
-                    R.string.short_break_length_error,
-                    ShortBreakMinutesRange.first,
-                    ShortBreakMinutesRange.last
-                )
-            }
-            return null
-        }
-
-    val longBreakLengthErrorMessage: String?
-        get() {
-            if (!LongBreakMinutesRange.contains(timerProperty.longBreakMinutes)) {
-                return context.getString(
-                    R.string.long_break_length_error,
-                    LongBreakMinutesRange.first,
-                    LongBreakMinutesRange.last
-                )
-            }
-            return null
-        }
-
-    val longIntervalErrorMessageRes: String?
-        get() {
-            if (!LongIntervalRange.contains(timerProperty.longBreakInterval)) {
-                return context.getString(
-                    R.string.long_break_interval_error,
-                    LongIntervalRange.first,
-                    LongIntervalRange.last
-                )
-            }
-            return null
-        }
-
     val canSave: Boolean
         get() {
-            return timerLengthErrorMessage == null &&
-                shortBreakLengthErrorMessage == null &&
-                longBreakLengthErrorMessage == null &&
-                longIntervalErrorMessageRes == null &&
-                didUpdate
+            return initTimerProperty != timerProperty
         }
 
     fun updateTimerProperty(
@@ -113,7 +60,6 @@ class PomodoroTimerEditBottomSheetState(
         longBreakMinutes: Int? = null,
         longBreakInterval: Int? = null
     ) {
-        didUpdate = true
         timerProperty = timerProperty.copy(
             timerLengthMinutes = timerLengthMinutes ?: timerProperty.timerLengthMinutes,
             shortBreakMinutes = shortBreakMinutes ?: timerProperty.shortBreakMinutes,
@@ -130,32 +76,21 @@ fun PomodoroTimerEditBottomSheet(
     onDismiss: () -> Unit
 ) {
     val timerProperty = state.timerProperty
-    val numberKeyboardOption = KeyboardOptions(keyboardType = KeyboardType.Number)
     var showRecheckDialog by remember { mutableStateOf(false) }
 
-    if (state.didUpdate && showRecheckDialog) {
-        AlertDialog(
+    if (state.canSave && showRecheckDialog) {
+        CamstudyDialog(
+            content = stringResource(R.string.are_you_sure_do_not_save_timer),
             onDismissRequest = { showRecheckDialog = false },
-            text = {
-                Text(text = stringResource(R.string.are_you_sure_do_not_save_timer))
-            },
-            dismissButton = {
-                TextButton(onClick = { showRecheckDialog = false }) {
-                    Text(text = stringResource(R.string.cancel))
-                }
-            },
-            confirmButton = {
-                TextButton(onClick = onDismiss) {
-                    Text(text = stringResource(R.string.quit))
-                }
-            }
+            onConfirm = onDismiss,
+            onCancel = { showRecheckDialog = false },
+            confirmText = stringResource(R.string.quit)
         )
     }
 
-    // TODO: 키보드가 안보임... https://github.com/holixfactory/bottomsheetdialog-compose/issues/17
-    BottomSheetDialog(
+    CamstudyBottomSheetDialog(
         onDismissRequest = {
-            if (state.didUpdate) {
+            if (state.canSave) {
                 showRecheckDialog = true
             } else {
                 onDismiss()
@@ -163,74 +98,89 @@ fun PomodoroTimerEditBottomSheet(
         }
     ) {
         Column {
-            Row {
-                Text(stringResource(R.string.study_timer_length))
-                CamstudyTextField(
-                    value = timerProperty.timerLengthMinutes.toString(),
-                    onValueChange = {
-                        val minutes = it.toIntOrNull() ?: 0
-                        state.updateTimerProperty(timerLengthMinutes = minutes)
-                    },
-                    keyboardOptions = numberKeyboardOption,
-                    isError = state.timerLengthErrorMessage != null,
-                    supportingText = {
-                        state.timerLengthErrorMessage?.let { Text(text = it) }
-                    }
+            Row(
+                modifier = Modifier.padding(start = 16.dp, end = 8.dp, top = 8.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                CamstudyText(
+                    modifier = Modifier.weight(1f),
+                    text = stringResource(id = R.string.edit_pomodoro_timer),
+                    style = CamstudyTheme.typography.titleLarge.copy(
+                        color = CamstudyTheme.colorScheme.systemUi09,
+                        fontWeight = FontWeight.SemiBold
+                    )
                 )
-            }
-            Row {
-                Text(stringResource(R.string.short_break_length))
-                CamstudyTextField(
-                    value = timerProperty.shortBreakMinutes.toString(),
-                    onValueChange = {
-                        val minutes = it.toIntOrNull() ?: 0
-                        state.updateTimerProperty(shortBreakMinutes = minutes)
-                    },
-                    keyboardOptions = numberKeyboardOption,
-                    isError = state.shortBreakLengthErrorMessage != null,
-                    supportingText = {
-                        state.shortBreakLengthErrorMessage?.let { Text(text = it) }
-                    }
-                )
-            }
-            Row {
-                Text(stringResource(R.string.long_break_length))
-                CamstudyTextField(
-                    value = timerProperty.longBreakMinutes.toString(),
-                    onValueChange = {
-                        val minutes = it.toIntOrNull() ?: 0
-                        state.updateTimerProperty(longBreakMinutes = minutes)
-                    },
-                    keyboardOptions = numberKeyboardOption,
-                    isError = state.longBreakLengthErrorMessage != null,
-                    supportingText = {
-                        state.longBreakLengthErrorMessage?.let { Text(text = it) }
-                    }
-                )
-            }
-            Row {
-                Text(stringResource(R.string.long_break_interval))
-                CamstudyTextField(
-                    value = timerProperty.longBreakInterval.toString(),
-                    onValueChange = {
-                        val minutes = it.toIntOrNull() ?: 0
-                        state.updateTimerProperty(longBreakInterval = minutes)
-                    },
-                    keyboardOptions = numberKeyboardOption,
-                    isError = state.longIntervalErrorMessageRes != null,
-                    supportingText = {
-                        state.longIntervalErrorMessageRes?.let { Text(text = it) }
-                    }
-                )
-            }
-            Row {
-                Button(
+                CamstudyTextButton(
+                    label = stringResource(R.string.save),
                     onClick = { onSaveClick(state.timerProperty) },
                     enabled = state.canSave
-                ) {
-                    Text(text = stringResource(R.string.save))
-                }
+                )
             }
+            SliderDivide(
+                title = stringResource(R.string.study_timer_length),
+                value = timerProperty.timerLengthMinutes,
+                onValueChange = {
+                    state.updateTimerProperty(timerLengthMinutes = it)
+                },
+                valueRange = RoomConstants.TimerLengthRange,
+                steps = 5
+            )
+            SliderDivide(
+                title = stringResource(R.string.short_break_length),
+                value = timerProperty.shortBreakMinutes,
+                onValueChange = {
+                    state.updateTimerProperty(shortBreakMinutes = it)
+                },
+                valueRange = RoomConstants.ShortBreakLengthRage,
+                steps = 6
+            )
+            SliderDivide(
+                title = stringResource(R.string.long_break_length),
+                value = timerProperty.longBreakMinutes,
+                onValueChange = {
+                    state.updateTimerProperty(longBreakMinutes = it)
+                },
+                valueRange = RoomConstants.LongBreakLengthRange,
+                steps = 3
+            )
+            SliderDivide(
+                title = stringResource(R.string.long_break_interval),
+                value = timerProperty.longBreakInterval,
+                onValueChange = {
+                    state.updateTimerProperty(longBreakInterval = it)
+                },
+                valueRange = RoomConstants.LongBreakIntervalRange,
+                steps = 3
+            )
         }
+    }
+}
+
+@Composable
+private fun SliderDivide(
+    title: String,
+    value: Int,
+    onValueChange: (Int) -> Unit,
+    valueRange: IntRange,
+    steps: Int
+) {
+    Box {
+        Column(Modifier.padding(horizontal = 16.dp, vertical = 20.dp)) {
+            CamstudyText(
+                text = title,
+                style = CamstudyTheme.typography.titleSmall.copy(
+                    color = CamstudyTheme.colorScheme.systemUi08,
+                    fontWeight = FontWeight.SemiBold
+                ),
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+            CamstudySlider(
+                value = value.toFloat(),
+                onValueChange = { onValueChange(round(it).toInt()) },
+                valueRange = valueRange.toFloatRange(),
+                steps = steps
+            )
+        }
+        CamstudyDivider(modifier = Modifier.align(Alignment.BottomCenter))
     }
 }
