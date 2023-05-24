@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.ProvideTextStyle
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -52,6 +53,43 @@ fun CamstudyDialog(
                         .padding(horizontal = 24.dp)
                         .padding(top = 24.dp, bottom = 16.dp),
                     title = title,
+                    content = {
+                        CamstudyText(text = content)
+                    }
+                )
+                Buttons(
+                    modifier = Modifier.padding(8.dp),
+                    confirmText = confirmText,
+                    onCancelClick = onCancel,
+                    onConfirmClick = onConfirm
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun CamstudyDialog(
+    title: String? = null,
+    content: @Composable () -> Unit,
+    confirmText: String = stringResource(R.string.confirm),
+    onDismissRequest: () -> Unit,
+    onCancel: (() -> Unit)? = null,
+    onConfirm: () -> Unit
+) {
+    Dialog(onDismissRequest = onDismissRequest) {
+        Box(
+            modifier = Modifier
+                .sizeIn(minWidth = DialogMinWidth, maxWidth = DialogMaxWidth)
+                .clip(RoundedCornerShape(8.dp))
+                .background(color = CamstudyTheme.colorScheme.systemBackground),
+        ) {
+            Column(Modifier.fillMaxWidth()) {
+                Texts(
+                    modifier = Modifier
+                        .padding(horizontal = 24.dp)
+                        .padding(top = 24.dp, bottom = 16.dp),
+                    title = title,
                     content = content
                 )
                 Buttons(
@@ -69,7 +107,7 @@ fun CamstudyDialog(
 private fun Texts(
     modifier: Modifier = Modifier,
     title: String?,
-    content: String
+    content: @Composable () -> Unit
 ) {
     Column(
         modifier = modifier
@@ -84,13 +122,14 @@ private fun Texts(
             )
             Spacer(modifier = Modifier.height(8.dp))
         }
-        CamstudyText(
-            text = content,
-            style = CamstudyTheme.typography.titleMedium.copy(
+        ProvideTextStyle(
+            value = CamstudyTheme.typography.titleMedium.copy(
                 fontWeight = FontWeight.Normal,
                 color = CamstudyTheme.colorScheme.systemUi05
             )
-        )
+        ) {
+            content()
+        }
     }
 }
 

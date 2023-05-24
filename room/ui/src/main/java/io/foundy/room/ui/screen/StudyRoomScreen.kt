@@ -18,7 +18,6 @@ import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
-import androidx.compose.material3.Checkbox
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -41,6 +40,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.holix.android.bottomsheetdialog.compose.BottomSheetDialog
+import io.foundy.core.designsystem.component.CamstudyCheckbox
+import io.foundy.core.designsystem.component.CamstudyDialog
 import io.foundy.core.designsystem.icon.CamstudyIcon
 import io.foundy.core.designsystem.icon.CamstudyIcons
 import io.foundy.core.designsystem.theme.CamstudyTheme
@@ -137,49 +138,11 @@ fun StudyRoomContent(
         )
     }
 
-    val userToKick = kickUserRecheckDialogState.user
-    if (userToKick != null) {
-        // TODO: 아래 코드 다른 composable 함수로 분리하기
-        var checkedBlock by remember { mutableStateOf(false) }
-        AlertDialog(
-            title = {
-                Text(
-                    text = stringResource(id = R.string.are_you_sure_want_to_kick, userToKick.name)
-                )
-            },
-            text = {
-                Row(
-                    modifier = Modifier.clickable { checkedBlock = !checkedBlock }
-                ) {
-                    Checkbox(
-                        checked = checkedBlock,
-                        onCheckedChange = { checkedBlock = !checkedBlock }
-                    )
-                    Text(text = stringResource(R.string.block_user))
-                }
-            },
-            confirmButton = {
-                TextButton(
-                    onClick = {
-                        if (checkedBlock) {
-                            uiState.onBlockUserClick(userToKick.id)
-                        } else {
-                            uiState.onKickUserClick(userToKick.id)
-                        }
-                        kickUserRecheckDialogState.hide()
-                    }
-                ) {
-                    Text(text = stringResource(R.string.kick))
-                }
-            },
-            dismissButton = {
-                TextButton(onClick = kickUserRecheckDialogState::hide) {
-                    Text(text = stringResource(R.string.cancel))
-                }
-            },
-            onDismissRequest = kickUserRecheckDialogState::hide,
-        )
-    }
+    KickUserRecheckDialog(
+        state = kickUserRecheckDialogState,
+        onBlockUserClick = uiState.onBlockUserClick,
+        onKickUserClick = uiState.onKickUserClick
+    )
 
     val selectedUser = userBottomSheetState.selectedUser
     if (selectedUser != null) {
@@ -386,6 +349,46 @@ class KickUserRecheckDialogState {
 
     fun hide() {
         user = null
+    }
+}
+
+@Composable
+fun KickUserRecheckDialog(
+    state: KickUserRecheckDialogState,
+    onBlockUserClick: (String) -> Unit,
+    onKickUserClick: (String) -> Unit
+
+) {
+    var wantToBlock by remember { mutableStateOf(false) }
+    val userToKick = state.user
+
+    if (userToKick != null) {
+        CamstudyDialog(
+            title = stringResource(id = R.string.are_you_sure_want_to_kick, userToKick.name),
+            content = {
+                Row(
+                    modifier = Modifier.clickable { wantToBlock = !wantToBlock },
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    CamstudyCheckbox(
+                        checked = wantToBlock,
+                        onCheckedChange = { wantToBlock = !wantToBlock }
+                    )
+                    Text(text = stringResource(R.string.block_user))
+                }
+            },
+            confirmText = stringResource(R.string.kick),
+            onConfirm = {
+                if (wantToBlock) {
+                    onBlockUserClick(userToKick.id)
+                } else {
+                    onKickUserClick(userToKick.id)
+                }
+                state.hide()
+            },
+            onCancel = state::hide,
+            onDismissRequest = state::hide,
+        )
     }
 }
 
