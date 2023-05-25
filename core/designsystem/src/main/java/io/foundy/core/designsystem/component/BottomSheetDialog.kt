@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import com.holix.android.bottomsheetdialog.compose.BottomSheetBehaviorProperties
 import com.holix.android.bottomsheetdialog.compose.BottomSheetDialog
 import com.holix.android.bottomsheetdialog.compose.BottomSheetDialogProperties
 import io.foundy.core.designsystem.theme.CamstudyTheme
@@ -11,7 +12,11 @@ import io.foundy.core.designsystem.theme.CamstudyTheme
 @Composable
 fun CamstudyBottomSheetDialog(
     onDismissRequest: () -> Unit,
-    properties: BottomSheetDialogProperties = BottomSheetDialogProperties(),
+    properties: BottomSheetDialogProperties = BottomSheetDialogProperties(
+        behaviorProperties = BottomSheetBehaviorProperties(
+            isHideable = false
+        )
+    ),
     content: @Composable () -> Unit
 ) {
     BottomSheetDialog(
