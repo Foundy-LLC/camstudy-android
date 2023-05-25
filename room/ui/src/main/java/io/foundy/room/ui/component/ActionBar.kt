@@ -35,6 +35,7 @@ import io.foundy.core.designsystem.component.CamstudyTooltipBox
 import io.foundy.core.designsystem.icon.CamstudyIcon
 import io.foundy.core.designsystem.icon.CamstudyIcons
 import io.foundy.core.designsystem.theme.CamstudyTheme
+import io.foundy.room.domain.PomodoroTimerProperty
 import io.foundy.room.domain.PomodoroTimerState
 import io.foundy.room.domain.WebRtcServerTimeZone
 import io.foundy.room.ui.R
@@ -44,11 +45,13 @@ import kotlinx.datetime.Clock
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.toInstant
 import kotlinx.datetime.toLocalDateTime
+import kotlin.time.Duration.Companion.minutes
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ActionBar(
     timerState: PomodoroTimerState,
+    timerProperty: PomodoroTimerProperty,
     timerEventDate: LocalDateTime?,
     onStartTimerClick: () -> Unit,
     enabledLocalVideo: Boolean,
@@ -69,6 +72,7 @@ fun ActionBar(
         ) {
             PomodoroTimer(
                 state = timerState,
+                timerProperty = timerProperty,
                 pomodoroTimerEventDate = timerEventDate,
                 onStartClick = onStartTimerClick,
             )
@@ -144,11 +148,17 @@ fun ActionBar(
 @Composable
 private fun PomodoroTimer(
     state: PomodoroTimerState,
+    timerProperty: PomodoroTimerProperty,
     pomodoroTimerEventDate: LocalDateTime?,
     onStartClick: () -> Unit
 ) {
     var elapsedTimeText by remember(pomodoroTimerEventDate) {
-        mutableStateOf(pomodoroTimerEventDate.elapsedTimeText)
+        mutableStateOf(
+            pomodoroTimerEventDate.getRemainTimeText(
+                timerState = state,
+                timerProperty = timerProperty
+            )
+        )
     }
     val color = when (state) {
         PomodoroTimerState.STOPPED -> Color.White
@@ -166,7 +176,10 @@ private fun PomodoroTimer(
         LaunchedEffect(pomodoroTimerEventDate) {
             while (true) {
                 delay(1_000)
-                elapsedTimeText = pomodoroTimerEventDate.elapsedTimeText
+                elapsedTimeText = pomodoroTimerEventDate.getRemainTimeText(
+                    timerState = state,
+                    timerProperty = timerProperty
+                )
             }
         }
     }
@@ -230,19 +243,30 @@ private fun PomodoroTimer(
     }
 }
 
-private val LocalDateTime?.elapsedTimeText: String
-    get() {
-        if (this == null) {
-            return "00:00"
-        }
-        val currentTime = Clock.System.now().toLocalDateTime(WebRtcServerTimeZone)
-        val instantDiff = currentTime.toInstant(WebRtcServerTimeZone) -
-            this.toInstant(WebRtcServerTimeZone)
-        val diffWholeSeconds = instantDiff.inWholeSeconds
-        val minutes = diffWholeSeconds / 60
-        val seconds = diffWholeSeconds % 60
-        return "%02d:%02d".format(minutes, seconds)
+private fun LocalDateTime?.getRemainTimeText(
+    timerState: PomodoroTimerState,
+    timerProperty: PomodoroTimerProperty
+): String {
+    if (this == null) {
+        return "00:00"
     }
+    val durationMinutes = when (timerState) {
+        PomodoroTimerState.STOPPED -> 0
+        PomodoroTimerState.STARTED -> timerProperty.timerLengthMinutes
+        PomodoroTimerState.SHORT_BREAK -> timerProperty.shortBreakMinutes
+        PomodoroTimerState.LONG_BREAK -> timerProperty.longBreakMinutes
+    }
+    val currentTime = Clock.System.now().toLocalDateTime(WebRtcServerTimeZone)
+    val targetTime = this.toInstant(WebRtcServerTimeZone) + durationMinutes.minutes
+    val remainTime = targetTime - currentTime.toInstant(WebRtcServerTimeZone)
+    val remainWholeSeconds = remainTime.inWholeSeconds + 1
+    if (remainWholeSeconds <= 0) {
+        return "00:00"
+    }
+    val minutes = remainWholeSeconds / 60
+    val seconds = remainWholeSeconds % 60
+    return "%02d:%02d".format(minutes, seconds)
+}
 
 @Preview(widthDp = 320)
 @Composable
@@ -252,6 +276,12 @@ private fun ActionBarPreview() {
         ActionBar(
             timerState = state,
             timerEventDate = null,
+            timerProperty = PomodoroTimerProperty(
+                timerLengthMinutes = 25,
+                shortBreakMinutes = 5,
+                longBreakMinutes = 15,
+                longBreakInterval = 4
+            ),
             onStartTimerClick = {
                 state = PomodoroTimerState.STARTED
             },
@@ -274,6 +304,12 @@ private fun ActionBarDisabledVideoPreview() {
         ActionBar(
             timerState = state,
             timerEventDate = null,
+            timerProperty = PomodoroTimerProperty(
+                timerLengthMinutes = 25,
+                shortBreakMinutes = 5,
+                longBreakMinutes = 15,
+                longBreakInterval = 4
+            ),
             onStartTimerClick = {
                 state = PomodoroTimerState.STARTED
             },
@@ -296,6 +332,12 @@ private fun TimerStartedActionBarPreview() {
             timerState = PomodoroTimerState.STARTED,
             timerEventDate = null,
             onStartTimerClick = {},
+            timerProperty = PomodoroTimerProperty(
+                timerLengthMinutes = 25,
+                shortBreakMinutes = 5,
+                longBreakMinutes = 15,
+                longBreakInterval = 4
+            ),
             enabledLocalVideo = true,
             enabledLocalAudio = true,
             enabledLocalHeadset = true,
@@ -314,6 +356,12 @@ private fun TimerShortBreakActionBarPreview() {
         ActionBar(
             timerState = PomodoroTimerState.SHORT_BREAK,
             timerEventDate = null,
+            timerProperty = PomodoroTimerProperty(
+                timerLengthMinutes = 25,
+                shortBreakMinutes = 5,
+                longBreakMinutes = 15,
+                longBreakInterval = 4
+            ),
             onStartTimerClick = {},
             enabledLocalVideo = true,
             enabledLocalAudio = true,
@@ -333,6 +381,12 @@ private fun TimerLongBreakActionBarPreview() {
         ActionBar(
             timerState = PomodoroTimerState.LONG_BREAK,
             timerEventDate = null,
+            timerProperty = PomodoroTimerProperty(
+                timerLengthMinutes = 25,
+                shortBreakMinutes = 5,
+                longBreakMinutes = 15,
+                longBreakInterval = 4
+            ),
             onStartTimerClick = {},
             enabledLocalVideo = true,
             enabledLocalAudio = true,
