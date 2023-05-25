@@ -154,15 +154,15 @@ fun EditProfileScreen(
                 .padding(innerPadding)
                 .fillMaxSize()
         ) {
-            if (uiState.didBind) {
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .weight(1f)
-                        .background(color = CamstudyTheme.colorScheme.systemBackground)
-                        .verticalScroll(rememberScrollState())
-                        .padding(horizontal = 16.dp)
-                ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f)
+                    .background(color = CamstudyTheme.colorScheme.systemBackground)
+                    .verticalScroll(rememberScrollState())
+                    .padding(horizontal = 16.dp)
+            ) {
+                if (uiState.didBind) {
                     ProfileImage(
                         model = uiState.selectedImage ?: uiState.imageUrl,
                         onSelectImage = uiState.onSelectImage,
