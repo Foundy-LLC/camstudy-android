@@ -19,7 +19,6 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
@@ -27,7 +26,6 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.Immutable
@@ -152,14 +150,10 @@ fun StudyRoomContent(
     }
 
     if (uiState.isCurrentUserKicked) {
-        // TODO: 아래 코드 다른 composable 함수로 분리하기
-        AlertDialog(
-            title = { Text(text = stringResource(id = R.string.master_kicked_you)) },
-            confirmButton = {
-                TextButton(onClick = onDismissKickedDialog) {
-                    Text(text = stringResource(R.string.back_to_home))
-                }
-            },
+        CamstudyDialog(
+            content = stringResource(id = R.string.master_kicked_you),
+            confirmText = stringResource(R.string.back_to_home),
+            onConfirm = onDismissKickedDialog,
             onDismissRequest = onDismissKickedDialog,
         )
     }
