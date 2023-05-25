@@ -41,7 +41,9 @@ import io.foundy.core.designsystem.theme.CamstudyTheme
 
 val CamstudyTextFieldTextStyle: TextStyle
     @Composable
-    get() = CamstudyTheme.typography.titleSmall
+    get() = CamstudyTheme.typography.titleSmall.copy(
+        color = CamstudyTheme.colorScheme.systemUi09
+    )
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
