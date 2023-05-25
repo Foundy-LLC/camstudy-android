@@ -203,12 +203,20 @@ private fun RankingDetail(score: Int, studyTimeSec: Int) {
         )
         Spacer(modifier = Modifier.width(20.dp))
         CamstudyText(
-            text = stringResource(R.string.score_format, "%,d".format(score)),
+            text = if (score == 0) {
+                stringResource(R.string.no_score)
+            } else {
+                stringResource(R.string.score_format, "%,d".format(score))
+            },
             style = infoTextStyle
         )
         Spacer(modifier = Modifier.width(12.dp))
         CamstudyText(
-            text = studyTimeSec.secToHourMinuteFormat(),
+            text = if (studyTimeSec == 0) {
+                stringResource(R.string.no_study_time)
+            } else {
+                studyTimeSec.secToHourMinuteFormat()
+            },
             style = infoTextStyle
         )
     }
