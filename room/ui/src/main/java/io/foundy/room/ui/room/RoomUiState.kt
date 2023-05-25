@@ -70,22 +70,31 @@ sealed class RoomUiState {
                 NotExists -> return stringResource(R.string.not_exists_study_room)
                 is FailedToConnect -> return message ?: stringResource(defaultMessageRes)
                 is Connected -> {
-                    if (data.joinerList.any { it.id == currentUserId }) {
-                        return stringResource(R.string.already_joined)
-                    }
-                    if (data.hasPassword &&
+                    val passwordNeeded = data.hasPassword &&
                         passwordInput.length < RoomConstants.PasswordRange.first
-                    ) {
-                        return stringResource(R.string.input_password)
-                    }
+                    val alreadyJoined = data.joinerList.any { it.id == currentUserId }
+
                     if (isCurrentUserMaster) {
+                        if (data.joinerList.any { it.id == currentUserId }) {
+                            return stringResource(R.string.already_joined)
+                        }
+                        if (passwordNeeded) {
+                            return stringResource(R.string.input_password)
+                        }
                         return null
+                    }
+
+                    if (isCurrentUserBlocked) {
+                        return stringResource(R.string.cannot_join_because_blocked)
+                    }
+                    if (alreadyJoined) {
+                        return stringResource(R.string.already_joined)
                     }
                     if (isFull) {
                         return stringResource(R.string.room_is_full)
                     }
-                    if (isCurrentUserBlocked) {
-                        return stringResource(R.string.cannot_join_because_blocked)
+                    if (passwordNeeded) {
+                        return stringResource(R.string.input_password)
                     }
                     return null
                 }
