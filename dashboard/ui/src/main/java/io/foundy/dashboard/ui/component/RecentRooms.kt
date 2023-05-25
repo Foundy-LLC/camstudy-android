@@ -18,6 +18,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import io.foundy.core.designsystem.component.CamstudyDivider
@@ -94,7 +95,9 @@ private fun RecentRoomTile(room: RoomOverview, onClick: (RoomOverview) -> Unit) 
                     style = CamstudyTheme.typography.titleSmall.copy(
                         color = CamstudyTheme.colorScheme.systemUi08,
                         fontWeight = FontWeight.Bold
-                    )
+                    ),
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
                 )
                 RoomTags(tags = room.tags)
             }
