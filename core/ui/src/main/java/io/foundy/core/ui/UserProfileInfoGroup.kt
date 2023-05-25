@@ -1,6 +1,5 @@
 package io.foundy.core.ui
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -44,9 +43,7 @@ fun UserProfileInfoGroup(
     consecutiveStudyDays: Int
 ) {
     Column(
-        modifier = Modifier
-            .background(color = CamstudyTheme.colorScheme.systemBackground)
-            .then(modifier)
+        modifier = modifier
     ) {
         InfoTile(
             leadingIcon = CamstudyIcons.Ranking,

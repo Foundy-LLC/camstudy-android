@@ -161,7 +161,9 @@ private fun SuccessContent(
         item {
             Spacer(modifier = Modifier.height(8.dp))
             UserProfileInfoGroup(
-                modifier = Modifier.padding(vertical = 10.dp, horizontal = 16.dp),
+                modifier = Modifier
+                    .background(color = CamstudyTheme.colorScheme.systemBackground)
+                    .padding(vertical = 10.dp, horizontal = 16.dp),
                 weeklyRankingOverall = user.weeklyRankingOverall,
                 weeklyStudyTimeSec = user.weeklyStudyTimeSec,
                 weeklyRanking = user.weeklyRanking,
