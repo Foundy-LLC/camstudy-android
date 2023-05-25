@@ -1,5 +1,8 @@
 package io.foundy.core.designsystem.theme
 
+import androidx.compose.material3.ColorScheme
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -110,6 +113,15 @@ class CamstudyColorScheme(
     var text04 by mutableStateOf(text04, structuralEqualityPolicy())
         internal set
 }
+
+@Composable
+fun CamstudyColorScheme.toMaterialColorScheme() = MaterialTheme.colorScheme.copy(
+    background = systemBackground,
+    onBackground = systemUi09,
+    primary = primary,
+    secondary = secondary,
+    tertiary = tertiary
+)
 
 fun lightCamstudyColorScheme(): CamstudyColorScheme {
     return CamstudyColorScheme(

@@ -57,6 +57,7 @@ fun CamstudyTheme(
         LocalCamstudyTypography provides Typography
     ) {
         MaterialTheme(
+            colorScheme = colorScheme.toMaterialColorScheme(),
             typography = Typography,
             content = content,
         )
