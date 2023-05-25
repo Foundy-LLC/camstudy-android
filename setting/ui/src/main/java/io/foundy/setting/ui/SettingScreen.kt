@@ -19,6 +19,7 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -203,7 +204,8 @@ fun TileItem(
             .fillMaxWidth()
             .background(color = CamstudyTheme.colorScheme.systemBackground)
             .clickable(onClick = onClick)
-            .padding(vertical = 20.dp, horizontal = 16.dp)
+            .padding(vertical = 20.dp, horizontal = 16.dp),
+        verticalAlignment = Alignment.CenterVertically
     ) {
         CamstudyIcon(
             modifier = Modifier.size(24.dp),
@@ -213,11 +215,18 @@ fun TileItem(
         )
         Spacer(modifier = Modifier.width(12.dp))
         CamstudyText(
+            modifier = Modifier.weight(1f),
             text = title,
             style = CamstudyTheme.typography.titleMedium.copy(
                 color = CamstudyTheme.colorScheme.systemUi08,
                 fontWeight = FontWeight.SemiBold
             )
+        )
+        CamstudyIcon(
+            modifier = Modifier.size(width = 13.dp, height = 16.dp),
+            icon = CamstudyIcons.ArrowForward,
+            contentDescription = null,
+            tint = CamstudyTheme.colorScheme.systemUi07
         )
     }
 }
