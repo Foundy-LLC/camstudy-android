@@ -260,6 +260,7 @@ fun StudyRoomContent(
             }
             ActionBar(
                 timerState = uiState.pomodoroTimerState,
+                timerProperty = uiState.pomodoroTimer,
                 timerEventDate = uiState.pomodoroTimerEventDate,
                 onStartTimerClick = uiState.onStartPomodoroClick,
                 enabledLocalVideo = enabledLocalVideo,
