@@ -5,7 +5,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 import io.foundy.core.model.constant.RoomConstants
 import io.foundy.room.data.model.WaitingRoomData
-import io.foundy.room.domain.ChatMessage
 import io.foundy.room.domain.PeerOverview
 import io.foundy.room.domain.PomodoroTimerProperty
 import io.foundy.room.domain.PomodoroTimerState
