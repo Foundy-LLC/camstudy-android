@@ -65,6 +65,7 @@ import io.foundy.room.ui.R
 import io.foundy.room.ui.component.ActionBar
 import io.foundy.room.ui.component.ChatDivide
 import io.foundy.room.ui.component.PeerContent
+import io.foundy.room.ui.component.PeerContentColor
 import io.foundy.room.ui.component.PeerContentIcon
 import io.foundy.room.ui.component.PomodoroTimerEditBottomSheet
 import io.foundy.room.ui.component.VideoRenderer
@@ -316,7 +317,7 @@ private fun PeerGridView(
                 items(MaxPeerCount - peerStates.size) {
                     Box(
                         modifier = sizeModifier.background(
-                            color = CamstudyTheme.colorScheme.systemUi09
+                            color = PeerContentColor
                         )
                     ) {
                         PeerContentIcon(
