@@ -38,7 +38,11 @@ import io.foundy.core.ui.UserProfileImage
 import io.foundy.core.ui.util.secToHourMinuteFormat
 import io.foundy.ranking.ui.R
 
-private fun getRankingNumberBoxColorBy(ranking: Int): Color {
+@Composable
+private fun getRankingNumberBoxColorBy(ranking: Int, hasScore: Boolean): Color {
+    if (!hasScore) {
+        return CamstudyTheme.colorScheme.systemUi03
+    }
     return when (ranking) {
         1 -> Color(0xFFE2B63E)
         2 -> Color(0xFFA6C0D3)
@@ -86,7 +90,7 @@ private fun RankingTileContent(
                 modifier = Modifier.padding(start = 16.dp, top = 8.dp, bottom = 7.dp, end = 4.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                RankingNumber(ranking = user.ranking)
+                RankingNumber(ranking = user.ranking, hasScore = user.score > 0)
                 Spacer(modifier = Modifier.width(12.dp))
                 UserProfileImage(model = user.profileImage)
                 Spacer(modifier = Modifier.width(12.dp))
@@ -122,15 +126,15 @@ private fun RankingTileContent(
 }
 
 @Composable
-private fun RankingNumber(ranking: Int) {
+private fun RankingNumber(ranking: Int, hasScore: Boolean) {
     Box(
         modifier = Modifier
             .clip(RoundedCornerShape(8.dp))
             .size(40.dp)
-            .background(getRankingNumberBoxColorBy(ranking = ranking))
+            .background(getRankingNumberBoxColorBy(ranking = ranking, hasScore = hasScore))
     ) {
         CamstudyText(
-            text = ranking.toString(),
+            text = if (hasScore) ranking.toString() else "-",
             modifier = Modifier.align(Alignment.Center),
             style = CamstudyTheme.typography.headlineSmall.copy(
                 color = Color.White,
@@ -199,12 +203,20 @@ private fun RankingDetail(score: Int, studyTimeSec: Int) {
         )
         Spacer(modifier = Modifier.width(20.dp))
         CamstudyText(
-            text = stringResource(R.string.score_format, "%,d".format(score)),
+            text = if (score == 0) {
+                stringResource(R.string.no_score)
+            } else {
+                stringResource(R.string.score_format, "%,d".format(score))
+            },
             style = infoTextStyle
         )
         Spacer(modifier = Modifier.width(12.dp))
         CamstudyText(
-            text = studyTimeSec.secToHourMinuteFormat(),
+            text = if (studyTimeSec == 0) {
+                stringResource(R.string.no_study_time)
+            } else {
+                studyTimeSec.secToHourMinuteFormat()
+            },
             style = infoTextStyle
         )
     }
