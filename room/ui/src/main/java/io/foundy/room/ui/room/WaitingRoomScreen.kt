@@ -24,6 +24,7 @@ import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -135,7 +136,7 @@ fun WaitingRoomScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(240.dp)
-                        .background(CamstudyTheme.colorScheme.systemUi09),
+                        .background(Color(0xFF333333)),
                 ) {
                     Box(Modifier.align(Alignment.Center)) {
                         if (localVideoTrack != null && enabledLocalVideo) {

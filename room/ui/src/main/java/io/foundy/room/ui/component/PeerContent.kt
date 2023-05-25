@@ -27,6 +27,8 @@ import io.foundy.room.ui.media.FakeMediaManager
 import io.foundy.room.ui.media.LocalMediaManager
 import io.foundy.room.ui.peer.PeerUiState
 
+val PeerContentColor = Color(0xFF191919)
+
 @Composable
 fun PeerContent(
     modifier: Modifier = Modifier,
@@ -37,7 +39,7 @@ fun PeerContent(
     val eglBaseContext = LocalMediaManager.current.eglBaseContext
 
     Box(
-        modifier = modifier.background(color = CamstudyTheme.colorScheme.systemUi09),
+        modifier = modifier.background(color = PeerContentColor),
     ) {
         if (peerState.videoTrack != null) {
             VideoRenderer(

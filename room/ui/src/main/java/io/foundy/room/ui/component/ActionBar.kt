@@ -1,5 +1,6 @@
 package io.foundy.room.ui.component
 
+import android.content.res.Configuration.UI_MODE_NIGHT_YES
 import androidx.compose.animation.Crossfade
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.clickable
@@ -45,6 +46,8 @@ import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.toInstant
 import kotlinx.datetime.toLocalDateTime
 
+private val ActionBarColor = Color(0xFF191919)
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ActionBar(
@@ -61,7 +64,7 @@ fun ActionBar(
 ) {
     Surface(
         modifier = Modifier.fillMaxWidth(),
-        color = CamstudyTheme.colorScheme.systemUi09
+        color = ActionBarColor
     ) {
         Row(
             modifier = Modifier.padding(start = 16.dp, end = 8.dp, top = 4.dp, bottom = 4.dp),
@@ -244,7 +247,7 @@ private val LocalDateTime?.elapsedTimeText: String
         return "%02d:%02d".format(minutes, seconds)
     }
 
-@Preview(widthDp = 320)
+@Preview(widthDp = 320, uiMode = UI_MODE_NIGHT_YES)
 @Composable
 private fun ActionBarPreview() {
     var state by remember { mutableStateOf(PomodoroTimerState.STOPPED) }
