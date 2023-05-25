@@ -102,6 +102,7 @@ fun HomeScreen(
                     IconButton(onClick = { navigator.navigate(SearchRouteDestination) }) {
                         CamstudyIcon(
                             icon = CamstudyIcons.Search,
+                            tint = CamstudyTheme.colorScheme.systemUi09,
                             contentDescription = stringResource(
                                 id = R.string.search_content_description
                             )
