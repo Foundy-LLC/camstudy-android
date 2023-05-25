@@ -9,13 +9,15 @@ import io.foundy.room_list.ui.R
 
 data class RoomCreateUiState(
     val title: String = "",
-    val password: String? = null,
+    val isPrivate: Boolean = false,
+    val password: String = "",
     val thumbnail: Bitmap? = null,
     val tag: String = "",
     val recommendedTags: List<String> = emptyList(),
     val addedTags: List<String> = emptyList(),
     val onTitleChange: (String) -> Unit,
-    val onPasswordChange: (String?) -> Unit,
+    val onIsPrivateChange: (Boolean) -> Unit,
+    val onPasswordChange: (String) -> Unit,
     val onTagChange: (String) -> Unit,
     val onThumbnailChange: (Bitmap?) -> Unit,
     val onAddTag: (String) -> Unit,
@@ -44,7 +46,7 @@ data class RoomCreateUiState(
 
     val isPasswordLengthValid: Boolean
         get() {
-            if (password == null) {
+            if (!isPrivate) {
                 return true
             }
             return RoomConstants.PasswordRange.contains(password.length)

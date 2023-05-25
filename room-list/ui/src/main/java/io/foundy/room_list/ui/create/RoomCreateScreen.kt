@@ -189,16 +189,14 @@ private fun RoomCreateContent(
                 SelectableTile(
                     title = stringResource(R.string.room_private_tile_title),
                     subtitle = stringResource(R.string.room_private_tile_subtitle),
-                    checked = uiState.password != null,
-                    onCheckedChange = { isPrivate ->
-                        uiState.onPasswordChange(if (isPrivate) "" else null)
-                    }
+                    checked = uiState.isPrivate,
+                    onCheckedChange = uiState.onIsPrivateChange
                 )
-                AnimatedVisibility(uiState.password != null) {
+                AnimatedVisibility(uiState.isPrivate) {
                     Column {
                         Spacer(modifier = Modifier.height(8.dp))
                         CamstudyTextField(
-                            value = uiState.password ?: "",
+                            value = uiState.password,
                             isError = !uiState.isPasswordLengthValid,
                             onValueChange = uiState.onPasswordChange,
                             placeholder = stringResource(R.string.room_password_placeholder),
@@ -310,7 +308,8 @@ private fun RoomCreateContentPreview() {
                 onAddTag = {},
                 onRemoveTag = {},
                 onTitleChange = {},
-                onCreateClick = {}
+                onCreateClick = {},
+                onIsPrivateChange = {}
             ),
             onBackClick = {},
             snackbarHostState = SnackbarHostState()

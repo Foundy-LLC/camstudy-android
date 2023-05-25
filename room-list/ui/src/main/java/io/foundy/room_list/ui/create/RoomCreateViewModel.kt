@@ -48,7 +48,8 @@ class RoomCreateViewModel @Inject constructor(
             onTagChange = ::updateTagInput,
             onThumbnailChange = ::updateThumbnail,
             onPasswordChange = ::updatePassword,
-            onCreateClick = ::saveRoom
+            onCreateClick = ::saveRoom,
+            onIsPrivateChange = ::updateIsPrivate
         )
     )
 
@@ -107,8 +108,12 @@ class RoomCreateViewModel @Inject constructor(
         reduce { state.copy(addedTags = state.addedTags.filter { it != tag }) }
     }
 
-    private fun updatePassword(password: String?) = blockingIntent {
+    private fun updatePassword(password: String) = blockingIntent {
         reduce { state.copy(password = password) }
+    }
+
+    private fun updateIsPrivate(isPrivate: Boolean) = intent {
+        reduce { state.copy(isPrivate = isPrivate) }
     }
 
     private fun saveRoom() = intent {
@@ -120,7 +125,7 @@ class RoomCreateViewModel @Inject constructor(
                     "로그인 하지 않고 방을 생성하려 했습니다."
                 },
                 title = state.title,
-                password = state.password,
+                password = if (state.isPrivate) state.password else null,
                 tags = state.addedTags,
                 timer = RoomConstants.TimerDefault,
                 shortBreak = RoomConstants.ShortBreakDefault,
