@@ -298,6 +298,7 @@ class MediaManagerImpl @Inject constructor(
         }
         _localAudioTrack.dispose()
 
+        audioManager?.isMicrophoneMute = false
         // dispose audio handler and video capturer.
         audioHandler.stop()
         videoCapturer.stopCapture()
