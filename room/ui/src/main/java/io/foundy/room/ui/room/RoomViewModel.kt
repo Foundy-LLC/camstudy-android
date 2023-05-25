@@ -442,7 +442,9 @@ class RoomViewModel @Inject constructor(
                 )
             }
             StudyRoomEvent.DisconnectedSocket -> {
-                postSideEffect(RoomSideEffect.Disconnected)
+                if (!uiState.isCurrentUserKicked) {
+                    postSideEffect(RoomSideEffect.Disconnected)
+                }
             }
         }
     }
