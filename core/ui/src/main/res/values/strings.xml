@@ -2,7 +2,7 @@
 <resources>
     <string name="join">입장</string>
     <string name="room_thumbnail">%s 썸네일</string>
-    <string name="strawberry">딸기</string>
+    <string name="strawberry">딸기(시연용)</string>
     <string name="tomato">토마토</string>
     <string name="carrot">당근</string>
     <string name="pumpkin">호박</string>
