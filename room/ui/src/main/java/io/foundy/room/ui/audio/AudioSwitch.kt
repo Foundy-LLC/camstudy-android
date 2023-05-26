@@ -123,8 +123,6 @@ class AudioSwitch internal constructor(
         logger.d { "[activate] state: $state" }
         when (state) {
             STARTED -> {
-                audioManager.cacheAudioState()
-
                 // Always set mute to false for WebRTC
                 audioManager.mute(false)
                 audioManager.setAudioFocus()
@@ -144,8 +142,7 @@ class AudioSwitch internal constructor(
         logger.d { "[deactivate] state: $state" }
         when (state) {
             ACTIVATED -> {
-                // Restore stored audio state
-                audioManager.restoreAudioState()
+                audioManager.mute(false)
                 state = STARTED
             }
             STARTED, STOPPED -> {
