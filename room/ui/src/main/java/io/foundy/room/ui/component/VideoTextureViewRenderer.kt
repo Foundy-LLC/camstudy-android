@@ -143,6 +143,7 @@ class VideoTextureViewRenderer @JvmOverloads constructor(
         ThreadUtils.checkIsOnMainThread()
         this.rendererEvents = rendererEvents
         eglRenderer.init(sharedContext, EglBase.CONFIG_PLAIN, GlRectDrawer())
+        eglRenderer.setMirror(true)
     }
 
     /**
