@@ -74,16 +74,6 @@ sealed class RoomUiState {
                         passwordInput.length < RoomConstants.PasswordRange.first
                     val alreadyJoined = data.joinerList.any { it.id == currentUserId }
 
-                    if (isCurrentUserMaster) {
-                        if (data.joinerList.any { it.id == currentUserId }) {
-                            return stringResource(R.string.already_joined)
-                        }
-                        if (passwordNeeded) {
-                            return stringResource(R.string.input_password)
-                        }
-                        return null
-                    }
-
                     if (isCurrentUserBlocked) {
                         return stringResource(R.string.cannot_join_because_blocked)
                     }
