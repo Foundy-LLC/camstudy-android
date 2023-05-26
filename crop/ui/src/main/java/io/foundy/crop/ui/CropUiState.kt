@@ -24,6 +24,7 @@ sealed class GrowingCropUiState {
         val growingCrop: GrowingCrop?,
         val onHarvestClick: (GrowingCrop) -> Unit,
         val onReplantClick: (GrowingCrop) -> Unit,
+        val onRemoveClick: (GrowingCrop) -> Unit,
         val isInHarvesting: Boolean = false,
         val isInDeleting: Boolean = false
     ) : GrowingCropUiState()
