@@ -1,5 +1,6 @@
 package io.foundy.core.designsystem.component
 
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.ProvideTextStyle
@@ -32,7 +33,11 @@ fun CamstudyExtendedFloatingActionButton(
         modifier = modifier,
         expanded = expanded,
         shape = RoundedCornerShape(100.dp),
-        containerColor = CamstudyTheme.colorScheme.systemBackground,
+        containerColor = if (isSystemInDarkTheme()) {
+            CamstudyTheme.colorScheme.systemUi03
+        } else {
+            CamstudyTheme.colorScheme.systemBackground
+        },
         contentColor = CamstudyTheme.colorScheme.primary
     )
 }
