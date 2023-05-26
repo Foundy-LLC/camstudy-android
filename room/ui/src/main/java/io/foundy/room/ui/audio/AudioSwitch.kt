@@ -199,7 +199,7 @@ class AudioSwitch internal constructor(
         selectedDevice = if (userSelectedDevice != null) {
             userSelectedDevice
         } else if (mutableAudioDevices.size > 0) {
-            mutableAudioDevices.first()
+            mutableAudioDevices.firstOrNull { it is Speakerphone } ?: mutableAudioDevices.first()
         } else {
             null
         }
