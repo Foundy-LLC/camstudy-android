@@ -565,7 +565,9 @@ class RoomSocketService @Inject constructor(
         _sendTransport?.dispose()
         _sendTransport = null
         for (wrapper in receiveTransportWrappers) {
-            wrapper.transport.dispose()
+            if (!wrapper.transport.isClosed) {
+                wrapper.transport.dispose()
+            }
         }
         receiveTransportWrappers.clear()
         mutedHeadset = false
