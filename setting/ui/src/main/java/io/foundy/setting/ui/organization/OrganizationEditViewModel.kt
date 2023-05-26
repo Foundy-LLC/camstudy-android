@@ -8,6 +8,7 @@ import io.foundy.core.model.OrganizationOverview
 import io.foundy.core.ui.UserMessage
 import io.foundy.organization.data.repository.OrganizationRepository
 import io.foundy.setting.ui.R
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.firstOrNull
@@ -105,6 +106,9 @@ class OrganizationEditViewModel @Inject constructor(
                         }
                     }
                 }.onFailure {
+                    if (it is CancellationException) {
+                        return@onFailure
+                    }
                     postSideEffect(
                         OrganizationEditSideEffect.Message(
                             UserMessage(

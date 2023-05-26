@@ -6,6 +6,7 @@ import androidx.paging.cachedIn
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.foundy.room_list.data.repository.RoomListRepository
 import io.foundy.search.data.repository.SearchRepository
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -66,6 +67,9 @@ class SearchViewModel @Inject constructor(
             searchRepository.searchUsers(userName = query).onSuccess {
                 reduce { state.copy(searchedUsers = it) }
             }.onFailure {
+                if (it is CancellationException) {
+                    return@onFailure
+                }
                 postSideEffect(
                     SearchSideEffect.Message(
                         content = it.message,

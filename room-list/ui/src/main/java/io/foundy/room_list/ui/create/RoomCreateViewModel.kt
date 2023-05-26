@@ -13,6 +13,7 @@ import io.foundy.room_list.data.model.RoomCreateRequestBody
 import io.foundy.room_list.data.repository.RoomListRepository
 import io.foundy.room_list.ui.R
 import io.foundy.welcome.data.repository.WelcomeRepository
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.firstOrNull
@@ -88,6 +89,9 @@ class RoomCreateViewModel @Inject constructor(
                         )
                     }
                 }.onFailure {
+                    if (it is CancellationException) {
+                        return@onFailure
+                    }
                     postSideEffect(
                         RoomCreateSideEffect.ErrorMessage(
                             UserMessage(

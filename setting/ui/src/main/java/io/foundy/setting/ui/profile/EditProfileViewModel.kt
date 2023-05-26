@@ -11,6 +11,7 @@ import io.foundy.setting.ui.R
 import io.foundy.setting.ui.model.EditProfileResult
 import io.foundy.user.domain.repository.UserRepository
 import io.foundy.welcome.data.repository.WelcomeRepository
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -121,6 +122,9 @@ class EditProfileViewModel @Inject constructor(
                         )
                     }
                 }.onFailure {
+                    if (it is CancellationException) {
+                        return@onFailure
+                    }
                     postSideEffect(
                         EditProfileSideEffect.ErrorMessage(
                             UserMessage(
