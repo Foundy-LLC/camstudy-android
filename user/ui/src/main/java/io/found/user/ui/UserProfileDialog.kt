@@ -85,7 +85,7 @@ private fun UserProfileDialogContent(
     // TODO: 다이어로그가 recomposition 되었을때 크기가 변하지 않는 버그가 존재함
     //  다음과 같은 방법으로 임시 해결 해놓음 https://stackoverflow.com/a/71287474/14434806
     //  추후에 버그가 수정되면 Box로 감싼 부분을 제거할 것.
-    Dialog(onDismissRequest = {}) {
+    Dialog(onDismissRequest = onCancel) {
         Box(
             contentAlignment = Alignment.Center,
             modifier = Modifier
@@ -101,6 +101,11 @@ private fun UserProfileDialogContent(
                     .sizeIn(minWidth = DialogMinWidth, maxWidth = DialogMaxWidth)
                     .clip(RoundedCornerShape(16.dp))
                     .background(color = CamstudyTheme.colorScheme.cardUi)
+                    .clickable(
+                        onClick = {},
+                        interactionSource = remember { MutableInteractionSource() },
+                        indication = null
+                    )
                     .padding(top = 28.dp, bottom = 20.dp)
                     .padding(horizontal = 24.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
