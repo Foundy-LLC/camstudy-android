@@ -1,5 +1,7 @@
 package io.foundy.crop.ui
 
+import android.content.Intent
+import android.net.Uri
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -36,6 +38,8 @@ import org.orbitmvi.orbit.compose.collectSideEffect
 import java.util.Calendar
 import java.util.Date
 
+const val VIDEO_URL = "https://youtu.be/F-N_g3ntKUQ"
+
 @Destination
 @Composable
 fun CropRoute(
@@ -55,6 +59,8 @@ fun CropRoute(
     plantResultRecipient.onNavResult {
         when (it) {
             is NavResult.Value -> {
+                val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(VIDEO_URL))
+                context.startActivity(browserIntent)
                 uiState.fetchGrowingCrop()
                 showSnackbar(context.getString(R.string.success_to_plant_crop))
             }
