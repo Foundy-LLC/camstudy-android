@@ -1,12 +1,15 @@
 package io.foundy.core.ui
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
@@ -23,6 +26,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import io.foundy.core.designsystem.component.CamstudyText
 import io.foundy.core.designsystem.component.CamstudyTextField
+import io.foundy.core.designsystem.icon.CamstudyIcon
+import io.foundy.core.designsystem.icon.CamstudyIcons
 import io.foundy.core.designsystem.theme.CamstudyTheme
 
 private fun Char.isAddingAction(): Boolean {
@@ -81,7 +86,7 @@ fun TagInputTextField(
             label = label,
             prefix = {
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    AddedTags(tags = addedTags)
+                    AddedTags(tags = addedTags, onRemove = onRemove)
                     if (value.isNotEmpty()) {
                         CamstudyText(text = "#")
                     }
@@ -106,7 +111,7 @@ fun TagInputTextField(
                         modifier = Modifier.padding(horizontal = 16.dp),
                         items = recommendedTags,
                         state = recommendListPopupState,
-                        onItemClick = {tag ->
+                        onItemClick = { tag ->
                             if (addedTags.contains(tag)) {
                                 error("Already input that tag!")
                             }
@@ -121,24 +126,42 @@ fun TagInputTextField(
 }
 
 @Composable
-private fun AddedTags(tags: List<String>) {
+private fun AddedTags(tags: List<String>, onRemove: (String) -> Unit) {
     Row {
         for (tag in tags) {
-            AddedTagItem(tag = "#$tag")
+            AddedTagItem(tag = "#$tag", onRemove = { onRemove(tag) })
             Spacer(modifier = Modifier.width(6.dp))
         }
     }
 }
 
 @Composable
-private fun AddedTagItem(tag: String, modifier: Modifier = Modifier) {
-    CamstudyText(
+private fun AddedTagItem(tag: String, onRemove: () -> Unit, modifier: Modifier = Modifier) {
+    Row(
         modifier = modifier
             .clip(RoundedCornerShape(4.dp))
-            .background(color = CamstudyTheme.colorScheme.primary.copy(alpha = 0.4f))
-            .padding(vertical = 2.dp, horizontal = 6.dp),
-        text = tag,
-    )
+            .background(color = CamstudyTheme.colorScheme.primary.copy(alpha = 0.4f)),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Spacer(modifier = Modifier.width(6.dp))
+        CamstudyText(modifier = Modifier.padding(vertical = 2.dp), text = tag)
+        Box(
+            modifier = Modifier
+                .size(24.dp)
+                .clickable(
+                    onClick = onRemove,
+                    interactionSource = remember { MutableInteractionSource() },
+                    indication = null
+                ),
+        ) {
+            CamstudyIcon(
+                modifier = Modifier.size(16.dp).align(Alignment.Center),
+                icon = CamstudyIcons.Close,
+                contentDescription = null,
+                tint = CamstudyTheme.colorScheme.systemUi07
+            )
+        }
+    }
 }
 
 @Preview(showBackground = true)
