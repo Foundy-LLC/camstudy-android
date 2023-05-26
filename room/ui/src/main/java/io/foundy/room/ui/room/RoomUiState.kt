@@ -65,7 +65,7 @@ sealed class RoomUiState {
 
         @Composable
         fun getCannotJoinMessage(): String? {
-            return when (this) {
+            when (this) {
                 Loading -> return stringResource(R.string.loading)
                 NotExists -> return stringResource(R.string.not_exists_study_room)
                 is FailedToConnect -> return message ?: stringResource(defaultMessageRes)
