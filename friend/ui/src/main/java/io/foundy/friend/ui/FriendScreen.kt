@@ -134,7 +134,6 @@ fun FriendScreen(
             ) { page ->
                 when (FriendTabDestination.values[page]) {
                     FriendTabDestination.List -> FriendListContent(
-                        uiState = uiState.friendListTabUiState,
                         onUserClick = onUserClick,
                         users = friends,
                         onRefresh = onFriendListRefresh

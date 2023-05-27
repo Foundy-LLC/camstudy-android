@@ -12,9 +12,7 @@ data class FriendUiState(
 )
 
 data class FriendListTabUiState(
-    val friendPagingData: Flow<PagingData<UserOverview>> = emptyFlow(),
-    val inRemovingUserIds: List<String> = emptyList(),
-    val onRemoveFriendClick: (String) -> Unit,
+    val friendPagingData: Flow<PagingData<UserOverview>> = emptyFlow()
 )
 
 data class FriendRecommendTabUiState(

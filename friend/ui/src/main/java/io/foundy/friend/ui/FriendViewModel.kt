@@ -25,9 +25,7 @@ class FriendViewModel @Inject constructor(
 
     override val container: Container<FriendUiState, FriendSideEffect> = container(
         FriendUiState(
-            friendListTabUiState = FriendListTabUiState(
-                onRemoveFriendClick = ::deleteFriend,
-            ),
+            friendListTabUiState = FriendListTabUiState(),
             friendRecommendTabUiState = FriendRecommendTabUiState(
                 onRequestFriend = ::requestFriend,
                 fetchRecommendedUsers = ::fetchRecommendedFriends
@@ -212,40 +210,5 @@ class FriendViewModel @Inject constructor(
                 )
             }
         removePendingAtRequestedFriendUiState(requesterId)
-    }
-
-    private fun deleteFriend(targetUserId: String) = intent {
-        reduce {
-            val friendListTabUiState = state.friendListTabUiState
-            state.copy(
-                friendListTabUiState = friendListTabUiState.copy(
-                    inRemovingUserIds = friendListTabUiState.inRemovingUserIds + targetUserId
-                )
-            )
-        }
-        friendRepository.deleteFriend(targetUserId)
-            .onSuccess {
-                postSideEffect(FriendSideEffect.RefreshFriendList)
-                postSideEffect(
-                    FriendSideEffect.Message(
-                        defaultStringRes = R.string.dissmissed_friend
-                    )
-                )
-            }.onFailure {
-                postSideEffect(
-                    FriendSideEffect.Message(
-                        content = it.message,
-                        defaultStringRes = R.string.failed_to_cancel_friend
-                    )
-                )
-            }
-        reduce {
-            val friendListTabUiState = state.friendListTabUiState
-            state.copy(
-                friendListTabUiState = friendListTabUiState.copy(
-                    inRemovingUserIds = friendListTabUiState.inRemovingUserIds - targetUserId
-                )
-            )
-        }
     }
 }
