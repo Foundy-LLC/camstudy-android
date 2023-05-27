@@ -15,6 +15,7 @@ import kotlinx.coroutines.launch
 import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.syntax.simple.intent
+import org.orbitmvi.orbit.syntax.simple.postSideEffect
 import org.orbitmvi.orbit.syntax.simple.reduce
 import org.orbitmvi.orbit.viewmodel.container
 import javax.inject.Inject
@@ -23,9 +24,9 @@ import javax.inject.Inject
 class UserProfileDialogViewModel @Inject constructor(
     private val getUserUseCase: GetUserUseCase,
     private val friendRepository: FriendRepository
-) : ViewModel(), ContainerHost<UserProfileDialogUiState, Unit> {
+) : ViewModel(), ContainerHost<UserProfileDialogUiState, UserProfileDialogSideEffect> {
 
-    override val container: Container<UserProfileDialogUiState, Unit> =
+    override val container: Container<UserProfileDialogUiState, UserProfileDialogSideEffect> =
         container(UserProfileDialogUiState.Loading)
 
     private var friendActionTextResFetchJob: Job? = null
@@ -96,6 +97,9 @@ class UserProfileDialogViewModel @Inject constructor(
                         isFriendActionLoading = false
                     )
                 }
+                postSideEffect(
+                    UserProfileDialogSideEffect.DidRequestFriend(user = uiState.user)
+                )
                 setFriendActionResultTextRes(R.string.success_to_request_friend)
             }.onFailure {
                 setFriendActionErrorTextRes(R.string.failed_to_request_friend)

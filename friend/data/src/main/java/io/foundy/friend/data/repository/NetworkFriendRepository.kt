@@ -7,7 +7,9 @@ import io.foundy.auth.data.repository.AuthRepository
 import io.foundy.core.data.extension.getDataOrThrowMessage
 import io.foundy.core.model.UserOverview
 import io.foundy.friend.data.api.FriendApi
+import io.foundy.friend.data.api.RecommendApi
 import io.foundy.friend.data.model.FriendPostRequestBody
+import io.foundy.friend.data.model.toEntity
 import io.foundy.friend.data.source.FriendPagingSource
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.firstOrNull
@@ -15,7 +17,8 @@ import javax.inject.Inject
 
 class NetworkFriendRepository @Inject constructor(
     private val authRepository: AuthRepository,
-    private val api: FriendApi
+    private val friendApi: FriendApi,
+    private val recommendApi: RecommendApi
 ) : FriendRepository {
 
     private suspend fun requireCurrentUserId(): String {
@@ -29,7 +32,7 @@ class NetworkFriendRepository @Inject constructor(
             config = PagingConfig(FriendPagingSource.PAGE_SIZE),
             pagingSourceFactory = {
                 FriendPagingSource(
-                    api = api,
+                    api = friendApi,
                     userId = userId,
                     accepted = true
                 )
@@ -42,7 +45,7 @@ class NetworkFriendRepository @Inject constructor(
             config = PagingConfig(FriendPagingSource.PAGE_SIZE),
             pagingSourceFactory = {
                 FriendPagingSource(
-                    api = api,
+                    api = friendApi,
                     userId = userId,
                     accepted = false
                 )
@@ -50,10 +53,17 @@ class NetworkFriendRepository @Inject constructor(
         ).flow
     }
 
+    override suspend fun getRecommendedFriends(userId: String): Result<List<UserOverview>> {
+        return runCatching {
+            val response = recommendApi.getRecommendedFriends(userId = userId)
+            response.getDataOrThrowMessage().users.map { it.toEntity() }
+        }
+    }
+
     override suspend fun requestFriend(targetUserId: String): Result<Unit> {
         val currentUserId = requireCurrentUserId()
         return runCatching {
-            val response = api.requestFriend(
+            val response = friendApi.requestFriend(
                 requesterId = currentUserId,
                 body = FriendPostRequestBody(targetUserId = targetUserId)
             )
@@ -64,7 +74,7 @@ class NetworkFriendRepository @Inject constructor(
     override suspend fun acceptFriendRequest(requesterId: String): Result<Unit> {
         val currentUserId = requireCurrentUserId()
         return runCatching {
-            val response = api.acceptRequest(userId = currentUserId, friendId = requesterId)
+            val response = friendApi.acceptRequest(userId = currentUserId, friendId = requesterId)
             return@runCatching response.getDataOrThrowMessage()
         }
     }
@@ -72,7 +82,8 @@ class NetworkFriendRepository @Inject constructor(
     override suspend fun rejectFriendRequest(requesterId: String): Result<Unit> {
         val currentUserId = requireCurrentUserId()
         return runCatching {
-            val response = api.deleteFriend(requesterId = requesterId, acceptorId = currentUserId)
+            val response =
+                friendApi.deleteFriend(requesterId = requesterId, acceptorId = currentUserId)
             return@runCatching response.getDataOrThrowMessage()
         }
     }
@@ -80,7 +91,8 @@ class NetworkFriendRepository @Inject constructor(
     override suspend fun deleteFriend(targetUserId: String): Result<Unit> {
         val currentUserId = requireCurrentUserId()
         return runCatching {
-            val response = api.deleteFriend(requesterId = currentUserId, acceptorId = targetUserId)
+            val response =
+                friendApi.deleteFriend(requesterId = currentUserId, acceptorId = targetUserId)
             return@runCatching response.getDataOrThrowMessage()
         }
     }

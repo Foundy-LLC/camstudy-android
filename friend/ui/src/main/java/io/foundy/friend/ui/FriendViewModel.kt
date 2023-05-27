@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.paging.cachedIn
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.foundy.auth.data.repository.AuthRepository
+import io.foundy.core.model.User
 import io.foundy.friend.data.repository.FriendRepository
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
@@ -28,7 +29,8 @@ class FriendViewModel @Inject constructor(
                 onRemoveFriendClick = ::deleteFriend,
             ),
             friendRecommendTabUiState = FriendRecommendTabUiState(
-                onRequestFriend = { /* TODO */ }
+                onRequestFriend = ::requestFriend,
+                fetchRecommendedUsers = ::fetchRecommendedFriends
             ),
             requestedFriendTabUiState = RequestedFriendTabUiState(
                 onAcceptClick = ::acceptFriendRequest,
@@ -37,10 +39,14 @@ class FriendViewModel @Inject constructor(
         )
     )
 
+    private var _currentUserId: String? = null
+    private val currentUserId: String get() = requireNotNull(_currentUserId)
+
     init {
         viewModelScope.launch {
-            val currentUserId = authRepository.currentUserIdStream.firstOrNull()
-            check(currentUserId != null)
+            _currentUserId = authRepository.currentUserIdStream.firstOrNull()
+            checkNotNull(_currentUserId)
+            fetchRecommendedFriends()
             intent {
                 reduce {
                     state.copy(
@@ -57,6 +63,36 @@ class FriendViewModel @Inject constructor(
                     )
                 }
             }
+        }
+    }
+
+    private fun fetchRecommendedFriends() = intent {
+        reduce {
+            state.copy(
+                friendRecommendTabUiState = state.friendRecommendTabUiState.copy(isLoading = true)
+            )
+        }
+        friendRepository.getRecommendedFriends(userId = currentUserId)
+            .onSuccess { users ->
+                reduce {
+                    state.copy(
+                        friendRecommendTabUiState = state.friendRecommendTabUiState.copy(
+                            recommendedUsers = users
+                        )
+                    )
+                }
+            }.onFailure {
+                postSideEffect(
+                    FriendSideEffect.Message(
+                        content = it.message,
+                        defaultStringRes = R.string.failed_to_load_recommeded_friends
+                    )
+                )
+            }
+        reduce {
+            state.copy(
+                friendRecommendTabUiState = state.friendRecommendTabUiState.copy(isLoading = false)
+            )
         }
     }
 
@@ -102,6 +138,59 @@ class FriendViewModel @Inject constructor(
                 )
             }
         removePendingAtRequestedFriendUiState(requesterId)
+    }
+
+    fun removeRecommendedUser(user: User) = intent {
+        reduce {
+            state.copy(
+                friendRecommendTabUiState = state.friendRecommendTabUiState.copy(
+                    recommendedUsers = state.friendRecommendTabUiState.recommendedUsers.filterNot {
+                        it.id == user.id
+                    }
+                )
+            )
+        }
+    }
+
+    private fun requestFriend(userId: String) = intent {
+        reduce {
+            state.copy(
+                friendRecommendTabUiState = state.friendRecommendTabUiState.copy(
+                    inPendingUserIds = state.friendRecommendTabUiState.inPendingUserIds + userId
+                )
+            )
+        }
+        friendRepository.requestFriend(targetUserId = userId).onSuccess {
+            reduce {
+                val friendRecommendTabUiState = state.friendRecommendTabUiState
+                state.copy(
+                    friendRecommendTabUiState = friendRecommendTabUiState.copy(
+                        recommendedUsers = friendRecommendTabUiState.recommendedUsers.filterNot {
+                            it.id == userId
+                        }
+                    )
+                )
+            }
+            postSideEffect(
+                FriendSideEffect.Message(
+                    defaultStringRes = R.string.success_to_request_friend
+                )
+            )
+        }.onFailure {
+            postSideEffect(
+                FriendSideEffect.Message(
+                    content = it.message,
+                    defaultStringRes = R.string.failed_to_request_friend
+                )
+            )
+        }
+        reduce {
+            state.copy(
+                friendRecommendTabUiState = state.friendRecommendTabUiState.copy(
+                    inPendingUserIds = state.friendRecommendTabUiState.inPendingUserIds - userId
+                )
+            )
+        }
     }
 
     private fun rejectFriendRequest(requesterId: String) = intent {

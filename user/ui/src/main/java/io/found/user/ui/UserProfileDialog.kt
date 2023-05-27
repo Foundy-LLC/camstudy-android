@@ -55,6 +55,7 @@ import io.foundy.core.ui.UserProfileImage
 import io.foundy.core.ui.UserProfileInfoGroup
 import io.foundy.user.ui.R
 import org.orbitmvi.orbit.compose.collectAsState
+import org.orbitmvi.orbit.compose.collectSideEffect
 import java.util.Date
 
 private object UserProfileDialogProperty {
@@ -66,9 +67,18 @@ private object UserProfileDialogProperty {
 fun UserProfileDialog(
     viewModel: UserProfileDialogViewModel = hiltViewModel(),
     userId: String,
-    onCancel: () -> Unit
+    onCancel: () -> Unit,
+    onDidRequestFriend: ((User) -> Unit)? = null,
 ) {
     val uiState = viewModel.collectAsState().value
+
+    viewModel.collectSideEffect {
+        when (it) {
+            is UserProfileDialogSideEffect.DidRequestFriend -> {
+                onDidRequestFriend?.invoke(it.user)
+            }
+        }
+    }
 
     LaunchedEffect(userId) {
         viewModel.fetchUser(id = userId)

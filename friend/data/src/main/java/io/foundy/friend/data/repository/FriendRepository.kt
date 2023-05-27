@@ -7,6 +7,7 @@ import kotlinx.coroutines.flow.Flow
 interface FriendRepository {
     fun getFriends(userId: String): Flow<PagingData<UserOverview>>
     fun getFriendRequests(userId: String): Flow<PagingData<UserOverview>>
+    suspend fun getRecommendedFriends(userId: String): Result<List<UserOverview>>
     suspend fun requestFriend(targetUserId: String): Result<Unit>
     suspend fun acceptFriendRequest(requesterId: String): Result<Unit>
     suspend fun rejectFriendRequest(requesterId: String): Result<Unit>

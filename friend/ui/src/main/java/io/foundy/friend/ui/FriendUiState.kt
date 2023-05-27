@@ -18,9 +18,10 @@ data class FriendListTabUiState(
 )
 
 data class FriendRecommendTabUiState(
-    val userPagingData: Flow<PagingData<UserOverview>> = emptyFlow(),
+    val isLoading: Boolean = true,
+    val recommendedUsers: List<UserOverview> = emptyList(),
     val inPendingUserIds: List<String> = emptyList(),
-    val friendRequestedUserIds: List<String> = emptyList(),
+    val fetchRecommendedUsers: () -> Unit,
     val onRequestFriend: (String) -> Unit,
 )
 

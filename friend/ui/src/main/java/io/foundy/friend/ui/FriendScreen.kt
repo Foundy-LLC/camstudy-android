@@ -74,7 +74,11 @@ fun FriendRoute(
     }
 
     userIdForShowDialog?.let {
-        UserProfileDialog(userId = it, onCancel = { userIdForShowDialog = null })
+        UserProfileDialog(
+            userId = it,
+            onCancel = { userIdForShowDialog = null },
+            onDidRequestFriend = viewModel::removeRecommendedUser,
+        )
     }
 
     FriendScreen(
@@ -136,7 +140,8 @@ fun FriendScreen(
                         onRefresh = onFriendListRefresh
                     )
                     FriendTabDestination.Recommend -> FriendRecommendContent(
-                        uiState = uiState.friendRecommendTabUiState
+                        uiState = uiState.friendRecommendTabUiState,
+                        onUserClick = onUserClick
                     )
                     FriendTabDestination.Requested -> RequestedFriendContent(
                         uiState = uiState.requestedFriendTabUiState,
