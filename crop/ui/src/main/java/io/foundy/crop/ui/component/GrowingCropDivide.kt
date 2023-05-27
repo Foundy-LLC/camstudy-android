@@ -6,6 +6,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -130,10 +131,38 @@ private fun DivideContent(
                     onClick = { showReplantCropDialog = true }
                 )
             } else {
-                HarvestButton(
-                    enabled = growingCrop.canHarvest && !growingCropSuccessUiState.isInHarvesting,
-                    onClick = { growingCropSuccessUiState.onHarvestClick(growingCrop) }
-                )
+                var showRemoveRecheckDialog by remember { mutableStateOf(false) }
+
+                if (showRemoveRecheckDialog) {
+                    CamstudyDialog(
+                        content = stringResource(R.string.remove_growing_crop_dialog_content),
+                        onDismissRequest = { showRemoveRecheckDialog = false },
+                        onCancel = { showRemoveRecheckDialog = false },
+                        confirmText = stringResource(id = R.string.remove_growing_crop),
+                        onConfirm = {
+                            showRemoveRecheckDialog = false
+                            growingCropUiState.onRemoveClick(growingCrop)
+                        }
+                    )
+                }
+
+                Row {
+                    CamstudyOutlinedButton(
+                        modifier = Modifier
+                            .width(120.dp)
+                            .height(48.dp),
+                        label = stringResource(R.string.remove_growing_crop),
+                        onClick = { showRemoveRecheckDialog = true },
+                        borderColor = CamstudyTheme.colorScheme.danger,
+                        contentColor = CamstudyTheme.colorScheme.danger
+                    )
+                    Spacer(modifier = Modifier.width(12.dp))
+                    HarvestButton(
+                        enabled = growingCrop.canHarvest &&
+                            !growingCropSuccessUiState.isInHarvesting,
+                        onClick = { growingCropSuccessUiState.onHarvestClick(growingCrop) }
+                    )
+                }
             }
         }
     }
@@ -314,10 +343,10 @@ private fun ReplantButton(onClick: () -> Unit) {
 }
 
 @Composable
-private fun HarvestButton(enabled: Boolean, onClick: () -> Unit) {
+private fun RowScope.HarvestButton(enabled: Boolean, onClick: () -> Unit) {
     CamstudyContainedButton(
         modifier = Modifier
-            .fillMaxWidth()
+            .weight(1f)
             .height(48.dp),
         label = stringResource(R.string.harvest),
         onClick = onClick,
@@ -358,6 +387,7 @@ fun GrowingCropDividePreview() {
                 ),
                 onHarvestClick = {},
                 onReplantClick = {},
+                onRemoveClick = {}
             ),
             onPlantClick = {},
             onQuestionClick = {}
@@ -384,6 +414,7 @@ fun GrowingCropDivideCanHarvestPreview() {
                 ),
                 onHarvestClick = {},
                 onReplantClick = {},
+                onRemoveClick = {}
             ),
             onPlantClick = {},
             onQuestionClick = {}
@@ -410,6 +441,7 @@ fun GrowingCropDivideDeadPreview() {
                 ),
                 onHarvestClick = {},
                 onReplantClick = {},
+                onRemoveClick = {}
             ),
             onPlantClick = {},
             onQuestionClick = {}
@@ -427,6 +459,7 @@ fun EmptyGrowingCropDividePreview() {
                 growingCrop = null,
                 onHarvestClick = {},
                 onReplantClick = {},
+                onRemoveClick = {}
             ),
             onPlantClick = {},
             onQuestionClick = {}

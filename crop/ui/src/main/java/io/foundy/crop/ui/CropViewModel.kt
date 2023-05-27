@@ -47,7 +47,13 @@ class CropViewModel @Inject constructor(
                             growingCropUiState = GrowingCropUiState.Success(
                                 growingCrop = growingCrop,
                                 onHarvestClick = ::harvestGrowingCrop,
-                                onReplantClick = ::deleteGrowingCrop
+                                onReplantClick = { growingCrop ->
+                                    deleteGrowingCrop(
+                                        growingCrop = growingCrop,
+                                        navigateToPlantScreen = true
+                                    )
+                                },
+                                onRemoveClick = ::deleteGrowingCrop
                             )
                         )
                     }
@@ -124,7 +130,10 @@ class CropViewModel @Inject constructor(
             }
     }
 
-    private fun deleteGrowingCrop(growingCrop: GrowingCrop) = intent {
+    private fun deleteGrowingCrop(
+        growingCrop: GrowingCrop,
+        navigateToPlantScreen: Boolean = false
+    ) = intent {
         val growingCropUiState = state.growingCropUiState
         check(growingCropUiState is GrowingCropUiState.Success)
         reduce { state.copy(growingCropUiState = growingCropUiState.copy(isInDeleting = true)) }
@@ -143,7 +152,9 @@ class CropViewModel @Inject constructor(
                         defaultRes = R.string.crop_deleted
                     )
                 )
-                postSideEffect(CropSideEffect.NavigateToPlantScreen)
+                if (navigateToPlantScreen) {
+                    postSideEffect(CropSideEffect.NavigateToPlantScreen)
+                }
             }.onFailure {
                 postSideEffect(
                     CropSideEffect.Message(

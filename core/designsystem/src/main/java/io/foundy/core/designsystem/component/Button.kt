@@ -97,6 +97,13 @@ fun CamstudyOutlinedButton(
     enableLabelSizeAnimation: Boolean = false,
     shape: Shape = RoundedCornerShape(8.dp),
     enabled: Boolean = true,
+    containerColor: Color = CamstudyTheme.colorScheme.systemBackground,
+    contentColor: Color = CamstudyTheme.colorScheme.primary,
+    borderColor: Color = if (enabled) {
+        CamstudyTheme.colorScheme.primary
+    } else {
+        CamstudyTheme.colorScheme.systemUi03
+    },
     onClick: () -> Unit
 ) {
     val colorScheme = CamstudyTheme.colorScheme
@@ -108,13 +115,10 @@ fun CamstudyOutlinedButton(
         enabled = enabled,
         enableLabelSizeAnimation = enableLabelSizeAnimation,
         leadingIcon = leadingIcon,
-        border = BorderStroke(
-            width = 1.dp,
-            color = if (enabled) colorScheme.primary else colorScheme.systemUi03
-        ),
+        border = BorderStroke(width = 1.dp, color = borderColor),
         colors = ButtonDefaults.buttonColors(
-            containerColor = colorScheme.systemBackground,
-            contentColor = colorScheme.primary,
+            containerColor = containerColor,
+            contentColor = contentColor,
             disabledContainerColor = colorScheme.systemBackground,
             disabledContentColor = colorScheme.systemUi04
         ),

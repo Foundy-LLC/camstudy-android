@@ -114,7 +114,7 @@ fun CropScreen(
                 GrowingCropDivide(
                     growingCropUiState = uiState.growingCropUiState,
                     onPlantClick = onPlantClick,
-                    onQuestionClick = onQuestionClick
+                    onQuestionClick = onQuestionClick,
                 )
             }
             item { Spacer(modifier = Modifier.height(8.dp)) }
@@ -145,7 +145,8 @@ private fun CropScreenPreview() {
                         }.time
                     ),
                     onHarvestClick = {},
-                    onReplantClick = {}
+                    onReplantClick = {},
+                    onRemoveClick = {}
                 ),
                 harvestedCropsUiState = HarvestedCropsUiState.Success(
                     harvestedCrops = listOf(
