@@ -5,4 +5,6 @@ import io.foundy.core.model.User
 sealed class UserProfileDialogSideEffect {
 
     data class DidRequestFriend(val user: User) : UserProfileDialogSideEffect()
+
+    data class DidRemoveFriend(val user: User) : UserProfileDialogSideEffect()
 }

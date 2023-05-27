@@ -138,6 +138,7 @@ class UserProfileDialogViewModel @Inject constructor(
                         isFriendActionLoading = false
                     )
                 }
+                postSideEffect(UserProfileDialogSideEffect.DidRemoveFriend(uiState.user))
                 setFriendActionResultTextRes(R.string.success_to_cancel_friend)
             }.onFailure {
                 setFriendActionErrorTextRes(R.string.failed_to_cancel_friend)

@@ -69,6 +69,7 @@ fun UserProfileDialog(
     userId: String,
     onCancel: () -> Unit,
     onDidRequestFriend: ((User) -> Unit)? = null,
+    onDidRemoveFriend: ((User) -> Unit)? = null
 ) {
     val uiState = viewModel.collectAsState().value
 
@@ -76,6 +77,9 @@ fun UserProfileDialog(
         when (it) {
             is UserProfileDialogSideEffect.DidRequestFriend -> {
                 onDidRequestFriend?.invoke(it.user)
+            }
+            is UserProfileDialogSideEffect.DidRemoveFriend -> {
+                onDidRemoveFriend?.invoke(it.user)
             }
         }
     }
