@@ -1,6 +1,7 @@
 package io.foundy.welcome.ui
 
 import android.content.Context
+import io.foundy.auth.domain.usecase.GetCurrentUserIdUseCase
 import io.foundy.core.common.util.ConvertBitmapToFileUseCase
 import io.foundy.core.test.MainDispatcherRule
 import io.foundy.user.domain.usecase.PostUserInitInfoUseCase
@@ -47,7 +48,7 @@ class WelcomeViewModelTest {
     private fun initViewModel() {
         viewModel = WelcomeViewModel(
             postUserInitInfoUseCase = PostUserInitInfoUseCase(userRepository = userRepository),
-            authRepository = authRepository,
+            getCurrentUserIdUseCase = GetCurrentUserIdUseCase(authRepository = authRepository),
             welcomeRepository = welcomeRepository,
             convertBitmapToFileUseCase = ConvertBitmapToFileUseCase(context)
         )

@@ -1,5 +1,6 @@
 package io.foundy.room.ui
 
+import io.foundy.auth.domain.usecase.GetCurrentUserIdUseCase
 import io.foundy.core.test.MainDispatcherRule
 import io.foundy.room.ui.fake.FakeAuthRepository
 import io.foundy.room.ui.fake.FakeRoomService
@@ -72,7 +73,7 @@ class RoomViewModelTest {
         roomService = FakeRoomService()
         mediaManager = FakeMediaManager()
         viewModel = RoomViewModel(
-            authRepository = authRepository,
+            getCurrentUserIdUseCase = GetCurrentUserIdUseCase(authRepository = authRepository),
             roomService = roomService,
             mediaManager = mediaManager
         ).liveTest { dispatcher = mainDispatcherRule.testDispatcher }

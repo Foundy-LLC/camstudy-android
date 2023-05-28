@@ -1,5 +1,8 @@
 package io.foundy.camstudy
 
+import dagger.hilt.android.testing.HiltAndroidTest
+import io.foundy.auth.domain.usecase.ExistsInitInfoUseCase
+import io.foundy.auth.domain.usecase.GetCurrentUserIdUseCase
 import io.foundy.auth.ui.destinations.LoginRouteDestination
 import io.foundy.camstudy.fake.FakeAuthRepository
 import io.foundy.core.test.MainDispatcherRule
@@ -10,7 +13,11 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.junit.Rule
 import org.junit.Test
+import org.junit.runner.RunWith
+import org.junit.runners.JUnit4
 
+@RunWith(JUnit4::class)
+@HiltAndroidTest
 @OptIn(ExperimentalCoroutinesApi::class)
 class MainViewModelTest {
 
@@ -59,6 +66,9 @@ class MainViewModelTest {
         }
 
     private fun initViewModel() {
-        viewModel = MainViewModel(authRepository = authRepository)
+        viewModel = MainViewModel(
+            getCurrentUserIdUseCase = GetCurrentUserIdUseCase(authRepository = authRepository),
+            existsInitInfoUseCase = ExistsInitInfoUseCase(authRepository = authRepository)
+        )
     }
 }
