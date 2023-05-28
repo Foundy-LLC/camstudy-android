@@ -9,10 +9,10 @@ import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -530,16 +530,15 @@ fun KickUserRecheckDialog(
 @Composable
 fun StudyRoomContentInPip() {
     val mediaManager = LocalMediaManager.current
-    val videoSizeModifier = Modifier.size(width = 128.dp, height = 128.dp)
     val localVideoTrack = mediaManager.localVideoTrackFlow.collectAsState(initial = null).value
 
     Surface(
-        modifier = videoSizeModifier,
-        color = CamstudyTheme.colorScheme.text01
+        modifier = Modifier.fillMaxSize(),
+        color = CamstudyTheme.colorScheme.systemBackground
     ) {
         if (localVideoTrack != null) {
             VideoRenderer(
-                modifier = videoSizeModifier,
+                modifier = Modifier.fillMaxSize(),
                 eglBaseContext = mediaManager.eglBaseContext,
                 videoTrack = localVideoTrack
             )
