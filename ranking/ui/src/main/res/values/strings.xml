@@ -4,7 +4,7 @@
     <string name="weekly_ranking_tab">주간 랭킹</string>
     <string name="organization_ranking_tab">소속 랭킹</string>
     <string name="ranking_detail">상세 랭킹 정보</string>
-    <string name="score_format">%s점</string>
+    <string name="score_format">점수: %s점</string>
     <string name="failed_to_load_my_ranking">나의 랭킹을 불러오지 못했어요</string>
     <string name="me">\(나\)</string>
     <string name="user_dialog_failed_to_load_user">회원 정보를 불러오지 못했어요</string>
@@ -12,4 +12,5 @@
     <string name="entire">모두</string>
     <string name="no_score">점수 없음</string>
     <string name="no_study_time">공부 시간 없음</string>
+    <string name="ranking_detail_study_time">공부 시간: %s</string>
 </resources>

@@ -195,14 +195,6 @@ private fun RankingDetail(score: Int, studyTimeSec: Int) {
         verticalAlignment = Alignment.CenterVertically
     ) {
         CamstudyText(
-            text = stringResource(R.string.ranking_detail),
-            style = CamstudyTheme.typography.titleSmall.copy(
-                color = CamstudyTheme.colorScheme.systemUi08,
-                fontWeight = FontWeight.Medium
-            )
-        )
-        Spacer(modifier = Modifier.width(20.dp))
-        CamstudyText(
             text = if (score == 0) {
                 stringResource(R.string.no_score)
             } else {
@@ -215,7 +207,10 @@ private fun RankingDetail(score: Int, studyTimeSec: Int) {
             text = if (studyTimeSec == 0) {
                 stringResource(R.string.no_study_time)
             } else {
-                studyTimeSec.secToHourMinuteFormat()
+                stringResource(
+                    R.string.ranking_detail_study_time,
+                    studyTimeSec.secToHourMinuteFormat()
+                )
             },
             style = infoTextStyle
         )
