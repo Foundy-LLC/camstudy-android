@@ -62,6 +62,7 @@ class DashboardViewModel @Inject constructor(
     }
 
     private fun fetchUserRanking() = intent {
+        reduce { state.copy(userRankingUiState = UserRankingUiState.Loading) }
         rankingRepository.getUserRanking(
             userId = currentUserId,
             isWeekly = true,
@@ -82,6 +83,7 @@ class DashboardViewModel @Inject constructor(
     }
 
     private fun fetchGrowingCrop() = intent {
+        reduce { state.copy(growingCropUiState = GrowingCropUiState.Loading) }
         cropRepository.getGrowingCrop(userId = currentUserId)
             .onFailure { throwable ->
                 reduce {
@@ -93,6 +95,7 @@ class DashboardViewModel @Inject constructor(
     }
 
     private fun fetchRecentRooms() = intent {
+        reduce { state.copy(recentRoomsUiState = RecentRoomsUiState.Loading) }
         roomListRepository.getRecentRooms(userId = currentUserId)
             .onSuccess { rooms ->
                 reduce {
