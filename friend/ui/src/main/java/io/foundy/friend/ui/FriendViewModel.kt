@@ -5,7 +5,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.paging.cachedIn
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.foundy.auth.data.repository.AuthRepository
-import io.foundy.core.model.User
+import io.foundy.core.model.FriendStatus
 import io.foundy.friend.data.repository.FriendRepository
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
@@ -118,32 +118,34 @@ class FriendViewModel @Inject constructor(
 
     private fun acceptFriendRequest(requesterId: String) = intent {
         addPendingAtRequestedFriendUiState(requesterId)
-        friendRepository.acceptFriendRequest(requesterId)
-            .onSuccess {
-                postSideEffect(FriendSideEffect.RefreshFriendRequestingUserList)
-                postSideEffect(FriendSideEffect.RefreshFriendList)
-                postSideEffect(
-                    FriendSideEffect.Message(
-                        defaultStringRes = R.string.accepted_friend
-                    )
+        friendRepository.acceptFriendRequest(requesterId).onSuccess {
+            postSideEffect(FriendSideEffect.RefreshFriendRequestingUserList)
+            postSideEffect(FriendSideEffect.RefreshFriendList)
+            postSideEffect(
+                FriendSideEffect.Message(
+                    defaultStringRes = R.string.accepted_friend
                 )
-            }.onFailure {
-                postSideEffect(
-                    FriendSideEffect.Message(
-                        content = it.message,
-                        defaultStringRes = R.string.failed_to_accept_request
-                    )
+            )
+            removeRecommendedUser(userId = requesterId)
+        }.onFailure {
+            postSideEffect(
+                FriendSideEffect.Message(
+                    content = it.message,
+                    defaultStringRes = R.string.failed_to_accept_request
                 )
-            }
+            )
+        }
         removePendingAtRequestedFriendUiState(requesterId)
     }
 
-    fun removeRecommendedUser(user: User) = intent {
+    // TODO: 함수 제거하거나 친구 상태 바꾸는 함수로 수정하기.
+    //  친구 수락 or 친구 요청한 경우 추천 친구 목록에서 삭제하지 않고 친구 해제 버튼으로 둬야함
+    fun removeRecommendedUser(userId: String) = intent {
         reduce {
             state.copy(
                 friendRecommendTabUiState = state.friendRecommendTabUiState.copy(
                     recommendedUsers = state.friendRecommendTabUiState.recommendedUsers.filterNot {
-                        it.id == user.id
+                        it.id == userId
                     }
                 )
             )
@@ -158,7 +160,7 @@ class FriendViewModel @Inject constructor(
                 )
             )
         }
-        friendRepository.requestFriend(targetUserId = userId).onSuccess {
+        friendRepository.requestFriend(targetUserId = userId).onSuccess { status ->
             reduce {
                 val friendRecommendTabUiState = state.friendRecommendTabUiState
                 state.copy(
@@ -169,11 +171,25 @@ class FriendViewModel @Inject constructor(
                     )
                 )
             }
-            postSideEffect(
-                FriendSideEffect.Message(
-                    defaultStringRes = R.string.success_to_request_friend
-                )
-            )
+            when (status) {
+                FriendStatus.REQUESTED -> {
+                    postSideEffect(
+                        FriendSideEffect.Message(
+                            defaultStringRes = R.string.success_to_request_friend
+                        )
+                    )
+                }
+                FriendStatus.ACCEPTED -> {
+                    postSideEffect(
+                        FriendSideEffect.Message(
+                            defaultStringRes = R.string.did_be_friend_because_there_is_request
+                        )
+                    )
+                    postSideEffect(FriendSideEffect.RefreshFriendList)
+                    postSideEffect(FriendSideEffect.RefreshFriendRequestingUserList)
+                }
+                else -> error("잘못된 친구 요청 응답 상태가 도착했습니다. 요청되었거나 친구가 되어야 합니다.")
+            }
         }.onFailure {
             postSideEffect(
                 FriendSideEffect.Message(

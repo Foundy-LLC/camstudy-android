@@ -11,4 +11,7 @@
     <string name="cancel_friend_request">친구 요청 취소</string>
     <string name="cancel_friend">친구 해제</string>
     <string name="sure_you_want_to_cancel_friend">정말로 친구를 해제할까요?</string>
+    <string name="accept_friend_request">친구 요청 수락</string>
+    <string name="accepted_friend_message">친구 수락됨!</string>
+    <string name="failed_to_accept_friend_request">수락 오류 발생!</string>
 </resources>

@@ -5,6 +5,8 @@ import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import io.foundy.auth.data.repository.AuthRepository
 import io.foundy.core.data.extension.getDataOrThrowMessage
+import io.foundy.core.data.model.toEntity
+import io.foundy.core.model.FriendStatus
 import io.foundy.core.model.UserOverview
 import io.foundy.friend.data.api.FriendApi
 import io.foundy.friend.data.api.RecommendApi
@@ -60,14 +62,14 @@ class NetworkFriendRepository @Inject constructor(
         }
     }
 
-    override suspend fun requestFriend(targetUserId: String): Result<Unit> {
+    override suspend fun requestFriend(targetUserId: String): Result<FriendStatus> {
         val currentUserId = requireCurrentUserId()
         return runCatching {
             val response = friendApi.requestFriend(
                 requesterId = currentUserId,
                 body = FriendPostRequestBody(targetUserId = targetUserId)
             )
-            return@runCatching response.getDataOrThrowMessage()
+            response.getDataOrThrowMessage().toEntity()
         }
     }
 

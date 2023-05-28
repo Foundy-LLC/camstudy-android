@@ -1,5 +1,6 @@
 package io.foundy.friend.data.api
 
+import io.foundy.core.data.model.FriendStatusDto
 import io.foundy.core.data.util.CamstudyResponse
 import io.foundy.friend.data.model.FriendPostRequestBody
 import io.foundy.friend.data.model.GetFriendsResponse
@@ -30,7 +31,7 @@ interface FriendApi {
     suspend fun requestFriend(
         @Path("userId") requesterId: String,
         @Body body: FriendPostRequestBody
-    ): CamstudyResponse<Unit>
+    ): CamstudyResponse<FriendStatusDto>
 
     @PUT("users/{userId}/friends/{friendId}")
     suspend fun acceptRequest(

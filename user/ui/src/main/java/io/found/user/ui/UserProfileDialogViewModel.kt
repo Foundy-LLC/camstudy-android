@@ -32,10 +32,6 @@ class UserProfileDialogViewModel @Inject constructor(
     private var friendActionTextResFetchJob: Job? = null
 
     fun fetchUser(id: String) = intent {
-        val fetchedUser = (state as? UserProfileDialogUiState.Success)?.user
-        if (fetchedUser?.id == id) {
-            return@intent
-        }
         reduce { UserProfileDialogUiState.Loading }
         getUserUseCase(id)
             .onSuccess { user ->
@@ -43,6 +39,7 @@ class UserProfileDialogViewModel @Inject constructor(
                     UserProfileDialogUiState.Success(
                         user = user,
                         onRequestFriend = ::requestFriend,
+                        onAcceptFriend = ::acceptFriendRequest,
                         onCancelFriendRequest = ::cancelRequest,
                         onCancelFriend = ::cancelFriend
                     )
@@ -103,6 +100,28 @@ class UserProfileDialogViewModel @Inject constructor(
                 setFriendActionResultTextRes(R.string.success_to_request_friend)
             }.onFailure {
                 setFriendActionErrorTextRes(R.string.failed_to_request_friend)
+                reduce { uiState.copy(isFriendActionLoading = false) }
+            }
+    }
+
+    private fun acceptFriendRequest() = intent {
+        val uiState = state
+        check(uiState is UserProfileDialogUiState.Success)
+        reduce { uiState.copy(isFriendActionLoading = true) }
+        friendRepository.acceptFriendRequest(requesterId = uiState.user.id)
+            .onSuccess {
+                reduce {
+                    uiState.copy(
+                        user = uiState.user.copy(friendStatus = FriendStatus.ACCEPTED),
+                        isFriendActionLoading = false
+                    )
+                }
+                postSideEffect(
+                    UserProfileDialogSideEffect.DidAcceptFriend(user = uiState.user)
+                )
+                setFriendActionResultTextRes(R.string.accepted_friend_message)
+            }.onFailure {
+                setFriendActionErrorTextRes(R.string.failed_to_accept_friend_request)
                 reduce { uiState.copy(isFriendActionLoading = false) }
             }
     }

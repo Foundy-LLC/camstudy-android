@@ -77,8 +77,15 @@ fun FriendRoute(
         UserProfileDialog(
             userId = it,
             onCancel = { userIdForShowDialog = null },
-            onDidRequestFriend = viewModel::removeRecommendedUser,
-            onDidRemoveFriend = { refreshFriends() }
+            onDidRequestFriend = { user ->
+                viewModel.removeRecommendedUser(user.id)
+            },
+            onDidRemoveFriend = { refreshFriends() },
+            onDidAcceptFriendRequest = { user ->
+                refreshFriends()
+                refreshFriendRequestingUsers()
+                viewModel.removeRecommendedUser(user.id)
+            }
         )
     }
 

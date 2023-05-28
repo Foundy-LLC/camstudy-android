@@ -69,7 +69,8 @@ fun UserProfileDialog(
     userId: String,
     onCancel: () -> Unit,
     onDidRequestFriend: ((User) -> Unit)? = null,
-    onDidRemoveFriend: ((User) -> Unit)? = null
+    onDidRemoveFriend: ((User) -> Unit)? = null,
+    onDidAcceptFriendRequest: ((User) -> Unit)? = null
 ) {
     val uiState = viewModel.collectAsState().value
 
@@ -80,6 +81,9 @@ fun UserProfileDialog(
             }
             is UserProfileDialogSideEffect.DidRemoveFriend -> {
                 onDidRemoveFriend?.invoke(it.user)
+            }
+            is UserProfileDialogSideEffect.DidAcceptFriend -> {
+                onDidAcceptFriendRequest?.invoke(it.user)
             }
         }
     }
@@ -208,6 +212,15 @@ private fun ColumnScope.SuccessContent(uiState: UserProfileDialogUiState.Success
                         ?: CamstudyIcons.CancelScheduleSend,
                     label = stringResource(
                         uiState.friendActionMessageRes ?: R.string.cancel_friend_request
+                    )
+                )
+                FriendStatus.REQUEST_RECEIVED -> CamstudyContainedButton(
+                    onClick = uiState.onAcceptFriend,
+                    enabled = uiState.enabledFriendActionButton,
+                    enableLabelSizeAnimation = true,
+                    leadingIcon = uiState.friendActionLeadingIcon ?: CamstudyIcons.PersonAdd,
+                    label = stringResource(
+                        uiState.friendActionMessageRes ?: R.string.accept_friend_request
                     )
                 )
                 FriendStatus.ACCEPTED -> CamstudyOutlinedButton(
@@ -423,6 +436,7 @@ private fun UserProfileDialogPreview() {
                     friendStatus = FriendStatus.NONE
                 ),
                 onRequestFriend = {},
+                onAcceptFriend = {},
                 onCancelFriendRequest = {},
                 onCancelFriend = {}
             ),

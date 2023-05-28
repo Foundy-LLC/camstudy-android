@@ -16,6 +16,7 @@ sealed class UserProfileDialogUiState {
         @StringRes val friendActionSuccessMessageRes: Int? = null,
         @StringRes val friendActionFailureMessageRes: Int? = null,
         val onRequestFriend: () -> Unit,
+        val onAcceptFriend: () -> Unit,
         val onCancelFriendRequest: () -> Unit,
         val onCancelFriend: () -> Unit
     ) : UserProfileDialogUiState() {
