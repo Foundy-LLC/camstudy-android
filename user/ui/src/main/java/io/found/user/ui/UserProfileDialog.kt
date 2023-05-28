@@ -187,6 +187,7 @@ private fun ColumnScope.SuccessContent(uiState: UserProfileDialogUiState.Success
         weeklyRankingOverall = user.weeklyRankingOverall,
         weeklyStudyTimeSec = user.weeklyStudyTimeSec,
         weeklyRanking = user.weeklyRanking,
+        hasWeeklyRankingScore = user.hasWeeklyRanking,
         consecutiveStudyDays = user.consecutiveStudyDays,
         growingCrop = user.growingCrop,
         harvestedCrops = user.harvestedCrops
@@ -387,7 +388,6 @@ private fun UserProfileDialogPreview() {
                     introduce = "안녕하세요",
                     profileImage = null,
                     weeklyRanking = 23,
-                    totalRanking = 40,
                     weeklyStudyTimeSec = 23142,
                     weeklyRankingOverall = 42,
                     growingCrop = GrowingCrop(
@@ -440,7 +440,8 @@ private fun UserProfileDialogPreview() {
                     organizations = listOf("한성대학교"),
                     tags = listOf("안드로이드", "개발", "웹"),
                     consecutiveStudyDays = 4,
-                    friendStatus = FriendStatus.NONE
+                    friendStatus = FriendStatus.NONE,
+                    hasWeeklyRanking = true,
                 ),
                 onRequestFriend = {},
                 onAcceptFriend = {},

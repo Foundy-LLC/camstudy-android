@@ -113,7 +113,11 @@ private fun UserRankingTile(userRankingUiState: UserRankingUiState, onSeeRanking
                 }
                 Spacer(modifier = Modifier.height(4.dp))
                 CamstudyText(
-                    text = stringResource(R.string.weekly_ranking, weeklyRanking.toString()),
+                    text = if (userRankingUiState.userRanking.score == 0) {
+                        stringResource(R.string.dashboard_no_ranking)
+                    } else {
+                        stringResource(R.string.weekly_ranking, weeklyRanking.toString())
+                    },
                     style = CamstudyTheme.typography.titleSmall.copy(
                         color = CamstudyTheme.colorScheme.systemUi07
                     )

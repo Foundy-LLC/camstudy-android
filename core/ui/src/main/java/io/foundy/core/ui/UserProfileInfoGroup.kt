@@ -36,6 +36,7 @@ import io.foundy.core.ui.util.secToHourMinuteFormat
 fun UserProfileInfoGroup(
     modifier: Modifier = Modifier,
     weeklyRanking: Int,
+    hasWeeklyRankingScore: Boolean,
     harvestedCrops: List<HarvestedCrop>,
     growingCrop: GrowingCrop?,
     weeklyRankingOverall: Int,
@@ -49,21 +50,27 @@ fun UserProfileInfoGroup(
             leadingIcon = CamstudyIcons.Ranking,
             title = stringResource(R.string.user_dialog_weekly_ranking_title),
             content = {
-                CamstudyText(
-                    text = stringResource(
-                        R.string.user_dialog_ranking_content,
-                        weeklyRanking
-                    ),
-                    style = CamstudyTheme.typography.titleMedium.copy(
-                        color = CamstudyTheme.colorScheme.systemUi08,
-                        fontWeight = FontWeight.SemiBold
+                if (hasWeeklyRankingScore) {
+                    CamstudyText(
+                        text = stringResource(
+                            R.string.user_dialog_ranking_content,
+                            weeklyRanking
+                        ),
+                        style = CamstudyTheme.typography.titleMedium.copy(
+                            color = CamstudyTheme.colorScheme.systemUi08,
+                            fontWeight = FontWeight.SemiBold
+                        )
                     )
-                )
+                }
             },
-            trailingInfo = stringResource(
-                R.string.user_dialog_weekly_ranking_overall_info,
-                weeklyRankingOverall
-            )
+            trailingInfo = if (hasWeeklyRankingScore) {
+                stringResource(
+                    R.string.user_dialog_weekly_ranking_overall_info,
+                    weeklyRankingOverall
+                )
+            } else {
+                stringResource(R.string.user_profile_dialog_no_ranking)
+            }
         )
         InfoTile(
             leadingIcon = CamstudyIcons.AccessTimeFilled,

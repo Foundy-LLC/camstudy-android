@@ -44,9 +44,6 @@ class NetworkUserRepository @Inject constructor(
                 val weeklyRankingDeferred = async {
                     rankingApi.getUserRanking(isWeekly = true, userId = id).getDataOrThrowMessage()
                 }
-                val totalRankingDeferred = async {
-                    rankingApi.getUserRanking(isWeekly = false, userId = id).getDataOrThrowMessage()
-                }
                 val harvestedCropsDeferred = async {
                     cropApi.getHarvestedCrops(userId = id).getDataOrThrowMessage()
                 }
@@ -59,15 +56,14 @@ class NetworkUserRepository @Inject constructor(
                 }
 
                 val weeklyRanking = weeklyRankingDeferred.await()
-                val totalRanking = totalRankingDeferred.await()
                 val harvestedCrops = harvestedCropsDeferred.await()
                 val growingCrop = growingCropDeferred.await()
 
                 return@coroutineScope userDeferred.await()
                     .toEntity(
                         isMe = currentUserId == id,
+                        weeklyRankingScore = weeklyRanking.user.score,
                         weeklyRanking = weeklyRanking.user.ranking,
-                        totalRanking = totalRanking.user.ranking,
                         weeklyStudyTimeSec = weeklyRanking.user.studyTimeSec,
                         weeklyRankingOverall = 100 * weeklyRanking.user.ranking /
                             weeklyRanking.totalUserCount,

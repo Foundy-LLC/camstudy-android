@@ -18,4 +18,5 @@
     <string name="failed_to_load_header_info">정보를 불러오지 못했어요</string>
     <string name="dashboard_growing_crop_is_dead">죽었어요…</string>
     <string name="dashboard_growing_crop_can_harvest">수확 가능!</string>
+    <string name="dashboard_no_ranking">아직 랭킹이 없어요</string>
 </resources>

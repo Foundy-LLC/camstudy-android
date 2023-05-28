@@ -170,7 +170,8 @@ private fun SuccessContent(
                 weeklyRanking = user.weeklyRanking,
                 consecutiveStudyDays = user.consecutiveStudyDays,
                 growingCrop = user.growingCrop,
-                harvestedCrops = user.harvestedCrops
+                harvestedCrops = user.harvestedCrops,
+                hasWeeklyRankingScore = user.hasWeeklyRanking
             )
         }
         item {

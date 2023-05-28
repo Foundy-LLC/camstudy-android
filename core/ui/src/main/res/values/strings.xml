@@ -35,4 +35,5 @@
     <string name="user_dialog_empty_harvested_crops">수확한 작물 없음</string>
     <string name="user_dialog_harvested_crops_content">총 %d개</string>
     <string name="ellipsis">…</string>
+    <string name="user_profile_dialog_no_ranking">랭킹 없음</string>
 </resources>
