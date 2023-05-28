@@ -2,7 +2,8 @@ package io.foundy.auth.ui
 
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
-import io.foundy.auth.data.repository.AuthRepository
+import io.foundy.auth.domain.usecase.ExistsInitInfoUseCase
+import io.foundy.auth.domain.usecase.GetCurrentUserIdStreamUseCase
 import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.syntax.simple.intent
 import org.orbitmvi.orbit.syntax.simple.postSideEffect
@@ -11,18 +12,19 @@ import javax.inject.Inject
 
 @HiltViewModel
 class LoginViewModel @Inject constructor(
-    private val authRepository: AuthRepository
+    private val getCurrentUserIdStreamUseCase: GetCurrentUserIdStreamUseCase,
+    private val existsInitInfoUseCase: ExistsInitInfoUseCase
 ) : ViewModel(), ContainerHost<LoginUiState, LoginSideEffect> {
 
     override val container = container<LoginUiState, LoginSideEffect>(LoginUiState)
 
     init {
         intent {
-            authRepository.currentUserIdStream.collect { uid ->
+            getCurrentUserIdStreamUseCase().collect { uid ->
                 if (uid == null) {
                     return@collect
                 }
-                val existsInitInfo = authRepository.existsInitInfo
+                val existsInitInfo = existsInitInfoUseCase()
                 if (existsInitInfo == null) {
                     postSideEffect(
                         LoginSideEffect.Message(

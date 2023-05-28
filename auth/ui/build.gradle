@@ -52,7 +52,7 @@ android {
 
 dependencies {
     implementation project(path: ':core:navigation')
-    implementation project(path: ':auth:data')
+    implementation project(path: ':auth:domain')
     implementation project(path: ':user:data')
 
     // compose destination

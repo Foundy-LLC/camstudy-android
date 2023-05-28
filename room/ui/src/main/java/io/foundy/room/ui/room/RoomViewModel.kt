@@ -4,7 +4,7 @@ import androidx.annotation.VisibleForTesting
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import io.foundy.auth.data.repository.AuthRepository
+import io.foundy.auth.domain.usecase.GetCurrentUserIdUseCase
 import io.foundy.core.model.constant.RoomConstants
 import io.foundy.room.data.model.StudyRoomEvent
 import io.foundy.room.data.model.WaitingRoomEvent
@@ -21,7 +21,6 @@ import io.foundy.room.ui.model.toUiState
 import io.foundy.room.ui.peer.merge
 import io.foundy.room.ui.peer.toInitialUiState
 import kotlinx.coroutines.TimeoutCancellationException
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
 import kotlinx.datetime.toLocalDateTime
@@ -42,7 +41,7 @@ import javax.inject.Inject
 @HiltViewModel
 class RoomViewModel @Inject constructor(
     private val roomService: RoomService,
-    private val authRepository: AuthRepository,
+    private val getCurrentUserIdUseCase: GetCurrentUserIdUseCase,
     val mediaManager: MediaManager
 ) : ViewModel(), ContainerHost<RoomUiState, RoomSideEffect> {
 
@@ -54,7 +53,7 @@ class RoomViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            val currentUserId = authRepository.currentUserIdStream.first()
+            val currentUserId = getCurrentUserIdUseCase()
             check(currentUserId != null) {
                 "회원 정보를 얻을 수 없습니다. 로그인하지 않고 공부방 접속은 할 수 없습니다."
             }

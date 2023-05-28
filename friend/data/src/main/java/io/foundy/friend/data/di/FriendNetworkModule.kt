@@ -4,7 +4,7 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import io.foundy.auth.data.repository.AuthRepository
+import io.foundy.auth.domain.usecase.GetCurrentUserIdUseCase
 import io.foundy.core.data.di.DefaultRetrofit
 import io.foundy.core.data.di.RankingRetrofit
 import io.foundy.friend.data.api.FriendApi
@@ -34,12 +34,12 @@ class FriendNetworkModule {
     @Singleton
     fun providesFriendRepository(
         api: FriendApi,
-        authRepository: AuthRepository,
+        getCurrentUserIdUseCase: GetCurrentUserIdUseCase,
         recommendApi: RecommendApi
     ): FriendRepository {
         return NetworkFriendRepository(
             friendApi = api,
-            authRepository = authRepository,
+            getCurrentUserIdUseCase = getCurrentUserIdUseCase,
             recommendApi = recommendApi
         )
     }

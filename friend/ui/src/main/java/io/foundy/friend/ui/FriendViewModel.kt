@@ -4,10 +4,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.cachedIn
 import dagger.hilt.android.lifecycle.HiltViewModel
-import io.foundy.auth.data.repository.AuthRepository
+import io.foundy.auth.domain.usecase.GetCurrentUserIdUseCase
 import io.foundy.core.model.FriendStatus
 import io.foundy.friend.data.repository.FriendRepository
-import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.ContainerHost
@@ -19,7 +18,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class FriendViewModel @Inject constructor(
-    private val authRepository: AuthRepository,
+    private val getCurrentUserIdUseCase: GetCurrentUserIdUseCase,
     private val friendRepository: FriendRepository
 ) : ViewModel(), ContainerHost<FriendUiState, FriendSideEffect> {
 
@@ -42,7 +41,7 @@ class FriendViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            _currentUserId = authRepository.currentUserIdStream.firstOrNull()
+            _currentUserId = getCurrentUserIdUseCase()
             checkNotNull(_currentUserId)
             fetchRecommendedFriends()
             intent {

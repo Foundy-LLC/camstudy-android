@@ -56,7 +56,7 @@ dependencies {
     implementation project(path: ':ranking:ui')
     implementation project(path: ':search:ui')
     implementation project(path: ':friend:ui')
-    implementation project(path: ':auth:data')
+    implementation project(path: ':auth:domain')
     implementation project(path: ':setting:ui')
     implementation project(path: ':user:domain')
 

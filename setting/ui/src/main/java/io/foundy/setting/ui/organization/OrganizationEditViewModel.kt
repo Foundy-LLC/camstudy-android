@@ -3,7 +3,7 @@ package io.foundy.setting.ui.organization
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import io.foundy.auth.data.repository.AuthRepository
+import io.foundy.auth.domain.usecase.GetCurrentUserIdUseCase
 import io.foundy.core.model.OrganizationOverview
 import io.foundy.core.ui.UserMessage
 import io.foundy.organization.data.repository.OrganizationRepository
@@ -11,7 +11,6 @@ import io.foundy.setting.ui.R
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.ContainerHost
@@ -27,7 +26,7 @@ import javax.inject.Inject
 @HiltViewModel
 class OrganizationEditViewModel @Inject constructor(
     private val organizationRepository: OrganizationRepository,
-    private val authRepository: AuthRepository
+    private val getCurrentUserIdUseCase: GetCurrentUserIdUseCase
 ) : ViewModel(), ContainerHost<OrganizationEditUiState, OrganizationEditSideEffect> {
 
     override val container: Container<OrganizationEditUiState, OrganizationEditSideEffect> =
@@ -40,7 +39,7 @@ class OrganizationEditViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            _currentUserId = requireNotNull(authRepository.currentUserIdStream.firstOrNull())
+            _currentUserId = requireNotNull(getCurrentUserIdUseCase())
             organizationRepository.getUserOrganizations(userId = currentUserId)
                 .onSuccess { organizations ->
                     intent {

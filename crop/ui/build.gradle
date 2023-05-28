@@ -50,7 +50,7 @@ dependencies {
     implementation project(path: ':core:model')
     implementation project(path: ':core:ui')
     implementation project(path: ':crop:data')
-    implementation project(path: ':auth:data')
+    implementation project(path: ':auth:domain')
 
     // navigation
     implementation "androidx.hilt:hilt-navigation-compose:$hilt_navigation_compose"

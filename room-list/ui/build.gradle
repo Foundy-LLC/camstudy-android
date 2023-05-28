@@ -51,7 +51,7 @@ dependencies {
     implementation project(path: ':core:model')
     implementation project(path: ':core:ui')
     implementation project(path: ':core:common')
-    implementation project(path: ':auth:data')
+    implementation project(path: ':auth:domain')
     implementation project(path: ':room-list:data')
     implementation project(path: ':room:ui')
     implementation project(path: ':organization:ui')

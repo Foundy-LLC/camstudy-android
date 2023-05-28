@@ -3,7 +3,7 @@ package io.foundy.friend.data.repository
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
-import io.foundy.auth.data.repository.AuthRepository
+import io.foundy.auth.domain.usecase.GetCurrentUserIdUseCase
 import io.foundy.core.data.extension.getDataOrThrowMessage
 import io.foundy.core.data.model.toEntity
 import io.foundy.core.model.FriendStatus
@@ -14,17 +14,16 @@ import io.foundy.friend.data.model.FriendPostRequestBody
 import io.foundy.friend.data.model.toEntity
 import io.foundy.friend.data.source.FriendPagingSource
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.firstOrNull
 import javax.inject.Inject
 
 class NetworkFriendRepository @Inject constructor(
-    private val authRepository: AuthRepository,
+    private val getCurrentUserIdUseCase: GetCurrentUserIdUseCase,
     private val friendApi: FriendApi,
     private val recommendApi: RecommendApi
 ) : FriendRepository {
 
     private suspend fun requireCurrentUserId(): String {
-        val currentUserId = authRepository.currentUserIdStream.firstOrNull()
+        val currentUserId = getCurrentUserIdUseCase()
         check(currentUserId != null)
         return currentUserId
     }

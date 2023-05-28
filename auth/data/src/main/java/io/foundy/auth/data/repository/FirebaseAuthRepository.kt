@@ -4,6 +4,7 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import io.foundy.auth.data.source.AuthLocalDataSource
 import io.foundy.auth.data.source.AuthRemoteDataSource
+import io.foundy.auth.domain.repository.AuthRepository
 import io.foundy.core.common.di.ApplicationScope
 import io.foundy.core.data.extension.getDataOrThrowMessage
 import kotlinx.coroutines.CoroutineScope
@@ -26,6 +27,10 @@ class FirebaseAuthRepository @Inject constructor(
         Firebase.auth.addAuthStateListener { auth ->
             fetchAndNotify(auth.currentUser?.uid)
         }
+    }
+
+    override suspend fun markAsUserInitialInfoExists(userId: String) {
+        authLocalDataSource.markAsUserInitialInfoExists(userId = userId)
     }
 
     private fun fetchAndNotify(currentUserId: String?) {

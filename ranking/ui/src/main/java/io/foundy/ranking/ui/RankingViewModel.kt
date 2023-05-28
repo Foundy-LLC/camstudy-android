@@ -4,12 +4,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.cachedIn
 import dagger.hilt.android.lifecycle.HiltViewModel
-import io.foundy.auth.data.repository.AuthRepository
+import io.foundy.auth.domain.usecase.GetCurrentUserIdUseCase
 import io.foundy.core.model.OrganizationOverview
 import io.foundy.core.ui.UserMessage
 import io.foundy.organization.data.repository.OrganizationRepository
 import io.foundy.ranking.data.repository.RankingRepository
-import kotlinx.coroutines.flow.firstOrNull
 import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.syntax.simple.intent
@@ -20,7 +19,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class RankingViewModel @Inject constructor(
-    private val authRepository: AuthRepository,
+    private val getCurrentUserIdUseCase: GetCurrentUserIdUseCase,
     private val rankingRepository: RankingRepository,
     private val organizationRepository: OrganizationRepository
 ) : ViewModel(), ContainerHost<RankingUiState, RankingSideEffect> {
@@ -60,7 +59,7 @@ class RankingViewModel @Inject constructor(
     }
 
     private suspend fun requireCurrentUserId(): String {
-        return requireNotNull(authRepository.currentUserIdStream.firstOrNull())
+        return requireNotNull(getCurrentUserIdUseCase())
     }
 
     private fun updateSelectedOrganization(organization: OrganizationOverview?) = intent {

@@ -46,7 +46,7 @@ dependencies {
     implementation project(path: ':core:model')
     implementation project(path: ':core:ui')
     implementation project(path: ':crop:data')
-    implementation project(path: ':auth:data')
+    implementation project(path: ':auth:domain')
     implementation project(path: ':ranking:data')
     implementation project(path: ':crop:ui')
     implementation project(path: ':room-list:data')

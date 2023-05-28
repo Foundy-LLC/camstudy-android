@@ -3,11 +3,10 @@ package io.foundy.setting.ui
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import io.foundy.auth.data.repository.AuthRepository
+import io.foundy.auth.domain.usecase.GetCurrentUserIdUseCase
 import io.foundy.core.ui.UserMessage
 import io.foundy.setting.ui.model.EditProfileResult
 import io.foundy.user.domain.usecase.GetUserUseCase
-import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.ContainerHost
@@ -19,7 +18,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SettingViewModel @Inject constructor(
-    private val authRepository: AuthRepository,
+    private val getCurrentUserIdUseCase: GetCurrentUserIdUseCase,
     private val getUserUseCase: GetUserUseCase
 ) : ViewModel(), ContainerHost<SettingUiState, SettingSideEffect> {
 
@@ -31,7 +30,7 @@ class SettingViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            _currentUserId = authRepository.currentUserIdStream.firstOrNull()
+            _currentUserId = getCurrentUserIdUseCase()
             check(_currentUserId != null)
             fetchCurrentUser()
         }

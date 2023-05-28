@@ -3,9 +3,8 @@ package io.foundy.home.ui
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import io.foundy.auth.data.repository.AuthRepository
+import io.foundy.auth.domain.usecase.GetCurrentUserIdUseCase
 import io.foundy.user.domain.usecase.GetUserUseCase
-import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.ContainerHost
@@ -17,7 +16,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    private val authRepository: AuthRepository,
+    private val getCurrentUserIdUseCase: GetCurrentUserIdUseCase,
     private val getUserUseCase: GetUserUseCase
 ) : ViewModel(), ContainerHost<HomeUiState, HomeSideEffect> {
 
@@ -25,7 +24,7 @@ class HomeViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            val currentUserId = authRepository.currentUserIdStream.firstOrNull()
+            val currentUserId = getCurrentUserIdUseCase()
             check(currentUserId != null)
             getUserUseCase(userId = currentUserId)
                 .onSuccess { user ->

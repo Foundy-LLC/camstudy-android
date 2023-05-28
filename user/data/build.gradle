@@ -37,7 +37,7 @@ android {
 dependencies {
     implementation project(path: ':core:data')
     implementation project(path: ':core:model')
-    implementation project(path: ':auth:data')
+    implementation project(path: ':auth:domain')
     implementation project(path: ':user:domain')
     implementation project(path: ':ranking:data')
     implementation project(path: ':crop:data')

@@ -4,7 +4,7 @@ import android.graphics.Bitmap
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import io.foundy.auth.data.repository.AuthRepository
+import io.foundy.auth.domain.usecase.GetCurrentUserIdUseCase
 import io.foundy.core.common.util.ConvertBitmapToFileUseCase
 import io.foundy.core.model.constant.RoomConstants
 import io.foundy.core.model.constant.UserConstants
@@ -16,7 +16,6 @@ import io.foundy.welcome.data.repository.WelcomeRepository
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.ContainerHost
@@ -37,7 +36,7 @@ import javax.inject.Inject
 class RoomCreateViewModel @Inject constructor(
     private val welcomeRepository: WelcomeRepository,
     private val roomListRepository: RoomListRepository,
-    private val authRepository: AuthRepository,
+    private val getCurrentUserIdUseCase: GetCurrentUserIdUseCase,
     private val convertBitmapToFileUseCase: ConvertBitmapToFileUseCase
 ) : ViewModel(), ContainerHost<RoomCreateUiState, RoomCreateSideEffect> {
 
@@ -125,7 +124,7 @@ class RoomCreateViewModel @Inject constructor(
         reduce { state.copy(isInCreating = true) }
         roomListRepository.createRoom(
             createRequestBody = RoomCreateRequestBody(
-                masterId = requireNotNull(authRepository.currentUserIdStream.firstOrNull()) {
+                masterId = requireNotNull(getCurrentUserIdUseCase()) {
                     "로그인 하지 않고 방을 생성하려 했습니다."
                 },
                 title = state.title,

@@ -61,6 +61,7 @@ dependencies {
     implementation project(":core:designsystem")
     implementation project(":core:navigation")
     implementation project(":core:test")
+    implementation project(":auth:domain")
     implementation project(":auth:data")
     implementation project(":auth:ui")
     implementation project(":setting:ui")

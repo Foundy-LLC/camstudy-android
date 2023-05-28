@@ -1,7 +1,7 @@
 package io.foundy.user.data.repository
 
-import io.foundy.auth.data.repository.AuthRepository
-import io.foundy.auth.data.source.AuthLocalDataSource
+import io.foundy.auth.domain.usecase.GetCurrentUserIdUseCase
+import io.foundy.auth.domain.usecase.MarkAsUserInitialInfoExistsUseCase
 import io.foundy.core.data.extension.getDataOrThrowMessage
 import io.foundy.core.model.User
 import io.foundy.crop.data.api.CropApi
@@ -14,7 +14,6 @@ import io.foundy.user.data.source.UserRemoteDataSource
 import io.foundy.user.domain.repository.UserRepository
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.flow.firstOrNull
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
@@ -23,8 +22,8 @@ import javax.inject.Inject
 
 class NetworkUserRepository @Inject constructor(
     private val userDataSource: UserRemoteDataSource,
-    private val authRepository: AuthRepository,
-    private val authLocalDataSource: AuthLocalDataSource,
+    private val getCurrentUserIdUseCase: GetCurrentUserIdUseCase,
+    private val markAsUserInitialInfoExistsUseCase: MarkAsUserInitialInfoExistsUseCase,
     private val rankingApi: RankingApi,
     // TODO: CropDataSource 구현하기면 수정하기
     private val cropApi: CropApi,
@@ -32,7 +31,7 @@ class NetworkUserRepository @Inject constructor(
 
     override suspend fun getUser(id: String): Result<User> {
         return runCatching {
-            val currentUserId = requireNotNull(authRepository.currentUserIdStream.firstOrNull()) {
+            val currentUserId = requireNotNull(getCurrentUserIdUseCase()) {
                 "로그인 없이 다른 회원 정보를 열람했습니다."
             }
             return@runCatching coroutineScope {
@@ -94,7 +93,7 @@ class NetworkUserRepository @Inject constructor(
         )
         return runCatching {
             userDataSource.postUserInitialInfo(body = requestBody).getDataOrThrowMessage()
-            authLocalDataSource.markAsUserInitialInfoExists(userId)
+            markAsUserInitialInfoExistsUseCase(userId = userId)
             if (profileImage != null) {
                 val multipart = MultipartBody.Part.createFormData(
                     PROFILE_IMAGE_KEY,
@@ -119,7 +118,7 @@ class NetworkUserRepository @Inject constructor(
         if (shouldRemoveProfileImage) {
             require(profileImage == null) { "기본 이미지로 바꿀때는 profileImage가 null이어야 합니다" }
         }
-        val currentUserId = requireNotNull(authRepository.currentUserIdStream.firstOrNull()) {
+        val currentUserId = requireNotNull(getCurrentUserIdUseCase()) {
             "로그인 없이 다른 회원 정보를 업데이트하려 했습니다."
         }
         val requestBody = UserUpdateRequestBody(

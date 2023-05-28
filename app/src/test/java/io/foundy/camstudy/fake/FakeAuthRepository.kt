@@ -1,6 +1,6 @@
 package io.foundy.camstudy.fake
 
-import io.foundy.auth.data.repository.AuthRepository
+import io.foundy.auth.domain.repository.AuthRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 
@@ -14,4 +14,8 @@ class FakeAuthRepository : AuthRepository {
 
     override val existsInitInfo: Boolean?
         get() = existsInitInfoTestValue
+
+    override suspend fun markAsUserInitialInfoExists(userId: String) {
+        TODO("Not yet implemented")
+    }
 }

@@ -53,7 +53,7 @@ dependencies {
     implementation project(path: ':core:common')
     implementation project(path: ':ranking:data')
     implementation project(path: ':organization:ui')
-    implementation project(path: ':auth:data')
+    implementation project(path: ':auth:domain')
     implementation project(path: ':organization:data')
     implementation project(path: ':user:ui')
 

@@ -50,7 +50,7 @@ dependencies {
     implementation project(path: ':core:designsystem')
     implementation project(path: ':core:ui')
     implementation project(path: ':friend:data')
-    implementation project(path: ':auth:data')
+    implementation project(path: ':auth:domain')
     implementation project(path: ':user:ui')
 
     // compose destination

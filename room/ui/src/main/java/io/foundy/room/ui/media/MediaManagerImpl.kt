@@ -14,7 +14,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.core.content.getSystemService
 import dagger.hilt.android.qualifiers.ApplicationContext
-import io.foundy.auth.data.repository.AuthRepository
+import io.foundy.auth.domain.usecase.GetCurrentUserIdUseCase
 import io.foundy.room.ui.R
 import io.foundy.room.ui.audio.AudioHandler
 import io.foundy.room.ui.audio.AudioSwitchHandler
@@ -26,7 +26,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
-import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 import org.webrtc.AudioTrack
 import org.webrtc.Camera2Capturer
@@ -45,7 +44,7 @@ val LocalMediaManager: ProvidableCompositionLocal<MediaManager> =
 
 class MediaManagerImpl @Inject constructor(
     @ApplicationContext private val context: Context,
-    authRepository: AuthRepository
+    getCurrentUserIdUseCase: GetCurrentUserIdUseCase
 ) : MediaManager {
     private val logger by taggedLogger("Call:LocalRoomSessionManager")
     private val managerScope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
@@ -150,7 +149,7 @@ class MediaManagerImpl @Inject constructor(
 
     init {
         managerScope.launch {
-            _currentUserId = requireNotNull(authRepository.currentUserIdStream.firstOrNull())
+            _currentUserId = requireNotNull(getCurrentUserIdUseCase())
         }
     }
 

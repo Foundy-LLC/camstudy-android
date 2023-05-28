@@ -4,14 +4,13 @@ import android.graphics.Bitmap
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import io.foundy.auth.data.repository.AuthRepository
+import io.foundy.auth.domain.usecase.GetCurrentUserIdUseCase
 import io.foundy.core.common.util.ConvertBitmapToFileUseCase
 import io.foundy.core.model.constant.UserConstants
 import io.foundy.user.domain.usecase.PostUserInitInfoUseCase
 import io.foundy.welcome.data.repository.WelcomeRepository
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.ContainerHost
@@ -27,7 +26,7 @@ import javax.inject.Inject
 @HiltViewModel
 class WelcomeViewModel @Inject constructor(
     private val postUserInitInfoUseCase: PostUserInitInfoUseCase,
-    private val authRepository: AuthRepository,
+    private val getCurrentUserIdUseCase: GetCurrentUserIdUseCase,
     private val welcomeRepository: WelcomeRepository,
     private val convertBitmapToFileUseCase: ConvertBitmapToFileUseCase
 ) : ViewModel(), ContainerHost<WelcomeUiState, WelcomeSideEffect> {
@@ -108,7 +107,7 @@ class WelcomeViewModel @Inject constructor(
     }
 
     fun saveInitInformation() = intent {
-        val uid = authRepository.currentUserIdStream.first()
+        val uid = getCurrentUserIdUseCase()
         check(uid != null)
         reduce { state.copy(inSaving = true) }
         postUserInitInfoUseCase(
