@@ -30,6 +30,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
@@ -171,9 +172,11 @@ private fun ColumnScope.SuccessContent(uiState: UserProfileDialogUiState.Success
         name = user.name,
         organization = user.organizations.firstOrNull()
     )
-    if (user.introduce != null) {
-        Spacer(modifier = Modifier.height(4.dp))
-        Introduce(introduce = user.introduce!!)
+    user.introduce?.let { introduce ->
+        if (introduce.isNotBlank()) {
+            Spacer(modifier = Modifier.height(4.dp))
+            Introduce(introduce = introduce)
+        }
     }
     Spacer(modifier = Modifier.height(8.dp))
     Tags(tags = user.tags)
@@ -243,11 +246,14 @@ private fun ColumnScope.SuccessContent(uiState: UserProfileDialogUiState.Success
 private fun NameAndOrganization(name: String, organization: String?) {
     Row(verticalAlignment = Alignment.CenterVertically) {
         CamstudyText(
+            modifier = Modifier.weight(weight = 1f, fill = false),
             text = name,
             style = CamstudyTheme.typography.titleLarge.copy(
                 color = CamstudyTheme.colorScheme.systemUi08,
                 fontWeight = FontWeight.SemiBold
-            )
+            ),
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis
         )
         if (organization != null) {
             Spacer(modifier = Modifier.width(8.dp))
@@ -256,7 +262,8 @@ private fun NameAndOrganization(name: String, organization: String?) {
                 style = CamstudyTheme.typography.titleSmall.copy(
                     color = CamstudyTheme.colorScheme.primaryPress,
                     fontWeight = FontWeight.Medium
-                )
+                ),
+                maxLines = 1
             )
         }
     }
