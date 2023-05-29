@@ -319,12 +319,14 @@ private fun GrowingCropInfo(growingCrop: GrowingCrop, onQuestionClick: () -> Uni
                         },
                         style = textStyle
                     )
-                    CamstudyIcon(
-                        modifier = Modifier.size(18.dp),
-                        icon = CamstudyIcons.Question,
-                        contentDescription = null,
-                        tint = Color.Unspecified
-                    )
+                    if (!growingCrop.isDead) {
+                        CamstudyIcon(
+                            modifier = Modifier.size(18.dp),
+                            icon = CamstudyIcons.Question,
+                            contentDescription = null,
+                            tint = Color.Unspecified
+                        )
+                    }
                 }
             }
         }
