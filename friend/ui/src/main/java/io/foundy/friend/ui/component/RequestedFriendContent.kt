@@ -31,11 +31,13 @@ fun RequestedFriendContent(
     onUserClick: (String) -> Unit,
     onRefresh: () -> Unit
 ) {
+    val isLoading = users.loadState.refresh is LoadState.Loading
+
     RefreshableContent(
-        refreshing = users.loadState.refresh is LoadState.Loading,
+        refreshing = isLoading,
         onRefresh = onRefresh
     ) {
-        if (users.itemCount == 0) {
+        if (users.itemCount == 0 && !isLoading) {
             EmptyFriends()
         } else {
             LazyColumn(Modifier.fillMaxSize()) {
