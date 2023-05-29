@@ -12,6 +12,8 @@ interface RoomListRepository {
 
     suspend fun getRecentRooms(userId: String): Result<List<RoomOverview>>
 
+    suspend fun getRecommendedRooms(userId: String): Result<List<RoomOverview>>
+
     suspend fun createRoom(
         createRequestBody: RoomCreateRequestBody,
         thumbnail: File?

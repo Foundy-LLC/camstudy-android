@@ -8,6 +8,7 @@ data class DashboardUiState(
     val userRankingUiState: UserRankingUiState = UserRankingUiState.Loading,
     val growingCropUiState: GrowingCropUiState = GrowingCropUiState.Loading,
     val recentRoomsUiState: RecentRoomsUiState = RecentRoomsUiState.Loading,
+    val recommendedRoomsUiState: RecommendedRoomsUiState = RecommendedRoomsUiState.Loading,
     val fetchGrowingCrop: () -> Unit,
     val onRefresh: () -> Unit
 ) {
@@ -15,7 +16,8 @@ data class DashboardUiState(
         get() {
             return userRankingUiState is UserRankingUiState.Loading &&
                 growingCropUiState is GrowingCropUiState.Loading &&
-                recentRoomsUiState is RecentRoomsUiState.Loading
+                recentRoomsUiState is RecentRoomsUiState.Loading &&
+                recommendedRoomsUiState is RecommendedRoomsUiState.Loading
         }
 }
 
@@ -44,4 +46,13 @@ sealed class RecentRoomsUiState {
     data class Success(val recentRooms: List<RoomOverview>) : RecentRoomsUiState()
 
     data class Failure(val message: String?) : RecentRoomsUiState()
+}
+
+sealed class RecommendedRoomsUiState {
+
+    object Loading : RecommendedRoomsUiState()
+
+    data class Success(val rooms: List<RoomOverview>) : RecommendedRoomsUiState()
+
+    data class Failure(val message: String?) : RecommendedRoomsUiState()
 }

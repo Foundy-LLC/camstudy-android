@@ -55,10 +55,11 @@ class DashboardViewModel @Inject constructor(
         }
     }
 
-    private fun refresh() = intent {
+    private fun refresh() {
         fetchUserRanking()
         fetchGrowingCrop()
         fetchRecentRooms()
+        fetchRecommendedRooms()
     }
 
     private fun fetchUserRanking() = intent {
@@ -109,6 +110,28 @@ class DashboardViewModel @Inject constructor(
                 reduce {
                     state.copy(
                         recentRoomsUiState = RecentRoomsUiState.Failure(message = it.message)
+                    )
+                }
+            }
+    }
+
+    private fun fetchRecommendedRooms() = intent {
+        reduce { state.copy(recommendedRoomsUiState = RecommendedRoomsUiState.Loading) }
+        roomListRepository.getRecommendedRooms(userId = currentUserId)
+            .onSuccess { rooms ->
+                reduce {
+                    state.copy(
+                        recommendedRoomsUiState = RecommendedRoomsUiState.Success(
+                            rooms = rooms
+                        )
+                    )
+                }
+            }.onFailure {
+                reduce {
+                    state.copy(
+                        recommendedRoomsUiState = RecommendedRoomsUiState.Failure(
+                            message = it.message
+                        )
                     )
                 }
             }

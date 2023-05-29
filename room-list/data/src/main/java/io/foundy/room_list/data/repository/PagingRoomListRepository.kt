@@ -5,6 +5,7 @@ import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import io.foundy.core.data.extension.getDataOrThrowMessage
 import io.foundy.core.model.RoomOverview
+import io.foundy.room_list.data.api.RecommendRoomApi
 import io.foundy.room_list.data.api.RoomListApi
 import io.foundy.room_list.data.model.RoomCreateRequestBody
 import io.foundy.room_list.data.model.toEntity
@@ -17,7 +18,8 @@ import java.io.File
 import javax.inject.Inject
 
 class PagingRoomListRepository @Inject constructor(
-    private val roomListApi: RoomListApi
+    private val roomListApi: RoomListApi,
+    private val recommendRoomApi: RecommendRoomApi
 ) : RoomListRepository {
 
     override fun getRooms(query: String): Flow<PagingData<RoomOverview>> {
@@ -31,6 +33,13 @@ class PagingRoomListRepository @Inject constructor(
         return runCatching {
             val response = roomListApi.getRecentRooms(userId = userId)
             response.getDataOrThrowMessage().map { it.toEntity() }
+        }
+    }
+
+    override suspend fun getRecommendedRooms(userId: String): Result<List<RoomOverview>> {
+        return runCatching {
+            val response = recommendRoomApi.getRecommendedRoom(userId = userId)
+            response.getDataOrThrowMessage().rooms.map { it.toEntity() }
         }
     }
 
