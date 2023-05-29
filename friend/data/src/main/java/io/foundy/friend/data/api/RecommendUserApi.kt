@@ -5,7 +5,7 @@ import io.foundy.friend.data.model.GetRecommendedFriendsResponse
 import retrofit2.http.GET
 import retrofit2.http.Path
 
-interface RecommendApi {
+interface RecommendUserApi {
 
     @GET("users/{userId}/recommended-friends")
     suspend fun getRecommendedFriends(

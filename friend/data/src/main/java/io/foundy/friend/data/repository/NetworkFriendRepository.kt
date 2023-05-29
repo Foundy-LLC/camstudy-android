@@ -9,7 +9,7 @@ import io.foundy.core.data.model.toEntity
 import io.foundy.core.model.FriendStatus
 import io.foundy.core.model.UserOverview
 import io.foundy.friend.data.api.FriendApi
-import io.foundy.friend.data.api.RecommendApi
+import io.foundy.friend.data.api.RecommendUserApi
 import io.foundy.friend.data.model.FriendPostRequestBody
 import io.foundy.friend.data.model.toEntity
 import io.foundy.friend.data.source.FriendPagingSource
@@ -19,7 +19,7 @@ import javax.inject.Inject
 class NetworkFriendRepository @Inject constructor(
     private val getCurrentUserIdUseCase: GetCurrentUserIdUseCase,
     private val friendApi: FriendApi,
-    private val recommendApi: RecommendApi
+    private val recommendUserApi: RecommendUserApi
 ) : FriendRepository {
 
     private suspend fun requireCurrentUserId(): String {
@@ -56,7 +56,7 @@ class NetworkFriendRepository @Inject constructor(
 
     override suspend fun getRecommendedFriends(userId: String): Result<List<UserOverview>> {
         return runCatching {
-            val response = recommendApi.getRecommendedFriends(userId = userId)
+            val response = recommendUserApi.getRecommendedFriends(userId = userId)
             response.getDataOrThrowMessage().users.map { it.toEntity() }
         }
     }
