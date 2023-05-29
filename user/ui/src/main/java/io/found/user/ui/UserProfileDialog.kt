@@ -71,7 +71,8 @@ fun UserProfileDialog(
     onCancel: () -> Unit,
     onDidRequestFriend: ((User) -> Unit)? = null,
     onDidRemoveFriend: ((User) -> Unit)? = null,
-    onDidAcceptFriendRequest: ((User) -> Unit)? = null
+    onDidAcceptFriendRequest: ((User) -> Unit)? = null,
+    onDidCancelRequest: ((User) -> Unit)? = null
 ) {
     val uiState = viewModel.collectAsState().value
 
@@ -85,6 +86,9 @@ fun UserProfileDialog(
             }
             is UserProfileDialogSideEffect.DidAcceptFriend -> {
                 onDidAcceptFriendRequest?.invoke(it.user)
+            }
+            is UserProfileDialogSideEffect.DidCancelRequest -> {
+                onDidCancelRequest?.invoke(it.user)
             }
         }
     }

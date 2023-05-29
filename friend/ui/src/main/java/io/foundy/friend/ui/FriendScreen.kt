@@ -26,6 +26,7 @@ import io.found.user.ui.UserProfileDialog
 import io.foundy.core.designsystem.component.CamstudyTab
 import io.foundy.core.designsystem.component.CamstudyTabRow
 import io.foundy.core.designsystem.theme.CamstudyTheme
+import io.foundy.core.model.FriendStatus
 import io.foundy.core.model.UserOverview
 import io.foundy.core.ui.collectAsLazyPagingItems
 import io.foundy.friend.ui.component.FriendListContent
@@ -78,13 +79,31 @@ fun FriendRoute(
             userId = it,
             onCancel = { userIdForShowDialog = null },
             onDidRequestFriend = { user ->
-                viewModel.removeRecommendedUser(user.id)
+                viewModel.changeRecommendTabFriendStatus(
+                    userId = user.id,
+                    status = FriendStatus.REQUESTED
+                )
             },
-            onDidRemoveFriend = { refreshFriends() },
+            onDidCancelRequest = { user ->
+                viewModel.changeRecommendTabFriendStatus(
+                    userId = user.id,
+                    status = FriendStatus.NONE
+                )
+            },
+            onDidRemoveFriend = { user ->
+                refreshFriends()
+                viewModel.changeRecommendTabFriendStatus(
+                    userId = user.id,
+                    status = FriendStatus.NONE
+                )
+            },
             onDidAcceptFriendRequest = { user ->
                 refreshFriends()
                 refreshFriendRequestingUsers()
-                viewModel.removeRecommendedUser(user.id)
+                viewModel.changeRecommendTabFriendStatus(
+                    userId = user.id,
+                    status = FriendStatus.ACCEPTED
+                )
             }
         )
     }

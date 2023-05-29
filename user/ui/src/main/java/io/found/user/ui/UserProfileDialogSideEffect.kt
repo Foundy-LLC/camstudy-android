@@ -8,5 +8,7 @@ sealed class UserProfileDialogSideEffect {
 
     data class DidRemoveFriend(val user: User) : UserProfileDialogSideEffect()
 
+    data class DidCancelRequest(val user: User) : UserProfileDialogSideEffect()
+
     data class DidAcceptFriend(val user: User) : UserProfileDialogSideEffect()
 }

@@ -7,6 +7,7 @@ import io.foundy.auth.domain.usecase.GetCurrentUserIdUseCase
 import io.foundy.core.data.extension.getDataOrThrowMessage
 import io.foundy.core.data.model.toEntity
 import io.foundy.core.model.FriendStatus
+import io.foundy.core.model.RecommendedUser
 import io.foundy.core.model.UserOverview
 import io.foundy.friend.data.api.FriendApi
 import io.foundy.friend.data.api.RecommendUserApi
@@ -54,7 +55,7 @@ class NetworkFriendRepository @Inject constructor(
         ).flow
     }
 
-    override suspend fun getRecommendedFriends(userId: String): Result<List<UserOverview>> {
+    override suspend fun getRecommendedFriends(userId: String): Result<List<RecommendedUser>> {
         return runCatching {
             val response = recommendUserApi.getRecommendedFriends(userId = userId)
             response.getDataOrThrowMessage().users.map { it.toEntity() }
