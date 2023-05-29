@@ -9,6 +9,7 @@ import io.foundy.core.ui.UserMessage
 import io.foundy.friend.data.repository.FriendRepository
 import io.foundy.user.domain.usecase.GetUserUseCase
 import io.foundy.user.ui.R
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -30,11 +31,14 @@ class UserProfileDialogViewModel @Inject constructor(
         container(UserProfileDialogUiState.Loading)
 
     private var friendActionTextResFetchJob: Job? = null
+    private var fetchUserJob: Job? = null
 
     fun fetchUser(id: String) = intent {
         reduce { UserProfileDialogUiState.Loading }
-        getUserUseCase(id)
-            .onSuccess { user ->
+        friendActionTextResFetchJob?.cancel()
+        fetchUserJob?.cancel()
+        fetchUserJob = viewModelScope.launch {
+            getUserUseCase(id).onSuccess { user ->
                 reduce {
                     UserProfileDialogUiState.Success(
                         user = user,
@@ -45,6 +49,9 @@ class UserProfileDialogViewModel @Inject constructor(
                     )
                 }
             }.onFailure {
+                if (it is CancellationException) {
+                    return@onFailure
+                }
                 reduce {
                     UserProfileDialogUiState.Failure(
                         message = UserMessage(
@@ -54,6 +61,7 @@ class UserProfileDialogViewModel @Inject constructor(
                     )
                 }
             }
+        }
     }
 
     private fun setFriendActionResultTextRes(@StringRes textRes: Int) = intent {
