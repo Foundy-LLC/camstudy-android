@@ -21,7 +21,6 @@ class FakeUserRepository : UserRepository {
                 introduce = "안녕하세요",
                 profileImage = null,
                 weeklyRanking = 23,
-                totalRanking = 40,
                 weeklyStudyTimeSec = 23142,
                 weeklyRankingOverall = 42,
                 growingCrop = GrowingCrop(
@@ -44,7 +43,8 @@ class FakeUserRepository : UserRepository {
                 organizations = listOf("한성대학교"),
                 tags = listOf("안드로이드", "개발", "웹"),
                 consecutiveStudyDays = 4,
-                friendStatus = FriendStatus.NONE
+                friendStatus = FriendStatus.NONE,
+                hasWeeklyRanking = true
             )
         )
     }
