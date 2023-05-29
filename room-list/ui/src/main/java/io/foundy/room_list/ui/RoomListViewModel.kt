@@ -34,18 +34,18 @@ class RoomListViewModel @Inject constructor(
     private var roomSearchJob: Job? = null
 
     private fun refresh() = intent {
-        updateSearchQuery(state.searchQuery)
+        updateSearchQuery(state.searchQuery, delayMillis = 0)
     }
 
-    private fun updateSearchQuery(query: String) = blockingIntent {
+    private fun updateSearchQuery(query: String, delayMillis: Long = 300) = blockingIntent {
         reduce { state.copy(searchQuery = query) }
-        searchRooms(query = query)
+        searchRooms(query = query, delayMillis = delayMillis)
     }
 
-    private fun searchRooms(query: String) = intent {
+    private fun searchRooms(query: String, delayMillis: Long = 300) = intent {
         roomSearchJob?.cancel()
         roomSearchJob = viewModelScope.launch {
-            delay(300)
+            delay(delayMillis)
             val roomsStream = roomListRepository.getRooms(query)
             reduce { state.copy(roomPagingDataStream = roomsStream) }
         }
