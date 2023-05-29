@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
@@ -29,6 +30,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -37,6 +39,7 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.items
 import com.ramcosta.composedestinations.annotation.Destination
 import io.found.user.ui.UserProfileDialog
+import io.foundy.core.designsystem.component.CamstudyDivider
 import io.foundy.core.designsystem.component.CamstudyFilterChip
 import io.foundy.core.designsystem.component.CamstudyTab
 import io.foundy.core.designsystem.component.CamstudyTabRow
@@ -150,6 +153,10 @@ private fun RankingContent(
     val currentUser = uiState.currentUserRanking
     val isLoading = uiState.isCurrentUserRankingLoading ||
         users.loadState.refresh is LoadState.Loading
+    val titleTextStyle = CamstudyTheme.typography.titleMedium.copy(
+        color = CamstudyTheme.colorScheme.systemUi07,
+        fontWeight = FontWeight.Normal
+    )
 
     LaunchedEffect(Unit) {
         if (uiState.shouldFetchRanking) {
@@ -171,9 +178,32 @@ private fun RankingContent(
                 .background(color = CamstudyTheme.colorScheme.systemBackground)
         ) {
             item {
-                if (currentUser != null) {
+                CamstudyDivider()
+            }
+            if (currentUser != null) {
+                item {
+                    CamstudyText(
+                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp),
+                        text = stringResource(R.string.my_ranking_title),
+                        style = titleTextStyle
+                    )
+                    CamstudyDivider()
                     RankingTile(user = currentUser, isMe = true, onClick = onClickUser)
+                    Spacer(
+                        modifier = Modifier
+                            .height(8.dp)
+                            .fillMaxWidth()
+                            .background(color = CamstudyTheme.colorScheme.systemUi01)
+                    )
                 }
+            }
+            item {
+                CamstudyText(
+                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp),
+                    text = stringResource(R.string.ranking_list_title),
+                    style = titleTextStyle
+                )
+                CamstudyDivider()
             }
             items(users, key = { it.id }) { user ->
                 if (user == null) {

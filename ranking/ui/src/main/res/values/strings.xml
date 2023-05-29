@@ -13,4 +13,6 @@
     <string name="no_score">점수 없음</string>
     <string name="no_study_time">공부 시간 없음</string>
     <string name="ranking_detail_study_time">공부 시간: %s</string>
+    <string name="my_ranking_title">내 랭킹</string>
+    <string name="ranking_list_title">랭킹 목록</string>
 </resources>
