@@ -1,5 +1,6 @@
 package io.foundy.core.model
 
+import java.util.Calendar
 import java.util.Date
 
 data class GrowingCrop(
@@ -11,5 +12,18 @@ data class GrowingCrop(
     val isDead: Boolean,
     val plantedAt: Date
 ) {
-    val canHarvest: Boolean = type.maxLevel == level
+    val remainMinutesToHarvest: Long = run {
+        val currentTimeCalendar = Calendar.getInstance()
+        val harvestedAtCalendar = Calendar.getInstance().apply {
+            time = plantedAt
+            add(Calendar.DAY_OF_YEAR, type.requiredDay)
+        }
+        val diffInMillis = maxOf(
+            0,
+            harvestedAtCalendar.timeInMillis - currentTimeCalendar.timeInMillis
+        )
+        return@run diffInMillis / (1000 * 60)
+    }
+
+    val canHarvest: Boolean = remainMinutesToHarvest == 0L
 }

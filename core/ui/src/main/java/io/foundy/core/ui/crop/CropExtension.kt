@@ -11,7 +11,6 @@ import io.foundy.core.model.GrowingCrop
 import io.foundy.core.model.HarvestedCrop
 import io.foundy.core.ui.R
 import java.text.SimpleDateFormat
-import java.util.Calendar
 import java.util.concurrent.TimeUnit
 
 val HarvestedCrop.imageIcon
@@ -79,22 +78,9 @@ fun GrowingCrop.getFormattedPlantAt(format: String): String {
     ).format(plantedAt)
 }
 
-private fun GrowingCrop.getRemainingTimeInMinutes(): Long {
-    val currentTimeCalendar = Calendar.getInstance()
-    val harvestedAtCalendar = Calendar.getInstance().apply {
-        time = this@getRemainingTimeInMinutes.plantedAt
-        add(Calendar.DAY_OF_YEAR, this@getRemainingTimeInMinutes.type.requiredDay)
-    }
-    val diffInMillis = maxOf(
-        0,
-        harvestedAtCalendar.timeInMillis - currentTimeCalendar.timeInMillis
-    )
-    return diffInMillis / (1000 * 60)
-}
-
 @Composable
 fun GrowingCrop.getRemainingTimeText(): String {
-    val remainingMinutes = this.getRemainingTimeInMinutes()
+    val remainingMinutes = this.remainMinutesToHarvest
     val days = TimeUnit.MINUTES.toDays(remainingMinutes)
     val hours = TimeUnit.MINUTES.toHours(remainingMinutes) % 24
     val minutes = TimeUnit.MINUTES.toMinutes(remainingMinutes) % 60
