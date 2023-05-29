@@ -38,7 +38,7 @@ fun FriendRecommendContent(
 
     userIdToRemoveFriend?.let { userId ->
         CamstudyDialog(
-            content = "정말로 친구를 해제할까요?",
+            content = stringResource(id = R.string.are_you_sure_dismiss),
             onDismissRequest = { userIdToRemoveFriend = null },
             onCancel = { userIdToRemoveFriend = null },
             onConfirm = {
@@ -109,22 +109,22 @@ fun RecommendedUserTile(
                 onClick: (String) -> Unit
             ) = when (user.friendStatus) {
                 FriendStatus.NONE -> Triple(
-                    "친구 요청",
+                    stringResource(R.string.action_button_request_friend),
                     CamstudyTheme.colorScheme.primary,
                     onRequestFriend
                 )
                 FriendStatus.REQUESTED -> Triple(
-                    "요청 취소",
+                    stringResource(R.string.action_button_cancel_request),
                     CamstudyTheme.colorScheme.systemUi05,
                     onCancelRequest
                 )
                 FriendStatus.REQUEST_RECEIVED -> Triple(
-                    "친구 수락",
+                    stringResource(R.string.action_button_accept_request),
                     CamstudyTheme.colorScheme.primary,
                     onAcceptFriend
                 )
                 FriendStatus.ACCEPTED -> Triple(
-                    "친구 해제",
+                    stringResource(R.string.action_button_remove_friend),
                     CamstudyTheme.colorScheme.systemUi05,
                     onRemoveFriend
                 )
