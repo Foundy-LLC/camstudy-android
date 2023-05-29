@@ -25,7 +25,8 @@ import io.foundy.core.ui.UserProfileImage
 internal fun UserTile(
     user: UserOverview,
     leading: (@Composable () -> Unit)? = null,
-    onClick: (UserOverview) -> Unit
+    onClick: (UserOverview) -> Unit,
+    showDivider: Boolean = true
 ) {
     Box {
         Row(
@@ -64,7 +65,9 @@ internal fun UserTile(
             Spacer(modifier = Modifier.width(12.dp))
             leading?.invoke()
         }
-        CamstudyDivider(modifier = Modifier.align(Alignment.BottomCenter))
+        if (showDivider) {
+            CamstudyDivider(modifier = Modifier.align(Alignment.BottomCenter))
+        }
     }
 }
 

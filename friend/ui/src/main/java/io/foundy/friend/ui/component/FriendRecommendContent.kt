@@ -23,6 +23,7 @@ import io.foundy.core.designsystem.component.CamstudyTextButton
 import io.foundy.core.designsystem.component.camstudyTextButtonColors
 import io.foundy.core.designsystem.theme.CamstudyTheme
 import io.foundy.core.model.FriendStatus
+import io.foundy.core.model.RecommendedUser
 import io.foundy.core.model.UserOverview
 import io.foundy.core.ui.pullrefresh.RefreshableContent
 import io.foundy.friend.ui.FriendRecommendTabUiState
@@ -68,53 +69,75 @@ fun FriendRecommendContent(
         } else {
             LazyColumn(modifier = Modifier.fillMaxSize()) {
                 items(uiState.recommendedUsers) { user ->
-                    UserTile(
-                        user = UserOverview(
-                            id = user.id,
-                            name = user.name,
-                            introduce = user.introduce,
-                            profileImage = user.profileImage
-                        ),
-                        onClick = { onUserClick(user.id) },
-                        leading = {
-                            val (
-                                label: String,
-                                labelColor: Color,
-                                onClick: (String) -> Unit
-                            ) = when (user.friendStatus) {
-                                FriendStatus.NONE -> Triple(
-                                    "친구 요청",
-                                    CamstudyTheme.colorScheme.primary,
-                                    uiState.onRequestFriend
-                                )
-                                FriendStatus.REQUESTED -> Triple(
-                                    "요청 취소",
-                                    CamstudyTheme.colorScheme.systemUi05,
-                                    uiState.onCancelRequest
-                                )
-                                FriendStatus.REQUEST_RECEIVED -> Triple(
-                                    "친구 수락",
-                                    CamstudyTheme.colorScheme.primary,
-                                    uiState.onAcceptFriend
-                                )
-                                FriendStatus.ACCEPTED -> Triple(
-                                    "친구 해제",
-                                    CamstudyTheme.colorScheme.systemUi05
-                                ) { userId -> userIdToRemoveFriend = userId }
-                            }
-                            CamstudyTextButton(
-                                modifier = Modifier.padding(end = 4.dp),
-                                label = label,
-                                enabled = !uiState.inPendingUserIds.contains(user.id),
-                                colors = ButtonDefaults.camstudyTextButtonColors(
-                                    contentColor = labelColor
-                                ),
-                                onClick = { onClick(user.id) }
-                            )
-                        }
+                    RecommendedUserTile(
+                        user = user,
+                        enabledActionButton = !uiState.inPendingUserIds.contains(user.id),
+                        onUserClick = { onUserClick(user.id) },
+                        onRemoveFriend = uiState.onRemoveFriend,
+                        onCancelRequest = uiState.onCancelRequest,
+                        onAcceptFriend = uiState.onAcceptFriend,
+                        onRequestFriend = uiState.onRequestFriend
                     )
                 }
             }
         }
     }
+}
+
+@Composable
+fun RecommendedUserTile(
+    user: RecommendedUser,
+    enabledActionButton: Boolean,
+    onUserClick: (String) -> Unit,
+    onRequestFriend: (String) -> Unit,
+    onAcceptFriend: (String) -> Unit,
+    onCancelRequest: (String) -> Unit,
+    onRemoveFriend: (String) -> Unit
+) {
+    UserTile(
+        user = UserOverview(
+            id = user.id,
+            name = user.name,
+            introduce = user.introduce,
+            profileImage = user.profileImage
+        ),
+        onClick = { onUserClick(user.id) },
+        leading = {
+            val (
+                label: String,
+                labelColor: Color,
+                onClick: (String) -> Unit
+            ) = when (user.friendStatus) {
+                FriendStatus.NONE -> Triple(
+                    "친구 요청",
+                    CamstudyTheme.colorScheme.primary,
+                    onRequestFriend
+                )
+                FriendStatus.REQUESTED -> Triple(
+                    "요청 취소",
+                    CamstudyTheme.colorScheme.systemUi05,
+                    onCancelRequest
+                )
+                FriendStatus.REQUEST_RECEIVED -> Triple(
+                    "친구 수락",
+                    CamstudyTheme.colorScheme.primary,
+                    onAcceptFriend
+                )
+                FriendStatus.ACCEPTED -> Triple(
+                    "친구 해제",
+                    CamstudyTheme.colorScheme.systemUi05,
+                    onRemoveFriend
+                )
+            }
+            CamstudyTextButton(
+                modifier = Modifier.padding(end = 4.dp),
+                label = label,
+                enabled = enabledActionButton,
+                colors = ButtonDefaults.camstudyTextButtonColors(
+                    contentColor = labelColor
+                ),
+                onClick = { onClick(user.id) }
+            )
+        }
+    )
 }

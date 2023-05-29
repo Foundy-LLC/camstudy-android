@@ -163,6 +163,7 @@ fun FriendScreen(
                     FriendTabDestination.List -> FriendListContent(
                         onUserClick = onUserClick,
                         users = friends,
+                        recommendTabUiState = uiState.friendRecommendTabUiState,
                         onRefresh = onFriendListRefresh
                     )
                     FriendTabDestination.Recommend -> FriendRecommendContent(

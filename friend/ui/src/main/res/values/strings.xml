@@ -26,4 +26,5 @@
     <string name="failed_to_cancel_friend_request">요청 취소를 실패했습니다</string>
     <string name="removed_friend">친구를 해제했습니다</string>
     <string name="failed_to_remove_friend">친구 해제를 실패했습니다</string>
+    <string name="recommendation_for_you">회원님을 위한 추천 친구</string>
 </resources>
