@@ -181,7 +181,7 @@ private fun LazyListScope.headerItem(
 }
 
 private fun LazyListScope.errorItem(loadState: CombinedLoadStates) {
-    val error = loadState.refresh as LoadState.Error
+    val error = loadState.refresh as? LoadState.Error ?: return
     item {
         val message = error.error.message ?: stringResource(R.string.unknown_error_caused)
         Text(text = message)
