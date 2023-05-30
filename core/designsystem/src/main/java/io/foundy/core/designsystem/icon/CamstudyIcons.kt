@@ -81,6 +81,7 @@ object CamstudyIcons {
     val KeyboardArrowUp = Icons.Default.KeyboardArrowUp.asCamstudyIcon()
     val KeyboardArrowDown = Icons.Default.KeyboardArrowDown.asCamstudyIcon()
     val AppTitle = R.drawable.ic_app_title.asCamstudyIcon()
+    val LoginTitle = R.drawable.ic_login_title.asCamstudyIcon()
 }
 
 sealed class CamstudyIcon

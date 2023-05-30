@@ -52,6 +52,7 @@ android {
 
 dependencies {
     implementation project(path: ':core:navigation')
+    implementation project(path: ':core:designsystem')
     implementation project(path: ':auth:domain')
     implementation project(path: ':user:data')
 
