@@ -118,10 +118,7 @@ fun RoomListScreen(
                 state = listState
             ) {
                 headerItem(query = uiState.searchQuery, onQueryChange = uiState.onSearchQueryChange)
-                items(
-                    items = rooms,
-                    key = { it.id }
-                ) { roomOverview ->
+                items(items = rooms) { roomOverview ->
                     if (roomOverview == null) {
                         return@items
                     }
