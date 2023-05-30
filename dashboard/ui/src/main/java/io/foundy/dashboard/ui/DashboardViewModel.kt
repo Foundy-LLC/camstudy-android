@@ -102,7 +102,7 @@ class DashboardViewModel @Inject constructor(
                 reduce {
                     state.copy(
                         recentRoomsUiState = RecentRoomsUiState.Success(
-                            recentRooms = rooms
+                            recentRooms = rooms.take(5)
                         )
                     )
                 }
