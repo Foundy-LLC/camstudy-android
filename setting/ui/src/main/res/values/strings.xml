@@ -47,4 +47,5 @@
     <string name="request_organization_enroll_mail">소속 등록 메일 요청하기</string>
     <string name="failed_to_request_organization">소속 등록 요청을 실패했어요</string>
     <string name="success_to_request_organization_adding">인증 메일을 보냈습니다. 24시간 이내에 응답해주세요.</string>
+    <string name="already_registered_organization">이미 등록된 소속이에요</string>
 </resources>

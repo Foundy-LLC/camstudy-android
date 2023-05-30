@@ -37,6 +37,10 @@ sealed class OrganizationEditUiState {
             recommendedOrganizations.firstOrNull { it.name == name }
         }
 
+        private val isOrganizationAlreadyRegistered = run {
+            registeredOrganizations.any { it.name == name }
+        }
+
         private val isValidEmailForSelectedOrganization: Boolean = run {
             val selectedOrganizationEmailAddress = selectedOrganization?.address
             if (selectedOrganizationEmailAddress != null) {
@@ -54,7 +58,13 @@ sealed class OrganizationEditUiState {
 
         val shouldShowNameError: Boolean
             get() {
-                return name.isNotEmpty() && selectedOrganization == null
+                if (isOrganizationAlreadyRegistered) {
+                    return true
+                }
+                if (selectedOrganization == null) {
+                    return false
+                }
+                return name.isNotEmpty()
             }
 
         val shouldShowEmailError: Boolean
@@ -72,6 +82,9 @@ sealed class OrganizationEditUiState {
             @Composable
             @ReadOnlyComposable
             get() {
+                if (isOrganizationAlreadyRegistered) {
+                    return stringResource(R.string.already_registered_organization)
+                }
                 if (selectedOrganization != null) {
                     return stringResource(R.string.organization_name_is_valid_supporting_text)
                 }
@@ -103,7 +116,8 @@ sealed class OrganizationEditUiState {
             }
 
         val canRequest: Boolean = run {
-            selectedOrganization != null &&
+            !isOrganizationAlreadyRegistered &&
+                selectedOrganization != null &&
                 isValidEmailForSelectedOrganization &&
                 !inRequesting
         }
