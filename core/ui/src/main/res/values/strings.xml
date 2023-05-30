@@ -28,7 +28,7 @@
     <string name="user_dialog_ranking_content">%d위</string>
     <string name="user_dialog_weekly_ranking_overall_info">상위 %d\%%</string>
     <string name="user_dialog_weekly_ranking_title">이번 주 랭킹</string>
-    <string name="user_dialog_weekly_study_time_title">주간 공부시간</string>
+    <string name="user_dialog_weekly_study_time_title">주간 공부</string>
     <string name="user_dialog_consecutive_study_days">%d일 연속 공부중</string>
     <string name="none">없음</string>
     <string name="user_dialog_harvested_crops_title">작물 현황</string>
