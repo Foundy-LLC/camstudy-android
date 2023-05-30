@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -61,37 +60,37 @@ fun FriendListContent(
                         showDivider = users.itemCount - 1 != index
                     )
                 }
-                if (hasRecommendedUser && !isFriendListLoading) {
-                    item {
-                        Spacer(
-                            modifier = Modifier
-                                .height(8.dp)
-                                .fillMaxWidth()
-                                .background(color = CamstudyTheme.colorScheme.systemUi01)
+            }
+            if (hasRecommendedUser && !isFriendListLoading) {
+                item {
+                    Spacer(
+                        modifier = Modifier
+                            .height(8.dp)
+                            .fillMaxWidth()
+                            .background(color = CamstudyTheme.colorScheme.systemUi01)
+                    )
+                    CamstudyText(
+                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp),
+                        text = stringResource(R.string.recommendation_for_you),
+                        style = CamstudyTheme.typography.titleMedium.copy(
+                            color = CamstudyTheme.colorScheme.systemUi07,
+                            fontWeight = FontWeight.Normal
                         )
-                        CamstudyText(
-                            modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp),
-                            text = stringResource(R.string.recommendation_for_you),
-                            style = CamstudyTheme.typography.titleMedium.copy(
-                                color = CamstudyTheme.colorScheme.systemUi07,
-                                fontWeight = FontWeight.Normal
-                            )
-                        )
-                        CamstudyDivider()
-                    }
-                    items(items = recommendTabUiState.recommendedUsers) { user ->
-                        RecommendedUserTile(
-                            user = user,
-                            enabledActionButton = !recommendTabUiState.inPendingUserIds.contains(
-                                element = user.id
-                            ),
-                            onUserClick = { onUserClick(user.id) },
-                            onRemoveFriend = recommendTabUiState.onRemoveFriend,
-                            onCancelRequest = recommendTabUiState.onCancelRequest,
-                            onAcceptFriend = recommendTabUiState.onAcceptFriend,
-                            onRequestFriend = recommendTabUiState.onRequestFriend
-                        )
-                    }
+                    )
+                    CamstudyDivider()
+                }
+                items(items = recommendTabUiState.recommendedUsers) { user ->
+                    RecommendedUserTile(
+                        user = user,
+                        enabledActionButton = !recommendTabUiState.inPendingUserIds.contains(
+                            element = user.id
+                        ),
+                        onUserClick = { onUserClick(user.id) },
+                        onRemoveFriend = recommendTabUiState.onRemoveFriend,
+                        onCancelRequest = recommendTabUiState.onCancelRequest,
+                        onAcceptFriend = recommendTabUiState.onAcceptFriend,
+                        onRequestFriend = recommendTabUiState.onRequestFriend
+                    )
                 }
             }
         }
@@ -99,16 +98,14 @@ fun FriendListContent(
 }
 
 @Composable
-private fun LazyItemScope.EmptyFriends() {
+private fun EmptyFriends() {
     Box(
         modifier = Modifier
-            .fillParentMaxSize()
-            .padding(16.dp)
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp, vertical = 40.dp)
     ) {
         CamstudyText(
-            modifier = Modifier
-                .padding(16.dp)
-                .align(Alignment.Center),
+            modifier = Modifier.align(Alignment.Center),
             text = stringResource(R.string.there_is_no_friend),
             style = CamstudyTheme.typography.headlineSmall.copy(
                 color = CamstudyTheme.colorScheme.systemUi04,
