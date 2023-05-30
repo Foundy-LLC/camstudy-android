@@ -27,8 +27,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
-import io.foundy.core.designsystem.component.CamstudyText
 import io.foundy.core.designsystem.component.CamstudyContainedButton
+import io.foundy.core.designsystem.component.CamstudyText
 import io.foundy.core.designsystem.icon.CamstudyIcon
 import io.foundy.core.designsystem.icon.CamstudyIcons
 import io.foundy.core.designsystem.theme.CamstudyTheme
@@ -45,15 +45,16 @@ fun RoomTileWithJoinButton(
     Row(modifier = modifier.background(color = CamstudyTheme.colorScheme.systemBackground)) {
         RoomTile(
             modifier = Modifier
-                .weight(1f)
-                .padding(16.dp),
+                .padding(vertical = 16.dp)
+                .padding(start = 16.dp)
+                .weight(1f),
             room = room
         )
-        Box(modifier = Modifier.width(28.dp))
         CamstudyContainedButton(
             modifier = Modifier
                 .align(Alignment.Bottom)
-                .padding(16.dp),
+                .padding(vertical = 16.dp)
+                .padding(end = 16.dp),
             label = stringResource(R.string.join),
             onClick = { onJoinClick(room) }
         )
@@ -223,6 +224,29 @@ private fun JoinerImages(joinerImages: List<String?>, maxCount: Int) {
                 rightPaddingBox()
             }
         }
+    }
+}
+
+@Preview(fontScale = 1.0f)
+@Composable
+private fun RoomTileWithJoinButtonPreview() {
+    CamstudyTheme {
+        RoomTileWithJoinButton(
+            room = RoomOverview(
+                id = "id",
+                title = "공시족 모여라모여라모여라모여라모여라모여라모여라모여라모여라모여라모여라모여라",
+                masterId = "id",
+                hasPassword = false,
+                thumbnail = null,
+                joinCount = 1,
+                joinedUsers = listOf(
+                    UserOverview(id = "id", name = "김민성", profileImage = null, introduce = null)
+                ),
+                maxCount = 4,
+                tags = listOf("공시", "자격증")
+            ),
+            onJoinClick = {}
+        )
     }
 }
 
