@@ -191,32 +191,13 @@ fun CamstudyTextField(
             visualTransformation = visualTransformation,
             cursorBrush = SolidColor(colorScheme.primary),
             decorationBox = { innerTextField ->
-                Box(
-                    modifier = Modifier
-                        .heightIn(min = 48.dp)
-                        .padding(horizontal = 16.dp)
-                ) {
-                    val verticalAlignmentModifier = Modifier.align(Alignment.CenterStart)
-
-                    if (value.isEmpty() && placeholder != null) {
-                        CamstudyText(
-                            modifier = verticalAlignmentModifier,
-                            text = placeholder,
-                            style = textStyle
-                        )
-                    }
-                    Row(
-                        modifier = verticalAlignmentModifier,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        if (prefix != null) {
-                            ProvideTextStyle(value = CamstudyTextFieldTextStyle) {
-                                prefix()
-                            }
-                        }
-                        innerTextField()
-                    }
-                }
+                DecorationBox(
+                    value = value,
+                    textStyle = textStyle,
+                    placeholder = placeholder,
+                    prefix = prefix,
+                    innerTextField = innerTextField
+                )
             }
         )
         supportingContent?.invoke()
@@ -226,6 +207,43 @@ fun CamstudyTextField(
                 text = it,
                 style = typography.labelMedium.copy(color = supportingTextColor)
             )
+        }
+    }
+}
+
+@Composable
+private fun DecorationBox(
+    value: String,
+    textStyle: TextStyle,
+    placeholder: String?,
+    prefix: (@Composable () -> Unit)?,
+    innerTextField: @Composable () -> Unit,
+) {
+    Box(
+        modifier = Modifier
+            .heightIn(min = 48.dp)
+            .padding(horizontal = 16.dp)
+    ) {
+        val verticalAlignmentModifier = Modifier.align(Alignment.CenterStart)
+
+        Row(
+            modifier = verticalAlignmentModifier,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            if (prefix != null) {
+                ProvideTextStyle(value = CamstudyTextFieldTextStyle) {
+                    prefix()
+                }
+            }
+            if (value.isEmpty() && placeholder != null) {
+                CamstudyText(
+                    modifier = verticalAlignmentModifier,
+                    text = placeholder,
+                    style = textStyle
+                )
+            } else {
+                innerTextField()
+            }
         }
     }
 }
