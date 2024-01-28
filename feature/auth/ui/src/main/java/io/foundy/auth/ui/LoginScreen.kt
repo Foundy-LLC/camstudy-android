@@ -30,6 +30,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
+import com.google.android.gms.common.api.Status
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
@@ -61,10 +62,9 @@ fun LoginRoute(
     val scope = rememberCoroutineScope()
     val signInWithGoogleLauncher = rememberSignInWithGoogleLauncher(
         onFailure = {
+            val message = context.getString(R.string.failed_to_sign_in, it.statusCode)
             scope.launch {
-                snackbarHostState.showSnackbar(
-                    context.getString(R.string.failed_to_sign_in, it.statusCode)
-                )
+                snackbarHostState.showSnackbar(message)
             }
         }
     )
@@ -136,8 +136,11 @@ private fun rememberSignInWithGoogleLauncher(
     onFailure: (ApiException) -> Unit
 ): ManagedActivityResultLauncher<Intent, ActivityResult> {
     val startActivityForResult = ActivityResultContracts.StartActivityForResult()
-    return rememberLauncherForActivityResult(startActivityForResult) { result ->
+    return rememberLauncherForActivityResult(startActivityForResult) remember@{ result ->
         val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
+        if (task.isSuccessful.not()) {
+            return@remember
+        }
         try {
             val account = task.getResult(ApiException::class.java)
             val credential = GoogleAuthProvider.getCredential(account.idToken, null)
