@@ -4,18 +4,18 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ramcosta.composedestinations.spec.DirectionDestinationSpec
 import dagger.hilt.android.lifecycle.HiltViewModel
-import io.foundy.auth.domain.usecase.ExistsInitInfoUseCase
-import io.foundy.auth.domain.usecase.GetCurrentUserIdUseCase
+import io.foundy.auth.domain.model.AuthState
+import io.foundy.auth.domain.usecase.GetAuthStateStreamUseCase
 import io.foundy.auth.ui.destinations.LoginRouteDestination
 import io.foundy.home.ui.destinations.HomeRouteDestination
 import io.foundy.welcome.ui.destinations.WelcomeRouteDestination
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
-    private val getCurrentUserIdUseCase: GetCurrentUserIdUseCase,
-    private val existsInitInfoUseCase: ExistsInitInfoUseCase
+    private val getAuthStateStreamUseCase: GetAuthStateStreamUseCase,
 ) : ViewModel() {
 
     private var _startDestination: DirectionDestinationSpec? = null
@@ -23,22 +23,14 @@ class MainViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            val currentUserId = getCurrentUserIdUseCase()
-            if (currentUserId == null) {
-                _startDestination = LoginRouteDestination
-            } else {
-                val existsInitInfo = existsInitInfoUseCase()
-                if (existsInitInfo == null) {
-                    // 로그인이 되어 있으나 초기 정보 입력 여부를 판단할 수 없는 경우 서버와의 연결에 실패한 것이다.
-                    // 에러 메시지는 로그인 화면에서 보이기 때문에 따로 여기서 에러 메시지를 보이는 로직은 없다.
-                    _startDestination = LoginRouteDestination
-                    return@launch
-                }
-                _startDestination = if (existsInitInfo) {
+            _startDestination = when (val authState = getAuthStateStreamUseCase().firstOrNull()) {
+                is AuthState.SignedIn -> if (authState.existsInitInfo) {
                     HomeRouteDestination
                 } else {
                     WelcomeRouteDestination
                 }
+
+                else -> LoginRouteDestination
             }
         }
     }

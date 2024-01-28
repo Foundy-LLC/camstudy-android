@@ -1,8 +1,8 @@
 package io.foundy.camstudy
 
 import dagger.hilt.android.testing.HiltAndroidTest
-import io.foundy.auth.domain.usecase.ExistsInitInfoUseCase
-import io.foundy.auth.domain.usecase.GetCurrentUserIdUseCase
+import io.foundy.auth.domain.model.AuthState
+import io.foundy.auth.domain.usecase.GetAuthStateStreamUseCase
 import io.foundy.auth.ui.destinations.LoginRouteDestination
 import io.foundy.camstudy.fake.FakeAuthRepository
 import io.foundy.core.test.MainDispatcherRule
@@ -29,18 +29,17 @@ class MainViewModelTest {
     private lateinit var viewModel: MainViewModel
 
     @Test
-    fun `should startDestination is Login when currentUserId is null`() = runTest {
+    fun `should startDestination is Login when not signed in`() = runTest {
         initViewModel()
-        authRepository.currentUserIdSharedFlow.emit(null)
+        authRepository.emitState(AuthState.NotSignedIn)
 
         assertEquals(LoginRouteDestination, viewModel.startDestination)
     }
 
     @Test
     fun `should startDestination is Home when currentUserId and init info exist`() = runTest {
-        authRepository.currentUserIdSharedFlow.emit("id")
-        authRepository.existsInitInfoTestValue = true
         initViewModel()
+        authRepository.emitState(AuthState.SignedIn(currentUserId = "id", existsInitInfo = true))
 
         assertEquals(HomeRouteDestination, viewModel.startDestination)
     }
@@ -48,27 +47,29 @@ class MainViewModelTest {
     @Test
     fun `should startDestination is Welcome when currentUserId exists but init info not`() =
         runTest {
-            authRepository.currentUserIdSharedFlow.emit("id")
-            authRepository.existsInitInfoTestValue = false
             initViewModel()
+            authRepository.emitState(
+                AuthState.SignedIn(
+                    currentUserId = "id",
+                    existsInitInfo = false
+                )
+            )
 
             assertEquals(WelcomeRouteDestination, viewModel.startDestination)
         }
 
     @Test
-    fun `should startDestination is Login when currentUserId exists but init info is null`() =
+    fun `should startDestination is Login when there is error`() =
         runTest {
-            authRepository.currentUserIdSharedFlow.emit("id")
-            authRepository.existsInitInfoTestValue = null
             initViewModel()
+            authRepository.emitState(AuthState.Error)
 
             assertEquals(LoginRouteDestination, viewModel.startDestination)
         }
 
     private fun initViewModel() {
         viewModel = MainViewModel(
-            getCurrentUserIdUseCase = GetCurrentUserIdUseCase(authRepository = authRepository),
-            existsInitInfoUseCase = ExistsInitInfoUseCase(authRepository = authRepository)
+            getAuthStateStreamUseCase = GetAuthStateStreamUseCase(authRepository = authRepository)
         )
     }
 }
