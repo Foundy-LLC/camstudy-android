@@ -1,9 +1,7 @@
 plugins {
-    id 'com.android.application'
+    id 'com.android.library'
     id 'org.jetbrains.kotlin.android'
-    id 'com.google.gms.google-services'
     id 'kotlin-kapt'
-    id 'dagger.hilt.android.plugin'
     id 'org.jlleitschuh.gradle.ktlint' version "$ktlint_version"
     id 'com.google.devtools.ksp' version "$ksp_version"
 }
@@ -11,20 +9,15 @@ plugins {
 android {
     def globalConfiguration = rootProject.extensions.getByName("ext")
 
-    namespace 'io.foundy.camstudy'
+    namespace 'io.foundy.ranking.ui'
     compileSdk globalConfiguration["android_compile_sdk_version"]
 
     defaultConfig {
-        applicationId "io.foundy.camstudy"
         minSdk globalConfiguration["android_min_sdk_version"]
         targetSdk globalConfiguration["android_target_sdk_version"]
-        versionCode globalConfiguration["android_version_code"]
-        versionName globalConfiguration["android_version_name"]
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-        vectorDrawables {
-            useSupportLibrary true
-        }
+        consumerProguardFiles "consumer-rules.pro"
     }
 
     buildTypes {
@@ -37,52 +30,52 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
-    kotlinOptions {
-        jvmTarget = '1.8'
-    }
     buildFeatures {
         compose true
     }
     composeOptions {
         kotlinCompilerExtensionVersion '1.4.2'
     }
-    packagingOptions {
-        resources {
-            excludes += '/META-INF/{AL2.0,LGPL2.1}'
-        }
+    kotlinOptions {
+        jvmTarget = '1.8'
     }
     ksp {
-        arg("compose-destinations.moduleName", "app")
-        arg("compose-destinations.mode", "navgraphs")
+        arg("compose-destinations.moduleName", "ranking")
+        arg("compose-destinations.mode", "destinations")
     }
 }
 
 dependencies {
-    implementation project(":core:designsystem")
-    implementation project(":core:navigation")
-    implementation project(":core:test")
-    implementation project(":feature:auth:domain")
-    implementation project(":feature:auth:data")
-    implementation project(":feature:auth:ui")
-    implementation project(":feature:setting:ui")
-    implementation project(":feature:welcome:ui")
-    implementation project(":feature:home:ui")
-    implementation project(":feature:room-list:ui")
-    implementation project(":feature:room:ui")
-    implementation project(":feature:organization:ui")
-    implementation project(":feature:crop:ui")
-    implementation project(path: ':feature:dashboard:ui')
-    implementation project(path: ':feature:search:ui')
+    implementation project(path: ':core:navigation')
+    implementation project(path: ':core:designsystem')
+    implementation project(path: ':core:model')
+    implementation project(path: ':core:ui')
+    implementation project(path: ':core:common')
+    implementation project(path: ':feature:ranking:data')
+    implementation project(path: ':feature:organization:ui')
+    implementation project(path: ':feature:auth:domain')
+    implementation project(path: ':feature:organization:data')
+    implementation project(path: ':feature:user:ui')
 
-    // stream log
-    implementation("io.getstream:stream-log-android:$stream_log_version")
-    debugImplementation("io.getstream:stream-log-android-file:$stream_log_version")
-
-    // mediasoup
-    implementation "org.mediasoup.droid:mediasoup-client:$mediasoupe_version"
+    // coil
+    implementation("io.coil-kt:coil-compose:$coil_version")
 
     // compose destination
-    implementation "io.github.raamcosta.compose-destinations:animations-core:$compose_destination_version"
+    implementation "io.github.raamcosta.compose-destinations:core:$compose_destination_version"
+    ksp "io.github.raamcosta.compose-destinations:ksp:$compose_destination_version"
+
+    // navigation
+    implementation "androidx.hilt:hilt-navigation-compose:$hilt_navigation_compose"
+    implementation "com.google.accompanist:accompanist-navigation-animation:$accompanist_navigation_animation"
+
+    // orbit
+    implementation("org.orbit-mvi:orbit-viewmodel:$orbit_version")
+    implementation("org.orbit-mvi:orbit-compose:$orbit_version")
+    testImplementation("org.orbit-mvi:orbit-test:$orbit_version")
+
+    // paging
+    implementation "androidx.paging:paging-common-ktx:$paging"
+    implementation "androidx.paging:paging-compose:$paging_compose"
 
     // hilt
     implementation "com.google.dagger:hilt-android:$hilt_version"
@@ -93,17 +86,6 @@ dependencies {
     androidTestImplementation "com.google.dagger:hilt-android-testing:$hilt_version"
     kaptAndroidTest "com.google.dagger:hilt-android-compiler:$hilt_version"
     androidTestAnnotationProcessor "com.google.dagger:hilt-android-compiler:$hilt_version"
-
-    // firabse
-    implementation platform("com.google.firebase:firebase-bom:$firebase_bom")
-    implementation 'com.google.firebase:firebase-analytics-ktx'
-
-    // navigation
-    implementation "androidx.navigation:navigation-compose:$nav_version"
-    implementation "com.google.accompanist:accompanist-navigation-animation:$accompanist_navigation_animation"
-
-    // coroutine test
-    testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:$coroutines_version"
 
     implementation 'androidx.core:core-ktx:1.9.0'
     implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.5.1'

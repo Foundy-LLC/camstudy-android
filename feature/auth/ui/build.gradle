@@ -1,9 +1,7 @@
 plugins {
-    id 'com.android.application'
+    id 'com.android.library'
     id 'org.jetbrains.kotlin.android'
-    id 'com.google.gms.google-services'
     id 'kotlin-kapt'
-    id 'dagger.hilt.android.plugin'
     id 'org.jlleitschuh.gradle.ktlint' version "$ktlint_version"
     id 'com.google.devtools.ksp' version "$ksp_version"
 }
@@ -11,20 +9,20 @@ plugins {
 android {
     def globalConfiguration = rootProject.extensions.getByName("ext")
 
-    namespace 'io.foundy.camstudy'
+    namespace 'io.foundy.auth.ui'
     compileSdk globalConfiguration["android_compile_sdk_version"]
 
     defaultConfig {
-        applicationId "io.foundy.camstudy"
         minSdk globalConfiguration["android_min_sdk_version"]
         targetSdk globalConfiguration["android_target_sdk_version"]
-        versionCode globalConfiguration["android_version_code"]
-        versionName globalConfiguration["android_version_name"]
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-        vectorDrawables {
-            useSupportLibrary true
-        }
+        consumerProguardFiles "consumer-rules.pro"
+
+        def localPropertiesFile = rootProject.file("local.properties")
+        def localProperties = new Properties()
+        localProperties.load(new FileInputStream(localPropertiesFile))
+        buildConfigField("String", "WEB_CLIENT_ID", localProperties['WEB_CLIENT_ID'])
     }
 
     buildTypes {
@@ -37,52 +35,42 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
-    kotlinOptions {
-        jvmTarget = '1.8'
-    }
     buildFeatures {
         compose true
     }
     composeOptions {
         kotlinCompilerExtensionVersion '1.4.2'
     }
-    packagingOptions {
-        resources {
-            excludes += '/META-INF/{AL2.0,LGPL2.1}'
-        }
+    kotlinOptions {
+        jvmTarget = '1.8'
     }
     ksp {
-        arg("compose-destinations.moduleName", "app")
-        arg("compose-destinations.mode", "navgraphs")
+        arg("compose-destinations.moduleName", "auth")
+        arg("compose-destinations.mode", "destinations")
     }
 }
 
 dependencies {
-    implementation project(":core:designsystem")
-    implementation project(":core:navigation")
-    implementation project(":core:test")
-    implementation project(":feature:auth:domain")
-    implementation project(":feature:auth:data")
-    implementation project(":feature:auth:ui")
-    implementation project(":feature:setting:ui")
-    implementation project(":feature:welcome:ui")
-    implementation project(":feature:home:ui")
-    implementation project(":feature:room-list:ui")
-    implementation project(":feature:room:ui")
-    implementation project(":feature:organization:ui")
-    implementation project(":feature:crop:ui")
-    implementation project(path: ':feature:dashboard:ui')
-    implementation project(path: ':feature:search:ui')
-
-    // stream log
-    implementation("io.getstream:stream-log-android:$stream_log_version")
-    debugImplementation("io.getstream:stream-log-android-file:$stream_log_version")
-
-    // mediasoup
-    implementation "org.mediasoup.droid:mediasoup-client:$mediasoupe_version"
+    implementation project(path: ':core:navigation')
+    implementation project(path: ':core:designsystem')
+    implementation project(path: ':feature:auth:domain')
+    implementation project(path: ':feature:user:data')
 
     // compose destination
-    implementation "io.github.raamcosta.compose-destinations:animations-core:$compose_destination_version"
+    implementation "io.github.raamcosta.compose-destinations:core:$compose_destination_version"
+    ksp "io.github.raamcosta.compose-destinations:ksp:$compose_destination_version"
+
+    // navigation
+    implementation "com.google.accompanist:accompanist-navigation-animation:$accompanist_navigation_animation"
+
+    // orbit
+    implementation("org.orbit-mvi:orbit-viewmodel:$orbit_version")
+    implementation("org.orbit-mvi:orbit-compose:$orbit_version")
+    testImplementation("org.orbit-mvi:orbit-test:$orbit_version")
+
+    // play services
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.6.4"
+    implementation "com.google.android.gms:play-services-auth:20.4.1"
 
     // hilt
     implementation "com.google.dagger:hilt-android:$hilt_version"
@@ -94,16 +82,21 @@ dependencies {
     kaptAndroidTest "com.google.dagger:hilt-android-compiler:$hilt_version"
     androidTestAnnotationProcessor "com.google.dagger:hilt-android-compiler:$hilt_version"
 
-    // firabse
-    implementation platform("com.google.firebase:firebase-bom:$firebase_bom")
-    implementation 'com.google.firebase:firebase-analytics-ktx'
+    // retrofit2
+    implementation "com.squareup.retrofit2:retrofit:$retrofit_version"
+    implementation "com.squareup.retrofit2:converter-gson:$retrofit_version"
+    implementation 'com.squareup.okhttp3:logging-interceptor:4.9.2'
+
+    // junit
+    testImplementation "junit:junit:$junit_version"
 
     // navigation
     implementation "androidx.navigation:navigation-compose:$nav_version"
-    implementation "com.google.accompanist:accompanist-navigation-animation:$accompanist_navigation_animation"
+    implementation "androidx.hilt:hilt-navigation-compose:$hilt_navigation_compose"
 
-    // coroutine test
-    testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:$coroutines_version"
+    // firabse
+    implementation platform("com.google.firebase:firebase-bom:$firebase_bom")
+    implementation 'com.google.firebase:firebase-auth-ktx'
 
     implementation 'androidx.core:core-ktx:1.9.0'
     implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.5.1'
