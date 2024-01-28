@@ -7,6 +7,7 @@ import io.foundy.auth.domain.usecase.GetCurrentUserIdStreamUseCase
 import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.syntax.simple.intent
 import org.orbitmvi.orbit.syntax.simple.postSideEffect
+import org.orbitmvi.orbit.syntax.simple.reduce
 import org.orbitmvi.orbit.viewmodel.container
 import javax.inject.Inject
 
@@ -16,7 +17,7 @@ class LoginViewModel @Inject constructor(
     private val existsInitInfoUseCase: ExistsInitInfoUseCase
 ) : ViewModel(), ContainerHost<LoginUiState, LoginSideEffect> {
 
-    override val container = container<LoginUiState, LoginSideEffect>(LoginUiState)
+    override val container = container<LoginUiState, LoginSideEffect>(LoginUiState())
 
     init {
         intent {
@@ -39,6 +40,12 @@ class LoginViewModel @Inject constructor(
                     postSideEffect(LoginSideEffect.NavigateToWelcome)
                 }
             }
+        }
+    }
+
+    fun setInProgressGoogleSignIn(inProgress: Boolean) = intent {
+        reduce {
+            state.copy(inProgressGoogleSignIn = inProgress)
         }
     }
 }

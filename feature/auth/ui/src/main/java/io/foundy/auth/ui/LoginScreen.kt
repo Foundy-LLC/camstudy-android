@@ -30,7 +30,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
-import com.google.android.gms.common.api.Status
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
@@ -61,7 +60,9 @@ fun LoginRoute(
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
     val signInWithGoogleLauncher = rememberSignInWithGoogleLauncher(
+        onCancelled = { viewModel.setInProgressGoogleSignIn(false) },
         onFailure = {
+            viewModel.setInProgressGoogleSignIn(false)
             val message = context.getString(R.string.failed_to_sign_in, it.statusCode)
             scope.launch {
                 snackbarHostState.showSnackbar(message)
@@ -90,6 +91,7 @@ fun LoginRoute(
                 .build()
             val googleSignInClient = GoogleSignIn.getClient(context, options)
             signInWithGoogleLauncher.launch(googleSignInClient.signInIntent)
+            viewModel.setInProgressGoogleSignIn(true)
         }
     )
 }
@@ -126,19 +128,25 @@ fun LoginScreen(
                 )
             )
             Spacer(modifier = Modifier.height(36.dp))
-            GoogleLoginButton(onClick = onGoogleLoginClick)
+            GoogleLoginButton(
+                showProgressIndicator = uiState.inProgressGoogleSignIn,
+                enabled = !uiState.inProgressGoogleSignIn,
+                onClick = onGoogleLoginClick
+            )
         }
     }
 }
 
 @Composable
 private fun rememberSignInWithGoogleLauncher(
+    onCancelled: () -> Unit,
     onFailure: (ApiException) -> Unit
 ): ManagedActivityResultLauncher<Intent, ActivityResult> {
     val startActivityForResult = ActivityResultContracts.StartActivityForResult()
     return rememberLauncherForActivityResult(startActivityForResult) remember@{ result ->
         val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
         if (task.isSuccessful.not()) {
+            onCancelled()
             return@remember
         }
         try {
@@ -156,7 +164,7 @@ private fun rememberSignInWithGoogleLauncher(
 @Composable
 fun LoginScreenPreview() {
     LoginScreen(
-        LoginUiState,
+        LoginUiState(),
         snackbarHostState = SnackbarHostState(),
         onGoogleLoginClick = {}
     )

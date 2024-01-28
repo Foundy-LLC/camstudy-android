@@ -1,3 +1,5 @@
 package io.foundy.auth.ui
 
-object LoginUiState
+data class LoginUiState(
+    val inProgressGoogleSignIn: Boolean = false
+)
