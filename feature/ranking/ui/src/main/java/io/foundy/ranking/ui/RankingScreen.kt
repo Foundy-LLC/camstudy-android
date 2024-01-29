@@ -36,7 +36,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
-import androidx.paging.compose.items
+import androidx.paging.compose.itemKey
 import com.ramcosta.composedestinations.annotation.Destination
 import io.found.user.ui.UserProfileDialog
 import io.foundy.core.designsystem.component.CamstudyDivider
@@ -205,10 +205,8 @@ private fun RankingContent(
                 )
                 CamstudyDivider()
             }
-            items(users, key = { it.id }) { user ->
-                if (user == null) {
-                    return@items
-                }
+            items(count = users.itemCount, key = users.itemKey { it.id }) { index ->
+                val user = users[index] ?: return@items
                 RankingTile(user = user, onClick = onClickUser)
             }
             // TODO: 에러 보이기

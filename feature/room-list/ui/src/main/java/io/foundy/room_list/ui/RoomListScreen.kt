@@ -28,7 +28,7 @@ import androidx.paging.CombinedLoadStates
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
-import androidx.paging.compose.items
+import androidx.paging.compose.itemKey
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import io.foundy.core.designsystem.component.CamstudyDivider
 import io.foundy.core.designsystem.component.CamstudyExtendedFloatingActionButton
@@ -119,12 +119,10 @@ fun RoomListScreen(
             ) {
                 headerItem(query = uiState.searchQuery, onQueryChange = uiState.onSearchQueryChange)
                 items(
-                    items = rooms,
-                    key = { it.id }
-                ) { roomOverview ->
-                    if (roomOverview == null) {
-                        return@items
-                    }
+                    count = rooms.itemCount,
+                    key = rooms.itemKey { it.id },
+                ) { index ->
+                    val roomOverview = rooms[index] ?: return@items
                     Box {
                         RoomTileWithJoinButton(
                             modifier = Modifier.fillMaxWidth(),
