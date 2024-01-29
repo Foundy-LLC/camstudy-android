@@ -3,6 +3,7 @@ package io.foundy.room_list.ui
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -22,9 +23,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.paging.CombinedLoadStates
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
@@ -46,6 +47,7 @@ import io.foundy.room.ui.RoomActivity
 import io.foundy.room_list.ui.create.destinations.RoomCreateScreenDestination
 import org.orbitmvi.orbit.compose.collectAsState
 import org.orbitmvi.orbit.compose.collectSideEffect
+import java.net.ConnectException
 
 @Composable
 fun RoomListRoute(
@@ -63,6 +65,7 @@ fun RoomListRoute(
                 snackbarHostState.currentSnackbarData?.dismiss()
                 snackbarHostState.showSnackbar(it.content ?: context.getString(it.defaultRes))
             }
+
             is RoomListSideEffect.SuccessToCreateRoom -> {
                 val intent = RoomActivity.getIntent(context, roomOverview = it.createdRoom)
                 context.startActivity(intent)
@@ -114,7 +117,9 @@ fun RoomListScreen(
             }
         ) { padding ->
             LazyColumn(
-                modifier = Modifier.padding(padding),
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(padding),
                 state = listState
             ) {
                 headerItem(query = uiState.searchQuery, onQueryChange = uiState.onSearchQueryChange)
@@ -133,12 +138,12 @@ fun RoomListScreen(
                     }
                 }
                 item { CamstudyDivider() }
-                when (rooms.loadState.refresh) { // FIRST LOAD
-                    is LoadState.Error -> errorItem(rooms.loadState)
+                when (val loadState = rooms.loadState.refresh) { // FIRST LOAD
+                    is LoadState.Error -> errorItem(loadState)
                     else -> {}
                 }
-                when (rooms.loadState.append) { // Pagination
-                    is LoadState.Error -> errorItem(rooms.loadState)
+                when (val loadState = rooms.loadState.append) { // Pagination
+                    is LoadState.Error -> errorItem(loadState)
                     else -> {}
                 }
                 item { Spacer(modifier = Modifier.height(FloatingActionButtonBottomPadding)) }
@@ -178,10 +183,21 @@ private fun LazyListScope.headerItem(
     }
 }
 
-private fun LazyListScope.errorItem(loadState: CombinedLoadStates) {
-    val error = loadState.refresh as? LoadState.Error ?: return
+private fun LazyListScope.errorItem(loadState: LoadState.Error) {
     item {
-        val message = error.error.message ?: stringResource(R.string.unknown_error_caused)
-        Text(text = message)
+        val message = when (loadState.error) {
+            is ConnectException -> stringResource(R.string.network_error)
+            else -> loadState.error.message ?: stringResource(R.string.unknown_error_caused)
+        }
+        Text(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            text = message,
+            style = CamstudyTheme.typography.headlineSmall.copy(
+                color = CamstudyTheme.colorScheme.text04,
+            ),
+            textAlign = TextAlign.Center
+        )
     }
 }
