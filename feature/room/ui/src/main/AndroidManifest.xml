@@ -10,11 +10,11 @@
 
     <application android:theme="@style/Theme.Camstudy">
 
-        <receiver android:name=".receiver.VideoToggleReceiver" />
-        <receiver android:name=".receiver.AudioToggleReceiver" />
+        <receiver android:name="io.foundy.feature.room.ui.receiver.VideoToggleReceiver" />
+        <receiver android:name="io.foundy.feature.room.ui.receiver.AudioToggleReceiver" />
 
         <activity
-            android:name=".RoomActivity"
+            android:name="io.foundy.feature.room.ui.RoomActivity"
             android:configChanges="screenSize|smallestScreenSize|screenLayout|orientation"
             android:exported="false"
             android:launchMode="singleInstance"

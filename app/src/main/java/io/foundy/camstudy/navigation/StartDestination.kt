@@ -1,5 +1,5 @@
 package io.foundy.camstudy.navigation
 
-import io.foundy.auth.ui.destinations.LoginRouteDestination
+import io.foundy.feature.auth.ui.destinations.LoginRouteDestination
 
 typealias StartDestination = LoginRouteDestination

@@ -14,11 +14,11 @@ import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import com.ramcosta.composedestinations.spec.DestinationStyle
 import com.ramcosta.composedestinations.spec.DirectionDestinationSpec
 import dagger.hilt.android.AndroidEntryPoint
-import io.foundy.auth.ui.destinations.LoginRouteDestination
 import io.foundy.camstudy.navigation.StartDestination
 import io.foundy.camstudy.ui.CamstudyApp
-import io.foundy.home.ui.destinations.HomeRouteDestination
-import io.foundy.welcome.ui.destinations.WelcomeRouteDestination
+import io.foundy.feature.auth.ui.destinations.LoginRouteDestination
+import io.foundy.feature.home.ui.destinations.HomeRouteDestination
+import io.foundy.feature.welcome.ui.destinations.WelcomeRouteDestination
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 

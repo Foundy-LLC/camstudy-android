@@ -1,13 +1,13 @@
 package io.foundy.camstudy
 
 import dagger.hilt.android.testing.HiltAndroidTest
-import io.foundy.auth.domain.model.AuthState
-import io.foundy.auth.domain.usecase.GetAuthStateStreamUseCase
-import io.foundy.auth.ui.destinations.LoginRouteDestination
 import io.foundy.camstudy.fake.FakeAuthRepository
 import io.foundy.core.test.MainDispatcherRule
-import io.foundy.home.ui.destinations.HomeRouteDestination
-import io.foundy.welcome.ui.destinations.WelcomeRouteDestination
+import io.foundy.feature.auth.domain.model.AuthState
+import io.foundy.feature.auth.domain.usecase.GetAuthStateStreamUseCase
+import io.foundy.feature.auth.ui.destinations.LoginRouteDestination
+import io.foundy.feature.home.ui.destinations.HomeRouteDestination
+import io.foundy.feature.welcome.ui.destinations.WelcomeRouteDestination
 import junit.framework.TestCase.assertEquals
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest

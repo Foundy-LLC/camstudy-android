@@ -13,13 +13,13 @@ import io.foundy.camstudy.navigation.RootNavGraph
 import io.foundy.camstudy.navigation.navigator.LoginNavigatorImpl
 import io.foundy.camstudy.navigation.navigator.WelcomeNavigatorImpl
 import io.foundy.core.designsystem.theme.CamstudyTheme
-import io.foundy.crop.ui.destinations.PlantCropRouteDestination
-import io.foundy.home.ui.HomeRoute
-import io.foundy.home.ui.destinations.HomeRouteDestination
-import io.foundy.setting.ui.SettingRoute
-import io.foundy.setting.ui.destinations.EditProfileRouteDestination
-import io.foundy.setting.ui.destinations.SettingRouteDestination
-import io.foundy.setting.ui.model.EditProfileResult
+import io.foundy.feature.crop.ui.destinations.PlantCropRouteDestination
+import io.foundy.feature.home.ui.HomeRoute
+import io.foundy.feature.home.ui.destinations.HomeRouteDestination
+import io.foundy.feature.setting.ui.SettingRoute
+import io.foundy.feature.setting.ui.destinations.EditProfileRouteDestination
+import io.foundy.feature.setting.ui.destinations.SettingRouteDestination
+import io.foundy.feature.setting.ui.model.EditProfileResult
 
 @OptIn(ExperimentalAnimationApi::class, ExperimentalMaterialNavigationApi::class)
 @Composable

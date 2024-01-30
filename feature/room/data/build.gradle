@@ -13,7 +13,7 @@ localProperties.load(new FileInputStream(localPropertiesFile))
 android {
     def globalConfiguration = rootProject.extensions.getByName("ext")
 
-    namespace 'io.foundy.room.data'
+    namespace 'io.foundy.feature.room.data'
     compileSdk globalConfiguration["android_compile_sdk_version"]
 
     defaultConfig {

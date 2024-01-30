@@ -10,7 +10,7 @@ plugins {
 android {
     def globalConfiguration = rootProject.extensions.getByName("ext")
 
-    namespace 'io.foundy.setting.ui'
+    namespace 'io.foundy.feature.setting.ui'
     compileSdk globalConfiguration["android_compile_sdk_version"]
 
     defaultConfig {

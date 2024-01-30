@@ -8,7 +8,7 @@ plugins {
 android {
     def globalConfiguration = rootProject.extensions.getByName("ext")
 
-    namespace 'io.foundy.auth.data'
+    namespace 'io.foundy.feature.auth.data'
     compileSdk globalConfiguration["android_compile_sdk_version"]
 
     defaultConfig {

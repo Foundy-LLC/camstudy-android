@@ -1,7 +1,7 @@
 package io.foundy.camstudy.fake
 
-import io.foundy.auth.domain.model.AuthState
-import io.foundy.auth.domain.repository.AuthRepository
+import io.foundy.feature.auth.domain.model.AuthState
+import io.foundy.feature.auth.domain.repository.AuthRepository
 import kotlinx.coroutines.flow.MutableSharedFlow
 
 class FakeAuthRepository : AuthRepository {
