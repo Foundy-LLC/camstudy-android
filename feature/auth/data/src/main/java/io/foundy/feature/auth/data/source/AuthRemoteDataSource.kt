@@ -1,8 +1,7 @@
 package io.foundy.feature.auth.data.source
 
-import io.foundy.core.data.model.ResponseBody
-import retrofit2.Response
+import io.foundy.core.data.util.CamstudyApiResponse
 
 interface AuthRemoteDataSource {
-    suspend fun getUserInitialInfoExistence(userId: String): Response<ResponseBody<Boolean>>
+    suspend fun getUserInitialInfoExistence(userId: String): CamstudyApiResponse<Boolean>
 }

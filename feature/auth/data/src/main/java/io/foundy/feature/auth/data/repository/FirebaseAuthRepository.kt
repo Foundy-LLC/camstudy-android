@@ -2,8 +2,9 @@ package io.foundy.feature.auth.data.repository
 
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
+import com.skydoves.sandwich.suspendOnFailure
+import com.skydoves.sandwich.suspendOnSuccess
 import io.foundy.core.common.di.ApplicationScope
-import io.foundy.core.data.extension.getDataOrThrowMessage
 import io.foundy.feature.auth.data.source.AuthLocalDataSource
 import io.foundy.feature.auth.data.source.AuthRemoteDataSource
 import io.foundy.feature.auth.domain.model.AuthState
@@ -47,23 +48,22 @@ class FirebaseAuthRepository @Inject constructor(
                         existsInitInfo = true
                     )
                 )
-            } else {
-                runCatching {
-                    val response = authRemoteDataSource.getUserInitialInfoExistence(currentUserId)
-                    response.getDataOrThrowMessage()
-                }.onSuccess { exists ->
-                    if (exists) {
-                        authLocalDataSource.markAsUserInitialInfoExists(currentUserId)
-                    }
-                    stateStream.emit(
-                        AuthState.SignedIn(
-                            currentUserId = currentUserId,
-                            existsInitInfo = exists
-                        )
-                    )
-                }.onFailure {
-                    stateStream.emit(AuthState.Error)
+                return@launch
+            }
+            val response = authRemoteDataSource.getUserInitialInfoExistence(currentUserId)
+            response.suspendOnSuccess {
+                val exists = data.data
+                if (exists) {
+                    authLocalDataSource.markAsUserInitialInfoExists(currentUserId)
                 }
+                stateStream.emit(
+                    AuthState.SignedIn(
+                        currentUserId = currentUserId,
+                        existsInitInfo = exists
+                    )
+                )
+            }.suspendOnFailure {
+                stateStream.emit(AuthState.Error)
             }
         }
     }

@@ -4,6 +4,10 @@ import javax.inject.Qualifier
 
 @Retention(AnnotationRetention.BINARY)
 @Qualifier
+annotation class NewDefaultRetrofit
+
+@Retention(AnnotationRetention.BINARY)
+@Qualifier
 annotation class DefaultRetrofit
 
 @Retention(AnnotationRetention.BINARY)

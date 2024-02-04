@@ -37,6 +37,7 @@ buildscript {
         kotlin_datetime_version = "0.3.2"
         bottom_sheet_dialog_version = "1.2.1"
         compose_shimmer_version = "1.0.4"
+        sandwich_version = "2.0.5"
     }
     dependencies {
 

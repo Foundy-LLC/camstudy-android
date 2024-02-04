@@ -68,6 +68,9 @@ dependencies {
 
     // junit
     testImplementation "junit:junit:$junit_version"
+
+    // sandwich
+    implementation "com.github.skydoves:sandwich-retrofit:$sandwich_version"
 }
 
 kapt {

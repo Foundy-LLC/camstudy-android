@@ -4,7 +4,7 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import io.foundy.core.data.di.DefaultRetrofit
+import io.foundy.core.data.di.NewDefaultRetrofit
 import io.foundy.feature.auth.data.api.AuthApi
 import io.foundy.feature.auth.data.source.AuthRemoteDataSource
 import io.foundy.feature.auth.data.source.RetrofitAuthDataSource
@@ -17,7 +17,7 @@ class AuthNetworkModule {
 
     @Provides
     @Singleton
-    fun provideAuthApiService(@DefaultRetrofit retrofit: Retrofit): AuthApi {
+    fun provideAuthApiService(@NewDefaultRetrofit retrofit: Retrofit): AuthApi {
         return retrofit.create(AuthApi::class.java)
     }
 
