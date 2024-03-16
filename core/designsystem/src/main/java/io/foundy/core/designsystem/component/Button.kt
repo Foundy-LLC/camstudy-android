@@ -11,6 +11,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.ProvideTextStyle
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -39,9 +40,7 @@ fun ButtonDefaults.camstudyTextButtonColors(
 @Composable
 internal fun RawButton(
     modifier: Modifier = Modifier,
-    label: String,
-    enableLabelSizeAnimation: Boolean = false,
-    leadingIcon: CamstudyIcon? = null,
+    leading: @Composable (() -> Unit)? = null,
     shape: Shape = RoundedCornerShape(8.dp),
     colors: ButtonColors = ButtonDefaults.buttonColors(
         containerColor = CamstudyTheme.colorScheme.primary,
@@ -51,7 +50,8 @@ internal fun RawButton(
     ),
     enabled: Boolean = true,
     border: BorderStroke? = null,
-    onClick: () -> Unit
+    onClick: () -> Unit,
+    content: @Composable () -> Unit,
 ) {
     Button(
         modifier = modifier,
@@ -66,27 +66,40 @@ internal fun RawButton(
         )
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
-            if (leadingIcon != null) {
-                CamstudyIcon(
-                    modifier = Modifier.size(20.dp),
-                    icon = leadingIcon,
-                    contentDescription = null,
-                )
+            if (leading != null) {
+                leading()
                 Spacer(modifier = Modifier.width(10.dp))
             }
-            Text(
-                modifier = if (enableLabelSizeAnimation) {
-                    Modifier.animateContentSize()
-                } else {
-                    Modifier
-                },
-                text = label,
-                style = CamstudyTheme.typography.titleMedium.copy(
+            ProvideTextStyle(
+                value = CamstudyTheme.typography.titleMedium.copy(
                     fontWeight = FontWeight.Medium
                 )
-            )
+            ) {
+                content()
+            }
         }
     }
+}
+
+@Composable
+private fun DefaultContentText(text: String, enableLabelSizeAnimation: Boolean = false) {
+    Text(
+        modifier = if (enableLabelSizeAnimation) {
+            Modifier.animateContentSize()
+        } else {
+            Modifier
+        },
+        text = text,
+    )
+}
+
+@Composable
+private fun DefaultLeadingIcon(icon: CamstudyIcon) {
+    CamstudyIcon(
+        modifier = Modifier.size(20.dp),
+        icon = icon,
+        contentDescription = null,
+    )
 }
 
 @Composable
@@ -110,11 +123,11 @@ fun CamstudyOutlinedButton(
     RawButton(
         modifier = modifier,
         onClick = onClick,
-        label = label,
         shape = shape,
         enabled = enabled,
-        enableLabelSizeAnimation = enableLabelSizeAnimation,
-        leadingIcon = leadingIcon,
+        leading = if (leadingIcon != null) {
+            { DefaultLeadingIcon(icon = leadingIcon) }
+        } else null,
         border = BorderStroke(width = 1.dp, color = borderColor),
         colors = ButtonDefaults.buttonColors(
             containerColor = containerColor,
@@ -122,7 +135,9 @@ fun CamstudyOutlinedButton(
             disabledContainerColor = colorScheme.systemBackground,
             disabledContentColor = colorScheme.systemUi04
         ),
-    )
+    ) {
+        DefaultContentText(text = label, enableLabelSizeAnimation = enableLabelSizeAnimation)
+    }
 }
 
 @Composable
@@ -139,10 +154,10 @@ fun CamstudyContainedButton(
     RawButton(
         modifier = modifier,
         onClick = onClick,
-        label = label,
         shape = shape,
-        enableLabelSizeAnimation = enableLabelSizeAnimation,
-        leadingIcon = leadingIcon,
+        leading = if (leadingIcon != null) {
+            { DefaultLeadingIcon(icon = leadingIcon) }
+        } else null,
         enabled = enabled,
         colors = ButtonDefaults.buttonColors(
             containerColor = colorScheme.primary,
@@ -150,7 +165,9 @@ fun CamstudyContainedButton(
             disabledContainerColor = colorScheme.systemUi02,
             disabledContentColor = colorScheme.systemUi05
         ),
-    )
+    ) {
+        DefaultContentText(text = label, enableLabelSizeAnimation = enableLabelSizeAnimation)
+    }
 }
 
 @Composable
@@ -166,12 +183,15 @@ fun CamstudyTextButton(
     RawButton(
         modifier = modifier,
         onClick = onClick,
-        label = label,
         shape = shape,
-        leadingIcon = leadingIcon,
+        leading = if (leadingIcon != null) {
+            { DefaultLeadingIcon(icon = leadingIcon) }
+        } else null,
         enabled = enabled,
         colors = colors,
-    )
+    ) {
+        DefaultContentText(text = label)
+    }
 }
 
 @Preview
